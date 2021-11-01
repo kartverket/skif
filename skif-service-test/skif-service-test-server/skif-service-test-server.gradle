@@ -1,15 +1,17 @@
 plugins {
     id 'java-library'
-    id 'sktools.provided'
+    id 'singlevm-variant'
 }
 
 dependencies {
     api project(':skif-service-server')
     api project(':skif-service-test:skif-service-test-api')
 
-    provided libraries.jee
-    provided libraries.c3p0
-    provided libraries.jdbc
+    singlevmImplementation(project(':skif-service-server')) {
+        capabilities {
+            requireCapability("${project.group}:skif-service-server-singlevm")
+        }
+    }
 
     testImplementation project(':skif-testsupport-common')
 

@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'sktools.provided'
+    id 'singlevm-variant'
 }
 
 description = 'Inneholder service-rammeverk klasser for tjener'
@@ -11,12 +11,22 @@ dependencies {
 
     provided libraries.jee
     provided libraries.c3p0 // er kun brukt for intern testfunksjonalitet - burde kanskje ligge et annet sted
-    provided libraries.jaxws_rt
+
+    singlevmImplementation libraries.jaxws_rt
+    singlevmImplementation libraries.jdbc
+    singlevmImplementation(project(':skif-service-common')) {
+        capabilities {
+            requireCapability("${project.group}:skif-service-common-singlevm")
+        }
+    }
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
-    testImplementation project(path: ':skif-service-common', configuration: 'testApi')
-    testImplementation libraries.jdbc
+    testImplementation(project(':skif-service-common')) {
+        capabilities {
+            requireCapability("${project.group}:skif-service-common-test")
+        }
+    }
 }
 
 publishing {

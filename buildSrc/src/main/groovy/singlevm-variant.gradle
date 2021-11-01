@@ -1,0 +1,18 @@
+plugins {
+    id 'java-library'
+}
+
+java {
+    registerFeature('singlevm') {
+        usingSourceSet(sourceSets.main)
+    }
+}
+
+configurations {
+    provided {
+        description = 'Dependencies for compiling and single-vm'
+    }
+
+    compileOnlyApi.extendsFrom provided
+    singlevmImplementation.extendsFrom provided
+}

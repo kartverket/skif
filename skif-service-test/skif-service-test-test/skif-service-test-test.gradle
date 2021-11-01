@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'sktools.provided'
 }
 
 dependencies {
@@ -8,17 +7,20 @@ dependencies {
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsclient')
 
-    provided libraries.jee
-    provided libraries.c3p0
-    provided libraries.jdbc
-
     testImplementation project(':skif-testsupport-common')
-    testImplementation project(':skif-service-test:skif-service-test-server') //trenger denne avhengighet for testing av servicer
+
+    //trenger denne avhengighet for testing av servicer
+    testImplementation project(':skif-service-test:skif-service-test-server')
+    testImplementation(project(':skif-service-test:skif-service-test-server')) {
+        capabilities {
+            requireCapability("${project.group}:skif-service-test-server-singlevm")
+        }
+    }
+
     testImplementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wswar')
 
     //internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
 
     testImplementation libraries.jaxws_rt
-
 }

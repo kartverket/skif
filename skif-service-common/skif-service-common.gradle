@@ -1,35 +1,35 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'singlevm-variant'
 }
 
 description = 'Inneholder service-rammeverk klasser for klient'
 
-configurations {
-    testApi
+java {
+    registerFeature('test') {
+        usingSourceSet(sourceSets.test)
+    }
 }
 
 dependencies {
     api libraries.slf4j_api
-    api libraries.jsr305
     api libraries.guice
     api libraries.guava //pga TypeToken
 
-    implementation libraries.guava
     implementation libraries.jodatime
-    compileOnly libraries.jaxws_api
+
+    provided libraries.jaxws_api
 
     testImplementation libraries.jaxws_rt
     testImplementation libraries.reflections
 }
 
-task testJar(type: Jar) {
-    archiveClassifier = 'tests'
-    from sourceSets.test.output
+components.java.withVariantsFromConfiguration(configurations.testRuntimeElements) {
+    skip()
 }
-
-artifacts {
-    testApi testJar
+components.java.withVariantsFromConfiguration(configurations.testApiElements) {
+    skip()
 }
 
 publishing {
@@ -50,10 +50,8 @@ task assertDependencies() {
             boolean godkjent = [
                     'joda-time',
                     'org.slf4j',
-                    'com.google.code.findbugs:jsr305',
                     'com.google.inject:guice',
                     'com.google.guava:guava',
-                    'com.google.inject.extensions:guice-',
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 
             if (!godkjent) {
