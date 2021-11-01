@@ -1,0 +1,12 @@
+plugins {
+    id 'java'
+}
+
+configurations {
+    provided {
+        description = 'Dependencies for compiling and test'
+    }
+
+    compileOnlyApi.extendsFrom provided
+    testImplementation.extendsFrom provided
+}
