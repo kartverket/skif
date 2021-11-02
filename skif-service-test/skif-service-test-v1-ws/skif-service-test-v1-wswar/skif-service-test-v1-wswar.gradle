@@ -1,12 +1,11 @@
 plugins {
     id 'sktools.wsgen'
     id 'singlevm-variant'
+    id 'skinny-war'
 }
 
 configurations {
-    war { description = 'War-artifaktet' }
     wsdls { description = 'Zip med WSDL-er' }
-    earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)'}
 }
 
 dependencies {
@@ -19,11 +18,6 @@ dependencies {
     provided libraries.jaxws_rt
 }
 
-war {
-    // Skinny war
-    classpath = sourceSets.main.output
-}
-
 task zipWsdls(type: Zip) {
     archiveAppendix = 'wsdls'
     from genWsdls
@@ -31,5 +25,4 @@ task zipWsdls(type: Zip) {
 
 artifacts {
     wsdls zipWsdls
-    war project.war
 }

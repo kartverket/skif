@@ -2,12 +2,11 @@ plugins {
     id 'sktools.wsgen'
     id 'sktools.wsdl-customizer'
     id 'singlevm-variant'
+    id 'skinny-war'
 }
 
 configurations {
-    war { description = 'War-artifaktet' }
     wsdls { description = 'Zip med WSDL-er' }
-    earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)' }
 }
 
 dependencies {
@@ -53,14 +52,10 @@ zipCustomizedWsdls {
 
 
 war {
-    // Skinny war
-    classpath = sourceSets.main.output
-
     // dokumentasjon for eksterne klienter
     from zipCustomizedWsdls
 }
 
 artifacts {
     wsdls zipCustomizedWsdls
-    war project.war
 }

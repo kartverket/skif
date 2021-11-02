@@ -1,0 +1,30 @@
+plugins {
+    id 'war'
+}
+
+configurations {
+    war {
+        description = 'War-artifaktet'
+
+        canBeConsumed = true
+        canBeResolved = false
+    }
+
+    earlib {
+        description = 'Felles avhengheter i ear (skinny wars)'
+
+        canBeConsumed = true
+        canBeResolved = false
+
+        extendsFrom implementation, runtimeOnly
+    }
+}
+
+war {
+    // Ingen avhengigheter med i
+    classpath = sourceSets.main.output
+}
+
+artifacts {
+    war project.war
+}
