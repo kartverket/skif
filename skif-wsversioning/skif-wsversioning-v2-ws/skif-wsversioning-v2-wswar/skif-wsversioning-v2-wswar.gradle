@@ -1,6 +1,6 @@
 plugins {
     id 'sktools.wsgen'
-    id 'sktools.provided'
+    id 'singlevm-variant'
 }
 
 configurations {

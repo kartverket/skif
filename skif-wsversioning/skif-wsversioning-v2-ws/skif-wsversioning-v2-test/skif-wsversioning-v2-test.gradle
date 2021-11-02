@@ -1,17 +1,17 @@
 plugins {
     id 'java'
-    id 'sktools.provided'
 }
 
 dependencies {
+    implementation project(':skif-wsversioning:skif-wsversioning-server')
+
     implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsmapping')
     implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsclient')
 
-    provided project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar')
+    implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar')
 
-    provided libraries.jee
+    implementation libraries.jee
 
-    testImplementation project(':skif-wsversioning:skif-wsversioning-server')
     testImplementation project(':skif-testsupport-common')
     testRuntimeOnly project(':skif-config')
 }

@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'sktools.provided'
+    id 'singlevm-variant'
 }
 
 dependencies {
