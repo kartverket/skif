@@ -1,14 +1,12 @@
 package no.statkart.skif.util;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import no.statkart.skif.config.Configuration;
-import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.jdbc.ConnectionSelector;
 
-import javax.sql.DataSource;
-import java.beans.PropertyVetoException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author Henrik Fredholm
@@ -70,26 +68,6 @@ public class JDBCHelper {
             } catch (SQLException e) {
                 throw new ImplementationException("Error during rollback", e);
             }
-        }
-    }
-
-    public static DataSource createPooledDataSource(Configuration configuration) {
-        String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
-        String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
-        String service = configuration.getString(SkifConfigConstants.DB_SERVICE);
-        String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
-        String port = configuration.getString(SkifConfigConstants.DB_PORT);
-        String url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
-
-        try {
-            ComboPooledDataSource pool = new ComboPooledDataSource();
-            pool.setDriverClass("oracle.jdbc.OracleDriver");
-            pool.setJdbcUrl(url);
-            pool.setUser(username);
-            pool.setPassword(password);
-            return pool;
-        } catch (PropertyVetoException e) {
-            throw new ImplementationException("Could not set up connection pool", e);
         }
     }
 
