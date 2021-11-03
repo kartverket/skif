@@ -6,7 +6,7 @@ plugins {
 }
 
 configurations {
-    wsdls { description = 'Zip med WSDL-er' }
+    wsdls { description = 'Zip med WSDL-er'; canBeConsumed = true; canBeResolved = false }
 }
 
 dependencies {
