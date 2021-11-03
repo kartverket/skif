@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 import javax.sql.DataSource;
 import java.sql.*;
 
-import static no.statkart.skif.util.JDBCHelper.createPooledDataSource;
+import static no.statkart.skif.persistence.PoolHelper.createPooledDataSource;
 import static org.testng.Assert.*;
 
 /**

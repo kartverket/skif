@@ -10,13 +10,13 @@ dependencies {
     api project(':skif-service-common')
 
     provided libraries.jee
-    provided libraries.c3p0 // er kun brukt for intern testfunksjonalitet - burde kanskje ligge et annet sted
     provided libraries.jaxws_rt
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
     testImplementation project(path: ':skif-service-common', configuration: 'testApi')
     testImplementation libraries.jdbc
+    testImplementation libraries.c3p0
 }
 
 publishing {
@@ -26,3 +26,37 @@ publishing {
         }
     }
 }
+
+task assertDependencies() {
+    doFirst {
+        configurations.apiElements.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
+            boolean godkjent = [
+                    'joda-time',
+                    'org.slf4j',
+                    'com.google.inject:guice',
+                    'com.google.guava:guava',
+                    'javax.annotation:javax.annotation-api:1.2',
+                    'javax.servlet:javax.servlet-api:3.0.1',
+                    'javax.transaction:jta:1.1',
+                    'javax.ejb:ejb-api:3.0',
+            ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
+
+            if (!godkjent) {
+                throw new TaskExecutionException(it, new RuntimeException('Ukjent avhengighet: ' + dependency)) //avhengighet ikke i godkjent-liste
+            }
+        }
+        configurations.runtimeElements.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
+            boolean godkjent = [
+                    'joda-time',
+                    'org.slf4j',
+                    'com.google.inject:guice',
+                    'com.google.guava:guava',
+            ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
+
+            if (!godkjent) {
+                throw new TaskExecutionException(it, new RuntimeException('Ukjent avhengighet: ' + dependency)) //avhengighet ikke i godkjent-liste
+            }
+        }
+    }
+}
+test.dependsOn assertDependencies //kjøres som en test
