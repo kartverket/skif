@@ -34,3 +34,7 @@ setEnv_personal.cmd
 
 # jEnv
 /.java-version
+
+# Global config with secrets
+/config/
+

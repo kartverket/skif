@@ -4,9 +4,14 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestTxManagementEJBInterceptorJEE;
+import no.statkart.skif.skiftest.config.SkifTestTxManagementEJBInterceptorSpring;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.*;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -17,6 +22,8 @@ import javax.interceptor.Interceptors;
 @Stateless(name = "no.statkart.skif.skiftest.service.txcmt.ContainerManagedTxAServiceEJBBean")
 @Interceptors(SkifTestTxManagementEJBInterceptorJEE.class)
 @TransactionManagement(TransactionManagementType.CONTAINER)
+@TransactionAttribute(TransactionAttributeType.REQUIRED) // I Spring er default SUPPORTS. Vi må derfor legge denne på alle EJBs. Da vil Weblogic og Spring virke likt.
+@SkifTestTxManagementEJBInterceptorSpring
 public class ContainerManagedTxAServiceEJBBean extends EJBTimedService implements ContainerManagedTxAService {
 
     @Inject @EJBServiceChain

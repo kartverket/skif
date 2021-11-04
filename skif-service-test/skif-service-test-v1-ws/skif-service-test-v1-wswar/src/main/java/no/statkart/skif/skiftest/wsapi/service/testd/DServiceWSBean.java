@@ -12,6 +12,8 @@ import no.statkart.skif.skiftest.wsapi.exception.impl.ExceptionDetail;
 import no.statkart.skif.skiftest.wsapi.exception.impl.ServiceFaultInfo;
 import no.statkart.skif.skiftest.wsapi.exception.impl.StackTraceElementList;
 import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleNonMappedFaultInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -29,7 +31,9 @@ import java.lang.reflect.InvocationTargetException;
         name = "DService",
         serviceName = "DServiceWS",
         targetNamespace = "http://skif.statkart.no/skiftest/wsapi/service/testd")
+@Component
 public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

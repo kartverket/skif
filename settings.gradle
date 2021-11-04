@@ -37,6 +37,7 @@ include ':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wswar'
 include ':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsclient'
 include ':skif-service-test:skif-service-test-test'
 include ':skif-service-test:skif-service-test-ear'
+include ':skif-service-test:skif-service-test-spring'
 
 include ':skif-store-common'
 include ':skif-store-server'

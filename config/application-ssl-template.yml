@@ -1,0 +1,4 @@
+#  Copy this file to application-ssl.yml, add key store password and do not check that file into git
+server:
+  ssl:
+    key-store-password: <key-store-password-here>

@@ -1,0 +1,7 @@
+logging:
+  level:
+    root: WARN
+#    org.springframework.security: DEBUG
+#    org.springframework.transaction: TRACE
+#    no.statkart.skif.skiftest.config: DEBUG
+#    org.springframework.jdbc.datasource: DEBUG

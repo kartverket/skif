@@ -9,6 +9,8 @@ import no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
 import no.statkart.skif.skiftest.wsapi.exception.simple.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -27,7 +29,9 @@ import java.lang.reflect.InvocationTargetException;
         name = "TestExService",
         serviceName = "TestExServiceWS",
         targetNamespace = "http://skif.statkart.no/skiftest/wsapi/service/testex")
+@Component
 public class TestExServiceWSBean extends SkifWebService<TestExServiceWSI> implements TestExServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

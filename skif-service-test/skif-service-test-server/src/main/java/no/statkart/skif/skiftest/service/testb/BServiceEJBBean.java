@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
+import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorSpring;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Stateless(name = "no.statkart.skif.skiftest.service.testb.BServiceEJBBean")
 @Interceptors(SkifTestEJBInterceptorJEE.class)
+@SkifTestEJBInterceptorSpring
 public class BServiceEJBBean extends EJBTimedService implements BService {
 
     @Inject

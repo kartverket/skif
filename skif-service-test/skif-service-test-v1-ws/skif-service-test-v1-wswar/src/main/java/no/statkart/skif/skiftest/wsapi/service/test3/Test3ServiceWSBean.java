@@ -7,6 +7,8 @@ import no.statkart.skif.skiftest.wsapi.domain.A;
 import no.statkart.skif.skiftest.wsapi.domain.B;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
 import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -23,7 +25,9 @@ import javax.xml.ws.WebServiceContext;
         name = "Test3Service",
         serviceName = "Test3ServiceWS",
         targetNamespace = "http://skif.statkart.no/skiftest/wsapi/service/test3")
+@Component
 public class Test3ServiceWSBean extends SkifWebService<Test3ServiceWSI> implements Test3ServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

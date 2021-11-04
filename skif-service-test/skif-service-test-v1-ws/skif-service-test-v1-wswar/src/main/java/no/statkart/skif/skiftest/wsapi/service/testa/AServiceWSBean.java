@@ -4,6 +4,8 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -21,7 +23,9 @@ import javax.xml.ws.WebServiceContext;
         name = "AService",
         serviceName = "AServiceWS",
         targetNamespace = "http://skif.statkart.no/skiftest/wsapi/service/testa")
+@Component
 public class AServiceWSBean extends SkifWebService<AServiceWSI> implements AServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

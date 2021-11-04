@@ -1,0 +1,35 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.6'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+dependencies {
+    implementation project(':skif-config')
+    implementation project(':skif-service-server')
+    implementation project(':skif-service-test:skif-service-test-server')
+    implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
+    implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
+    implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wswar')
+
+    // Spring og CXF
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework:spring-tx'
+    implementation 'org.apache.cxf:cxf-spring-boot-starter-jaxws:3.4.5'
+    implementation 'org.apache.cxf:cxf-rt-features-logging:3.4.5'
+
+    // Ta med EJB annotasjoner
+    implementation "javax.transaction:jta:1.1"
+    implementation "javax.ejb:ejb-api:3.0"
+
+    implementation "com.oracle.jdbc:ojdbc8:12.2.0.1@jar"
+
+    // For Java 11:
+    implementation 'com.sun.xml.ws:jaxws-rt:2.3.3'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}

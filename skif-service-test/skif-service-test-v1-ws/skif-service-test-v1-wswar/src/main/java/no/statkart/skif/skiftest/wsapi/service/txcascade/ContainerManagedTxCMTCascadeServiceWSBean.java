@@ -4,6 +4,8 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.skiftest.wsapi.config.SkifTestTxManagementWebServiceInjectorConfig;
 import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -19,7 +21,9 @@ import javax.xml.ws.WebServiceContext;
         name = "ContainerManagedTxCMTCascadeService",
         serviceName = "ContainerManagedTxCMTCascadeServiceWS",
         targetNamespace = "http://skif.statkart.no/skiftest/wsapi/service/txcascade")
+@Component
 public class ContainerManagedTxCMTCascadeServiceWSBean extends SkifWebService<ContainerManagedTxCMTCascadeServiceWSI> implements ContainerManagedTxCMTCascadeServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

@@ -4,9 +4,14 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestTxManagementEJBInterceptorJEE;
+import no.statkart.skif.skiftest.config.SkifTestTxManagementEJBInterceptorSpring;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.*;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -16,7 +21,9 @@ import javax.interceptor.Interceptors;
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.skiftest.service.txcascade.ContainerManagedTxCMTShadowServiceEJBBean")
 @Interceptors(SkifTestTxManagementEJBInterceptorJEE.class)
+@SkifTestTxManagementEJBInterceptorSpring
 @TransactionManagement(TransactionManagementType.CONTAINER)
+@TransactionAttribute(TransactionAttributeType.REQUIRED) // I Spring er default SUPPORTS. Vi må derfor legge denne på alle EJBs. Da vil Weblogic og Spring virke likt.
 public class ContainerManagedTxCMTCascadeServiceEJBBean extends EJBTimedService implements ContainerManagedTxCMTCascadeService {
 
     @Inject @EJBServiceChain
@@ -60,6 +67,8 @@ public class ContainerManagedTxCMTCascadeServiceEJBBean extends EJBTimedService 
 
     @Override
     // Bruk default. Hvilket er det samme som: @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    // Siden vi også skal være kompatible med Spring, må vi legge annotasjon på klassenivå og dermed får vi ikke
+    // testet default verdien som Weblogic bruker. (når klassen ikke har noen annotasjon)
     public void containerTest4(String key1, String value1, String key2, String value2) {
         serviceChain.containerTest4(key1, value1, key2, value2);
     }

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
+import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorSpring;
 import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
 
@@ -18,6 +19,7 @@ import javax.interceptor.Interceptors;
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.skiftest.service.test2.Test2ServiceEJBBean")
 @Interceptors(SkifTestEJBInterceptorJEE.class)
+@SkifTestEJBInterceptorSpring
 public class Test2ServiceEJBBean extends EJBTimedService implements Test2Service {
 
     @Inject @EJBServiceChain

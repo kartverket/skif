@@ -3,10 +3,21 @@ plugins {
     id 'sktools.provided'
 }
 
+java {
+    registerFeature('springSupport') {
+        usingSourceSet(sourceSets.main)
+    }
+}
+
 configurations {
     war { description = 'War-artifaktet' }
     wsdls { description = 'Zip med WSDL-er' }
     earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)'}
+
+    sprigSupportApi.extendsFrom api
+    springSupportImplementation.extendsFrom implementation
+    springSupportCompileOnly.extendsFrom compileOnly
+
 }
 
 dependencies {
@@ -17,6 +28,8 @@ dependencies {
 
     provided libraries.jee
     provided libraries.jaxws_rt
+
+    springSupportImplementation 'org.springframework:spring-context:5.3.12'
 }
 
 war {

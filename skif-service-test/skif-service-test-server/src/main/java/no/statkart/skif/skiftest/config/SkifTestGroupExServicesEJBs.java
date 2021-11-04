@@ -2,6 +2,7 @@ package no.statkart.skif.skiftest.config;
 
 import no.statkart.skif.service.ejb.EJBRegistration;
 import no.statkart.skif.skiftest.service.testex.TestExService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBs;
@@ -16,6 +17,7 @@ import javax.ejb.EJBs;
 @EJBs({
         @EJB(name = "ejb/TestExServiceEJBBean", beanInterface = TestExService.class)
 })
+@ConditionalOnProperty("ExcludeWhenRunningOnSpring") // A trick to prevent Spring from picking up this ServletContextListener
 public class SkifTestGroupExServicesEJBs extends EJBRegistration {
     public SkifTestGroupExServicesEJBs() {
         super(new SkifTestGroupExServices());

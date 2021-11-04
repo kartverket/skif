@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
+import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorSpring;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -22,6 +23,7 @@ import java.util.List;
 @Stateless(name = "no.statkart.skif.skiftest.service.testc.CServiceEJBBean")
 @Interceptors(SkifTestEJBInterceptorJEE.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SkifTestEJBInterceptorSpring
 public class CServiceEJBBean extends EJBTimedService implements CService {
 
     @Inject @EJBServiceChain

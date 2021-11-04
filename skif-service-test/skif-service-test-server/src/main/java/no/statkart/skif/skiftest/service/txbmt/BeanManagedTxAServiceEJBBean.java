@@ -4,9 +4,14 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestTxManagementEJBInterceptorJEE;
+import no.statkart.skif.skiftest.config.SkifTestTxManagementEJBInterceptorSpring;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.*;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -16,7 +21,9 @@ import javax.interceptor.Interceptors;
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.skiftest.service.txbmt.BeanManagedTxAServiceEJBBean")
 @Interceptors(SkifTestTxManagementEJBInterceptorJEE.class)
+@SkifTestTxManagementEJBInterceptorSpring
 @TransactionManagement(TransactionManagementType.BEAN)
+@Transactional(propagation = Propagation.NOT_SUPPORTED)  // Spring krever dette i tillegg til TransactionManagementType.BEAN
 public class BeanManagedTxAServiceEJBBean extends EJBTimedService implements BeanManagedTxAService {
 
     @Inject @EJBServiceChain
