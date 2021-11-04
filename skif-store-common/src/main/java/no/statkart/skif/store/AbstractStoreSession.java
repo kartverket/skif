@@ -84,7 +84,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         }
 
         final T bubble = getDerivedBubbleObjectCopyIfLocked(entry);
-        if (bubble == null) {
+        if (bubble == null || !bubbleId.getType().isInstance(bubble)) {
             throw new ObjectNotFoundException(bubbleId);
         }
         return bubble;
@@ -134,6 +134,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void get(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
         requireNonNull(bubbleIds, "bubbleIds");
@@ -150,9 +151,16 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 }
                 deletedBubbleIds.add(bubbleId);
             } else {
-                final T bubbleObject = storeEntry == null ? null : getDerivedBubbleObjectCopyIfLocked(storeEntry);
+                final BubbleObject bubbleObject = storeEntry == null ? null : getDerivedBubbleObjectCopyIfLocked(storeEntry);
                 if (bubbleObject != null) {
-                    bubbleObjects.add(bubbleObject);
+                    if (!bubbleId.getType().isInstance(bubbleObject)) {
+                        if (deletedBubbleIds == null) {
+                            deletedBubbleIds = new HashSet<>(bubbleIds.size());
+                        }
+                        deletedBubbleIds.add(bubbleId);
+                    } else {
+                        bubbleObjects.add((T) bubbleObject);
+                    }
                 } else {
                     if (missingBubbleIds == null) {
                         missingBubbleIds = new HashSet<>(bubbleIds.size());
@@ -187,6 +195,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends BubbleObject> T getDerivedBubbleObjectCopyIfLocked(StoreEntry entry) {
         if (entry.getBubbleObject(level)!=null) return (T) entry.getBubbleObject(level);
 
@@ -232,6 +241,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void getOrdered(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
         requireNonNull(bubbleIds, "bubbleIds");
@@ -253,9 +263,17 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 deletedBubbleIds.add(bubbleId);
                 bubbleObjectsFound.add(null);  // null er plassholder
             } else {
-                final T bubbleObject = storeEntry == null ? null : getDerivedBubbleObjectCopyIfLocked(storeEntry);
+                final BubbleObject bubbleObject = storeEntry == null ? null : getDerivedBubbleObjectCopyIfLocked(storeEntry);
                 if (bubbleObject != null) {
-                    bubbleObjectsFound.add( bubbleObject);
+                    if (!bubbleId.getType().isInstance(bubbleObject)) {
+                        if (deletedBubbleIds == null) {
+                            deletedBubbleIds = new HashSet<>(bubbleIds.size());
+                        }
+                        deletedBubbleIds.add(bubbleId);
+                        bubbleObjectsFound.add(null);  // null er plassholder
+                    } else {
+                        bubbleObjectsFound.add((T) bubbleObject);
+                    }
                 } else {
                     bubbleObjectsFound.add(null);  // null er plassholder
                     if (missingBubbleIds == null) {
@@ -328,6 +346,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void getIgnoreMissing(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
         requireNonNull(bubbleIds, "bubbleIds");
@@ -338,9 +357,11 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             final StoreEntryState state = storeEntry != null ? storeEntry.getState(level) : StoreEntryState.NULL;
             final boolean isDeleted = state == StoreEntryState.DELETED || state == StoreEntryState.INSERTED_DELETED;
             if (!isDeleted) {
-                final T bubbleObject = storeEntry == null ? null : getDerivedBubbleObjectCopyIfLocked(storeEntry);
+                final BubbleObject bubbleObject = storeEntry == null ? null : getDerivedBubbleObjectCopyIfLocked(storeEntry);
                 if (bubbleObject != null) {
-                    bubbleObjects.add(bubbleObject);
+                    if (bubbleId.getType().isInstance(bubbleObject)) {
+                        bubbleObjects.add((T) bubbleObject);
+                    }
                 } else {
                     if (missingBubbleIds == null) {
                         missingBubbleIds = new HashSet<>(bubbleIds.size());
@@ -532,7 +553,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
             }
             if (bubbleObject instanceof BubbleObjectWithIdent) {
-                relationCache.onIdentRemoved((BubbleObjectWithIdent)bubbleObject);
+                relationCache.onIdentRemoved((BubbleObjectWithIdent<?>)bubbleObject);
             }
         }
         return storeEntry;
@@ -622,11 +643,22 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         modifiedMap.put(bubbleId, storeEntry);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends BubbleObject> T lock(BubbleId<? extends T> bubbleId) {
         StoreEntry entry = lockEntry(level, bubbleId);
-        //noinspection unchecked
-        return (T) entry.getBubbleObject(level);
+
+        StoreEntryState state = entry.getState(level);
+        if (state == StoreEntryState.DELETED || state == StoreEntryState.INSERTED_DELETED) {
+            throw new ObjectNotFoundException(bubbleId);
+        }
+
+        BubbleObject bubbleObject = entry.getBubbleObject(level);
+        if (!bubbleId.getType().isInstance(bubbleObject)) {
+            throw new ObjectNotFoundException(bubbleId);
+        }
+
+        return (T) bubbleObject;
     }
 
     @Override
@@ -657,21 +689,43 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> void lock(Collection<I> bubbleIds, Collection<T> bubbleObjects) {
         requireNonNull(bubbleIds, "bubbleIds");
         Set<I> unlockedBubbleIds = null;
+        Set<BubbleId<?>> deletedBubbleIds = null;
 
         for (I bubbleId : bubbleIds) {
             final StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry != null && storeEntry.isLocked()) {
-                bubbleObjects.add(getDerivedBubbleObjectCopyIfLocked(storeEntry));
+                StoreEntryState state = storeEntry.getState(level);
+                if (state == StoreEntryState.DELETED || state == StoreEntryState.INSERTED_DELETED) {
+                    if (deletedBubbleIds == null) {
+                        deletedBubbleIds = new HashSet<>();
+                    }
+                    deletedBubbleIds.add(bubbleId);
+                }
+
+                BubbleObject bubbleObject = getDerivedBubbleObjectCopyIfLocked(storeEntry);
+                if (bubbleId.getType().isInstance(bubbleObject)) {
+                    bubbleObjects.add((T) bubbleObject);
+                } else {
+                    if (deletedBubbleIds == null) {
+                        deletedBubbleIds = new HashSet<>();
+                    }
+                    deletedBubbleIds.add(bubbleId);
+                }
             } else {
                 if (unlockedBubbleIds == null) {
                     unlockedBubbleIds = new HashSet<>(bubbleIds.size());
                 }
                 unlockedBubbleIds.add(bubbleId);
             }
+        }
+
+        if (deletedBubbleIds != null) {
+            throw new ObjectsNotFoundException(deletedBubbleIds);
         }
 
         if (unlockedBubbleIds != null) {
@@ -957,7 +1011,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                                 relationCache.updateRemoved(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
                             }
                             if (bubbleObject instanceof BubbleObjectWithIdent) {
-                                relationCache.onIdentRemoved((BubbleObjectWithIdent)bubbleObject);
+                                relationCache.onIdentRemoved((BubbleObjectWithIdent<?>)bubbleObject);
                             }
                         } else {
                             // Kan komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
