@@ -6,6 +6,18 @@ plugins {
 
 description = 'Inneholder service-rammeverk klasser for tjener'
 
+java {
+    registerFeature('springSupport') {
+        usingSourceSet(sourceSets.main)
+    }
+}
+
+configurations {
+    sprigSupportApi.extendsFrom api
+    springSupportImplementation.extendsFrom implementation
+    springSupportCompileOnly.extendsFrom compileOnly
+}
+
 dependencies {
     api project(':skif-service-common')
 
@@ -17,6 +29,10 @@ dependencies {
     testImplementation project(':skif-testsupport-common')
     testImplementation project(path: ':skif-service-common', configuration: 'testApi')
     testImplementation libraries.jdbc
+
+    springSupportImplementation 'org.springframework:spring-context:5.3.12'
+    springSupportImplementation 'org.springframework:spring-jdbc:5.3.12'
+    springSupportImplementation 'org.aspectj:aspectjweaver:1.9.7'
 }
 
 publishing {
