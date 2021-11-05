@@ -41,8 +41,10 @@ ext.libraries = [
 
 
         // Testing
-        testng: dependencies.create('org.testng:testng:6.14.3') {
+        // TestNG 7.4.0 er broken, se: https://github.com/cbeust/testng/pull/2487
+        testng: dependencies.create('org.testng:testng:7.3.0') {
             exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
+            exclude group:'com.google.inject'
         },
         mockito: 'org.mockito:mockito-core:2.19.0', /* mockito 3.x for java 8 */
         dbunit: 'org.dbunit:dbunit:2.5.4',
