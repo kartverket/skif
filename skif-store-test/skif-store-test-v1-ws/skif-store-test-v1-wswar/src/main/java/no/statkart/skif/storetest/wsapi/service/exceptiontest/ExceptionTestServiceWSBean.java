@@ -7,6 +7,8 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -19,7 +21,9 @@ import javax.xml.ws.WebServiceContext;
         name = "ExceptionTestService",
         serviceName = "ExceptionTestServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/exceptiontest")
+@Component
 public class ExceptionTestServiceWSBean extends SkifWebService<ExceptionTestServiceWSI> implements ExceptionTestServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

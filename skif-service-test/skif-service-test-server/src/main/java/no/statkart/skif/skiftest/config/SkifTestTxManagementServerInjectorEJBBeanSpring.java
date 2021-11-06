@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Henrik Fredholm
  * @since 2.0
  */
-
+// NB: Viktig at denne ikke inneholder @Stateless annotasjon, for da finnes det 2 EJB beans med dette interface og Weblogic kan ikke resolve ejb-ref
 public class SkifTestTxManagementServerInjectorEJBBeanSpring implements SkifTestTxManagementServerInjector {
     @Autowired
     private SkifConfiguration configuration;

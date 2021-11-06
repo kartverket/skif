@@ -1,13 +1,13 @@
 package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
-import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -23,7 +23,9 @@ import java.util.Map;
 @SuppressWarnings("unused")
 
 @Stateless(name = "no.statkart.skif.storetest.service.store.StoreServiceEJBBean")
+@StoreTestEJBInterceptorSpring
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED) // Springs default for metoder er ingen transaksjonshåndtering. Må angi REQUIRED her hvis det skal være default for klassen
 public class StoreServiceEJBBean extends EJBTimedService implements StoreService {
     @Inject  @EJBServiceChain
     private StoreService serviceChain;

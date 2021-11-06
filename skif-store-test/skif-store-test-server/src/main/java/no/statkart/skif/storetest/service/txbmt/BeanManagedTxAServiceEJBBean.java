@@ -4,7 +4,10 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
 import no.statkart.skif.storetest.service.txbmt.BeanManagedTxAService;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -19,7 +22,9 @@ import javax.interceptor.Interceptors;
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.skiftest.service.txbmt.BeanManagedTxAServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@StoreTestEJBInterceptorSpring
 @TransactionManagement(TransactionManagementType.BEAN)
+@Transactional(propagation = Propagation.NOT_SUPPORTED)  // Spring krever dette i tillegg til TransactionManagementType.BEAN
 public class BeanManagedTxAServiceEJBBean extends EJBTimedService implements BeanManagedTxAService {
 
     @Inject @EJBServiceChain

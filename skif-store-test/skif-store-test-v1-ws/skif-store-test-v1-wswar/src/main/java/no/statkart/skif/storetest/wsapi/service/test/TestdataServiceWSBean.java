@@ -10,6 +10,8 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.TestNumber;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -27,7 +29,9 @@ import javax.xml.ws.WebServiceContext;
         name = "TestdataService",
         serviceName = "TestdataServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/test")
+@Component
 public class TestdataServiceWSBean extends SkifWebService<TestdataServiceWSI> implements TestdataServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

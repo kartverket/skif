@@ -8,6 +8,8 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.basic.SimpleId;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -26,7 +28,9 @@ import javax.xml.ws.WebServiceContext;
         name = "UowTestService",
         serviceName = "UowTestServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/uow")
+@Component
 public class UowTestServiceWSBean extends SkifWebService<UowTestServiceWSI> implements UowTestServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

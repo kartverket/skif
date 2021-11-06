@@ -4,10 +4,20 @@ plugins {
     id 'sktools.provided'
 }
 
+java {
+    registerFeature('springSupport') {
+        usingSourceSet(sourceSets.main)
+    }
+}
+
 configurations {
     war { description = 'War-artifaktet' }
     wsdls { description = 'Zip med WSDL-er' }
     earlib { extendsFrom implementation; description = 'Felles avhengheter i ear (skinny wars)' }
+
+    sprigSupportApi.extendsFrom api
+    springSupportImplementation.extendsFrom implementation
+    springSupportCompileOnly.extendsFrom compileOnly
 }
 
 dependencies {
@@ -20,6 +30,8 @@ dependencies {
     provided libraries.jaxws_rt
 
     originalSchemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
+
+    springSupportImplementation 'org.springframework:spring-context:5.3.12'
 }
 
 customizeWsdls {

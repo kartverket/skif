@@ -7,8 +7,11 @@ import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -18,6 +21,8 @@ import javax.interceptor.Interceptors;
 
 @Stateless(name = "no.statkart.skif.storetest.service.kodeliste.KodelisteServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@StoreTestEJBInterceptorSpring
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class KodelisteServiceEJBBean extends EJBTimedService implements KodelisteService {
     @Inject  @EJBServiceChain
     private KodelisteService serviceImpl;

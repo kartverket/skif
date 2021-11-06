@@ -7,6 +7,8 @@ import no.statkart.skif.storetest.wsapi.domain.*;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 import no.statkart.skif.storetest.wsapi.service.store.StoreServiceWSI;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -19,7 +21,9 @@ import javax.xml.ws.WebServiceContext;
         name = "LockService",
         serviceName = "LockServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/lock")
+@Component
 public class LockServiceWSBean extends SkifWebService<LockServiceWSI> implements LockServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

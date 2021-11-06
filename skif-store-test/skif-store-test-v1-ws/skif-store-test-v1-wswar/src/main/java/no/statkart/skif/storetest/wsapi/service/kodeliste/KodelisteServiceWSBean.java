@@ -7,6 +7,8 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -24,7 +26,9 @@ import javax.xml.ws.WebServiceContext;
         name = "KodelisteService",
         serviceName = "KodelisteServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/kodeliste")
+@Component
 public class KodelisteServiceWSBean extends SkifWebService<KodelisteServiceWSI> implements KodelisteServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

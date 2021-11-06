@@ -7,6 +7,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Kontroll;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
 
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @Stateless(name = "NedlastningServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@StoreTestEJBInterceptorSpring
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class NedlastningServiceEJBBean extends EJBTimedService implements NedlastningService {
     @Inject

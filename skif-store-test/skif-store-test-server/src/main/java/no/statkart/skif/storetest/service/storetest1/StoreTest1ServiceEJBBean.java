@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -17,7 +18,9 @@ import javax.interceptor.Interceptors;
  */
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.storetest.service.test1.Test1ServiceEJBBean")
+@StoreTestEJBInterceptorSpring
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED) // Springs default for metoder er ingen transaksjonshåndtering. Må angi REQUIRED her hvis det skal være default for klassen
 public class StoreTest1ServiceEJBBean extends EJBTimedService implements StoreTest1Service {
 
     @Inject @EJBServiceChain

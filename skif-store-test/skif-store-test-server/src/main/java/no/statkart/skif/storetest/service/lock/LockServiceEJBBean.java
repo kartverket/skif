@@ -8,6 +8,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
 import no.statkart.skif.storetest.service.store.StoreService;
 
 import javax.ejb.Stateless;
@@ -21,6 +22,8 @@ import java.util.Map;
 @SuppressWarnings("unused")
 @Stateless(name = "no.statkart.skif.storetest.service.lock.LockServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@StoreTestEJBInterceptorSpring
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class LockServiceEJBBean extends EJBTimedService implements LockService {
     @Inject  @EJBServiceChain
     private LockService serviceChain;

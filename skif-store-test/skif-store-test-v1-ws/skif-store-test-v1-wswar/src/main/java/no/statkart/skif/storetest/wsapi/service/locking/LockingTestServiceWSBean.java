@@ -6,6 +6,8 @@ import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -22,7 +24,9 @@ import javax.xml.ws.WebServiceContext;
         name = "LockingTestService",
         serviceName = "LockingTestServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/locking")
+@Component
 public class LockingTestServiceWSBean extends SkifWebService<LockingTestServiceWSI> implements LockingTestServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

@@ -7,6 +7,9 @@ import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.*;
@@ -21,7 +24,9 @@ import java.util.Set;
 @RolesAllowed("Innsyn")
 @Stateless(name = "no.statkart.skif.storetest.service.locker.DBLockerServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@StoreTestEJBInterceptorSpring
 @TransactionManagement(TransactionManagementType.BEAN)
+@Transactional(propagation = Propagation.NOT_SUPPORTED)  // Spring krever dette i tillegg til TransactionManagementType.BEAN
 public class DBLockerServiceEJBBean extends EJBTimedService implements DBLockerService {
 
     @Inject @EJBServiceChain

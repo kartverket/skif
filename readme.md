@@ -43,3 +43,33 @@ Message:
 ORA-01031: utilstrekkelige privilegier
 ``` 
 så mangler man privilegier. Gjeldende workaround for dette er å kjøre `gradlew saGrant`
+
+### Test i JEE Mode mot Weblogic og Spring Server
+
+Alle SKIF test applikasjoner kan deployes samlet mot kjørende Weblogic Server ved kommando:
+
+```
+./gradlew deploy
+```
+
+Der etter kjøres alle tester mot Weblogic med kommando:
+```
+./gradlew cleanTest test -Pservice_mode=JEE -Pwls_sport=7002
+```
+
+To av SKIFs test applikasjoner er også implementert på Spring Boot, 'skif-service-test-spring' og 
+'store-service-test-spring'. Disse må kjøres hver for seg da de begge kjører på port 8080. 
+
+For å test 'skif-service-test-spring' start applikasjonen 'SkifSpringServiceTestServerApplication' med ssl profil. Kjør
+deretter testene mot denne modulen:
+
+```
+./gradlew cleanTest :skif-service-test:skif-service-test-test:test -Pservice_mode=JEE -Pwls_sport=8080
+```
+
+For å test 'skif-store-test-spring' start applikasjonen 'SkifSpringStoreTestServerApplication' med ssl profil. Kjør
+deretter testene mot denne modulen:
+
+```
+./gradlew cleanTest :skif-store-test:skif-store-test-test:test -Pservice_mode=JEE -Pwls_sport=8080
+```

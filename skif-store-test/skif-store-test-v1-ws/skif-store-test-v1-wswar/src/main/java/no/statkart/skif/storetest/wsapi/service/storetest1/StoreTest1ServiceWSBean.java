@@ -4,6 +4,8 @@ import com.google.inject.Injector;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.annotation.PostConstruct;
@@ -20,7 +22,9 @@ import javax.xml.ws.WebServiceContext;
         name = "StoreTest1Service",
         serviceName = "StoreTest1ServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/storetest1")
+@Component
 public class StoreTest1ServiceWSBean extends SkifWebService<StoreTest1ServiceWSI> implements StoreTest1ServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

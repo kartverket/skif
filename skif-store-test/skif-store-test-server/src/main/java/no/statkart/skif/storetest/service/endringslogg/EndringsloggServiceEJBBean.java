@@ -9,6 +9,7 @@ import no.statkart.skif.store.Kontroll;
 import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.endringslogg.EndringId;
 
@@ -31,6 +32,7 @@ import java.util.Collection;
 
 @Stateless(name = "EndringsloggServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@StoreTestEJBInterceptorSpring
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class EndringsloggServiceEJBBean extends EJBTimedService implements EndringsloggService {
     @Inject

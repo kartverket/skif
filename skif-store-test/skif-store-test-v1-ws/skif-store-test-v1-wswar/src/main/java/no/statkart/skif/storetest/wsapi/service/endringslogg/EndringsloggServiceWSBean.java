@@ -11,6 +11,8 @@ import no.statkart.skif.storetest.wsapi.domain.endringslogg.Endringer;
 import no.statkart.skif.storetest.wsapi.domain.endringslogg.Kontroll;
 import no.statkart.skif.storetest.wsapi.domain.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -30,8 +32,9 @@ import javax.xml.ws.WebServiceContext;
         name = "EndringsloggService",
         serviceName = "EndringsloggServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/endringslogg")
+@Component
 public class EndringsloggServiceWSBean extends SkifWebService<EndringsloggServiceWSI> implements EndringsloggServiceWSI {
-
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

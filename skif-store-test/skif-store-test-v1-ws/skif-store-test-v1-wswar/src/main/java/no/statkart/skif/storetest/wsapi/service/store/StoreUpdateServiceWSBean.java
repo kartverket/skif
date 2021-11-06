@@ -5,6 +5,8 @@ import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -21,7 +23,9 @@ import javax.xml.ws.WebServiceContext;
         name = "StoreUpdateService",
         serviceName = "StoreUpdateServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/store")
+@Component
 public class StoreUpdateServiceWSBean extends SkifWebService<StoreUpdateServiceWSI> implements StoreUpdateServiceWSI {
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

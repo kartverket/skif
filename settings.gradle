@@ -50,6 +50,7 @@ include ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping'
 include ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar'
 include ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient'
 include ':skif-store-test:skif-store-test-ear'
+include ':skif-store-test:skif-store-test-spring'
 
 include ':skif-wsversioning:skif-wsversioning-api'
 include ':skif-wsversioning:skif-wsversioning-server'

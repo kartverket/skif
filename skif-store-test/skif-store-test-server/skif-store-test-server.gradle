@@ -3,8 +3,18 @@ plugins {
     id 'sktools.provided'
 }
 
+java {
+    registerFeature('springSupport') {
+        usingSourceSet(sourceSets.main)
+    }
+}
+
 configurations {
     client
+
+    sprigSupportApi.extendsFrom api
+    springSupportImplementation.extendsFrom implementation
+    springSupportCompileOnly.extendsFrom compileOnly
 }
 
 dependencies {
@@ -19,4 +29,11 @@ dependencies {
 
     // internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
+
+    springSupportImplementation 'org.springframework:spring-context:5.3.12'
+    springSupportImplementation 'org.aspectj:aspectjweaver:1.9.7'
+    springSupportImplementation  'org.springframework:spring-tx:5.3.12'
+    springSupportImplementation  'org.springframework:spring-jdbc:5.3.12'
+    springSupportImplementation  'org.springframework.boot:spring-boot-autoconfigure:2.5.6'
+
 }

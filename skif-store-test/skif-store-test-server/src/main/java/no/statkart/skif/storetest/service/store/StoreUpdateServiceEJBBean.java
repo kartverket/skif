@@ -8,6 +8,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
 
 import javax.annotation.Nullable;
 import javax.ejb.Stateless;
@@ -21,7 +22,9 @@ import java.util.Collection;
  * @since 2.0
  */
 @Stateless(name = "no.statkart.skif.storetest.service.store.StoreUpdateServiceEJBBean")
+@StoreTestEJBInterceptorSpring
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED) // Springs default for metoder er ingen transaksjonshåndtering. Må angi REQUIRED her hvis det skal være default for klassen
 public class StoreUpdateServiceEJBBean extends EJBTimedService implements StoreUpdateService {
 
     @Inject

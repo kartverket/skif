@@ -9,6 +9,8 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.endringslogg.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -26,8 +28,9 @@ import javax.xml.ws.WebServiceContext;
         name = "NedlastningService",
         serviceName = "NedlastningServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/nedlastning")
+@Component
 public class NedlastningServiceWSBean extends SkifWebService<NedlastningServiceWSI> implements NedlastningServiceWSI {
-
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

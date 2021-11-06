@@ -1,0 +1,6 @@
+server:
+  ssl:
+    key-store: /etc/ssl/certs/kartverket/star_statkart_no.p12
+    key-store-type: pkcs12
+    key-alias: server
+    key-store-password: <do-not-set-in-this-file>

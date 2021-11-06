@@ -12,6 +12,7 @@ import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
 import no.statkart.skif.storetest.service.store.StoreService;
 import no.statkart.skif.storetest.service.uow.UowTestService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBs;
@@ -36,6 +37,7 @@ import javax.ejb.EJBs;
         @EJB(name = "ejb/EndringsloggServiceEJBBean", beanInterface = EndringsloggService.class),
         @EJB(name = "ejb/NedlastningServiceEJBBean", beanInterface = NedlastningService.class)
 })
+@ConditionalOnProperty("ExcludeWhenRunningOnSpring") // A trick to prevent Spring from picking up this ServletContextListener
 public class StoreTestStoreServicesEJBs extends EJBRegistration {
     public StoreTestStoreServicesEJBs() {
         super(new StoreTestStoreServices());

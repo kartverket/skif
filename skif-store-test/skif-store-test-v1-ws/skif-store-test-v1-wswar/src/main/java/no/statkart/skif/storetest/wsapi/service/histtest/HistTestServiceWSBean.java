@@ -10,6 +10,8 @@ import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleIdList;
 import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleIdToHistWithRelationIdsMap;
 import no.statkart.skif.storetest.wsapi.domain.basic.HistWithRelationIdList;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -26,8 +28,9 @@ import javax.xml.ws.WebServiceContext;
         name = "HistTestService",
         serviceName = "HistTestServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/histtest")
+@Component
 public class HistTestServiceWSBean extends SkifWebService<HistTestServiceWSI> implements HistTestServiceWSI {
-
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 

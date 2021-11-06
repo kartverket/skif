@@ -35,7 +35,7 @@ import javax.servlet.ServletContextListener;
 // bruker @Component. I begge varianter fører til at @PostConstruct alltid blir kjørt først.
 @Component
 public class SkifTestWebServiceInjectorConfig implements ServletContextListener {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private static volatile Injector injector;
 
     @EJB
@@ -45,7 +45,6 @@ public class SkifTestWebServiceInjectorConfig implements ServletContextListener 
     public static Injector getWebServiceInjector() {
         return injector;
     }
-
 
     @PostConstruct
     public void createInjector() {

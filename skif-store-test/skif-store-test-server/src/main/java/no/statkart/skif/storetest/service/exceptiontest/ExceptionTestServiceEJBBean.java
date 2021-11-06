@@ -5,6 +5,7 @@ import no.statkart.skif.exception.*;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorSpring;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 import javax.annotation.security.RolesAllowed;
@@ -20,6 +21,7 @@ import java.sql.Timestamp;
 @RolesAllowed("Innsyn")
 @Stateless(name = "ExceptionTestServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
+@StoreTestEJBInterceptorSpring
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class ExceptionTestServiceEJBBean extends EJBTimedService implements ExceptionTestService {
     @Inject

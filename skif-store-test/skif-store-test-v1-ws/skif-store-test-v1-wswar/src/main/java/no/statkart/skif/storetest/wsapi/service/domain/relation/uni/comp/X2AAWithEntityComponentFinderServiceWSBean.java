@@ -6,6 +6,8 @@ import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
 import javax.annotation.PostConstruct;
@@ -23,8 +25,9 @@ import javax.xml.ws.WebServiceContext;
         name = "X2AAWithEntityComponentFinderService",
         serviceName = "X2AAWithEntityComponentFinderServiceWS",
         targetNamespace = "http://skif.statkart.no/storetest/wsapi/service/domain/relation/uni/comp")
+@Component
 public class X2AAWithEntityComponentFinderServiceWSBean extends SkifWebService<X2AAWithEntityComponentFinderServiceWSI> implements X2AAWithEntityComponentFinderServiceWSI{
-
+    @Autowired
     @Resource
     private WebServiceContext ctx;
 
