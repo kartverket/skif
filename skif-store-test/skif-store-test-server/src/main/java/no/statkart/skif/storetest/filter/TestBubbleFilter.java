@@ -1,31 +1,88 @@
 package no.statkart.skif.storetest.filter;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.exception.PermissionDeniedException;
 import no.statkart.skif.store.StoreSessionReadListener;
+import no.statkart.skif.store.StoreSessionReadListenerAdapter;
+import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.StoreSessionWriteListener;
 import no.statkart.skif.storetest.domain.standalone.FilteredBubble;
 import no.statkart.skif.storetest.domain.standalone.FilteredBubbleId;
 
+import java.util.Collection;
+
 /**
  * Filtrerer objekter som er av typen FilteredBubble.
  * <p>
- * Hvis egenskap
+ * Filteret brukes også til å teste lasting av objekter hvor brukeren får PermissionDeniedException for
+ * instanser det ikke er lov å laste. Bruker her teksten i feltet {@link FilteredBubble#getFilterText()} til
+ * å simulere om brukren har lov til å se objektet eller ikke.
  *
  * @author Jan Holmen
  * @since 2.1
  */
-public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionWriteListener {
+public class TestBubbleFilter extends StoreSessionReadListenerAdapter implements StoreSessionWriteListener {
     private final static String replaced = "*******";
+
+    private Collection<? extends BubbleObject> bubbleObjects;
+    private int timesOnPreRegisterBubblesWasCalled;
+    private int timesOnPostRegisterBubblesWasCalled;
+
+    public Collection<? extends BubbleObject> getBubbleObjects() {
+        return bubbleObjects;
+    }
+
+    public void setBubbleObjects(Collection<? extends BubbleObject> bubbleObjects) {
+        this.bubbleObjects = bubbleObjects;
+    }
+
+    public int getTimesOnPreRegisterBubblesWasCalled() {
+        return timesOnPreRegisterBubblesWasCalled;
+    }
+
+    public void setTimesOnPreRegisterBubblesWasCalled(int timesOnPreRegisterBubblesWasCalled) {
+        this.timesOnPreRegisterBubblesWasCalled = timesOnPreRegisterBubblesWasCalled;
+    }
+
+    public int getTimesOnPostRegisterBubblesWasCalled() {
+        return timesOnPostRegisterBubblesWasCalled;
+    }
+
+    public void setTimesOnPostRegisterBubblesWasCalled(int timesOnPostRegisterBubblesWasCalled) {
+        this.timesOnPostRegisterBubblesWasCalled = timesOnPostRegisterBubblesWasCalled;
+    }
+
+    public void clear() {
+        setBubbleObjects(null);
+        setTimesOnPreRegisterBubblesWasCalled(0);
+        setTimesOnPostRegisterBubblesWasCalled(0);
+    }
 
     //******************************************
     //**                read                  **
     //******************************************
+
+    @Override
+    public <T extends BubbleObject> void onPreRegisterBubbles(Collection<? extends T> bubbleObjects) {
+        super.onPreRegisterBubbles(bubbleObjects);
+        this.bubbleObjects = bubbleObjects;
+        timesOnPreRegisterBubblesWasCalled++;
+    }
+
+    @Override
+    public void onPostRegisterBubbles() {
+        super.onPostRegisterBubbles();
+        timesOnPostRegisterBubblesWasCalled++;
+    }
+
     @Override
     public <T extends BubbleObject> T onRegister(T bubbleObject) {
         if (bubbleObject instanceof FilteredBubble) {
             FilteredBubble fb = (FilteredBubble) bubbleObject;
             if (fb.isFilter()) {
+                if (fb.getFilterText().contains("PermissionDenied")) {
+                    throw new PermissionDeniedException(String.format("Ikke lov å laste objektet: %s", fb.getBubbleId().toString()));
+                }
                 FilteredBubble ro = new FilteredBubble(fb.getId(), fb.getText(), fb.isFilter(), replaced);
                 return (T)ro;
             }
@@ -110,4 +167,5 @@ public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionW
         }
         return persistentBubbleObject;
     }
+
 }
