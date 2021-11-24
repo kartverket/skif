@@ -833,10 +833,22 @@ public class StoreSessionServer extends AbstractStoreSession {
         } else {
             persistentBubbleObjects = persistenceSessionManager.get(bubbleIds);
         }
-
         Collection<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
-        for (T originalBubbleObject : persistentBubbleObjects) {
-            entries.add(createEntry(level, originalBubbleObject));
+        if (!bubbleIds.isEmpty()) {
+            try {
+                fireOnPreRegisterBubbles(persistentBubbleObjects);
+                for (T originalBubbleObject : persistentBubbleObjects) {
+                    try {
+                        entries.add(createEntry(level, originalBubbleObject));
+                    } catch (PermissionDeniedException e) {
+                        // Fjern boblen så den ikke ligger igjen i persistenceSessionManager
+                        persistenceSessionManager.evict(originalBubbleObject.getBubbleId());
+                        throw e;
+                    }
+                }
+            } finally {
+                fireOnPostRegisterBubbles();
+            }
         }
         return entries;
     }
@@ -860,10 +872,35 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
 
         Collection<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
-        for (T originalBubbleObject : persistentBubbleObjects) {
-            entries.add(createEntry(level, originalBubbleObject));
+        if (!bubbleIds.isEmpty()) {
+            try {
+                fireOnPreRegisterBubbles(persistentBubbleObjects);
+                for (T originalBubbleObject : persistentBubbleObjects) {
+                    try {
+                        entries.add(createEntry(level, originalBubbleObject));
+                    } catch (PermissionDeniedException e) {
+                        // Fjern boblen så den ikke ligger igjen i persistenceSessionManager
+                        // Kaster ikke exception videre her. Denne boblen blir ikke med i entries som returneres
+                        persistenceSessionManager.evict(originalBubbleObject.getBubbleId());
+                    }
+                }
+            } finally {
+                fireOnPostRegisterBubbles();
+            }
         }
         return entries;
+    }
+
+    private <T extends BubbleObject> void fireOnPreRegisterBubbles(Collection<? extends T> bubbleObjects) {
+        for (StoreSessionReadListener readListener: readListeners) {
+            readListener.onPreRegisterBubbles(bubbleObjects);
+        }
+    }
+
+    private void fireOnPostRegisterBubbles() {
+        for (StoreSessionReadListener readListener: readListeners) {
+            readListener.onPostRegisterBubbles();
+        }
     }
 
     @SuppressWarnings("UnusedDeclaration") // Public API

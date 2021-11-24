@@ -17,6 +17,8 @@ import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.exception.AttemptDeleteException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
+import no.statkart.skif.exception.ObjectsNotFoundException;
+import no.statkart.skif.exception.PermissionDeniedException;
 import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.PrincipalImpl;
@@ -90,6 +92,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -105,6 +108,7 @@ import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactorManagerBundle;
 import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.deletePreviouslyWrittenTestBubbles;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.extractProperty;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.assertEquals;
@@ -148,6 +152,9 @@ public class StoreSessionServerTest {
 
     private FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<>(1);
     private FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<>(2);
+    private FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_3 = new FilteredBubbleId<>(3);
+    private FilteredBubbleId<FilteredBubble> filteredBubbleId_4 = new FilteredBubbleId<>(4);
+    private FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_5 = new FilteredBubbleId<>(5);
     private FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<>(101);
 
     private ParentBubbleId<ParentBubble> parentBubbleId_1 = new ParentBubbleId<>(1);
@@ -170,6 +177,7 @@ public class StoreSessionServerTest {
     private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_5 = new ParentBubbleEmptyColOptimizerId<>(5L);
     private ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_6 = new ParentBubbleEmptyColOptimizerSub1Id<>(6L);
     private ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_7 = new ParentBubbleEmptyColOptimizerSub1Id<>(7L);
+    private TestBubbleFilter testBubbleFilter = new TestBubbleFilter();
     private StoreServer storeServer;
 
     public StoreSessionServerTest() {
@@ -235,6 +243,8 @@ public class StoreSessionServerTest {
                 ServiceRequestContext serviceRequestContext = new ServiceRequestContext(new PrincipalImpl("test"), 0);
                 bind(ServiceRequestContext.class).toInstance(serviceRequestContext);
                 bind(PersistenceSessionManager.class).toInstance(persistenceSessionManager);
+                bind(TestBubbleFilter.class).toInstance(testBubbleFilter);
+                testBubbleFilter.clear();
             }
 
             @Provides
@@ -420,6 +430,72 @@ public class StoreSessionServerTest {
         FilteredBubble filteredBubble2 = storeServer.get(filteredBubbleId_2);
         assertNotNull(filteredBubble2);
         assertTrue(filteredBubble2.getFilterText().contains("*"));
+    }
+
+    public void testLesFilteredKlasseGetList() {
+        List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(filteredBubbleId_1, filteredBubbleId_2);
+        List<FilteredBubble> filteredBubbles = storeServer.get(bubbleIds);
+        assertThat(filteredBubbles).hasSize(2);
+        assertFalse(filteredBubbles.get(0).getFilterText().contains("*"));
+        assertTrue(filteredBubbles.get(1).getFilterText().contains("*"));
+        assertThat(testBubbleFilter.getTimesOnPreRegisterBubblesWasCalled()).isEqualTo(1);
+        assertThat(testBubbleFilter.getTimesOnPostRegisterBubblesWasCalled()).isEqualTo(1);
+        assertThat(testBubbleFilter.getBubbleObjects()).extracting("id")
+                .containsExactlyInAnyOrder(filteredBubbleId_1, filteredBubbleId_2);
+    }
+
+    public void testLesFilteredKlasseGetObjectPermissionDenied() {
+        assertThatThrownBy(()->storeServer.get(filteredBubbleWithPermissionDeniedId_3))
+                .isInstanceOf(PermissionDeniedException.class)
+                .hasMessage("Ikke lov å laste objektet: FilteredBubbleId{value=3, snapshotVersion=SnapshotVersion{timestamp=CURRENT}}");
+    }
+
+    public void testLesFilteredKlasseGetListPermissionDenied() {
+        List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(filteredBubbleId_1, filteredBubbleWithPermissionDeniedId_3, filteredBubbleId_4, filteredBubbleWithPermissionDeniedId_5);
+        assertThatThrownBy(()->storeServer.get(filteredBubbleWithPermissionDeniedId_3))
+                .isInstanceOf(PermissionDeniedException.class)
+                .hasMessageStartingWith("Ikke lov å laste objektet: FilteredBubbleId");
+        assertThat(storeServer.get(filteredBubbleId_1)).as("Forventet å kunne laste boble").isNotNull();
+        assertThat(storeServer.get(filteredBubbleId_4)).as("Forventet å kunne laste boble").isNotNull();
+    }
+
+    /**
+     * Fordi man henter ut objekter med vanlig Store.get(list) istedet for Store.getIgnoreMissing(list) så får man
+     * kunne tilbake feil om de som ikke finnes, da dette sjekkes først.
+     */
+    public void testLesFilteredKlasseGetListPermissionDeniedAndObjectNotFound() {
+        List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(
+                filteredBubbleId_1,
+                filteredBubbleWithPermissionDeniedId_3,
+                filteredBubbleId_4,
+                new FilteredBubbleId<>(99), // finnes ikke
+                filteredBubbleWithPermissionDeniedId_5);
+        assertThatThrownBy(()->storeServer.get(bubbleIds))
+                .isInstanceOf(ObjectsNotFoundException.class)
+                .hasMessage("[FilteredBubbleId{value=99, snapshotVersion=SnapshotVersion{timestamp=CURRENT}}]");
+        assertThat(testBubbleFilter.getTimesOnPreRegisterBubblesWasCalled()).isEqualTo(0);
+        assertThat(testBubbleFilter.getTimesOnPostRegisterBubblesWasCalled()).isEqualTo(0);
+        assertThat(testBubbleFilter.getBubbleObjects()).isNull();
+    }
+
+    public void testLesFilteredKlasseGetIgnoreMissingPermissionDenied() {
+        List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(
+                filteredBubbleId_1,
+                filteredBubbleWithPermissionDeniedId_3,
+                filteredBubbleId_4,
+                new FilteredBubbleId<>(99), // finnes ikke
+                filteredBubbleWithPermissionDeniedId_5);
+        List<FilteredBubble> ignoreMissing = storeServer.getIgnoreMissing(bubbleIds);
+        assertThat(ignoreMissing).extracting("id").
+                containsExactly(filteredBubbleId_1, filteredBubbleId_4);
+        assertThat(testBubbleFilter.getTimesOnPreRegisterBubblesWasCalled()).isEqualTo(1);
+        assertThat(testBubbleFilter.getTimesOnPostRegisterBubblesWasCalled()).isEqualTo(1);
+        assertThat(testBubbleFilter.getBubbleObjects()).extracting("id").containsExactlyInAnyOrder(
+                filteredBubbleId_1,
+                filteredBubbleWithPermissionDeniedId_3,
+                filteredBubbleId_4,
+                filteredBubbleWithPermissionDeniedId_5
+        );
     }
 
 

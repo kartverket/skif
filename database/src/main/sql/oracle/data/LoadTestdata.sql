@@ -13,6 +13,9 @@ insert into TestBubbleWithHistory_H (ID, oppdateringsdato, sluttdato, versjonId,
 
 insert into FilteredBubble values(1, 'Orginal 1',0,'Ufilterert');
 insert into FilteredBubble values(2, 'Orginal 2',1,'Filterert');
+insert into FilteredBubble values(3, 'Orginal 3',1,'PermissionDenied');
+insert into FilteredBubble values(4, 'Orginal 4',0,'Ufilterert');
+insert into FilteredBubble values(5, 'Orginal 5',1,'PermissionDenied');
 
 insert into ParentBubble values (1, 'Parent 1');
 insert into ParentBubble values (2, 'Parent 2');
