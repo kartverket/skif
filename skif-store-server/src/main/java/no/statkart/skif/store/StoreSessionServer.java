@@ -9,7 +9,6 @@ import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.util.CopyHelper;
 import org.hibernate.JDBCException;
-import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.resource.transaction.spi.TransactionCoordinator;
 
@@ -835,19 +834,36 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
         Collection<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
         if (!bubbleIds.isEmpty()) {
+            // Litt komplisert kode fordi vi ikke ønsker å kaste første exception videre og undertrykke følge exceptions
+            RuntimeException firstException = null;
             try {
                 fireOnPreRegisterBubbles(persistentBubbleObjects);
                 for (T originalBubbleObject : persistentBubbleObjects) {
                     try {
                         entries.add(createEntry(level, originalBubbleObject));
-                    } catch (PermissionDeniedException e) {
+                    } catch (RuntimeException e) {
                         // Fjern boblen så den ikke ligger igjen i persistenceSessionManager
-                        persistenceSessionManager.evict(originalBubbleObject.getBubbleId());
+                        firstException = e;
+                        try {
+                            persistenceSessionManager.evict(originalBubbleObject.getBubbleId());
+                        } catch (Throwable extra) {
+                            e.addSuppressed(extra);
+                        }
                         throw e;
                     }
                 }
             } finally {
-                fireOnPostRegisterBubbles();
+                try {
+                    fireOnPostRegisterBubbles();
+                } catch (Throwable e) {
+                    if (firstException!=null) {
+                        firstException.addSuppressed((e));
+                        throw firstException;
+                    } else {
+                        //noinspection ThrowFromFinallyBlock
+                        throw e;
+                    }
+                }
             }
         }
         return entries;

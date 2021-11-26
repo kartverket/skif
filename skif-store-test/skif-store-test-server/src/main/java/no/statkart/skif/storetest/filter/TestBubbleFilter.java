@@ -3,7 +3,6 @@ package no.statkart.skif.storetest.filter;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.PermissionDeniedException;
 import no.statkart.skif.store.StoreSessionReadListener;
-import no.statkart.skif.store.StoreSessionReadListenerAdapter;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.StoreSessionWriteListener;
 import no.statkart.skif.storetest.domain.standalone.FilteredBubble;
@@ -21,7 +20,7 @@ import java.util.Collection;
  * @author Jan Holmen
  * @since 2.1
  */
-public class TestBubbleFilter extends StoreSessionReadListenerAdapter implements StoreSessionWriteListener {
+public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionWriteListener {
     private final static String replaced = "*******";
 
     private Collection<? extends BubbleObject> bubbleObjects;
@@ -64,14 +63,12 @@ public class TestBubbleFilter extends StoreSessionReadListenerAdapter implements
 
     @Override
     public <T extends BubbleObject> void onPreRegisterBubbles(Collection<? extends T> bubbleObjects) {
-        super.onPreRegisterBubbles(bubbleObjects);
         this.bubbleObjects = bubbleObjects;
         timesOnPreRegisterBubblesWasCalled++;
     }
 
     @Override
     public void onPostRegisterBubbles() {
-        super.onPostRegisterBubbles();
         timesOnPostRegisterBubblesWasCalled++;
     }
 
