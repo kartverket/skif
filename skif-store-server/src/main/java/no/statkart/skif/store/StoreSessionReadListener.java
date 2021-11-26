@@ -23,7 +23,7 @@ public interface StoreSessionReadListener {
      * å bli registrert, f.eks utføre søk mot databasen og cache resultatet, i forkant av
      * {@link #onRegister(BubbleObject)} kallene.
      */
-    <T extends BubbleObject> void onPreRegisterBubbles(Collection<? extends T> bubbleObjects);
+    default <T extends BubbleObject> void onPreRegisterBubbles(Collection<? extends T> bubbleObjects) {}
 
     /**
      * Kalles når flere bobler kommer til å bli registrert i Store rett etter hverander, rett etter siste kall til
@@ -32,5 +32,5 @@ public interface StoreSessionReadListener {
      * Denne metoden gir ReadListener mulighet for fjerne cachet data som har blitt lastet av
      * {@link #onPreRegisterBubbles}.
      */
-    void onPostRegisterBubbles();
+    default void onPostRegisterBubbles() {}
 }
