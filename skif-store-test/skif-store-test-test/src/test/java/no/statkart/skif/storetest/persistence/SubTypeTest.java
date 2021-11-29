@@ -7,6 +7,7 @@ import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
+import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.storetest.domain.basic.*;
@@ -21,6 +22,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 /**
  * Tester endring av subtype på tjenersiden.
@@ -107,7 +111,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
         server.run(new RunOnServerMethod() {
             @Inject
-            private Store store;
+            private StoreServer store;
 
             @Override
             public Object run() {
@@ -118,14 +122,16 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithPrimitive.setNum(9);
                 subTypeWithPrimitive.setText("Inserted");
                 store.insert(subTypeWithPrimitive);
-
+                assertThat(store.getInsertedIds()).extracting("value", "class")
+                        .as("has basetype")
+                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
                 return null;
             }
         });
 
         server.run(new RunOnServerMethod() {
             @Inject
-            private Store store;
+            private StoreServer store;
 
             @Override
             public Object run() {
@@ -138,6 +144,9 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithCollection.setId(withCollectionId);
                 subTypeWithCollection.setText("Updated");
                 store.update(subTypeWithCollection);
+                assertThat(store.getUpdatedIds()).extracting("value", "class")
+                        .as("has basetype")
+                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
 
                 return null;
             }
@@ -186,7 +195,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
         server.run(new RunOnServerMethod() {
             @Inject
-            private Store store;
+            private StoreServer store;
 
             @Override
             public Object run() {
@@ -197,6 +206,9 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithCollection.getTekster().add("Hoppsann");
                 subTypeWithCollection.setText("Inserted");
                 store.insert(subTypeWithCollection);
+                assertThat(store.getInsertedIds()).extracting("value", "class")
+                        .as("has has basetype")
+                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
 
                 return null;
             }
@@ -204,7 +216,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
         server.run(new RunOnServerMethod() {
             @Inject
-            private Store store;
+            private StoreServer store;
 
             @Override
             public Object run() {
@@ -218,6 +230,9 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithPrimitive.setText("Updated");
                 subTypeWithPrimitive.setNum(8);
                 store.update(subTypeWithPrimitive);
+                assertThat(store.getUpdatedIds()).extracting("value", "class")
+                        .as("has basetype")
+                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
 
                 return null;
             }
@@ -265,7 +280,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
         server.run(new RunOnServerMethod() {
             @Inject
-            private Store store;
+            private StoreServer store;
 
             @Override
             public Object run() {
@@ -276,6 +291,9 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithPrimitive.setNum(9);
                 subTypeWithPrimitive.setText("Inserted");
                 store.insert(subTypeWithPrimitive);
+                assertThat(store.getInsertedIds()).extracting("value", "class")
+                        .as("has basetype")
+                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
 
                 return null;
             }
@@ -289,7 +307,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
             server.run(new RunOnServerMethod() {
                 @Inject
-                private Store store;
+                private StoreServer store;
 
                 @Override
                 public Object run() {
@@ -298,6 +316,9 @@ public class SubTypeTest extends StoreTestTestCase {
                     subTypeWithCollection.setText("Updated");
 
                     store.update(subTypeWithCollection);
+                    assertThat(store.getUpdatedIds()).extracting("value", "class")
+                            .as("has basetype")
+                            .containsExactly(tuple(idValue, SubTypedBubbleId.class));
 
                     return null;
                 }
@@ -349,7 +370,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
         server.run(new RunOnServerMethod() {
             @Inject
-            private Store store;
+            private StoreServer store;
 
             @Override
             public Object run() {
@@ -360,7 +381,9 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithPrimitive.setNum(9);
                 subTypeWithPrimitive.setText("Inserted");
                 store.insert(subTypeWithPrimitive);
-
+                assertThat(store.getInsertedIds()).extracting("value", "class")
+                        .as("has basetype")
+                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
                 return null;
             }
         });
@@ -383,11 +406,14 @@ public class SubTypeTest extends StoreTestTestCase {
 
                 server.run(new RunOnServerMethod() {
                     @Inject
-                    private Store store;
+                    private StoreServer store;
 
                     @Override
                     public Object run() {
                         store.registerTransfer(unitOfWorkTransfer);
+                        assertThat(store.getUpdatedIds()).extracting("value", "class")
+                                .as("has basetype")
+                                .containsExactly(tuple(idValue, SubTypedBubbleId.class));
 
                         return null;
                     }

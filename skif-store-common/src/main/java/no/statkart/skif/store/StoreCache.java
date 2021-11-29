@@ -38,11 +38,11 @@ public class StoreCache {
         return register(loadedByLevel, bubbleObject, bubbleObject);
     }
     public <T extends BubbleObject> StoreEntry register(int loadedByLevel, T persistentBubbleObject, T bubbleObject) {
-        StoreEntry entry = new StoreEntry(bubbleObject.getId());
+        StoreEntry entry = new StoreEntry(bubbleObject.getId().asBase());
         entry.setPersistentBubbleObject(bubbleObject, persistentBubbleObject);
         entry.setState(0, StoreEntryState.UNCHANGED);
         entry.setLoadedByLevel(loadedByLevel);
-        StoreEntry oldEntry = cacheMap.put(bubbleObject.getId(), entry);
+        StoreEntry oldEntry = cacheMap.put(entry.getId(), entry);
         if (oldEntry!=null) {
             throw new ImplementationException("Duplicate entry:"  + bubbleObject.getId());
         }
@@ -66,7 +66,7 @@ public class StoreCache {
     }
 
     public StoreEntry createEntry(int level, BubbleId bubbleId) {
-        StoreEntry entry = new StoreEntry(bubbleId);
+        StoreEntry entry = new StoreEntry(bubbleId.asBase());
         entry.setLoadedByLevel(level);
         cacheMap.put(entry.getId(), entry);
         return entry;
