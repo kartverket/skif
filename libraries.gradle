@@ -23,7 +23,7 @@ ext.libraries = [
         jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${SLF4J_VERSION}",
         jul_to_slf4j: "org.slf4j:jul-to-slf4j:${SLF4J_VERSION}",
         log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${SLF4J_VERSION}",
-        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.2.3')}",
+        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.2.10')}",
 
         // Guice med extensions
         guice: "com.google.inject:guice:${libVersion('guice', '4.2.2')}",
