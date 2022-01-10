@@ -16,7 +16,7 @@ ext.libraries = [
         // Database
         ojdbc: "com.oracle.jdbc:ojdbc8:${libVersion('oracle', '12.2.0.1')}@jar",
         ojdbc_g: "com.oracle.jdbc:ojdbc8_g:${libVersion('oracle', '12.2.0.1')}@jar",
-        c3p0: "com.mchange:c3p0:${libVersion('c3p0', '0.9.5.2')}",
+        c3p0: "com.mchange:c3p0:${libVersion('c3p0', '0.9.5.5')}",
 
         // Logging
         slf4j_api: "org.slf4j:slf4j-api:${SLF4J_VERSION}",
