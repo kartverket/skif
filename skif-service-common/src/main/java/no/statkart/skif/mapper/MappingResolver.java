@@ -209,16 +209,16 @@ public class MappingResolver {
                     classes.addAll(findClasses(e, packageName));
                 }
             } else if (protocol.equals("jar")) {
-                try (JarFile jarFile = ((JarURLConnection) resource.openConnection()).getJarFile()) {
-                    Enumeration<JarEntry> jarEntries = jarFile.entries();
-                    while (jarEntries.hasMoreElements()) {
-                        JarEntry ze = jarEntries.nextElement();
-                        String entryName = ze.getName();
+                //PS: Don't close jar-resources as they are being managed by the classloader
+                JarFile jarFile = ((JarURLConnection) resource.openConnection()).getJarFile();
+                Enumeration<JarEntry> jarEntries = jarFile.entries();
+                while (jarEntries.hasMoreElements()) {
+                    JarEntry ze = jarEntries.nextElement();
+                    String entryName = ze.getName();
 
-                        // Laster kun klasser som ligger under packageName (inkl. underpakker)
-                        if (entryName.startsWith(pathForPackageName)) {
-                            tryCollectClassFromEntry(classes, entryName);
-                        }
+                    // Laster kun klasser som ligger under packageName (inkl. underpakker)
+                    if (entryName.startsWith(pathForPackageName)) {
+                        tryCollectClassFromEntry(classes, entryName);
                     }
                 }
             } else if (protocol.equals("zip")) {
