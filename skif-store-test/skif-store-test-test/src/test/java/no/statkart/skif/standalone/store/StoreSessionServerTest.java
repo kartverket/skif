@@ -478,7 +478,13 @@ public class StoreSessionServerTest {
         assertThat(testBubbleFilter.getBubbleObjects()).isNull();
     }
 
-    public void testLesFilteredKlasseGetIgnoreMissingPermissionDenied() {
+    public void testLesFilteredKlasseGetIgnoreMissingPermissionDenied_KunEnId() {
+        List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(filteredBubbleWithPermissionDeniedId_3);
+        List<FilteredBubble> ignoreMissing = storeServer.getIgnoreMissing(bubbleIds);
+        assertThat(ignoreMissing).isEmpty();
+    }
+
+    public void testLesFilteredKlasseGetIgnoreMissingPermissionDenied_FlereIds() {
         List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(
                 filteredBubbleId_1,
                 filteredBubbleWithPermissionDeniedId_3,
