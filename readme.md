@@ -1,14 +1,12 @@
 
-### Oppsett av utviklingsmiljø
-Prosjektet integreres i IntelliJ og åpnes som et gradle prosjekt der.
-
-NB: "Create separate module per source set" fungerer IKKE!
-
-Ved første gangs import av prosjektet må man stille inn encoding tilsvarende:
- * Project Encoding: **windows-1252**
- * Encoding for property files: **ISO-8859-1**
- * Create UTF-8 files: **with NO BOM** 
- 
+# Lokal utvikling på tvers av prosjekter
+For enkelt å teste endringer i andre gradle prosjekt kan disse inkluderes som "composite builds" i byggesystemet.
+Etter endring av oppsett må man oppfriske Gradle prosjektet i IntelliJ.
+```properties 
+# gradle.properties:
+includeBuild.hibernate-orm=../hibernate-orm
+includeBuild.hibernate-support=../skif-hibernate-support
+```
 
 
 #### Oppsett av WEBLOGIC_HOME
