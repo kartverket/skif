@@ -14,8 +14,8 @@ ext.JAXWS_VERSION = libVersion('jaxws', '2.2.8') // Nyeste versjon som ikke krev
 ext.libraries = [
 
         // Database
-        ojdbc: "com.oracle.jdbc:ojdbc8:${libVersion('oracle', '12.2.0.1')}@jar",
-        ojdbc_g: "com.oracle.jdbc:ojdbc8_g:${libVersion('oracle', '12.2.0.1')}@jar",
+        ojdbc: "com.oracle.database.jdbc:ojdbc8:${libVersion('oracle', '12.2.0.1')}@jar",
+        ojdbc_g: "com.oracle.database.jdbc.debug:ojdbc8_g:${libVersion('oracle', '12.2.0.1')}@jar",
         c3p0: "com.mchange:c3p0:${libVersion('c3p0', '0.9.5.5')}",
 
         // Logging
