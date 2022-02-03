@@ -10,18 +10,11 @@ includeBuild.hibernate-support=../skif-hibernate-support
 
 
 #### Oppsett av WEBLOGIC_HOME
-Konfigurasjon av biblioteker til weblogic gjøres i `gradle-user.properties`:  
+Konfigurasjon av biblioteker til weblogic gjøres i `gradle.properties`:  
 ``` properties
+Brukes ved deploy
 WEBLOGIC_HOME=C:\\wls1213
 WEBLOGIC_VERSION=12.1.3
-``` 
-
-
-Dersom weblogic home er satt feil eller mangler gir `gradlew assemble` feilmeldingen
-``` 
-:skif-service-common:compileJava
-C:\dev\skif\skif-service-common\src\main\java\no\statkart\skif\service\ws\JaxWsServicePool.java:3: error: package com.sun.xml.ws.developer does not exist
-import com.sun.xml.ws.developer.JAXWSProperties;
 ``` 
 
 
