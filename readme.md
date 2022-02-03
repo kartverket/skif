@@ -19,18 +19,16 @@ WEBLOGIC_VERSION=12.1.3
 
 
 #### Oppsett av testdatabase
-Bruker opprettes via `gradlew dbCreateUser`. Hvor tablespacefilen skal legges bestemmes
+Bruker opprettes via `gradle dbCreateUser`. Hvor tablespacefilen skal legges bestemmes
 av property `db_dataroot_dir`.
 
-Skjema settes opp via `gradlew dbInit`
+##### Oppsett av database-skjema
+Skjema settes opp via `gradle dbInit`
 
-Dersom man får feilmeldingen: 
-``` 
-CREATE OR REPLACE PACKAGE SNAPSHOT_TIME
-....
-END SNAPSHOT_TIME;
-
+Dersom man får `ORA-01031` så har man et skjema med et annet oppsett av privilegier (feks fra matrikkelen):
+```
 Message:
 ORA-01031: utilstrekkelige privilegier
-``` 
-så mangler man privilegier. Gjeldende workaround for dette er å kjøre `gradlew saGrant`
+ORA-01031: insufficient privileges
+```
+Se filen [CreateUser.sql](database/src/main/sql/oracle/user/CreateUser.sql) for hvilke privilegier som trengs.
