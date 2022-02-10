@@ -7,8 +7,6 @@ import no.statkart.skif.persistence.hibernate.EmptyCollectionOptimizerIntegrator
 import no.statkart.skif.store.BubbleModelConfiguration;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
-import no.statkart.skif.store.persistence.hibernate.type.EnumKodeIdType;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
@@ -60,7 +58,7 @@ public class HibernateSessionFactoryBuilder {
     private final static Object LOCK = new Object();
     final List<String> hbmResource = new ArrayList<>();
     private String mappingFilesDirectory;
-    private Map<String, String> className2resourceNameMap = new HashMap<>();
+    private final Map<String, String> className2resourceNameMap = new HashMap<>();
     private MetadataInterceptor metadataInterceptor;
 
     public HibernateSessionFactoryBuilder() {
@@ -180,6 +178,7 @@ public class HibernateSessionFactoryBuilder {
         // historiske spørringer. Setter derfor settes connection handling mode til "DELAYED_ACQUISITION_AND_HOLD"
         // som sikre at connection ikke lukkes før sessionn. Se kommentar i https://jira.statkart.no/browse/SKIF-699
         properties.setProperty(AvailableSettings.CONNECTION_HANDLING, "DELAYED_ACQUISITION_AND_HOLD");
+        properties.put("no.statkart.skif.SnapshotVersionSeed", snapshotVersionSeed);
         logger.info("SKIF hibernatekonfigurasjon({}): {}", org.hibernate.Version.getVersionString(), getAndConnectionInfo(snapshotVersionSeed, properties));
         logger.debug("creating session factory");
 
@@ -202,7 +201,7 @@ public class HibernateSessionFactoryBuilder {
         try {
             // TODO configure integrator (database event listener)
             MetadataSources metadataSources = createAndConfigureMetaSources(standardServiceRegistry);
-            return buildSessionFactoryForSnapshotVersion(snapshotVersionSeed, interceptor, metadataSources);
+            return buildSessionFactoryForSnapshotVersion(interceptor, metadataSources);
         } catch (RuntimeException e) {
             // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
             // so destroy it manually.
@@ -211,7 +210,7 @@ public class HibernateSessionFactoryBuilder {
         }
     }
 
-    private SessionFactory buildSessionFactoryForSnapshotVersion(SnapshotVersionSeed snapshotVersionSeed, @Nullable Interceptor interceptor, MetadataSources metadataSources) {
+    private SessionFactory buildSessionFactoryForSnapshotVersion(@Nullable Interceptor interceptor, MetadataSources metadataSources) {
         // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.SnapshotVersionSeedSeed ikke må endres mens
         // SessionFactory blir opprettet. Det er kun denne metoden som bruker {@code BubbleIdType.SnapshotVersionSeedSeed}.
         // Alle BubbleIdTypes som opprettes i SessionFactory får satt deres snapshotVersionSeed til
@@ -224,8 +223,6 @@ public class HibernateSessionFactoryBuilder {
         SessionFactory sessionFactory;
         synchronized (LOCK) {
             try {
-                BubbleIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
-                EnumKodeIdType.setSnapshotVersionSeedSeed(snapshotVersionSeed);
                 Metadata metadata = metadataSources.buildMetadata();
                 if (metadataInterceptor != null) {
                     metadataInterceptor.apply(metadata);
@@ -235,9 +232,6 @@ public class HibernateSessionFactoryBuilder {
                         .build();
             } catch (HibernateException e) {
                 throw new ImplementationException("Error initializing Hibernate", e, logger);
-            } finally {
-                // Set ny SnapshotVersionSeedSeed slik at to factory instanser ikke ved et uheld blir satt opp med samme seed.
-                BubbleIdType.setSnapshotVersionSeedSeed(new SnapshotVersionSeed(SnapshotVersion.CURRENT));
             }
         }
         return sessionFactory;
@@ -246,7 +240,7 @@ public class HibernateSessionFactoryBuilder {
     private String getAndConnectionInfo(SnapshotVersionSeed snapshotVersionSeed, Properties properties) {
         // Log databaseparametre. I singlevm mode brukes 'jdbc'(dvs url, bruker/password).
         // I servermode brukes 'jta' (dvs datasource)
-        String connectionInfo=null;
+        String connectionInfo;
         String transcationCoordinator = properties.getProperty(AvailableSettings.TRANSACTION_COORDINATOR_STRATEGY);
         if ("jdbc".equals(transcationCoordinator)) {
             connectionInfo = properties.getProperty("hibernate.connection.url") + " - " + properties.getProperty("hibernate.connection.username");

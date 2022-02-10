@@ -6,11 +6,12 @@ import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.kodeliste.KodeId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
+import org.hibernate.engine.config.spi.ConfigurationService;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.internal.util.StringHelper;
+import org.hibernate.type.spi.TypeConfiguration;
+import org.hibernate.type.spi.TypeConfigurationAware;
 import org.hibernate.usertype.EnhancedUserType;
 import org.hibernate.usertype.ParameterizedType;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -25,27 +27,11 @@ import java.util.Properties;
  *
  * @author Henrik Fredholm
  */
-public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
-    /* Logging is implemented as in org.hibernate.type.NullableType in order to get similar logging performance and output as for standard hibernate types */
-    private static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
-    private transient Logger log;
-
-    /* Controls the value of {@link #snapshotVersionSeed} for newly created BubbleIdTypes (is a Seed of Seeds) */
-    private static SnapshotVersionSeed snapshotVersionSeedSeed = new SnapshotVersionSeed(SnapshotVersion.CURRENT);
+public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, TypeConfigurationAware {
+    private TypeConfiguration typeConfiguration;
 
     /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
-    private SnapshotVersionSeed snapshotVersionSeed = snapshotVersionSeedSeed;
-
-    public static void setSnapshotVersionSeedSeed(SnapshotVersionSeed snapshotVersionSeedSeed) {
-        EnumKodeIdType.snapshotVersionSeedSeed = snapshotVersionSeedSeed;
-    }
-
-    private Logger log() {
-        if (log == null) {
-            log = LoggerFactory.getLogger(getClass());
-        }
-        return log;
-    }
+    private SnapshotVersionSeed snapshotVersionSeed = null;
 
     private Class<? extends KodeId> enumClass;
 
@@ -79,8 +65,24 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
         }
     }
 
+    @Override
+    public TypeConfiguration getTypeConfiguration() {
+        return typeConfiguration;
+    }
+
+    @Override
+    public void setTypeConfiguration(TypeConfiguration typeConfiguration) {
+        this.typeConfiguration = typeConfiguration;
+        snapshotVersionSeed = Objects.requireNonNull(
+                typeConfiguration.getServiceRegistry()
+                        .requireService(ConfigurationService.class)
+                        .getSetting("no.statkart.skif.SnapshotVersionSeed", SnapshotVersionSeed.class, snapshotVersionSeed),
+                "SnapshotVersionSeed not configured for session factory"
+        );
+    }
+
     public Object getInstance(int code) throws HibernateException {
-        SnapshotVersion snapshotVersion = snapshotVersionSeed.get();
+        SnapshotVersion snapshotVersion = Objects.requireNonNull(snapshotVersionSeed.get(), "snapshotVersionSeed not specified");
         return BubbleIds.createInstance(enumClass, (long) code, snapshotVersion);
     }
 
@@ -93,7 +95,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     public Serializable disassemble(Object value) throws HibernateException {
-        return (Enum) value;
+        return (Enum<?>) value;
     }
 
     public boolean equals(Object x, Object y) throws HibernateException {
@@ -108,36 +110,19 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
         return false;
     }
 
-//    public Object nullSafeGet(ResultSet rs, String[] names, Object owner)
-//            throws HibernateException, SQLException {
-//        int code=rs.getInt(names[0]);
-//        return rs.wasNull() ? null : getInstance(new Integer(code));
-//    }
-
-
     @Override
     public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         String name = names[0];
         try {
             int code = rs.getInt(name);
             if (rs.wasNull()) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning null as column: " + name);
-                }
                 return null;
             } else {
-                Object value = getInstance(code);
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning '" + value + "' as column: " + name);
-                }
-                return value;
+                return getInstance(code);
             }
-        } catch (RuntimeException re) {
-            log().info("could not read column value from result set: " + name + "; " + re.getMessage());
+        } catch (RuntimeException | SQLException re) {
+            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
             throw re;
-        } catch (SQLException se) {
-            log().info("could not read column value from result set: " + name + "; " + se.getMessage());
-            throw se;
         }
 
     }
@@ -147,27 +132,18 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         try {
             if (value == null) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding null to parameter: " + index);
-                }
                 st.setNull(index, Types.SMALLINT);
             } else {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding '" + value + "' to parameter: " + index);
-                }
                 // TODO: Fix så det virker for string også
-                long idValue = (Long)((KodeId) value).getValue();
-                st.setInt(index,(int)idValue);
+                long idValue = (Long) returnedClass().cast(value).getValue();
+                st.setInt(index, (int) idValue);
             }
         } catch (ClassCastException ce) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; ClassCastException: expected parameter of class " + getClass() + " got " + ce.getMessage());
+            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not bind value '{}' to parameter: {}; ClassCastException: expected parameter of class {} got {}", value, index, returnedClass(), ce.getMessage());
             throw ce;
-        } catch (RuntimeException re) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + re.getMessage());
+        } catch (RuntimeException | SQLException re) {
+            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not bind value '{}' to parameter: {}; {}", value, index, re.getMessage());
             throw re;
-        } catch (SQLException se) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + se.getMessage());
-            throw se;
         }
     }
 
@@ -175,7 +151,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
         return original;
     }
 
-    public Class returnedClass() {
+    public Class<? extends KodeId> returnedClass() {
         return enumClass;
     }
 
@@ -184,14 +160,14 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType {
     }
 
     public Object fromXMLString(String xmlValue) {
-        return getInstance(new Integer(xmlValue));
+        return getInstance(Integer.parseInt(xmlValue));
     }
 
     public String objectToSQLString(Object value) {
-        return '\'' + Long.toString((Long)((KodeId) value).getValue()) + '\'';
+        return '\'' + returnedClass().cast(value).getValue().toString() + '\'';
     }
 
     public String toXMLString(Object value) {
-        return Long.toString((Long)((KodeId) value).getValue());
+        return returnedClass().cast(value).getValue().toString();
     }
 }

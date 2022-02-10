@@ -7,10 +7,11 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.config.spi.ConfigurationService;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.internal.util.StringHelper;
+import org.hibernate.type.spi.TypeConfiguration;
+import org.hibernate.type.spi.TypeConfigurationAware;
 import org.hibernate.usertype.UserType;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 
 /**
@@ -26,28 +28,15 @@ import java.sql.Types;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class BubbleIdType implements UserType {
-    /* Logging is implemented as in org.hibernate.type.NullableType in order to get similar logging performance and output as for standard hibernate types */
-    protected static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
-    private transient Logger log;
-
-
-    protected Logger log() {
-        if (log == null) {
-            log = LoggerFactory.getLogger(BubbleIdType.class );
-        }
-        return log;
-    }
-
+public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     private final int[] SQL_TYPES;
 
-    /* Controls the value of {@link #snapshotVersionSeed} for newly created BubbleIdTypes (is a Seed of Seeds) */
-    private static SnapshotVersionSeed snapshotVersionSeedSeed = new SnapshotVersionSeed(SnapshotVersion.CURRENT);
+    private TypeConfiguration typeConfiguration;
 
     /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
-    private SnapshotVersionSeed snapshotVersionSeed = snapshotVersionSeedSeed;
+    private SnapshotVersionSeed snapshotVersionSeed = null;
 
-    protected final Class idValueType;
+    protected final Class<?> idValueType;
 
     public BubbleIdType() {
         idValueType = BubbleIds.getValueType(returnedClass());
@@ -77,19 +66,27 @@ public abstract class BubbleIdType implements UserType {
         this.snapshotVersionSeed = snapshotVersionSeed;
     }
 
-    public static SnapshotVersionSeed getSnapshotVersionSeedSeed() {
-        return snapshotVersionSeedSeed;
+    @Override
+    public TypeConfiguration getTypeConfiguration() {
+        return typeConfiguration;
     }
 
-    public static void setSnapshotVersionSeedSeed(SnapshotVersionSeed snapshotVersionSeedSeed) {
-        BubbleIdType.snapshotVersionSeedSeed = snapshotVersionSeedSeed;
+    @Override
+    public void setTypeConfiguration(TypeConfiguration typeConfiguration) {
+        this.typeConfiguration = typeConfiguration;
+        snapshotVersionSeed = Objects.requireNonNull(
+                typeConfiguration.getServiceRegistry()
+                        .requireService(ConfigurationService.class)
+                        .getSetting("no.statkart.skif.SnapshotVersionSeed", SnapshotVersionSeed.class, snapshotVersionSeed),
+                "SnapshotVersionSeed not configured for session factory"
+        );
     }
 
     public int[] sqlTypes() {
         return SQL_TYPES;
     }
 
-    public abstract Class returnedClass();
+    public abstract Class<? extends BubbleId> returnedClass();
 
     public boolean isMutable() {
         return false;
@@ -126,23 +123,13 @@ public abstract class BubbleIdType implements UserType {
             Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);
             //long value = rs.getLong(name);
             if (rs.wasNull()) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning null as column: " + name);
-                }
                 return null;
             } else {
-                    BubbleId id = (BubbleId) createId(value);
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning '" + id + "' as column: " + name);
-                }
-                return id;
+                return createId(value);
             }
-        } catch (RuntimeException re) {
-            log().info("could not read column value from result set: " + name + "; " + re.getMessage());
+        } catch (RuntimeException | SQLException re) {
+            LoggerFactory.getLogger(BubbleIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
             throw re;
-        } catch (SQLException se) {
-            log().info("could not read column value from result set: " + name + "; " + se.getMessage());
-            throw se;
         }
 
     }
@@ -151,28 +138,19 @@ public abstract class BubbleIdType implements UserType {
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         try {
             if (value == null) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding null to parameter: " + index);
-                }
                 StoreJDBCHelper.setBubbleIdValue(st, index, null, idValueType);
                 //st.setNull(index, Types.BIGINT);
             } else {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding '" + value + "' to parameter: " + index);
-                }
-                BubbleId bubbleId = (BubbleId) value;
+                BubbleId<?> bubbleId = (BubbleId<?>) value;
                 StoreJDBCHelper.setBubbleIdValue(st, index, bubbleId.getValue(), idValueType) ;
                 //st.setLong(index, (Long) bubbleId.getValue());
             }
         } catch (ClassCastException ce) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; ClassCastException: expected parameter of class " + getClass() + " got " + ce.getMessage());
+            LoggerFactory.getLogger(BubbleIdType.class).info("could not bind value '{}' to parameter: {}; ClassCastException: expected parameter of class {} got {}", value, index, returnedClass(), ce.getMessage());
             throw ce;
-        } catch (RuntimeException re) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + re.getMessage());
+        } catch (RuntimeException | SQLException re) {
+            LoggerFactory.getLogger(BubbleIdType.class).info("could not bind value '{}' to parameter: {}; {}", value, index, re.getMessage());
             throw re;
-        } catch (SQLException se) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + se.getMessage());
-            throw se;
         }
     }
 
@@ -184,7 +162,7 @@ public abstract class BubbleIdType implements UserType {
      * @param value id value for bubbleid'en
      */
     protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
-        return BubbleIds.createInstance((Class<? extends BubbleId>) returnedClass(), value, snapshotVersion);
+        return BubbleIds.createInstance(returnedClass(), value, snapshotVersion);
     }
 
     /**
@@ -192,8 +170,8 @@ public abstract class BubbleIdType implements UserType {
      *
      * @param value id value for bubbleid'en
      */
-    public Object createId(Object value) {
-        BubbleId id = (BubbleId) createPrototypeId(value, snapshotVersionSeed.get());
-        return id;
+    public BubbleId<?> createId(Object value) {
+        SnapshotVersion snapshotVersion = Objects.requireNonNull(snapshotVersionSeed.get(), "snapshotVersionSeed not specified");
+        return (BubbleId<?>) createPrototypeId(value, snapshotVersion);
     }
 }

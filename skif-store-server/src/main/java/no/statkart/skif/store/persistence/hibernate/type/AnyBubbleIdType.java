@@ -7,6 +7,7 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +29,7 @@ public class AnyBubbleIdType extends BubbleIdType {
         super(new int[]{Types.BIGINT, Types.VARCHAR});
     }
 
-    public  Class returnedClass() { return BubbleId.class; }
+    public Class<? extends BubbleId> returnedClass() { return BubbleId.class; }
 
     /**
      * Denne metode kan overskrives av subklasser som ønsker å bruke noe annet enn fully qualified classname som discriminator
@@ -50,24 +51,14 @@ public class AnyBubbleIdType extends BubbleIdType {
         try {
             Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);
             if (rs.wasNull()) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning null as column: " + name);
-                }
                 return null;
             } else {
                 String classname = rs.getString(names[1]);
-                BubbleId id = (BubbleId) createId(new Object[] {value, classname});
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning '" + id + "' as column: " + name);
-                }
-                return id;
+                return createId(new Object[] {value, classname});
             }
-        } catch (RuntimeException re) {
-            log().info("could not read column value from result set: " + name + "; " + re.getMessage());
+        } catch (RuntimeException | SQLException re) {
+            LoggerFactory.getLogger(AnyBubbleIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
             throw re;
-        } catch (SQLException se) {
-            log().info("could not read column value from result set: " + name + "; " + se.getMessage());
-            throw se;
         }
     }
 
@@ -76,28 +67,19 @@ public class AnyBubbleIdType extends BubbleIdType {
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         try {
             if (value == null) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding null to parameter: " + index);
-                }
                 StoreJDBCHelper.setBubbleIdValue(st, index, null, idValueType);
                 st.setNull(index+1, Types.VARBINARY);
             } else {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding '" + value + "' to parameter: " + index);
-                }
-                Object[] values = toSQLValues((BubbleId) value);
+                Object[] values = toSQLValues((BubbleId<?>) value);
                 st.setLong(index, (Long) values[0]);
                 st.setString(index + 1, (String)values[1]);
             }
         } catch (ClassCastException ce) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; ClassCastException: expected parameter of class " + getClass() + " got " + ce.getMessage());
+            LoggerFactory.getLogger(AnyBubbleIdType.class).info("could not bind value '{}' to parameter: {}; ClassCastException: expected parameter of class {} got {}", value, index, returnedClass(), ce.getMessage());
             throw ce;
-        } catch (RuntimeException re) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + re.getMessage());
+        } catch (RuntimeException | SQLException re) {
+            LoggerFactory.getLogger(AnyBubbleIdType.class).info("could not bind value '{}' to parameter: {}; {}", value, index, re.getMessage());
             throw re;
-        } catch (SQLException se) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + se.getMessage());
-            throw se;
         }
     }
 
@@ -109,12 +91,12 @@ public class AnyBubbleIdType extends BubbleIdType {
      * @param value Object array med  id value og classname for bubbleid'en
      */
     @Override
-    protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
+    protected BubbleId<?> createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
         Object[] values = (Object[]) value;
         return BubbleIds.createInstance(returnedClass(values[1]), values[0], snapshotVersion);
     }
 
-    public Object[] toSQLValues(BubbleId id) {
+    public Object[] toSQLValues(BubbleId<?> id) {
         return new Object[] {id.getValue(), id.getBaseIdType().getName()};
     }
 }

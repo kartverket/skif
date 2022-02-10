@@ -1,17 +1,20 @@
 package no.statkart.skif.service.sequence;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 import no.statkart.skif.store.BubbleId;
 import org.hibernate.HibernateException;
+import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.config.spi.ConfigurationService;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.id.Configurable;
 import org.hibernate.id.IdentifierGenerator;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.type.Type;
 
 import javax.inject.Provider;
 import java.io.Serializable;
-import java.util.Map;
+import java.util.Properties;
 
 /**
  * Hibernate specifik sekvens generator klasse som virker for JTA transaksjoner. Brukes av Hibernate
@@ -20,22 +23,8 @@ import java.util.Map;
  *
  * @author Henrik Fredholm
  */
-public class HighLowGenerator implements IdentifierGenerator {
-    private static Map<SessionFactory, Provider<IdService>> map = Maps.newConcurrentMap();
-
-    /**
-     * @since 2.3
-     */
-    public static void registerIdServiceForSessionFactory(SessionFactory sessionFactory, Provider<IdService> provider) {
-        Preconditions.checkState(map.put(sessionFactory, provider) == null, "A Provider<IdService> is already registered for SessionFactory: %s", sessionFactory);
-    }
-
-    /**
-     * @since 2.3
-     */
-    public static void unregisterIdServiceForSessionFactory(SessionFactory sessionFactory) {
-        map.remove(sessionFactory);
-    }
+public class HighLowGenerator implements IdentifierGenerator, Configurable {
+    private Provider<IdService> idServiceProvider;
 
     /**
      * Denne metode er synchronized da {@code IdService} objektet som metoden anvender allokerer id-er fra en id-blok
@@ -52,6 +41,13 @@ public class HighLowGenerator implements IdentifierGenerator {
     }
 
     private Provider<IdService> getIdServiceProvider(SessionFactory sessionFactory) {
-        return Preconditions.checkNotNull(map.get(sessionFactory), "No Provider<IdService> was registered for SessionFactory: %s", sessionFactory);
+        return Preconditions.checkNotNull(idServiceProvider, "No Provider<IdService> was registered for SessionFactory: %s", sessionFactory);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
+        idServiceProvider = (Provider<IdService>) serviceRegistry.requireService(ConfigurationService.class)
+                .getSetting("no.statkart.skif.IdServiceProvider", Provider.class, null);
     }
 }

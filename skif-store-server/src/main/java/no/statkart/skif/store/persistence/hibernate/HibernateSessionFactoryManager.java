@@ -1,12 +1,12 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import no.statkart.skif.service.sequence.HighLowGenerator;
 import no.statkart.skif.service.sequence.IdService;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import javax.inject.Provider;
+import java.util.Properties;
 
 /**
  * @author Henrik Fredholm
@@ -29,7 +29,6 @@ public class HibernateSessionFactoryManager {
     public void close() {
         if (factory != null) {
             factory.close();
-            HighLowGenerator.unregisterIdServiceForSessionFactory(factory);
             factory = null;
         }
     }
@@ -44,8 +43,11 @@ public class HibernateSessionFactoryManager {
     protected synchronized void createFactory() {
         if (factory == null) {
             Interceptor interceptor = descriptor.getHibernateInterceptorFactory().create(descriptor.getSeed());
-            factory = factoryBuilder.build(descriptor.getSeed(), descriptor.getHibernateProperties(), interceptor);
-            HighLowGenerator.registerIdServiceForSessionFactory(factory, idServiceProvider);
+            Properties hibernateProperties = descriptor.getHibernateProperties();
+            Properties properties = new Properties();
+            properties.putAll(hibernateProperties);
+            properties.put("no.statkart.skif.IdServiceProvider", idServiceProvider);
+            factory = factoryBuilder.build(descriptor.getSeed(), properties, interceptor);
         }
     }
 
