@@ -60,20 +60,21 @@ public class StoreSessionServer extends AbstractStoreSession {
             deletedIds = new LinkedHashSet<>();
             lockedIds = new LinkedHashSet<>();
             for (StoreEntry storeEntry : modifiedMap.values()) {
+                BubbleObject bubbleObject = storeEntry.getBubbleObject(0);
                 switch (storeEntry.getState(0)) {
                     case UNCHANGED:
                         if (storeEntry.isLocked()) {
-                            lockedIds.add(storeEntry.getId());
+                            lockedIds.add(bubbleObject.getId());
                         }
                         break;
                     case INSERTED:
-                        insertedIds.add(storeEntry.getId());
+                        insertedIds.add(bubbleObject.getId());
                         break;
                     case UPDATED:
-                        updatedIds.add(storeEntry.getId());
+                        updatedIds.add(bubbleObject.getId());
                         break;
                     case DELETED:
-                        deletedIds.add(storeEntry.getId());
+                        deletedIds.add(bubbleObject.getId());
                         break;
                 }
             }

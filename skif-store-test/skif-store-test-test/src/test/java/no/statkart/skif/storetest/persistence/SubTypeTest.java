@@ -43,12 +43,13 @@ public class SubTypeTest extends StoreTestTestCase {
 
     @Test(groups = {"singlevm-required"})
     public void likhet() {
-        SubTypedBubbleId<?> subTypedBubbleId = new SubTypedBubbleId(1L);
-        SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(1L);
-        SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(1L);
+        SubTypedBubbleId<?> subTypedBubbleId = new SubTypedBubbleId<>(1L);
+        SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId<>(1L);
+        SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId<>(1L);
 
         Assert.assertEquals(subTypedBubbleId, withPrimitiveId);
         Assert.assertEquals(subTypedBubbleId, withCollectionId);
+        //noinspection AssertBetweenInconvertibleTypes
         Assert.assertEquals(withPrimitiveId, withCollectionId);
     }
 
@@ -64,13 +65,13 @@ public class SubTypeTest extends StoreTestTestCase {
             public Object run() {
                 Long idValue = mockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId().getValue();
 
-                SubTypedBubbleId<?> idCurrent = new SubTypedBubbleId(idValue, SnapshotVersion.CURRENT);
+                SubTypedBubbleId<?> idCurrent = new SubTypedBubbleId<>(idValue, SnapshotVersion.CURRENT);
                 SubTypedBubble current = store.get(idCurrent);
                 Assert.assertTrue(current instanceof SubTypeWithCollection, "Ikke SubTypeWithCollection");
                 Assert.assertNotNull(((SubTypeWithCollection) current).getTekster());
                 Assert.assertTrue(((SubTypeWithCollection) current).getTekster().isEmpty());
 
-                SubTypedBubbleId<?> idPast = new SubTypedBubbleId(idValue, SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
+                SubTypedBubbleId<?> idPast = new SubTypedBubbleId<>(idValue, SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
                 SubTypedBubble past = store.get(idPast);
                 Assert.assertTrue(past instanceof SubTypeWithPrimitive, "Ikke SubTypeWithPrimitive");
 
@@ -93,7 +94,7 @@ public class SubTypeTest extends StoreTestTestCase {
                 SubTypedBubble current = store.get(idCurrent);
                 Assert.assertTrue(current instanceof SubTypeWithCollection, "Ikke SubTypeWithCollection");
 
-                SubTypedBubbleId<?> idPast = (SubTypedBubbleId) idCurrent.asSnapshotVersion(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
+                SubTypedBubbleId<?> idPast = (SubTypedBubbleId<?>) idCurrent.asSnapshotVersion(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
                 SubTypedBubble past = store.get(idPast);
                 Assert.assertTrue(past instanceof SubTypeWithPrimitive, "Ikke SubTypeWithPrimitive");
 
@@ -115,7 +116,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypeWithPrimitiveId<?> id = new SubTypeWithPrimitiveId(idValue);
+                SubTypeWithPrimitiveId<?> id = new SubTypeWithPrimitiveId<>(idValue);
 
                 SubTypeWithPrimitive subTypeWithPrimitive = new SubTypeWithPrimitive();
                 subTypeWithPrimitive.setId(id);
@@ -123,8 +124,8 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithPrimitive.setText("Inserted");
                 store.insert(subTypeWithPrimitive);
                 assertThat(store.getInsertedIds()).extracting("value", "class")
-                        .as("has basetype")
-                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
+                        .as("has final subtype")
+                        .containsExactly(tuple(idValue, SubTypeWithPrimitiveId.class));
                 return null;
             }
         });
@@ -135,8 +136,8 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(idValue);
-                SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(idValue);
+                SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId<>(idValue);
+                SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId<>(idValue);
 
                 store.lock(withPrimitiveId);
 
@@ -145,8 +146,8 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithCollection.setText("Updated");
                 store.update(subTypeWithCollection);
                 assertThat(store.getUpdatedIds()).extracting("value", "class")
-                        .as("has basetype")
-                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
+                        .as("has final subtype")
+                        .containsExactly(tuple(idValue, SubTypeWithCollectionId.class));
 
                 return null;
             }
@@ -161,7 +162,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypedBubbleId<?> id = new SubTypedBubbleId(idValue);
+                SubTypedBubbleId<?> id = new SubTypedBubbleId<>(idValue);
 
                 SubTypedBubble subTypedBubble = store.get(id);
                 Assert.assertTrue(subTypedBubble instanceof SubTypeWithCollection, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
@@ -199,7 +200,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypeWithCollectionId<?> id = new SubTypeWithCollectionId(idValue);
+                SubTypeWithCollectionId<?> id = new SubTypeWithCollectionId<>(idValue);
 
                 SubTypeWithCollection subTypeWithCollection = new SubTypeWithCollection();
                 subTypeWithCollection.setId(id);
@@ -207,8 +208,8 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithCollection.setText("Inserted");
                 store.insert(subTypeWithCollection);
                 assertThat(store.getInsertedIds()).extracting("value", "class")
-                        .as("has has basetype")
-                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
+                        .as("has final subtype")
+                        .containsExactly(tuple(idValue, SubTypeWithCollectionId.class));
 
                 return null;
             }
@@ -220,8 +221,8 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(idValue);
-                SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(idValue);
+                SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId<>(idValue);
+                SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId<>(idValue);
 
                 store.lock(withCollectionId);
 
@@ -231,8 +232,8 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithPrimitive.setNum(8);
                 store.update(subTypeWithPrimitive);
                 assertThat(store.getUpdatedIds()).extracting("value", "class")
-                        .as("has basetype")
-                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
+                        .as("has final subtype")
+                        .containsExactly(tuple(idValue, SubTypeWithPrimitiveId.class));
 
                 return null;
             }
@@ -247,7 +248,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypedBubbleId<?> id = new SubTypedBubbleId<SubTypedBubble>(idValue);
+                SubTypedBubbleId<?> id = new SubTypedBubbleId<>(idValue);
 
                 SubTypedBubble subTypedBubble = store.get(id);
                 Assert.assertTrue(subTypedBubble instanceof SubTypeWithPrimitive, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
@@ -284,7 +285,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypeWithPrimitiveId<?> id = new SubTypeWithPrimitiveId(idValue);
+                SubTypeWithPrimitiveId<?> id = new SubTypeWithPrimitiveId<>(idValue);
 
                 SubTypeWithPrimitive subTypeWithPrimitive = new SubTypeWithPrimitive();
                 subTypeWithPrimitive.setId(id);
@@ -292,15 +293,15 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithPrimitive.setText("Inserted");
                 store.insert(subTypeWithPrimitive);
                 assertThat(store.getInsertedIds()).extracting("value", "class")
-                        .as("has basetype")
-                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
+                        .as("has final subtype")
+                        .containsExactly(tuple(idValue, SubTypeWithPrimitiveId.class));
 
                 return null;
             }
         });
 
-        SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(idValue);
-        SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(idValue);
+        SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId<>(idValue);
+        SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId<>(idValue);
 
         try (UnitOfWork unitOfWork = clientStore.beginUnitOfWork()) {
             clientStore.lock(withPrimitiveId);
@@ -317,8 +318,8 @@ public class SubTypeTest extends StoreTestTestCase {
 
                     store.update(subTypeWithCollection);
                     assertThat(store.getUpdatedIds()).extracting("value", "class")
-                            .as("has basetype")
-                            .containsExactly(tuple(idValue, SubTypedBubbleId.class));
+                            .as("has final subtype")
+                            .containsExactly(tuple(idValue, SubTypeWithCollectionId.class));
 
                     return null;
                 }
@@ -336,7 +337,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypedBubbleId<?> id = new SubTypedBubbleId(idValue);
+                SubTypedBubbleId<?> id = new SubTypedBubbleId<>(idValue);
 
                 SubTypedBubble subTypedBubble = store.get(id);
                 Assert.assertTrue(subTypedBubble instanceof SubTypeWithCollection, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
@@ -374,7 +375,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypeWithPrimitiveId<?> id = new SubTypeWithPrimitiveId(idValue);
+                SubTypeWithPrimitiveId<?> id = new SubTypeWithPrimitiveId<>(idValue);
 
                 SubTypeWithPrimitive subTypeWithPrimitive = new SubTypeWithPrimitive();
                 subTypeWithPrimitive.setId(id);
@@ -382,8 +383,8 @@ public class SubTypeTest extends StoreTestTestCase {
                 subTypeWithPrimitive.setText("Inserted");
                 store.insert(subTypeWithPrimitive);
                 assertThat(store.getInsertedIds()).extracting("value", "class")
-                        .as("has basetype")
-                        .containsExactly(tuple(idValue, SubTypedBubbleId.class));
+                        .as("has final subtype")
+                        .containsExactly(tuple(idValue, SubTypeWithPrimitiveId.class));
                 return null;
             }
         });
@@ -392,8 +393,8 @@ public class SubTypeTest extends StoreTestTestCase {
             Store store = injector.getInstance(Store.class);
 
             try (UnitOfWork unitOfWork = store.beginUnitOfWork()) {
-                SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId(idValue);
-                SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId(idValue);
+                SubTypeWithPrimitiveId<?> withPrimitiveId = new SubTypeWithPrimitiveId<>(idValue);
+                SubTypeWithCollectionId<?> withCollectionId = new SubTypeWithCollectionId<>(idValue);
 
                 store.lock(withPrimitiveId);
 
@@ -412,8 +413,8 @@ public class SubTypeTest extends StoreTestTestCase {
                     public Object run() {
                         store.registerTransfer(unitOfWorkTransfer);
                         assertThat(store.getUpdatedIds()).extracting("value", "class")
-                                .as("has basetype")
-                                .containsExactly(tuple(idValue, SubTypedBubbleId.class));
+                                .as("has final subtype")
+                                .containsExactly(tuple(idValue, SubTypeWithCollectionId.class));
 
                         return null;
                     }
@@ -432,7 +433,7 @@ public class SubTypeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                SubTypedBubbleId<?> id = new SubTypedBubbleId(idValue);
+                SubTypedBubbleId<?> id = new SubTypedBubbleId<>(idValue);
 
                 SubTypedBubble subTypedBubble = store.get(id);
                 Assert.assertTrue(subTypedBubble instanceof SubTypeWithCollection, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
