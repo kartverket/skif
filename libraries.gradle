@@ -14,16 +14,16 @@ ext.JAXWS_VERSION = libVersion('jaxws', '2.2.8') // Nyeste versjon som ikke krev
 ext.libraries = [
 
         // Database
-        ojdbc: "com.oracle.jdbc:ojdbc8:${libVersion('oracle', '12.2.0.1')}@jar",
-        ojdbc_g: "com.oracle.jdbc:ojdbc8_g:${libVersion('oracle', '12.2.0.1')}@jar",
-        c3p0: "com.mchange:c3p0:${libVersion('c3p0', '0.9.5.2')}",
+        ojdbc: "com.oracle.database.jdbc:ojdbc8:${libVersion('oracle', '19.3.0.0')}@jar",
+        ojdbc_g: "com.oracle.database.jdbc.debug:ojdbc8_g:${libVersion('oracle', '19.3.0.0')}@jar",
+        c3p0: "com.mchange:c3p0:${libVersion('c3p0', '0.9.5.5')}",
 
         // Logging
         slf4j_api: "org.slf4j:slf4j-api:${SLF4J_VERSION}",
         jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${SLF4J_VERSION}",
         jul_to_slf4j: "org.slf4j:jul-to-slf4j:${SLF4J_VERSION}",
         log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${SLF4J_VERSION}",
-        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.2.3')}",
+        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.2.10')}",
 
         // Guice med extensions
         guice: "com.google.inject:guice:${libVersion('guice', '5.0.1')}",
@@ -78,7 +78,7 @@ libraries.bubbleref_spi = [
 
 libraries.hibernate = [
         'no.statkart.skif:skif-hibernate-support:1.0.2',
-        'org.hibernate:hibernate-core:5.3.5.Final.bubbleref.3',
+        'org.hibernate:hibernate-core:5.3.25.Final.bubbleref.1',
 ]
 
 // SKIF baserer seg på Java EE 6

@@ -8,6 +8,7 @@ import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.NotLockedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.exception.ObjectsNotFoundException;
+import no.statkart.skif.exception.PermissionDeniedException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.util.CopyHelper;
@@ -376,8 +377,8 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 try {
                     StoreEntry entry = loadEntry(level, missingBubbleIds.iterator().next(), false);
                     bubbleObjects.add(getDerivedBubbleObjectCopyIfLocked(entry));
-                } catch (ObjectNotFoundException ignore) {
-                    // OK, så fantes den ikke, da.
+                } catch (ObjectNotFoundException| PermissionDeniedException ignore) {
+                    // OK, så fantes den ikke, da. Eller har ikke adgang
                 }
             } else {
                 Collection<StoreEntry> entries = loadEntriesIgnoreMissing(level, missingBubbleIds, false);

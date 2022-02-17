@@ -27,7 +27,7 @@ publishing {
 
             pom.withXml {
                 asNode().dependencies.dependency.findAll { 'joda-time' == it.artifactId.text() }.each { it.appendNode('optional', 'true') } //optional avhengighet for joda-time [SKIF-472]
-                asNode().dependencies.dependency.findAll { 'com.oracle.jdbc' == it.groupId.text() }.each { it.appendNode('optional', 'true'); it.scope[0].value = 'provided'} //optional, provided avhengighet for jdbc drivere - kan brukes for singleVm [SKIF-472]
+                asNode().dependencies.dependency.findAll { 'com.oracle.database.jdbc' == it.groupId.text() }.each { it.appendNode('optional', 'true'); it.scope[0].value = 'provided'} //optional, provided avhengighet for jdbc drivere - kan brukes for singleVm [SKIF-472]
             }
         }
     }
