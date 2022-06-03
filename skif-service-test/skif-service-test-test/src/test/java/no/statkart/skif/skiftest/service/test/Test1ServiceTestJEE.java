@@ -3,6 +3,7 @@ package no.statkart.skif.skiftest.service.test;
 import com.google.common.collect.Lists;
 import com.google.inject.*;
 import no.statkart.skif.ServiceMode;
+import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifClientConfiguration;
 import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.mapper.Mapping;
@@ -17,24 +18,29 @@ import no.statkart.skif.service.chain.CallServiceChainFactory;
 import no.statkart.skif.service.chain.ClientCallServiceChainFactoryJEE;
 import no.statkart.skif.service.chain.ServiceChainFactories;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
+import no.statkart.skif.service.module.common.JaxWsModule;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.provider.ServiceProvider;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.D2WAdapterWithServiceContextMapperProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
+import no.statkart.skif.service.ws.DefaultWebServiceExceptionMapper;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
 import no.statkart.skif.skiftest.service.SkifTestServiceContext;
 import no.statkart.skif.skiftest.service.test1.Test1Service;
 import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
 import no.statkart.skif.util.NullHostnameVerifier;
 import no.statkart.skif.util.testsupport.SkifTestConfigurationAccessor;
+import org.checkerframework.checker.units.qual.K;
 import org.testng.annotations.Test;
 
 import javax.net.ssl.HostnameVerifier;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertEquals;
 
@@ -69,8 +75,19 @@ public class Test1ServiceTestJEE {
                         requireBinding(ServerUrlHolder.class);
                         requireBinding(HostnameVerifier.class);
                         // Bind Web Service interface
-                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class).toProvider(new TypeLiteral<JaxWsServiceProvider<no.statkart.skif.skiftest.wsapi.service.test1.Test1Service>>() {
-                        });
+                        install(JaxWsModule.Common.getInstance());
+                        TypeLiteral<Optional<HostnameVerifier>> optionalHostnameVerifierType = SkifUtil.typeLiteral(Optional.class, HostnameVerifier.class);
+                        bind(no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class)
+                                .toProvider(new JaxWsServiceProvider<>(
+                                        JaxWsServiceProvider.PoolConfig.builder().build(),
+                                        no.statkart.skif.skiftest.wsapi.service.test1.Test1Service.class,
+                                        JaxWsModule.JaxWsModuleStrategyJEE.DEFAULT_PORT_TYPE_TO_SERVICE_NAME_STRATEGY,
+                                        JaxWsModule.JaxWsModuleStrategyJEE.DEFAULT_SERVICE_NAME_TO_WSDL_LOCATION_STRATEGY,
+                                        JaxWsModule.JaxWsModuleStrategyJEE.DEFAULT_JAXWS_HANDLER_CLASSES.stream().map(binder()::getProvider).collect(Collectors.toList()),
+                                        DefaultWebServiceExceptionMapper::new,
+                                        getProvider(ServerUrlHolder.class),
+                                        getProvider(Key.get(optionalHostnameVerifierType))))
+                                .in(Singleton.class);
 
                         bind(new TypeLiteral<ServiceContextMapper<?>>(){}).to(SkifTestServiceContextMapper.class);
 

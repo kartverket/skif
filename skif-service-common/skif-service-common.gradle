@@ -17,7 +17,9 @@ dependencies {
 
     implementation libraries.guava
     implementation libraries.jodatime
+    implementation libraries.commons_pool
     compileOnly libraries.jaxws_api
+    compileOnly libraries.jws_api
 
     testImplementation libraries.jaxws_rt
     testImplementation libraries.reflections
@@ -54,6 +56,7 @@ task assertDependencies() {
                     'com.google.inject:guice',
                     'com.google.guava:guava',
                     'com.google.inject.extensions:guice-',
+                    'org.apache.commons:commons-pool2'
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 
             if (!godkjent) {

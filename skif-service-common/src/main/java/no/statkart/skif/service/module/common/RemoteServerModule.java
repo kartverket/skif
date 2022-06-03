@@ -2,6 +2,7 @@ package no.statkart.skif.service.module.common;
 
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.OptionalBinder;
 import com.google.inject.util.Providers;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
@@ -83,10 +84,8 @@ public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStr
         // SnapshotVersionContext har trådlokal verdi og bindes opp som ekte singleton istedet for med ServiceRequest scope
         bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
 
-        if (hostnameVerifierClass == null) {
-            bind(HostnameVerifier.class).toProvider(Providers.<HostnameVerifier>of(null));
-        } else {
-            bind(HostnameVerifier.class).to(hostnameVerifierClass);
+        if (hostnameVerifierClass != null) {
+            OptionalBinder.newOptionalBinder(binder(), HostnameVerifier.class).setBinding().to(hostnameVerifierClass);
         }
         strategy.configure(binder());
 

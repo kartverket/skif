@@ -38,6 +38,7 @@ ext.libraries = [
         guava: "com.google.guava:guava:30.1.1-jre",
         jsr305: "com.google.code.findbugs:jsr305:1.3.9",
         xstream: 'com.thoughtworks.xstream:xstream:1.4.8',
+        commons_pool: 'org.apache.commons:commons-pool2:2.11.1',
 
 
         // Testing
@@ -64,6 +65,7 @@ libraries.jaxb_api = "javax.xml.bind:jaxb-api:${JAXB_VERSION}"
 
 // JAXWS
 libraries.jaxws_api = "javax.xml.ws:jaxws-api:${JAXWS_VERSION}" //for kompilering
+libraries.jws_api = 'javax.jws:javax.jws-api:1.1'
 libraries.jaxws_rt = [ //for kjøring utenfor container
         libraries.jaxb_impl,
         "com.sun.xml.ws:jaxws-rt:${JAXWS_VERSION}",
