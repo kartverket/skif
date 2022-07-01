@@ -73,9 +73,10 @@ public class TimestampTypeMapper<WsapiT> extends AbstractJavaDateTypeMapper<Wsap
         if (timestamp.getYear() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Year is not specified.");
         if (timestamp.getMonth() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Month is not specified.");
         if (timestamp.getDay() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Day is not specified.");
-        if (timestamp.getHour() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Hour is not specified.");
-        if (timestamp.getMinute() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Minute is not specified.");
-        if (timestamp.getSecond() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Second is not specified.");
+        if (timestamp.getHour() == DatatypeConstants.FIELD_UNDEFINED ||
+                timestamp.getMinute() == DatatypeConstants.FIELD_UNDEFINED ||
+                timestamp.getSecond() == DatatypeConstants.FIELD_UNDEFINED
+        ) errorMsgs.add("Time is not specified.");
 
         if (!errorMsgs.isEmpty()) {
             String joined = String.join(" ", errorMsgs);
@@ -84,7 +85,7 @@ public class TimestampTypeMapper<WsapiT> extends AbstractJavaDateTypeMapper<Wsap
     }
 
     public static <T> TimestampTypeMapper<T> create(Class<T> wsTimestampClass) {
-        return new TimestampTypeMapper<T>(wsTimestampClass);
+        return new TimestampTypeMapper<>(wsTimestampClass);
     }
 
 }

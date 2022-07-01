@@ -66,14 +66,14 @@ public class JavaLocalDateTypeMapper<WsapiT> extends AbstractWrappedDateTypeMapp
         if (dateTime.getYear() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Year is not specified.");
         if (dateTime.getMonth() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Month is not specified.");
         if (dateTime.getDay() == DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("Day is not specified.");
-        if (dateTime.getHour() != DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("LocalDate can't have hours.");
-        if (dateTime.getMinute() != DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("LocalDate can't have minutes.");
-        if (dateTime.getSecond() != DatatypeConstants.FIELD_UNDEFINED) errorMsgs.add("LocalDate can't have seconds.");
-        if (dateTime.getMillisecond() != DatatypeConstants.FIELD_UNDEFINED)
-            errorMsgs.add("LocalDate can't have milliseconds.");
+        if (dateTime.getHour() != DatatypeConstants.FIELD_UNDEFINED ||
+                dateTime.getMinute() != DatatypeConstants.FIELD_UNDEFINED ||
+                dateTime.getSecond() != DatatypeConstants.FIELD_UNDEFINED ||
+                dateTime.getMillisecond() != DatatypeConstants.FIELD_UNDEFINED
+        ) errorMsgs.add("LocalDate can't have time.");
 
         if (!errorMsgs.isEmpty()) {
-            String joined = Joiner.on(' ').join(errorMsgs);
+            String joined = String.join(" ", errorMsgs);
             throw new MappingException("Can't map LocalDate: " + joined);
         }
     }

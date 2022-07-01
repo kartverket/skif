@@ -1,5 +1,7 @@
 package no.statkart.skif.mapper;
 
+import org.assertj.core.api.AbstractThrowableAssert;
+import org.assertj.core.api.Assertions;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -15,11 +17,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.function.Function;
 
 /**
  * Tester {@link TimestampTypeMapper}.
@@ -146,15 +148,24 @@ public class TimestampTypeMapperTest {
         Assert.assertEquals(timestamp2, timestamp, "Feil ved overføring av gammel Timestamp via XML");
     }
 
-    public void testParsing() throws DatatypeConfigurationException {
-        XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar();
-        xmlGregorianCalendar.setYear(2000);
-        xmlGregorianCalendar.setMonth(1);
-        xmlGregorianCalendar.setDay(1);
-        xmlGregorianCalendar.setHour(0);
-        xmlGregorianCalendar.setMinute(0);
-        xmlGregorianCalendar.setSecond(0);
-        xmlGregorianCalendar.setFractionalSecond(BigDecimal.valueOf(0, 9));
+    /**
+     * Sjekker at ingen ulovlige formateringer slipper gjennom, enten fordi parsing feiler eller fordi vi validerer.
+     */
+    public void testValidering() throws DatatypeConfigurationException {
+        XmlDateParsingAssertHelper<?> helper = new XmlDateParsingAssertHelper<>(TimestampTypeMapper.create(WrappedTimestamp.class), WrappedTimestamp::new);
+
+        helper.assertMappingException("2010").hasMessage("Can't map timestamp: Month is not specified. Day is not specified. Time is not specified.");
+        helper.assertMappingException("2010-01").hasMessage("Can't map timestamp: Day is not specified. Time is not specified.");
+        helper.assertMappingException("2010-01-01").hasMessage("Can't map timestamp: Time is not specified.");
+        helper.assertParseException("2010-01-01T00");
+        helper.assertParseException("2010-01-01T00:00");
+        helper.assertSuccess("2010-01-01T00:00:00");
+        helper.assertSuccess("2010-01-01T00:00:00+01:00");
+        helper.assertParseException("2010-01T00:00:00+01:00");
+        helper.assertParseException("2010T00:00:00+01:00");
+        helper.assertMappingException("00:00:00+01:00").hasMessage("Can't map timestamp: Year is not specified. Month is not specified. Day is not specified.");
+        helper.assertMappingException("00:00:00").hasMessage("Can't map timestamp: Year is not specified. Month is not specified. Day is not specified.");
+        helper.assertParseException("00:00");
     }
 
     @XmlRootElement(name = "wrapper", namespace = "http://skif.statkart.no/timestamptypemapper/")

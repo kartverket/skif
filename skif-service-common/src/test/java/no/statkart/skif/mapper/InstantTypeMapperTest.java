@@ -12,10 +12,8 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 public class InstantTypeMapperTest {
 
@@ -90,32 +88,6 @@ public class InstantTypeMapperTest {
             .isEqualTo("1969-12-01T01:02:03.888Z");
     }
 
-    @Test
-    void xsDateTime_UtenSekunderGirFeil() {
-        assertThatCode(() -> testXsDateTimeMapping(calendar -> {
-            calendar.setYear(2021);
-            calendar.setMonth(6);
-            calendar.setDay(3);
-        })).hasMessage("Can't map timestamp: Hour not specified. Minute not specified. Second not specified.");
-
-        assertThatCode(() -> testXsDateTimeMapping(calendar -> {
-            calendar.setYear(2021);
-            calendar.setMonth(6);
-            calendar.setDay(3);
-            calendar.setHour(4);
-            calendar.setMinute(5);
-        })).hasMessage("Can't map timestamp: Second not specified.");
-
-        assertThatCode(() -> testXsDateTimeMapping(calendar -> {
-            calendar.setYear(2021);
-            calendar.setMonth(6);
-            calendar.setDay(3);
-            calendar.setHour(4);
-            calendar.setMinute(5);
-            calendar.setSecond(0);
-        })).doesNotThrowAnyException();
-    }
-
     /**
      * Dersom tidssonen ikke er angitt så settes denne ihht til tidssone for tjener.
      * Offset er ikke statisk og varierer med om aktuell dato representerer vintertid eller sommertid.
@@ -144,14 +116,29 @@ public class InstantTypeMapperTest {
             .isEqualTo("2020-06-01T02:00:00.000000000+02:00");
     }
 
-    private Instant testXsDateTimeMapping(String lexicalRepresentation) throws DatatypeConfigurationException {
-        final XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(lexicalRepresentation);
-        return testXsDateTimeMapping(xmlGregorianCalendar);
+    /**
+     * Sjekker at ingen ulovlige formateringer slipper gjennom, enten fordi parsing feiler eller fordi vi validerer.
+     */
+    @Test
+    public void testValidering() throws DatatypeConfigurationException {
+        XmlDateParsingAssertHelper<?> helper = new XmlDateParsingAssertHelper<>(new InstantTypeMapper<>(WrappedTimestamp.class), WrappedTimestamp::new);
+
+        helper.assertMappingException("2010").hasMessage("Can't map timestamp: Month is not specified. Day is not specified. Time is not specified.");
+        helper.assertMappingException("2010-01").hasMessage("Can't map timestamp: Day is not specified. Time is not specified.");
+        helper.assertMappingException("2010-01-01").hasMessage("Can't map timestamp: Time is not specified.");
+        helper.assertParseException("2010-01-01T00");
+        helper.assertParseException("2010-01-01T00:00");
+        helper.assertSuccess("2010-01-01T00:00:00");
+        helper.assertSuccess("2010-01-01T00:00:00+01:00");
+        helper.assertParseException("2010-01T00:00:00+01:00");
+        helper.assertParseException("2010T00:00:00+01:00");
+        helper.assertMappingException("00:00:00+01:00").hasMessage("Can't map timestamp: Year is not specified. Month is not specified. Day is not specified.");
+        helper.assertMappingException("00:00:00").hasMessage("Can't map timestamp: Year is not specified. Month is not specified. Day is not specified.");
+        helper.assertParseException("00:00");
     }
 
-    private Instant testXsDateTimeMapping(Consumer<XMLGregorianCalendar> specification) throws DatatypeConfigurationException {
-        final XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar();
-        specification.accept(xmlGregorianCalendar);
+    private Instant testXsDateTimeMapping(String lexicalRepresentation) throws DatatypeConfigurationException {
+        final XMLGregorianCalendar xmlGregorianCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(lexicalRepresentation);
         return testXsDateTimeMapping(xmlGregorianCalendar);
     }
 
@@ -181,6 +168,10 @@ public class InstantTypeMapperTest {
 
         @SuppressWarnings("unused")
         public WrappedTimestamp() {
+        }
+
+        private WrappedTimestamp(XMLGregorianCalendar timestamp) {
+            this.timestamp = timestamp;
         }
 
         public XMLGregorianCalendar getTimestamp() {
