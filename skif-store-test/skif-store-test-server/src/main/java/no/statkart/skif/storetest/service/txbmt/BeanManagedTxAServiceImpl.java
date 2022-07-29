@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ValidationException;
-import no.statkart.skif.storetest.service.txbmt.BeanManagedTxAService;
 import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.*;
@@ -24,15 +23,11 @@ public class BeanManagedTxAServiceImpl implements BeanManagedTxAService {
     @Override
     public void clear() {
         Connection c = connectionProvider.get();
-        Statement statement = null;
-        try {
-            statement = c.createStatement();
+        try (Statement statement = c.createStatement()) {
             statement.execute("delete from TestMap");
             c.commit();
         } catch (SQLException e) {
             throw new ImplementationException(e);
-        } finally {
-            JDBCHelper.close(statement);
         }
     }
 
@@ -41,9 +36,7 @@ public class BeanManagedTxAServiceImpl implements BeanManagedTxAService {
     public String get(String key) {
         String result;
         Connection c = connectionProvider.get();
-        PreparedStatement ps = null;
-        try {
-            ps = c.prepareStatement("select v from TestMap where k=?");
+        try (PreparedStatement ps = c.prepareStatement("select v from TestMap where k=?")) {
             ps.setString(1, key);
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -56,8 +49,6 @@ public class BeanManagedTxAServiceImpl implements BeanManagedTxAService {
             }
         } catch (SQLException e) {
             throw new ImplementationException(e);
-        } finally {
-            JDBCHelper.close(ps);
         }
         return result;
     }
@@ -70,31 +61,30 @@ public class BeanManagedTxAServiceImpl implements BeanManagedTxAService {
 
         String oldValue = get(key);
         Connection connection = connectionProvider.get();
-        PreparedStatement ps = null;
         try {
             if (oldValue == null) {
-                ps = connection.prepareStatement("insert into TestMap values(?,?)");
-                ps.setString(1, key);
-                ps.setString(2, value);
-                int result = ps.executeUpdate();
-                if (result != 1) {
-                    throw new ImplementationException("Fikk feil update count: " + result);
+                try (PreparedStatement ps = connection.prepareStatement("insert into TestMap values(?,?)")) {
+                    ps.setString(1, key);
+                    ps.setString(2, value);
+                    int result = ps.executeUpdate();
+                    if (result != 1) {
+                        throw new ImplementationException("Fikk feil update count: " + result);
+                    }
                 }
             } else {
-                ps = connection.prepareStatement("update TestMap set v=? where k=?");
-                ps.setString(1, value);
-                ps.setString(2, key);
-                int result = ps.executeUpdate();
-                if (result != 1) {
-                    throw new ImplementationException("Fikk feil update count: " + result);
+                try (PreparedStatement ps = connection.prepareStatement("update TestMap set v=? where k=?")) {
+                    ps.setString(1, value);
+                    ps.setString(2, key);
+                    int result = ps.executeUpdate();
+                    if (result != 1) {
+                        throw new ImplementationException("Fikk feil update count: " + result);
+                    }
                 }
             }
             connection.commit();
         } catch (SQLException e) {
             JDBCHelper.rollback(connection);
             throw new ImplementationException(e);
-        } finally {
-            JDBCHelper.close(ps);
         }
         return oldValue;
     }

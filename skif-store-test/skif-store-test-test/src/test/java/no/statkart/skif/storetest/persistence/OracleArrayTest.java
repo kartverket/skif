@@ -12,7 +12,6 @@ import no.statkart.skif.storetest.domain.basic.SomeIdent;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
-import no.statkart.skif.util.JDBCHelper;
 import no.statkart.skif.util.OracleUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -63,16 +62,14 @@ public class OracleArrayTest extends StoreTestServerTestCase {
     }
 
 
-    public void testOracleNumberArrayType() {
+    public void testOracleNumberArrayType() throws SQLException {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         Collection<Long> simpleIds = ImmutableList.of(
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()
         );
 
-        PreparedStatement statement = null;
-        try {
-            Connection connection = OracleUtils.getOracleConnection(session().connection());
-            statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))");
+        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
             statement.setObject(1, OracleArrayType.getOracleNumberArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
@@ -80,21 +77,17 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 size++;
             }
             assertEquals(size, 1);
-        } catch (SQLException e) {
-            JDBCHelper.close(statement);
         }
     }
 
-    public void testOracleArrayNumberConverter() {
+    public void testOracleArrayNumberConverter() throws SQLException {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         Collection<Long> simpleIds = ImmutableList.of(
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()
         );
 
-        PreparedStatement statement = null;
-        try {
-            Connection connection = OracleUtils.getOracleConnection(session().connection());
-            statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))");
+        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
             statement.setArray(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
@@ -102,23 +95,19 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 size++;
             }
             assertEquals(size, 1);
-        } catch (SQLException e) {
-            JDBCHelper.close(statement);
         }
     }
 
 
-    public void testOracleArrayAnyBubbleIdConverter() {
+    public void testOracleArrayAnyBubbleIdConverter() throws SQLException {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         Collection<BubbleId<?>> anyIds = ImmutableList.<BubbleId<?>>of(
                 mockupFacade.getSimpleMockupFactory().getSimpleId2(),
                 mockupFacade.getBubbleWithRelationMockupFactory().getBubbleWithRelationId1()
         );
 
-        PreparedStatement statement = null;
-        try {
-            Connection connection = OracleUtils.getOracleConnection(session().connection());
-            statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.anyId, b.anyIdClass) in (select * from table(:anyBubbleIds))");
+        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        try (PreparedStatement statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.anyId, b.anyIdClass) in (select * from table(:anyBubbleIds))")) {
             statement.setArray(1, new OracleArrayAnyBubbleIdConverter().toArray(connection, anyIds));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
@@ -126,12 +115,10 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 size++;
             }
             assertEquals(size, 2);
-        } catch (SQLException e) {
-            JDBCHelper.close(statement);
         }
     }
 
-    public void testOracleArrayStringStringConverter() {
+    public void testOracleArrayStringStringConverter() throws SQLException {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
             Object[][] values =
@@ -139,11 +126,9 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                             {mockupFacade.getSimpleMockupFactory().getSimpleId2().getClass().getName(), "En BubbleWithRelation (nr 1) peker til denne"}
                     };
 
-        PreparedStatement statement = null;
-        try {
-            Connection connection = OracleUtils.getOracleConnection(session().connection());
-            statement = connection.prepareStatement("select s.id from BubbleWithAnyBubbleRef b, Simple s where b.anyId=s.id and s.id=:sId and (b.anyIdClass,s.text) in (select * from table(:idValues))");
-            statement.setObject(1, mockupFacade.getSimpleMockupFactory().getSimpleId2());
+        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        try (PreparedStatement statement = connection.prepareStatement("select s.id from BubbleWithAnyBubbleRef b, Simple s where b.anyId=s.id and s.id=:sId and (b.anyIdClass,s.text) in (select * from table(:idValues))")) {
+            statement.setLong(1, mockupFacade.getSimpleMockupFactory().getSimpleId2().getValue());
             statement.setArray(2, new OracleArrayStringStringConverter().toArray(connection, values));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
@@ -151,12 +136,10 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 size++;
             }
             assertEquals(size, 1);
-        } catch (SQLException e) {
-            JDBCHelper.close(statement);
         }
     }
 
-    public void testOracleArrayConcatenatedFieldsConverter() {
+    public void testOracleArrayConcatenatedFieldsConverter() throws SQLException {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 
         BubbleWithAnyBubbleRef bubbleWithAnyBubbleRef = mockupFacade.getStore().get(mockupFacade.getBubbleWithAnyBubbleRefMockupFactory().getBubbleWithAnyBubbleRefId2());
@@ -164,10 +147,8 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 new SomeIdent(bubbleWithAnyBubbleRef.getNr(), "null")
         );
 
-        PreparedStatement statement = null;
-        try {
-            Connection connection = OracleUtils.getOracleConnection(session().connection());
-            statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.someIdentValue, b.someIdentClass) in (select * from table(:identValues))");
+        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        try (PreparedStatement statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.someIdentValue, b.someIdentClass) in (select * from table(:identValues))")) {
             statement.setArray(1, new OracleArrayConcatenatedFieldsConverter().toArray(connection, identValues));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
@@ -175,8 +156,6 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 size++;
             }
             assertEquals(size, 1);
-        } catch (SQLException e) {
-            JDBCHelper.close(statement);
         }
     }
 

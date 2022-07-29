@@ -14,7 +14,6 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.lock.LockService;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.util.JDBCHelper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -107,26 +106,17 @@ public class DbKodelisteTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                PreparedStatement statement = null;
-
-                try {
-                    statement = connection.prepareStatement("delete from kodelisteloc where id=?");
+                try (PreparedStatement statement = connection.prepareStatement("delete from kodelisteloc where id=?")) {
                     statement.setLong(1, kodelisteId.getValue());
                     statement.executeUpdate();
                 } catch (SQLException e) {
                     throw new OperationalException(e);
                 } finally {
-                    JDBCHelper.close(statement);
-
-                    try {
-                        statement = connection.prepareStatement("delete from kodeliste where id=?");
+                    try (PreparedStatement statement = connection.prepareStatement("delete from kodeliste where id=?")) {
                         statement.setLong(1, kodelisteId.getValue());
                         statement.executeUpdate();
                     } catch (SQLException e) {
                         throw new OperationalException(e);
-                    } finally {
-                        JDBCHelper.close(statement);
-                        statement = null;
                     }
                 }
 

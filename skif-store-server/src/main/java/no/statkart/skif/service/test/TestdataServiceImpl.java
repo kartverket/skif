@@ -10,7 +10,6 @@ import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.mockup.TestNumberFactory;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
 import no.statkart.skif.store.*;
-import no.statkart.skif.util.JDBCHelper;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.sql.TIMESTAMPTZ;
 import org.slf4j.Logger;
@@ -119,9 +118,7 @@ public class TestdataServiceImpl implements TestdataService {
     private void setTransactionSnapshot(SnapshotVersion transactionSnapshot) {
         if (!SnapshotVersion.CURRENT.equals(transactionSnapshot)) {
             Connection connection = connectionProvider.get();
-            PreparedStatement statement = null;
-            try {
-                statement = connection.prepareStatement("insert into SNAPSHOT_TRANS values (?)");
+            try (PreparedStatement statement = connection.prepareStatement("insert into SNAPSHOT_TRANS values (?)")) {
 
                 // Dette feiler i den doble timen når vi går over fra sommertid til vintertid. Må bruke Oracle API.
 //                statement.setTimestamp(1, transactionSnapshot.getTimestamp());
@@ -134,8 +131,6 @@ public class TestdataServiceImpl implements TestdataService {
                 }
             } catch (SQLException e) {
                 throw new OperationalException("Could not set transaction timestamp", e);
-            } finally {
-                JDBCHelper.close(statement);
             }
         }
     }

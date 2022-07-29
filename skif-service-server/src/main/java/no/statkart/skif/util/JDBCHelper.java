@@ -14,6 +14,10 @@ import java.sql.*;
  * @author Henrik Fredholm
  */
 public class JDBCHelper {
+    /**
+     * @deprecated bruk heller try-with-resource
+     */
+    @Deprecated
     public static void close(Statement statement) {
         if (statement != null) {
             try {
@@ -24,7 +28,10 @@ public class JDBCHelper {
         }
     }
 
-    @Deprecated // Unødvendig å angi resultSett sammen med Statement da ResultSett lukkes automatisk
+    /**
+     * @deprecated bruk heller try-with-resource
+     */
+    @Deprecated
     public static void close(ResultSet resultSet, Statement statement) {
         try {
             if (resultSet != null) {
@@ -46,6 +53,10 @@ public class JDBCHelper {
 
     }
 
+    /**
+     * @deprecated bruk heller try-with-resource
+     */
+    @Deprecated
     public static void close(Statement statement, ConnectionSelector connectionSelector) {
         try {
             close(statement);
@@ -93,6 +104,10 @@ public class JDBCHelper {
         }
     }
 
+    /**
+     * @deprecated bruk heller try-with-resource
+     */
+    @Deprecated
     public static void close(ConnectionSelector connectionSelector) {
         if (connectionSelector!=null) connectionSelector.close();
     }

@@ -5,9 +5,7 @@ import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ValidationException;
 import no.statkart.skif.storetest.service.txbmt.BeanManagedTxAService;
-import no.statkart.skif.storetest.service.txcascade.ContainerManagedTxCMTCascadeService;
 import no.statkart.skif.storetest.service.txcmt.ContainerManagedTxAService;
-import no.statkart.skif.util.JDBCHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,9 +37,7 @@ public class ContainerManagedTxCMTCascadeServiceImpl implements ContainerManaged
     public String get(String key) {
         String result;
         Connection c = connectionProvider.get();
-        PreparedStatement ps = null;
-        try {
-            ps = c.prepareStatement("select v from TestMap where k=?");
+        try (PreparedStatement ps = c.prepareStatement("select v from TestMap where k=?")) {
             ps.setString(1, key);
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
@@ -54,8 +50,6 @@ public class ContainerManagedTxCMTCascadeServiceImpl implements ContainerManaged
             }
         } catch (SQLException e) {
             throw new ImplementationException(e);
-        } finally {
-            JDBCHelper.close(ps);
         }
 
         return result;
@@ -69,29 +63,28 @@ public class ContainerManagedTxCMTCascadeServiceImpl implements ContainerManaged
 
         String oldValue = get(key);
         Connection connection = connectionProvider.get();
-        PreparedStatement ps = null;
-        try {
-            if (oldValue == null) {
-                ps = connection.prepareStatement("insert into TestMap values(?,?)");
+        if (oldValue == null) {
+            try (PreparedStatement ps = connection.prepareStatement("insert into TestMap values(?,?)")) {
                 ps.setString(1, key);
                 ps.setString(2, value);
                 int result = ps.executeUpdate();
                 if (result != 1) {
                     throw new ImplementationException("Fikk feil update count: " + result);
                 }
-            } else {
-                ps = connection.prepareStatement("update TestMap set v=? where k=?");
+            } catch (SQLException e) {
+                throw new ImplementationException(e);
+            }
+        } else {
+            try (PreparedStatement ps = connection.prepareStatement("update TestMap set v=? where k=?")) {
                 ps.setString(1, value);
                 ps.setString(2, key);
                 int result = ps.executeUpdate();
                 if (result != 1) {
                     throw new ImplementationException("Fikk feil update count: " + result);
                 }
+            } catch (SQLException e) {
+                throw new ImplementationException(e);
             }
-        } catch (SQLException e) {
-            throw new ImplementationException(e);
-        } finally {
-            JDBCHelper.close(ps);
         }
         return oldValue;
     }

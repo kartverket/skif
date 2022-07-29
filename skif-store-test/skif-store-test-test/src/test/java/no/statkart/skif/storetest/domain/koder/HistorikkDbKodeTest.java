@@ -99,17 +99,11 @@ public class HistorikkDbKodeTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                PreparedStatement statement = null;
-
-                try {
-                    statement = connection.prepareStatement("delete from historiskdbkode_h where id=?");
+                try (PreparedStatement statement = connection.prepareStatement("delete from historiskdbkode_h where id=?")) {
                     statement.setLong(1, kodeId.getValue());
                     statement.executeUpdate();
                 } catch (SQLException e) {
                     throw new OperationalException(e);
-                } finally {
-                    JDBCHelper.close(statement);
-                    statement = null;
                 }
 
                 return null;

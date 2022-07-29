@@ -138,11 +138,9 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     public void unlock(LockKey<Long> lockKey, String owner) {
         Connection con = connectionProvider.get();
 
-        PreparedStatement stmt = null;
         boolean rollback = true;
-        try {
-            String sqlString = "DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID=? AND CLASS=? AND OWNER=?";
-            stmt = con.prepareStatement(sqlString);
+        String sqlString = "DELETE FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID=? AND CLASS=? AND OWNER=?";
+        try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
             stmt.setLong(1, lockKey.keyValue);
             stmt.setString(2, lockKey.discriminator);
             stmt.setString(3, owner);
@@ -159,7 +157,6 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
         } catch (SQLException e) {
             throw new OperationalException(e);
         } finally {
-            JDBCHelper.close(stmt);
             if (rollback) {
                 JDBCHelper.rollback(con);
             }

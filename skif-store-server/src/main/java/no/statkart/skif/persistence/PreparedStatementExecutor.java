@@ -3,7 +3,6 @@ package no.statkart.skif.persistence;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.util.StoreJDBCHelper;
-import no.statkart.skif.util.JDBCHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +26,10 @@ import java.util.*;
  * @since 2.1
  */
 public abstract class PreparedStatementExecutor {
-    private static Logger logger = LoggerFactory.getLogger(PreparedStatementExecutor.class);
-    private static Map<Integer, String> parameterlists = new HashMap<Integer, String>();
+    private static final Logger logger = LoggerFactory.getLogger(PreparedStatementExecutor.class);
+    private static final Map<Integer, String> parameterlists = new HashMap<>();
 
-    private List<ParameterHelper> customParameters = new ArrayList<ParameterHelper>();
+    private final List<ParameterHelper> customParameters = new ArrayList<>();
 
 
     protected abstract void readResult(final ResultSet resultSet) throws SQLException;
@@ -63,30 +62,26 @@ public abstract class PreparedStatementExecutor {
                     parameterlists.put(length, parameterlist);
                 }
 
-                PreparedStatement statement = null;
-                ResultSet resultSet = null;
-                try {
-                    String sql = new StringBuffer().append(query).append(parameterlist).append(queryEnd).toString();
-                    statement = connection.prepareStatement(sql);
+                String sql = query + parameterlist + queryEnd;
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
                     int customParametersSize = 0;
-                    for (ParameterHelper parameterHelper : customParameters) {
+                    for (ParameterHelper<?> parameterHelper : customParameters) {
                         parameterHelper.decorateStatement(++customParametersSize, statement, connection);
                     }
 
                     for (int index = customParametersSize; iterator.hasNext() && index < length + customParametersSize; index++) {
-                        BubbleId bubbleId = iterator.next();
+                        BubbleId<?> bubbleId = iterator.next();
                         StoreJDBCHelper.setBubbleId(statement, index + 1, bubbleId);
                     }
 
-                    resultSet = statement.executeQuery();
-                    while (resultSet.next()) {
-                        readResult(resultSet);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            readResult(resultSet);
+                        }
                     }
                 } catch (SQLException e) {
                     throw new ImplementationException("Query failed: " + e.getMessage(), e, logger);
-                } finally {
-                    JDBCHelper.close(resultSet, statement);
                 }
             }
 
@@ -117,31 +112,27 @@ public abstract class PreparedStatementExecutor {
                     parameterlists.put(length, parameterlist);
                 }
 
-                PreparedStatement statement = null;
-                ResultSet resultSet = null;
-                try {
-                    String sql = new StringBuffer().append(query1).append(parameterlist).append(query2).append(parameterlist).append(endQuery).toString();
-                    statement = connection.prepareStatement(sql);
+                String sql = query1 + parameterlist + query2 + parameterlist + endQuery;
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
                     int customParametersSize = 0;
-                    for (ParameterHelper parameterHelper : customParameters) {
+                    for (ParameterHelper<?> parameterHelper : customParameters) {
                         parameterHelper.decorateStatement(++customParametersSize, statement, connection);
                     }
 
                     for (int index = customParametersSize; iterator.hasNext() && index < length + customParametersSize; index++) {
-                        BubbleId bubbleId = iterator.next();
+                        BubbleId<?> bubbleId = iterator.next();
                         StoreJDBCHelper.setBubbleId(statement, index + 1, bubbleId);
                         StoreJDBCHelper.setBubbleId(statement, index + 1 + length, bubbleId);
                     }
 
-                    resultSet = statement.executeQuery();
-                    while (resultSet.next()) {
-                        readResult(resultSet);
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            readResult(resultSet);
+                        }
                     }
                 } catch (SQLException e) {
                     throw new ImplementationException("Query failed: " + e.getMessage(), e, logger);
-                } finally {
-                    JDBCHelper.close(resultSet, statement);
                 }
             }
 
@@ -182,14 +173,14 @@ public abstract class PreparedStatementExecutor {
     }
 
 
-    private void setValueImpl(int index, ParameterHelper parameter) {
+    private void setValueImpl(int index, ParameterHelper<?> parameter) {
         for (int i = customParameters.size(); i < index; i++) {
             customParameters.add(i, null);
         }
         customParameters.set(index - 1, parameter);
     }
 
-    private abstract class ParameterHelper<T> {
+    private abstract static class ParameterHelper<T> {
         final T value;
 
         public ParameterHelper(T value) {
@@ -204,7 +195,7 @@ public abstract class PreparedStatementExecutor {
      *
      * @see java.sql.PreparedStatement#setInt(int, int)
      */
-    final class IntegerParameter extends ParameterHelper<Integer> {
+    static final class IntegerParameter extends ParameterHelper<Integer> {
         IntegerParameter(Integer value) {
             super(value);
         }
@@ -234,7 +225,7 @@ public abstract class PreparedStatementExecutor {
      *
      * @see java.sql.PreparedStatement#setDouble(int, double)
      */
-    final class DoubleParameter extends ParameterHelper<Double> {
+    static final class DoubleParameter extends ParameterHelper<Double> {
         DoubleParameter(Double value) {
             super(value);
         }
@@ -249,7 +240,7 @@ public abstract class PreparedStatementExecutor {
      *
      * @see java.sql.PreparedStatement#setFloat(int, float)
      */
-    final class FloatParameter extends ParameterHelper<Float> {
+    static final class FloatParameter extends ParameterHelper<Float> {
         FloatParameter(Float value) {
             super(value);
         }
@@ -264,7 +255,7 @@ public abstract class PreparedStatementExecutor {
      *
      * @see java.sql.PreparedStatement#setObject(int, Object)
      */
-    final class ObjectParameter extends ParameterHelper<Object> {
+    static final class ObjectParameter extends ParameterHelper<Object> {
         ObjectParameter(Object value) {
             super(value);
         }
@@ -279,7 +270,7 @@ public abstract class PreparedStatementExecutor {
      *
      * @see java.sql.PreparedStatement#setDate(int, java.sql.Date)
      */
-    final class DateParameter extends ParameterHelper<Date> {
+    static final class DateParameter extends ParameterHelper<Date> {
         Calendar calendar;
         java.sql.Date cachedDate = null;
 
@@ -301,8 +292,8 @@ public abstract class PreparedStatementExecutor {
      *
      * @see java.sql.PreparedStatement#setObject(int, Object, int)
      */
-    final class ObjectParameter2 extends ParameterHelper<Object> {
-        private int sqltype;
+    static final class ObjectParameter2 extends ParameterHelper<Object> {
+        private final int sqltype;
 
         ObjectParameter2(Object value, int sqltype) {
             super(value);
@@ -319,7 +310,7 @@ public abstract class PreparedStatementExecutor {
      *
      * @see java.sql.PreparedStatement#setString(int, String)
      */
-    final class StringParameter extends ParameterHelper<String> {
+    static final class StringParameter extends ParameterHelper<String> {
         StringParameter(String value) {
             super(value);
         }

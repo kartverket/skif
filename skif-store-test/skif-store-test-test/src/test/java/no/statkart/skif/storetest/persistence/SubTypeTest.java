@@ -14,7 +14,6 @@ import no.statkart.skif.storetest.domain.basic.*;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.util.JDBCHelper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -168,18 +167,15 @@ public class SubTypeTest extends StoreTestTestCase {
                 Assert.assertTrue(subTypedBubble instanceof SubTypeWithCollection, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
 
                 Connection connection = connectionProvider.get();
-                Statement statement = null;
-                ResultSet resultSet = null;
-                try {
-                    statement = connection.createStatement();
-                    resultSet = statement.executeQuery("select num from subtypedbubble where id=" + idValue);
+                try (
+                        Statement statement = connection.createStatement();
+                        ResultSet resultSet = statement.executeQuery("select num from subtypedbubble where id=" + idValue)
+                ) {
 
                     Assert.assertTrue(resultSet.next(), "Fant ingen rader");
                     Assert.assertNull(resultSet.getObject(1), "num er ikke nullet ut");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
-                } finally {
-                    JDBCHelper.close(resultSet, statement);
                 }
 
                 return null;
@@ -254,17 +250,14 @@ public class SubTypeTest extends StoreTestTestCase {
                 Assert.assertTrue(subTypedBubble instanceof SubTypeWithPrimitive, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
 
                 Connection connection = connectionProvider.get();
-                Statement statement = null;
-                ResultSet resultSet = null;
-                try {
-                    statement = connection.createStatement();
-                    resultSet = statement.executeQuery("select * from TekstForSubtype where subtypedid=" + idValue);
+                try (
+                        Statement statement = connection.createStatement();
+                        ResultSet resultSet = statement.executeQuery("select * from TekstForSubtype where subtypedid=" + idValue)
+                ) {
 
                     Assert.assertFalse(resultSet.next(), "Fant rader");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
-                } finally {
-                    JDBCHelper.close(resultSet, statement);
                 }
 
                 return null;
@@ -343,18 +336,15 @@ public class SubTypeTest extends StoreTestTestCase {
                 Assert.assertTrue(subTypedBubble instanceof SubTypeWithCollection, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
 
                 Connection connection = connectionProvider.get();
-                Statement statement = null;
-                ResultSet resultSet = null;
-                try {
-                    statement = connection.createStatement();
-                    resultSet = statement.executeQuery("select num from subtypedbubble where id=" + idValue);
+                try (
+                        Statement statement = connection.createStatement();
+                        ResultSet resultSet = statement.executeQuery("select num from subtypedbubble where id=" + idValue)
+                ) {
 
                     Assert.assertTrue(resultSet.next(), "Fant ingen rader");
                     Assert.assertNull(resultSet.getObject(1), "num er ikke nullet ut");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
-                } finally {
-                    JDBCHelper.close(resultSet, statement);
                 }
 
                 return null;
@@ -439,18 +429,15 @@ public class SubTypeTest extends StoreTestTestCase {
                 Assert.assertTrue(subTypedBubble instanceof SubTypeWithCollection, "Boblen endret ikke type og er fortsatt " + subTypedBubble.getClass());
 
                 Connection connection = connectionProvider.get();
-                Statement statement = null;
-                ResultSet resultSet = null;
-                try {
-                    statement = connection.createStatement();
-                    resultSet = statement.executeQuery("select num from subtypedbubble where id=" + idValue);
+                try (
+                        Statement statement = connection.createStatement();
+                        ResultSet resultSet = statement.executeQuery("select num from subtypedbubble where id=" + idValue)
+                ) {
 
                     Assert.assertTrue(resultSet.next(), "Fant ingen rader");
                     Assert.assertNull(resultSet.getObject(1), "num er ikke nullet ut");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
-                } finally {
-                    JDBCHelper.close(resultSet, statement);
                 }
 
                 return null;

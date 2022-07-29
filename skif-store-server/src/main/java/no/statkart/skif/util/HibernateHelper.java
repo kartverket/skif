@@ -14,10 +14,18 @@ import java.util.Collections;
  * @author Henrik Fredholm
  */
 public class HibernateHelper {
+    /**
+     * @deprecated bruk heller try-with-resource
+     */
+    @Deprecated
     public static void close(Statement statement) {
         JDBCHelper.close(statement);
     }
 
+    /**
+     * @deprecated bruk heller try-with-resource
+     */
+    @Deprecated
     public static void close(PreparedStatement preparedStatement, SessionSelector sessionSelector) {
         try {
             close(preparedStatement);
