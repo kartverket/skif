@@ -1,4 +1,4 @@
-if (!['6.8.3'].findAll { gradle.gradleVersion == it }) {
+if (!['7.5'].findAll { gradle.gradleVersion == it }) {
     logger.warn "WARNING: Du benytter en annen versjon av Gradle enn hva byggesystemet er testet med: ${gradle.gradleVersion}"
 }
 
@@ -45,7 +45,7 @@ apply from: file('libraries.gradle')
 
 subprojects { Project project ->
     apply plugin: 'project-report'
-    apply plugin: 'base' // SÃ¥ vet vi at vi har clean
+    apply plugin: 'base' // Så vet vi at vi har clean
 
     clean {
         delete 'gen'
@@ -86,7 +86,7 @@ subprojects { Project project ->
             testImplementation libraries.mockito
             testImplementation libraries.assertj
 
-            compileOnly libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes pÃ¥ tvers av hele skif APIet
+            compileOnly libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
         }
 
         project.java {
@@ -96,7 +96,7 @@ subprojects { Project project ->
 
         /**
          * Testing via TestNG grupper. Se bruk av @Test(groups = "") i koden.
-         * FÃ¸lgende parametere styrer hvilke grupper som blir kjÃ¸rt:
+         * Følgende parametere styrer hvilke grupper som blir kjørt:
          *
          * gradle test -DfilterSlowTests=INCLUDE
          * gradle test -DfilterOracleLatest=INCLUDE
@@ -104,15 +104,15 @@ subprojects { Project project ->
          * osv..
          *
          * GBOK-2266: Tilpasset oppsett for downstream testing i Jenkins
-         * Dersom ingen test-oppsett spesifisert sÃ¥ ekskluderes alle grupper.
-         * Dersom test-oppsett spesifiseres, kjÃ¸res kun spesifisert gruppe.
-         *  - PÃ¥ denne mÃ¥ten oppnÃ¥s disjointe sett av tester slik man unngÃ¥r Ã¥ kjÃ¸re samme test to ganger i de ulike Jenkins jobbene.
+         * Dersom ingen test-oppsett spesifisert så ekskluderes alle grupper.
+         * Dersom test-oppsett spesifiseres, kjøres kun spesifisert gruppe.
+         *  - På denne måten oppnås disjointe sett av tester slik man unngår å kjøre samme test to ganger i de ulike Jenkins jobbene.
          *
-         * En har videre mulighet til ytterligere Ã¥ spesifisere kombinasjoner av grupper.
-         * F.eks. vil gradle test -DfilterHistorikkTests=INCLUDE -DfilterSlowTests=EXCLUDE kjÃ¸re alle tester i gruppen historikk, men ikke de som ogsÃ¥ finnes i gruppen slow.
-         * Har man en test annotert med @Test(groups = "kreverHistorikk, slow") vil den testen da ikke kjÃ¸res.
+         * En har videre mulighet til ytterligere å spesifisere kombinasjoner av grupper.
+         * F.eks. vil gradle test -DfilterHistorikkTests=INCLUDE -DfilterSlowTests=EXCLUDE kjøre alle tester i gruppen historikk, men ikke de som også finnes i gruppen slow.
+         * Har man en test annotert med @Test(groups = "kreverHistorikk, slow") vil den testen da ikke kjøres.
          *
-         * -DignoreFailures=true stopper ikke eksekvering etter feilende modul og kjÃ¸rer videre. Kjekt for integrasjonstesting som Ã¸nsker Ã¥ kjÃ¸re alle tester alltid.
+         * -DignoreFailures=true stopper ikke eksekvering etter feilende modul og kjører videre. Kjekt for integrasjonstesting som ønsker å kjøre alle tester alltid.
          *
          * --info gir verbos logging av hvilke grupper som faktisk blir inkludert og ekskludert.
          */
@@ -123,13 +123,13 @@ subprojects { Project project ->
             def filterOracleLatest = System.getProperty('filterOracleLatest', 'EXCLUDE').toUpperCase()
 
             filterTestGroup(it, 'slow', filterSlowTests)
-            filterTestGroup(it, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for Ã¥ exclude tester som krever seneste oracle versjon
+            filterTestGroup(it, 'oracleLatest', filterOracleLatest) // Midlertidig lagt til denne gruppe for å exclude tester som krever seneste oracle versjon
 
             jvmArgs '-Xmx1024m'
             testLogging.showStandardStreams = true
 
-            inputs.property 'excludedGroups', testFramework.options.includeGroups //trigger re-kjÃ¸ring av test ved endring av grupper
-            inputs.property 'includedGroups', testFramework.options.excludeGroups //trigger re-kjÃ¸ring av test ved endring av grupper
+            inputs.property 'excludedGroups', testFramework.options.includeGroups //trigger re-kjøring av test ved endring av grupper
+            inputs.property 'includedGroups', testFramework.options.excludeGroups //trigger re-kjøring av test ved endring av grupper
         }
     }
 
@@ -152,7 +152,7 @@ subprojects { Project project ->
         systemProperties "org.uncommons.reportng.title": "${project.name} Report"
 
 
-        inputs.property 'singleVm', singleVm //trigger re-kjÃ¸ring av test ved endring av parameter
+        inputs.property 'singleVm', singleVm //trigger re-kjøring av test ved endring av parameter
 
         if (rootProject.hasProperty('test.remote.debug')) {
             jvmArgs '-Xdebug'
@@ -171,7 +171,7 @@ subprojects { Project project ->
 
 
     project.idea.module {
-        // FÃ¥r Idea til Ã¥ legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
+        // Får Idea til å legge build katalog for alle moduler i en egen felles topp katalog (out/production, out/test)
         inheritOutputDirs = true
 
         downloadSources = true

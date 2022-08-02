@@ -29,5 +29,5 @@ dependencies {
 task loadMockupData(type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     maxHeapSize = '1024m'
-    main = 'no.statkart.skif.storetest.mockup.LoadTestdata'
+    mainClass = 'no.statkart.skif.storetest.mockup.LoadTestdata'
 }
