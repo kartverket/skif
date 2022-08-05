@@ -6,6 +6,7 @@ import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import javax.inject.Provider;
 import javax.jws.WebService;
@@ -111,11 +112,16 @@ public class JaxWsServiceProvider<S> implements Provider<S> {
                 serviceNameToWsdlLocationStrategy,
                 handlerProviders);
 
-        GenericObjectPool<S> pool = new GenericObjectPool<>(new PortPooledObjectFactory<>(
+        GenericObjectPoolConfig<S> config = new GenericObjectPoolConfig<>();
+        config.setJmxEnabled(false);
+        GenericObjectPool<S> pool = new GenericObjectPool<>(
+                new PortPooledObjectFactory<>(
                 serviceEndpointClientFactory,
                 serviceEndpointInterface,
                 serverUrlHolderProvider,
-                hostnameVerifierOptionProvider));
+                hostnameVerifierOptionProvider),
+                config
+        );
         pool.setMinIdle(poolConfig.getMinIdle());
         pool.setMaxIdle(poolConfig.getMaxIdle());
         pool.setMaxTotal(poolConfig.getMaxTotal());
