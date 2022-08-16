@@ -10,7 +10,12 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.UnitOfWorkTransfer;
-import no.statkart.skif.storetest.domain.basic.*;
+import no.statkart.skif.storetest.domain.basic.SubTypeWithCollection;
+import no.statkart.skif.storetest.domain.basic.SubTypeWithCollectionId;
+import no.statkart.skif.storetest.domain.basic.SubTypeWithPrimitive;
+import no.statkart.skif.storetest.domain.basic.SubTypeWithPrimitiveId;
+import no.statkart.skif.storetest.domain.basic.SubTypedBubble;
+import no.statkart.skif.storetest.domain.basic.SubTypedBubbleId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
@@ -23,7 +28,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.tuple;
+import static org.assertj.core.api.Assertions.tuple;
 
 /**
  * Tester endring av subtype på tjenersiden.
