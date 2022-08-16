@@ -9,10 +9,10 @@ import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionM
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
-import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
-import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistoryId;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
+import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
+import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistoryId;
 import org.hibernate.Session;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -23,16 +23,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotSame;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.CURRENT;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.OLD;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.S3;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.S4;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactorManagerBundle;
+import static no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper.createHibernateSessionFactoryBuilderWithHistory;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.extractProperty;
 
 /**
  * Tester for PersistenceSessionManager
  * <p>
- * Dette er en stand-alone-test som går direkte mot databasen uten å bruke StoreTestServer modulen. Mest naturlig at testene
- * kjøres i singleVM mode.
+ * Dette er en stand-alone-test som gï¿½r direkte mot databasen uten ï¿½ bruke StoreTestServer modulen. Mest naturlig at testene
+ * kjï¿½res i singleVM mode.
  * @author Henrik Fredholm
  */
 @Test(groups = "singlevm-required")
@@ -81,27 +85,27 @@ public class PersistenceSessionManagerTest {
 
         try {
             TestBubbleWithHistory TestBubbleWithHistory_10_CURRENT = persistenceSession.get(TestBubbleWithHistoryId_10_CURRENT);
-            assertEquals(TestBubbleWithHistory_10_CURRENT.getId().getSnapshotVersion(), CURRENT);
+            assertThat(TestBubbleWithHistory_10_CURRENT.getId().getSnapshotVersion()).isEqualTo(CURRENT);
 
             TestBubbleWithHistory TestBubbleWithHistory_10_OLD = persistenceSession.get(TestBubbleWithHistoryId_10_OLD);
-            assertEquals(TestBubbleWithHistory_10_OLD.getId().getSnapshotVersion(), OLD);
+            assertThat(TestBubbleWithHistory_10_OLD.getId().getSnapshotVersion()).isEqualTo(OLD);
 
 
             TestBubbleWithHistory TestBubbleWithHistory_10_S3 = persistenceSession.get(TestBubbleWithHistoryId_10_S3);
-            assertEquals(TestBubbleWithHistory_10_S3.getId().getSnapshotVersion(), S3);
+            assertThat(TestBubbleWithHistory_10_S3.getId().getSnapshotVersion()).isEqualTo(S3);
 
             try {
                 Session session = persistenceSession.getForSnapshotVersion(OLD).getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
                 TestBubbleWithHistory TestBubbleWithHistory_11_OLD = persistenceSession.get(TestBubbleWithHistoryId_11_OLD);
-                assertEquals(TestBubbleWithHistory_11_OLD.getId().getSnapshotVersion(), OLD);
+                assertThat(TestBubbleWithHistory_11_OLD.getId().getSnapshotVersion()).isEqualTo(OLD);
             } finally {
                 persistenceSession.getForSnapshotVersion(OLD).getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
             }
             TestBubbleWithHistory TestBubbleWithHistory_11_S3 = persistenceSession.get(TestBubbleWithHistoryId_11_S3);
-            assertEquals(TestBubbleWithHistory_11_S3.getId().getSnapshotVersion(), S3);
+            assertThat(TestBubbleWithHistory_11_S3.getId().getSnapshotVersion()).isEqualTo(S3);
 
             TestBubbleWithHistory TestBubbleWithHistory_11_CURRENT = persistenceSession.get(TestBubbleWithHistoryId_11_CURRENT);
-            assertEquals(TestBubbleWithHistory_11_CURRENT.getId().getSnapshotVersion(), CURRENT);
+            assertThat(TestBubbleWithHistory_11_CURRENT.getId().getSnapshotVersion()).isEqualTo(CURRENT);
         } finally {
             persistenceSession.close();
         }
@@ -137,10 +141,10 @@ public class PersistenceSessionManagerTest {
         HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             TestBubbleWithHistory TestBubbleWithHistory_10_OLD = persistenceSession.get(TestBubbleWithHistoryId_10_OLD);
-            assertEquals(TestBubbleWithHistory_10_OLD.getId().getSnapshotVersion(), OLD);
+            assertThat(TestBubbleWithHistory_10_OLD.getId().getSnapshotVersion()).isEqualTo(OLD);
 
             TestBubbleWithHistory TestBubbleWithHistory_11_OLD = persistenceSession.get(TestBubbleWithHistoryId_11_OLD);
-            assertEquals(TestBubbleWithHistory_11_OLD.getId().getSnapshotVersion(), OLD);
+            assertThat(TestBubbleWithHistory_11_OLD.getId().getSnapshotVersion()).isEqualTo(OLD);
         } finally {
             persistenceSession.close();
         }
@@ -149,13 +153,13 @@ public class PersistenceSessionManagerTest {
     public void testLoadObjectsForHistoric() {
         HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
-            // Må endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
+            // Mï¿½ endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
             persistenceSession.setSnapshot(S3);
             TestBubbleWithHistory TestBubbleWithHistory_10_S3 = persistenceSession.get(TestBubbleWithHistoryId_10_S3);
-            assertEquals(TestBubbleWithHistory_10_S3.getId().getSnapshotVersion(), S3);
+            assertThat(TestBubbleWithHistory_10_S3.getId().getSnapshotVersion()).isEqualTo(S3);
 
             TestBubbleWithHistory TestBubbleWithHistory_11_OLD = persistenceSession.get(TestBubbleWithHistoryId_11_S3);
-            assertEquals(TestBubbleWithHistory_11_OLD.getId().getSnapshotVersion(), S3);
+            assertThat(TestBubbleWithHistory_11_OLD.getId().getSnapshotVersion()).isEqualTo(S3);
         } finally {
             persistenceSession.close();
         }
@@ -165,17 +169,17 @@ public class PersistenceSessionManagerTest {
         HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
             TestBubbleWithHistory TestBubbleWithHistory_10_OLD = persistenceSession.get(TestBubbleWithHistoryId_10_OLD);
-            assertEquals(TestBubbleWithHistory_10_OLD.getId().getSnapshotVersion(), OLD);
+            assertThat(TestBubbleWithHistory_10_OLD.getId().getSnapshotVersion()).isEqualTo(OLD);
 
-            // Må endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
+            // Mï¿½ endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
             persistenceSession.setSnapshot(S3);
             TestBubbleWithHistory TestBubbleWithHistory_10_S3 = persistenceSession.get(TestBubbleWithHistoryId_10_S3);
-            assertEquals(TestBubbleWithHistory_10_S3.getId().getSnapshotVersion(), S3);
+            assertThat(TestBubbleWithHistory_10_S3.getId().getSnapshotVersion()).isEqualTo(S3);
 
-            // Må endre snapshot version tilbake fra S3 til OLD
+            // Mï¿½ endre snapshot version tilbake fra S3 til OLD
             persistenceSession.setSnapshot(OLD);
             TestBubbleWithHistory TestBubbleWithHistory_11_OLD = persistenceSession.get(TestBubbleWithHistoryId_11_OLD);
-            assertEquals(TestBubbleWithHistory_11_OLD.getId().getSnapshotVersion(), OLD);
+            assertThat(TestBubbleWithHistory_11_OLD.getId().getSnapshotVersion()).isEqualTo(OLD);
         } finally {
             persistenceSession.close();
         }
@@ -214,8 +218,7 @@ public class PersistenceSessionManagerTest {
             persistenceSession.evict(testBubble1.getId());
 
             TestBubble testBubble2 = persistenceSession.get(testBubble1.getId());
-            assertNotSame(testBubble1, testBubble2);
-            assertEquals(testBubble1, testBubble2);
+            assertThat(testBubble1).isNotSameAs(testBubble2).isEqualTo(testBubble2);
         } finally {
             persistenceSession.close();
         }
@@ -246,7 +249,7 @@ public class PersistenceSessionManagerTest {
                 hibernateSession = sessionManager.acquireForSnapshot(TestBubbleWithHistoryId.getSnapshotVersion());
                 TestBubbleWithHistory TestBubbleWithHistory = (TestBubbleWithHistory) hibernateSession.load(TestBubbleWithHistory.class, TestBubbleWithHistoryId);
                 hibernateSession = sessionManager.releaseForSnapshot(hibernateSession);
-                assertEquals(TestBubbleWithHistory.getNavn(), nr[i]);
+                assertThat(TestBubbleWithHistory.getNavn()).isEqualTo(nr[i]);
             }
         } finally {
             sessionManager.releaseForSnapshot(hibernateSession);

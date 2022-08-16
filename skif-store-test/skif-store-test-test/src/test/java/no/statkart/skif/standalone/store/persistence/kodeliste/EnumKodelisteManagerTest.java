@@ -7,9 +7,7 @@ import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.BEnumKodeId;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotSame;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester for EnumKodelisteManager
@@ -29,12 +27,11 @@ public class EnumKodelisteManagerTest {
         assertThat(aKodeliste.getKoderIds()).containsExactly(AEnumKodeId.IkkeOppgittId, AEnumKodeId.KodeAId, AEnumKodeId.KodeBId);
 
         AEnumKode aEnumKode_A = enumKodeManager.get(AEnumKodeId.KodeAId);
-        assertEquals(aEnumKode_A.getId(), AEnumKodeId.KodeAId);
-        assertEquals(aEnumKode_A.getKodelisteId(), AEnumKodeId.KODELISTE_ID);
+        assertThat(aEnumKode_A.getId()).isEqualTo(AEnumKodeId.KodeAId);
+        assertThat(aEnumKode_A.getKodelisteId()).isEqualTo(AEnumKodeId.KODELISTE_ID);
 
         Kodeliste aKodeliste_2 = enumKodeManager.get(AEnumKodeId.KODELISTE_ID);
-        assertEquals(aKodeliste, aKodeliste_2);
-        assertNotSame(aKodeliste, aKodeliste_2);
+        assertThat(aKodeliste).isEqualTo(aKodeliste_2).isNotSameAs(aKodeliste_2);
     }
 
 }
