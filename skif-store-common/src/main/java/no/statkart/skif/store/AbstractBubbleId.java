@@ -66,11 +66,9 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     // static Map of meta info for each BubbleId class
     private static Map<Class<?>, TypeInfo> typeInfoMap = new ConcurrentHashMap<>(100);
 
-    // Cached meta info for this instance.
-    transient private TypeInfo typeInfo;
-
     // Cache the class for faster access. This actually matters
     protected Class<?> clazz = getClass();
+
 
     protected AbstractBubbleId() {
     }
@@ -131,10 +129,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
     @Override
     public Class getValueType() {
-        if (typeInfo == null) {
-            typeInfo = getTypeInfo(clazz);
-        }
-        return typeInfo.valueType;
+        return getTypeInfo(clazz).valueType;
     }
 
     public static Class getValueType(Class<? extends BubbleId> type) {
@@ -224,10 +219,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * and getType as well).</p>
      */
     public String getTypeName() {
-        if (typeInfo == null) {
-            typeInfo = getTypeInfo(clazz);
-        }
-        return typeInfo.typeName;
+        return getTypeInfo(clazz).typeName;
     }
 
     private static String calcTypeName(Class<?> clazz) {
@@ -248,10 +240,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * @return the class
      */
     public Class<T> getType() {
-        if (typeInfo == null) {
-            typeInfo = getTypeInfo(clazz);
-        }
-        return typeInfo.type;
+        return getTypeInfo(clazz).type;
     }
 
     private static Class<?> calcType(Class<?> clazz) {
@@ -335,10 +324,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * @return the base type class of the id
      */
     public Class getBaseType() {
-        if (typeInfo == null) {
-            typeInfo = getTypeInfo(clazz);
-        }
-        return typeInfo.baseType;
+        return getTypeInfo(clazz).baseType;
     }
 
     private static Class<?> calcBaseType(Class<?> clazz) {
