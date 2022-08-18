@@ -40,22 +40,18 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         String typeName;
         Class type;
         Class baseType;
-        Class valueType;
+        Class<?> valueType;
 
-        public TypeInfo(String typeName, Class type, Class baseType, Class idClass) {
+        public TypeInfo(String typeName, Class<?> type, Class<?> baseType, Class<?> idClass) {
             this.typeName = typeName;
             this.type = type;
             this.baseType = baseType;
             this.valueType = calcIdValueType(idClass);
-//            Class<?> t = calcIdValueType(type);
-//            if (valueType != t) {
-//                throw new ImplementationException(String.format("Id-klasse og base id-klasse har forskjellig idValue type. %s->%s og %s->%s", type.getName(), t.getName(), baseType.getName(), valueType.getName()));
-//            }
         }
 
-        private Class calcIdValueType(Class<?> type) {
+        private static Class<?> calcIdValueType(Class<?> type) {
             try {
-                Class<?> valueType = type.getMethod("getValue", (Class[]) null).getReturnType();
+                Class<?> valueType = type.getMethod("getValue", (Class<?>[]) null).getReturnType();
 
                 if (valueType == Object.class) {
                     throw new ImplementationException("Id class' getValue() method returns Object. Expected Long, String or similar: " + type);
@@ -68,13 +64,13 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
     // static Map of meta info for each BubbleId class
-    transient private static Map<Class, TypeInfo> typeInfoMap = new ConcurrentHashMap<Class, TypeInfo>(100);
+    private static Map<Class<?>, TypeInfo> typeInfoMap = new ConcurrentHashMap<>(100);
 
     // Cached meta info for this instance.
     transient private TypeInfo typeInfo;
 
     // Cache the class for faster access. This actually matters
-    protected Class clazz = getClass();
+    protected Class<?> clazz = getClass();
 
     protected AbstractBubbleId() {
     }
@@ -122,7 +118,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return BubbleIds.createInstance(this.getBaseIdType(), getValue(), getSnapshotVersion());
     }
 
-    static TypeInfo getTypeInfo(Class clazz) {
+    static TypeInfo getTypeInfo(Class<?> clazz) {
         TypeInfo typeInfo = typeInfoMap.get(clazz);
         if (typeInfo == null) {
             typeInfo = new TypeInfo(calcTypeName(clazz), calcType(clazz), calcBaseType(clazz), clazz);
@@ -236,7 +232,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return typeInfo.typeName;
     }
 
-    private static String calcTypeName(Class clazz) {
+    private static String calcTypeName(Class<?> clazz) {
         String cachedTypeName;
         String className = clazz.getName();
         int lastDotIndex = className.lastIndexOf(".");
@@ -260,11 +256,10 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return typeInfo.type;
     }
 
-    private static Class calcType(Class clazz) {
-        Class type;
-        String className = null;
+    private static Class<?> calcType(Class<?> clazz) {
+        Class<?> type;
+        String className = clazz.getName();
         try {
-            className = clazz.getName();
             type = calcClassFromIdClassName(className);
             return type;
         } catch (ClassNotFoundException e) {
@@ -272,8 +267,8 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         }
     }
 
-    private static Class calcClassFromIdClassName(String className) throws ClassNotFoundException {
-        Class type;
+    private static Class<?> calcClassFromIdClassName(String className) throws ClassNotFoundException {
+        Class<?> type;
         if (className.endsWith("IdImpl")) {
             int cutIndex = className.length() - 6;
             int dollarIndex = className.lastIndexOf("$"); // For inner classes
@@ -320,7 +315,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return calcBaseIdType(clazz);
     }
 
-    private static Class calcBaseIdType(Class c) {
+    private static Class calcBaseIdType(Class<?> c) {
         while (!Modifier.isAbstract(c.getSuperclass().getModifiers())) c = c.getSuperclass();
         return c;
     }
@@ -331,7 +326,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * @return the classname without package prefix for the base id type.
      */
     public String getBaseIdTypeName() {
-        Class c = getBaseIdType();
+        Class<?> c = getBaseIdType();
         String classname = c.getName();
         return classname.substring(classname.lastIndexOf(".") + 1); // strip the package name
     }
@@ -348,13 +343,11 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         return typeInfo.baseType;
     }
 
-    private static Class calcBaseType(Class clazz) {
-        Class baseType;
-        Class c = calcBaseIdType(clazz);
-        String className = null;
+    private static Class<?> calcBaseType(Class<?> clazz) {
+        Class<?> baseType;
+        Class<?> c = calcBaseIdType(clazz);
+        String className = c.getName();
         try {
-            className = c.getName();
-
             baseType = calcClassFromIdClassName(className);
         } catch (ClassNotFoundException e) {
             throw new ConfigurationException("Could not load base class " + className + " derived from " + clazz, e);
@@ -369,7 +362,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * @return the base type class of the id
      */
     public String getBaseTypeName() {
-        Class c = getBaseType();
+        Class<?> c = getBaseType();
         String classname = c.getName();
         return classname.substring(classname.lastIndexOf(".") + 1); // strip the package name
     }

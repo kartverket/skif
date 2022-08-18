@@ -49,8 +49,13 @@ public class CopyHelperBubbleTest {
     public static class TestBubbleId extends AbstractBubbleId<TestBubble> {
         private static final long serialVersionUID = 1;
 
-        public TestBubbleId(Object value, SnapshotVersion version) {
+        public TestBubbleId(Long value, SnapshotVersion version) {
             super(value, version);
+        }
+
+        @Override
+        public Long getValue() {
+            return (Long) super.getValue();
         }
     }
 }
