@@ -28,7 +28,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     /**
      * Allows the object to exist in multiple versions in Store.
      */
-    private SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
+    private SnapshotVersion snapshotVersion;
 
     /**
      * Helper class that holds meta info for each subtype of this class. The meta info takes
@@ -71,10 +71,12 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
 
     protected AbstractBubbleId() {
+        snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
     }
 
     protected AbstractBubbleId(Object value) {
         this.value = value;
+        snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
     }
 
     protected AbstractBubbleId(Object value, SnapshotVersion version) {
@@ -368,9 +370,9 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
 
     private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
-        SnapshotVersion replaceWithSnapshotVersion = CopyHelper.getSnapshotVersion();
-        if (replaceWithSnapshotVersion !=null) {
-            this.snapshotVersion =  replaceWithSnapshotVersion;
+        SnapshotVersion copyHelperSnapshotVersion = CopyHelper.getSnapshotVersion();
+        if (copyHelperSnapshotVersion != null) {
+            this.snapshotVersion = copyHelperSnapshotVersion; //rekursiv konfigurasjon av snapshotVersjon via CopyHelper
         }
     }
 }
