@@ -46,7 +46,6 @@ ext.libraries = [
             exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
         },
         mockito: 'org.mockito:mockito-core:4.7.0',
-        dbunit: 'org.dbunit:dbunit:2.5.4',
         unitils: 'org.unitils:unitils-core:3.4.6',
         assertj: 'org.assertj:assertj-core:3.23.1',
         reflections: 'org.reflections:reflections:0.9.11',

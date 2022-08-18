@@ -17,7 +17,6 @@ dependencies {
     testImplementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient')
 
 
-    testImplementation libraries.dbunit //optional library for testing
     testImplementation libraries.unitils //optional library for testing
     testImplementation libraries.xstream // Brukes i test
 
