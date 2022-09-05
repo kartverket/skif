@@ -1,5 +1,5 @@
 def defaultProperties = [
-        base_version          : '3.3',
+        base_version          : '3.4',
         sub_version           : '-SNAPSHOT',
 
         hibernateVersion      : '3.6',
