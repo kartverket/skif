@@ -1,11 +1,13 @@
 package no.statkart.skif.service.ejb;
 
+import com.sun.istack.Pool;
 import no.statkart.skif.exception.*;
 import no.statkart.skif.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.naming.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -34,6 +36,7 @@ import java.util.Set;
  * at EJB referansen må være registret i lookupklassen før den kan hentes ut.
  * <p>
  * Uthenting skjer via metoden {@link #lookupEjb(Class)}.
+ *
  * @author Henrik Fredholm
  */
 public class EJBLookupHelper {
@@ -50,7 +53,7 @@ public class EJBLookupHelper {
             while (iterator.hasMore()) {
                 Binding binding = iterator.next();
                 Class<Object> serviceClass = addBinding(binding);
-                if (serviceClass !=null) {
+                if (serviceClass != null) {
                     foundEJBServices.add(serviceClass);
                 }
             }
@@ -64,6 +67,16 @@ public class EJBLookupHelper {
 
     private Class<Object> addBinding(Binding binding) {
         Object obj = binding.getObject();
+        // OpenEJB pakker objektet inn i ytterligere ett lag
+        if (obj.getClass().getName().endsWith("IntraVmJndiReference")) {
+            try {
+                obj = obj.getClass().getMethod("getObject").invoke(obj);
+            } catch (NoSuchMethodException | IllegalAccessException e) {
+                throw new ImplementationException(e);
+            } catch (InvocationTargetException e) {
+                throw new ImplementationException(e.getTargetException());
+            }
+        }
         for (Class<?> c : obj.getClass().getInterfaces()) {
             if (Object.class.isAssignableFrom(c)) {
                 Class<Object> serviceClass = (Class<Object>) c;
@@ -85,7 +98,8 @@ public class EJBLookupHelper {
     }
 
     /**
-     * Finner ejb referanse ut fra service interface. 
+     * Finner ejb referanse ut fra service interface.
+     *
      * @param serviceClass
      * @param <T>
      * @return
@@ -93,7 +107,7 @@ public class EJBLookupHelper {
     public <T extends Object> T lookupEjb(Class<T> serviceClass) {
         Object ejb = ejbRegistry.get(serviceClass);
         if (ejb == null) {
-            throw new ConfigurationException("Could not find EJB for interface: " + serviceClass.getName()+ " Check that corresponding EJB has been registered in SKIF by the EJBRegistration class; i.e. by a servlet listener in the Web service's web.xml");
+            throw new ConfigurationException("Could not find EJB for interface: " + serviceClass.getName() + " Check that corresponding EJB has been registered in SKIF by the EJBRegistration class; i.e. by a servlet listener in the Web service's web.xml");
         }
         return (T) ejb;
     }
