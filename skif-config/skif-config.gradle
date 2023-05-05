@@ -17,9 +17,7 @@ filterResources {
 
             db_username: db_username as String,
             db_password: db_password as String,
-            db_hostname: db_hostname as String,
-            db_port: db_port as String,
-            db_service: db_service as String,
+            db_jdbc_url: db_jdbc_url as String,
             db_datasource: db_datasource as String,
             db_datasource_old: db_datasource_old as String,
 

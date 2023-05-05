@@ -32,9 +32,17 @@ public class SkifConfigConstants {
 
     public static final String DB_USERNAME = "skif.db_username";
     public static final String DB_PASSWORD = "skif.db_password";
+    @Deprecated //bruk DB_JDBC_URL
     public static final String DB_HOSTNAME = "skif.db_hostname";
+    @Deprecated //bruk DB_JDBC_URL
     public static final String DB_PORT = "skif.db_port";
+    @Deprecated //bruk DB_JDBC_URL
     public static final String DB_SERVICE = "skif.db_service";
+    /**
+     * NB: Used for testing SKIF - consuming projects need to implement their own test-support!
+     * URL for the database e.g. {@code "jdbc:oracle:thin:@//localhost:1521/XEPDB1"}
+     */
+    public static final String DB_JDBC_URL = "skif.db_jdbc_url";
     public static final String DB_DATASOURCE = "skif.db_datasource";
     public static final String DB_DATASOURCE_OLD = "skif.db_datasource_old";
 

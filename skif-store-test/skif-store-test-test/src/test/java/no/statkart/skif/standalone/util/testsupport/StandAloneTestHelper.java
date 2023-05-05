@@ -88,10 +88,7 @@ public class StandAloneTestHelper {
         DataSource pooledDataSource;
         String username = ((Configuration) configuration).getString(SkifConfigConstants.DB_USERNAME);
         String password = ((Configuration) configuration).getString(SkifConfigConstants.DB_PASSWORD);
-        String service = ((Configuration) configuration).getString(SkifConfigConstants.DB_SERVICE);
-        String hostname = ((Configuration) configuration).getString(SkifConfigConstants.DB_HOSTNAME);
-        String port = ((Configuration) configuration).getString(SkifConfigConstants.DB_PORT);
-        String url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
+        String url = configuration.getString(SkifConfigConstants.DB_JDBC_URL);
 
         try {
             ComboPooledDataSource pool = new ComboPooledDataSource();

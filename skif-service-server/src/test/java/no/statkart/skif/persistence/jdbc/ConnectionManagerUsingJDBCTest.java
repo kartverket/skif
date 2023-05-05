@@ -35,10 +35,7 @@ public class ConnectionManagerUsingJDBCTest {
         SkifServerConfiguration configuration = new SkifServerConfiguration();
         username = configuration.getString(SkifConfigConstants.DB_USERNAME);
         password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
-        String service = configuration.getString(SkifConfigConstants.DB_SERVICE);
-        String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
-        String port = configuration.getString(SkifConfigConstants.DB_PORT);
-        url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
+        url = configuration.getString(SkifConfigConstants.DB_JDBC_URL);
 
         DataSource pool = createPooledDataSource(configuration);
 

@@ -22,9 +22,7 @@ def defaultProperties = [
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         db_username           : '<not set>',
         db_password           : "${-> db_username}",
-        db_service            : '<not set>',
-        db_hostname           : '<not set>',
-        db_port               : 1521,
+        db_jdbc_url           : 'jdbc:oracle:thin:@//localhost:1521/XEPDB1',
         db_datasource         : 'no.kartverket.skif.storetest.persistence.SkifStoreTest_DS',
         db_datasource_old     : 'no.kartverket.skif.storetest.persistence.SkifStoreTestOld_DS',
         db_dataroot_dir       : 'G:\\ORADATA\\MA04TST',

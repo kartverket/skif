@@ -12,10 +12,7 @@ public class PoolHelper {
     public static DataSource createPooledDataSource(Configuration configuration) {
         String username = configuration.getString(SkifConfigConstants.DB_USERNAME);
         String password = configuration.getString(SkifConfigConstants.DB_PASSWORD);
-        String service = configuration.getString(SkifConfigConstants.DB_SERVICE);
-        String hostname = configuration.getString(SkifConfigConstants.DB_HOSTNAME);
-        String port = configuration.getString(SkifConfigConstants.DB_PORT);
-        String url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
+        String url = configuration.getString(SkifConfigConstants.DB_JDBC_URL);
 
         try {
             ComboPooledDataSource pool = new ComboPooledDataSource();
