@@ -1,3 +1,9 @@
+#!groovy
+
+String schemaNumber() {
+    NODE_NAME.split('-')[2].toInteger() % SKIF_19C_TOTAL_SCHEMAS.toInteger()
+}
+
 pipeline {
     agent {
         node {
@@ -8,11 +14,8 @@ pipeline {
         string(name: 'SUBVERSION')
     }
     environment {
-        GRADLE_OPTS = '-Dorg.gradle.daemon=false'
-        GRADLE_USER_HOME = "${env.WORKSPACE}/.gradle"
         SKIF_VERSION = "${env.BRANCH_NAME}.${params.SUBVERSION}"
-        SKIF_19C_JDBC_URL = "jdbc:oracle:thin:@//nnridb161:1521/MA02TST.STATKART.NO"
-        GRADLE_ARGS = "-Pbase_version=${env.BRANCH_NAME} -Psub_version=-build$BUILD_NUMBER -Pdb_jdbc_url=$SKIF_19C_JDBC_URL -Pdb_username=JENKINS_SKIF_${env.EXECUTOR_NUMBER}"
+        GRADLE_ARGS = "-Pbase_version=$BRANCH_NAME -Psub_version=-build$BUILD_NUMBER -Pdb_jdbc_url=$SKIF_19C_JDBC_URL -Pdb_username=JENKINS_SKIF_${schemaNumber()}"
 
         //for publisering til sentralt maven repo bines opp via jenkins credential (secret text)
         MAVEN_PUBLISH = credentials('MAVEN_DEPLOY_RELEASES')
