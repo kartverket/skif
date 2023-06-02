@@ -8,8 +8,8 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 
 /**
  * @author Henrik Fredholm

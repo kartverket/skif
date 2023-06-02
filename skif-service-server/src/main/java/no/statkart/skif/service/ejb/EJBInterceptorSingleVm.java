@@ -9,7 +9,7 @@ import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.util.CopyHelper;
 
-import javax.ejb.TransactionAttributeType;
+import jakarta.ejb.TransactionAttributeType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;

@@ -5,11 +5,10 @@ import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 
 import javax.inject.Inject;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.LogicalHandler;
-import javax.xml.ws.handler.LogicalMessageContext;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.LogicalHandler;
+import jakarta.xml.ws.handler.LogicalMessageContext;
+import jakarta.xml.ws.handler.MessageContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -4,8 +4,8 @@ import no.statkart.skif.service.ejb.EJBRegistration;
 import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponentFinderService;
 import no.statkart.skif.storetest.domain.relation.uni.direct.X1AAFinderService;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBs;
 
 /**
  * EJB'er må listes her for at skif skal kunne finne frem til dem.

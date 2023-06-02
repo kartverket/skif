@@ -5,9 +5,9 @@ import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 
 /**
  * @author Roar Ingebrigtsen

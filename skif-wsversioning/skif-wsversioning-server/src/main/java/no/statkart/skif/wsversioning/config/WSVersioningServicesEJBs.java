@@ -5,8 +5,8 @@ import no.statkart.skif.wsversioning.service.LockService;
 import no.statkart.skif.wsversioning.service.StoreService;
 import no.statkart.skif.wsversioning.service.VegService;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBs;
 
 /**
  * EJB-er må listes her for at skif skal kunne finne frem til dem.

@@ -4,12 +4,12 @@ import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.service.chain.WSServiceChainFactory;
 
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceContext;
 
 /**
  * Factory for å få tak i {@code WSServiceChain} for Web Service av type {@code <W>}.
  * <p>
- * For hver gang {@link WebServiceImplementationFactory#getService(javax.xml.ws.WebServiceContext, Class)} kalles
+ * For hver gang {@link WebServiceImplementationFactory#getService(jakarta.xml.ws.WebServiceContext, Class)} kalles
  * oppretter factoryen en ny {@code WSServiceChain} med tilhørende proxy av type {@code W}.
  * <p>
  * {@code WSServiceChain}'en konstrueres ved å sette sammen en en {@code SkifWSInterceptor<W>} med ProxyHandlere
@@ -40,7 +40,7 @@ public class WebServiceImplementationFactoryImpl<W> implements WebServiceImpleme
 
 
     private String buildServiceName(Class impl) {
-        javax.jws.WebService webService = (javax.jws.WebService) impl.getAnnotation(javax.jws.WebService.class);
+        jakarta.jws.WebService webService = (jakarta.jws.WebService) impl.getAnnotation(jakarta.jws.WebService.class);
         if (webService.name() != null && !webService.name().trim().equals("")) {
             return impl.getPackage().getName() + "." + webService.name();
         } else {

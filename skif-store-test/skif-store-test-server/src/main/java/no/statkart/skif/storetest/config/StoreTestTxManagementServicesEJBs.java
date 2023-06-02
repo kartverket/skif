@@ -5,8 +5,8 @@ import no.statkart.skif.storetest.service.txbmt.BeanManagedTxAService;
 import no.statkart.skif.storetest.service.txcmt.ContainerManagedTxAService;
 import no.statkart.skif.storetest.service.txcascade.ContainerManagedTxCMTCascadeService;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBs;
 
 /**
  * EJB'er må listes her for at skif skal kunne finne frem til dem.

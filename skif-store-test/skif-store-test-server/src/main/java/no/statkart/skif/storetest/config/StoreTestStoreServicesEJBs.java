@@ -13,8 +13,8 @@ import no.statkart.skif.storetest.service.nedlastning.NedlastningService;
 import no.statkart.skif.storetest.service.store.StoreService;
 import no.statkart.skif.storetest.service.uow.UowTestService;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBs;
 
 /**
  * EJB'er må listes her for at skif skal kunne finne frem til dem.

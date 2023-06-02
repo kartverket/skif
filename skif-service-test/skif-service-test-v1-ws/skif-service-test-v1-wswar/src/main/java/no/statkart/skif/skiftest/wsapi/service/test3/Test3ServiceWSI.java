@@ -6,7 +6,7 @@ import no.statkart.skif.skiftest.wsapi.domain.B;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
 import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * @author Henrik Fredholm

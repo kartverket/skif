@@ -8,9 +8,9 @@ import no.statkart.skif.skiftest.domain.A;
 import no.statkart.skif.skiftest.domain.B;
 import no.statkart.skif.skiftest.exception.SimpleException;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 
 /**
  * @author Roar Ingebrigtsen

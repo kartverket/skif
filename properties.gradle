@@ -2,7 +2,7 @@ def defaultProperties = [
         base_version          : '3.4',
         sub_version           : '-SNAPSHOT',
 
-        hibernateVersion      : '3.6',
+        hibernateVersion      : '5.6',
 
         service_mode          : 'SINGLE_VM',
 

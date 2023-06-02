@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
-import javax.ejb.TransactionAttributeType;
+import jakarta.ejb.TransactionAttributeType;
 import java.security.Principal;
 
 /**

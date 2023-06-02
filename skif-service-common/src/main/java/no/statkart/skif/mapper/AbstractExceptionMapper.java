@@ -29,8 +29,8 @@ public abstract class AbstractExceptionMapper<M extends ExceptionMapping> extend
         if (args.length == 1 && !(args[0] instanceof SkifException)) {
             Throwable t = (Throwable) args[0];
 
-            // Kan ikke bruke instanceof på EJBAccessException, for den klassen finnes ikke på klientsiden, kun tjenersiden (og singlevm)
-            if (t.getClass().getName().equals("javax.ejb.EJBAccessException")) {
+            // Kan ikke bruke instanceof p? EJBAccessException, for den klassen finnes ikke p? klientsiden, kun tjenersiden (og singlevm)
+            if (t.getClass().getName().equals("jakarta.ejb.EJBAccessException")) {
                 PermissionDeniedException e = new PermissionDeniedException(t.getMessage(), t);
                 e.setStackTrace(t.getStackTrace());
                 return super.d2w(method, new Object[]{e});

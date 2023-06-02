@@ -3,7 +3,7 @@ package no.statkart.skif.skiftest.wsapi.service.testa;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * @author Henrik Fredholm

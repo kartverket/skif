@@ -5,8 +5,8 @@ import com.google.inject.Injector;
 import no.statkart.skif.ServerInjectorRegistry;
 import no.statkart.skif.module.ModuleConfiguration;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 
 /**
  * Definere hvilken injector som skal brukes internt i V1-api-et og hvordan denne konfigureres opp.

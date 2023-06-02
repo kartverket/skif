@@ -6,9 +6,9 @@ import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 import no.statkart.skif.storetest.service.txcmt.ContainerManagedTxAService;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.*;
-import javax.interceptor.Interceptors;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.*;
+import jakarta.interceptor.Interceptors;
 
 /**
  * @author Henrik Fredholm

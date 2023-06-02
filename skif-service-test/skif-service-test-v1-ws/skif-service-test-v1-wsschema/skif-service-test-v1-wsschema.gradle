@@ -6,6 +6,9 @@ plugins {
 dependencies {
   implementation libraries.jaxws_api
   implementation libraries.jaxb_api
+
+  compileOnly "org.glassfish.jaxb:jaxb-runtime:$JAXB_VERSION"
+  jaxb "org.glassfish.jaxb:jaxb-xjc:$JAXB_VERSION"
 }
 
 sourceSets {

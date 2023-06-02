@@ -8,9 +8,9 @@ import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.*;
-import javax.interceptor.Interceptors;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.*;
+import jakarta.interceptor.Interceptors;
 import java.util.Collection;
 import java.util.Set;
 

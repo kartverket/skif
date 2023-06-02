@@ -7,6 +7,6 @@ package no.statkart.skif.service.jta;
  * @author Henrik Fredholm
  * since 2.0
  */
-public interface JTASynchronizable extends javax.transaction.Synchronization {
+public interface JTASynchronizable extends jakarta.transaction.Synchronization {
     void setWaitForJTASynchronization(boolean doWait);
 }

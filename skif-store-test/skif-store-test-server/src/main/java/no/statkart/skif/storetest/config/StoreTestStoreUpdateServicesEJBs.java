@@ -3,8 +3,8 @@ package no.statkart.skif.storetest.config;
 import no.statkart.skif.service.ejb.EJBRegistration;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBs;
 
 /**
  * @author Roar Ingebrigtsen

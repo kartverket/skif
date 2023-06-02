@@ -9,7 +9,7 @@ import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 
-import javax.ejb.TransactionAttributeType;
+import jakarta.ejb.TransactionAttributeType;
 import java.lang.reflect.Method;
 
 /**

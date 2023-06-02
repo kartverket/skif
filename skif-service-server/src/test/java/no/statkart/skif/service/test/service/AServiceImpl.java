@@ -3,8 +3,8 @@ package no.statkart.skif.service.test.service;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.util.List;
 
 /**

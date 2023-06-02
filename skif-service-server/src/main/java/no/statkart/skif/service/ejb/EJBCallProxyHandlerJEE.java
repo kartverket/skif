@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

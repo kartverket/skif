@@ -3,8 +3,8 @@ package no.statkart.skif.skiftest.config;
 import no.statkart.skif.service.ejb.EJBRegistration;
 import no.statkart.skif.skiftest.service.testex.TestExService;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBs;
 
 /**
  * EJB'er må listes her for at skif skal kunne finne frem til dem.

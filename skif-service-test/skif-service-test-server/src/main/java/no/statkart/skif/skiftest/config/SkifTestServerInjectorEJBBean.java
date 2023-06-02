@@ -6,7 +6,7 @@ import com.google.inject.Injector;
 import no.statkart.skif.ServerInjectorRegistry;
 import no.statkart.skif.module.ModuleBuilder;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 
 /**

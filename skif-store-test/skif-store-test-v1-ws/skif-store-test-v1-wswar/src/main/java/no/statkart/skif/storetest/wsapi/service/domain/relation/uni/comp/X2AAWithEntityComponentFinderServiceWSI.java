@@ -8,7 +8,7 @@ import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2B
 import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2CCManyIdList;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * TODO: Denne service bruker feiler parameter typer. Legg inn riktige når de er modellert i basic.xsd

@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.endringslogg.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * @author Thomas Berg

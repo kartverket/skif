@@ -6,8 +6,8 @@ import no.statkart.skif.skiftest.service.testb.BService;
 import no.statkart.skif.skiftest.service.testc.CService;
 import no.statkart.skif.skiftest.service.testd.DService;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBs;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBs;
 
 /**
  * EJB'er må listes her for at skif skal kunne finne frem til dem.

@@ -3,7 +3,7 @@ package no.statkart.skif.wsversioning.config;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ejb.EJBInterceptorJEE;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 /**
  * EJB interceptor for WSVersioning-prosjektet.

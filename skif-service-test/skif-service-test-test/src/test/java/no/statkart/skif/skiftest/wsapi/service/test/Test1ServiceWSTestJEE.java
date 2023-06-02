@@ -30,8 +30,8 @@ import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceClient;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.WebServiceClient;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -98,7 +98,7 @@ public class Test1ServiceWSTestJEE {
                         return port;
                     }
 
-                    private String getWebServiceContextPath(Class<? extends javax.xml.ws.Service> wsClass) {
+                    private String getWebServiceContextPath(Class<? extends jakarta.xml.ws.Service> wsClass) {
                         // Matcher http://skif.statkart.no/skiftest/wsapi/service/...
                         Pattern pattern = Pattern.compile(".*://[^/]*/(.*)/service/.*");
                         WebServiceClient annotation = wsClass.getAnnotation(WebServiceClient.class);

@@ -9,7 +9,7 @@ import no.statkart.skif.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceContext;
 
 /**
  * @author Henrik Fredholm
