@@ -16,7 +16,7 @@ import java.util.Optional;
 public class DefaultWebServiceExceptionMapper implements WebServiceExceptionMapper {
     @Override
     public Optional<Throwable> mapException(WebServiceException e, Map<String, Object> responseContext, Method method, Object[] args) {
-        // Det kastes en intern exceptiontype, men den varierer ut fra implementasjonen. Teksten i den kan jo også
+        // Det kastes en intern exceptiontype, men den varierer ut fra implementasjonen. Teksten i den kan jo ogsï¿½
         // endre seg. Sjekker derfor HTTP-statuskoden direkte dersom det kastes en exception i det hele tatt.
         Integer responseCode = (Integer) responseContext.get(MessageContext.HTTP_RESPONSE_CODE);
         if (responseCode != null) {
