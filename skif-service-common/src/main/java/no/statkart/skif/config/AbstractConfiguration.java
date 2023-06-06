@@ -372,7 +372,7 @@ public abstract class AbstractConfiguration implements Configuration {
      * @see PropertyConverter#toBoolean(Object)
      */
     public boolean getBoolean(String key, boolean defaultValue) {
-        return getBoolean(key, new Boolean(defaultValue)).booleanValue();
+        return getBoolean(key, Boolean.valueOf(defaultValue));
     }
 
     /**
@@ -411,7 +411,7 @@ public abstract class AbstractConfiguration implements Configuration {
     }
 
     public byte getByte(String key, byte defaultValue) {
-        return getByte(key, new Byte(defaultValue)).byteValue();
+        return getByte(key, Byte.valueOf(defaultValue));
     }
 
     public Byte getByte(String key, Byte defaultValue) {
@@ -438,7 +438,7 @@ public abstract class AbstractConfiguration implements Configuration {
     }
 
     public double getDouble(String key, double defaultValue) {
-        return getDouble(key, new Double(defaultValue)).doubleValue();
+        return getDouble(key, Double.valueOf(defaultValue));
     }
 
     public Double getDouble(String key, Double defaultValue) {
@@ -465,7 +465,7 @@ public abstract class AbstractConfiguration implements Configuration {
     }
 
     public float getFloat(String key, float defaultValue) {
-        return getFloat(key, new Float(defaultValue)).floatValue();
+        return getFloat(key, Float.valueOf(defaultValue));
     }
 
     public Float getFloat(String key, Float defaultValue) {
@@ -525,7 +525,7 @@ public abstract class AbstractConfiguration implements Configuration {
     }
 
     public long getLong(String key, long defaultValue) {
-        return getLong(key, new Long(defaultValue)).longValue();
+        return getLong(key, Long.valueOf(defaultValue));
     }
 
     public Long getLong(String key, Long defaultValue) {
@@ -552,7 +552,7 @@ public abstract class AbstractConfiguration implements Configuration {
     }
 
     public short getShort(String key, short defaultValue) {
-        return getShort(key, new Short(defaultValue)).shortValue();
+        return getShort(key, Short.valueOf(defaultValue));
     }
 
     public Short getShort(String key, Short defaultValue) {
@@ -716,8 +716,8 @@ public abstract class AbstractConfiguration implements Configuration {
             list = new ArrayList(1);
             list.add(interpolate((String) value));
         } else if (value instanceof List) {
-            list = new ArrayList();
             List l = (List) value;
+            list = new ArrayList(l.size());
 
             // add the interpolated elements in the new list
             Iterator it = l.iterator();

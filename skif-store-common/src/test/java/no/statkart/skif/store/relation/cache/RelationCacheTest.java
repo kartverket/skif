@@ -28,20 +28,20 @@ public class RelationCacheTest {
             return (Long) super.getValue();
         }
 
-        TestBubbleId(int idValue) {
+        TestBubbleId(long idValue) {
             super(idValue);
         }
     }
 
-    final static private TestBubbleId KEY = new TestBubbleId(0);
-    final static private TestBubbleId KEY1 = new TestBubbleId(1);
-    final static private TestBubbleId KEY2 = new TestBubbleId(2);
+    final static private TestBubbleId KEY = new TestBubbleId(0L);
+    final static private TestBubbleId KEY1 = new TestBubbleId(1L);
+    final static private TestBubbleId KEY2 = new TestBubbleId(2L);
 
-    final static private TestBubbleId ID_VALUE = new TestBubbleId(10);
-    final static private TestBubbleId ID_VALUE1 = new TestBubbleId(11);
-    final static private TestBubbleId ID_VALUE2 = new TestBubbleId(12);
-    final static private TestBubbleId ID_VALUE3 = new TestBubbleId(13);
-    final static private TestBubbleId ID_VALUE4 = new TestBubbleId(14);
+    final static private TestBubbleId ID_VALUE = new TestBubbleId(10L);
+    final static private TestBubbleId ID_VALUE1 = new TestBubbleId(11L);
+    final static private TestBubbleId ID_VALUE2 = new TestBubbleId(12L);
+    final static private TestBubbleId ID_VALUE3 = new TestBubbleId(13L);
+    final static private TestBubbleId ID_VALUE4 = new TestBubbleId(14L);
 
     public void getCachedRelationNamesForEmptyCache() {
         RelationCache cache = new RelationCache();

@@ -19,7 +19,7 @@ public class EnumKodeIdTypeTest {
 
         EnumKodeIdType type = new EnumKodeIdType();
         Assert.assertTrue(type.equals(null, null));
-        Assert.assertFalse(type.equals(null, new Long(12)));
+        Assert.assertFalse(type.equals(null, 12L));
         Assert.assertFalse(type.equals(AEnumKodeId.KodeAId, null));
         Assert.assertTrue(type.equals(AEnumKodeId.KodeAId, AEnumKodeId.KodeAId));
         Assert.assertFalse(type.equals(AEnumKodeId.KodeBId, AEnumKodeId.KodeAId));

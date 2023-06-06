@@ -17,7 +17,7 @@ public class PersonId<T extends Person> extends AbstractStoreTestBubbleId<T> {
     }
 
     public static PersonId<?> create(long value) {
-        return new PersonId<Person>(new Long(value));
+        return new PersonId<>(value);
     }
 
 }

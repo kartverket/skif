@@ -147,18 +147,18 @@ public class StoreSessionServerTest {
     private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<>(11L, S3);
     private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.OLD);
 
-    private TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<>(1);
-    private TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101);
+    private final TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<>(1L);
+    private final TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101L);
 
-    private FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<>(1);
-    private FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<>(2);
-    private FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_3 = new FilteredBubbleId<>(3);
-    private FilteredBubbleId<FilteredBubble> filteredBubbleId_4 = new FilteredBubbleId<>(4);
-    private FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_5 = new FilteredBubbleId<>(5);
-    private FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<>(101);
+    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<>(1L);
+    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<>(2L);
+    private final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_3 = new FilteredBubbleId<>(3L);
+    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_4 = new FilteredBubbleId<>(4L);
+    private final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_5 = new FilteredBubbleId<>(5L);
+    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<>(101L);
 
-    private ParentBubbleId<ParentBubble> parentBubbleId_1 = new ParentBubbleId<>(1);
-    private ParentBubbleId<ParentBubble> parentBubbleId_2 = new ParentBubbleId<>(2);
+    private final ParentBubbleId<ParentBubble> parentBubbleId_1 = new ParentBubbleId<>(1L);
+    private final ParentBubbleId<ParentBubble> parentBubbleId_2 = new ParentBubbleId<>(2L);
 
     private HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
     private DefaultPersistenceSessionManager persistenceSessionManager;
@@ -286,7 +286,7 @@ public class StoreSessionServerTest {
         @Override
         public void onFinish(StoreServer storeServer) {
             BubbleId<?> bubbleId = storeServer.getUpdatedIds().stream()
-                    .filter(id -> id.equals(new ParentBubbleEmptyColOptimizerId<>(4)))
+                    .filter(id -> id.equals(new ParentBubbleEmptyColOptimizerId<>(4L)))
                     .findFirst().orElse(null);
             if (bubbleId!=null) {
                 ParentBubbleEmptyColOptimizer parent = (ParentBubbleEmptyColOptimizer) storeServer.get(bubbleId);
@@ -468,7 +468,7 @@ public class StoreSessionServerTest {
                 filteredBubbleId_1,
                 filteredBubbleWithPermissionDeniedId_3,
                 filteredBubbleId_4,
-                new FilteredBubbleId<>(99), // finnes ikke
+                new FilteredBubbleId<>(99L), // finnes ikke
                 filteredBubbleWithPermissionDeniedId_5);
         assertThatThrownBy(()->storeServer.get(bubbleIds))
                 .isInstanceOf(ObjectsNotFoundException.class)
@@ -489,7 +489,7 @@ public class StoreSessionServerTest {
                 filteredBubbleId_1,
                 filteredBubbleWithPermissionDeniedId_3,
                 filteredBubbleId_4,
-                new FilteredBubbleId<>(99), // finnes ikke
+                new FilteredBubbleId<>(99L), // finnes ikke
                 filteredBubbleWithPermissionDeniedId_5);
         List<FilteredBubble> ignoreMissing = storeServer.getIgnoreMissing(bubbleIds);
         assertThat(ignoreMissing).extracting("id").
@@ -1267,21 +1267,21 @@ public class StoreSessionServerTest {
      */
     public void testAttemptDelete() {
         //Opprett 1 parent bubble og 2 child bubbles
-        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201);
-        ParentBubbleId<ParentBubble> parentBubbleId_202 = new ParentBubbleId<>(202);
-        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201);
-        ChildBubbleId<ChildBubble> ChildBubbleId_202 = new ChildBubbleId<>(202);
+        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201L);
+        ParentBubbleId<ParentBubble> parentBubbleId_202 = new ParentBubbleId<>(202L);
+        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201L);
+        ChildBubbleId<ChildBubble> ChildBubbleId_202 = new ChildBubbleId<>(202L);
 
         ParentBubble parentBubble_201 = new ParentBubble(parentBubbleId_201);
         parentBubble_201.setText("Insert parent 1");
 
         ChildBubble childBubble_201 = new ChildBubble(ChildBubbleId_201);
         childBubble_201.setText("Insert child 1");
-        parentBubble_201.addChild(ChildBubbleId_201, (long) 201);
+        parentBubble_201.addChild(ChildBubbleId_201, 201L);
 
         ChildBubble childBubble_202 = new ChildBubble(ChildBubbleId_202);
         childBubble_202.setText("Insert child 2");
-        childBubble_202.setTestBubbleId(new TestBubbleId<>(2));
+        childBubble_202.setTestBubbleId(new TestBubbleId<>(2L));
 
         storeServer.beginTransaction();
         storeServer.insert(childBubble_201);
@@ -1333,15 +1333,15 @@ public class StoreSessionServerTest {
 
     public void testAttemptDeleteManyCallsWithFail() {
         int MAX_SAVEPOINTS = 1;
-        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201);
-        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201);
+        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201L);
+        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201L);
 
         ParentBubble parentBubble_201 = new ParentBubble(parentBubbleId_201);
         parentBubble_201.setText("Insert parent 1");
 
         ChildBubble childBubble_201 = new ChildBubble(ChildBubbleId_201);
         childBubble_201.setText("Insert child 1");
-        parentBubble_201.addChild(ChildBubbleId_201, (long) 201);
+        parentBubble_201.addChild(ChildBubbleId_201, 201L);
 
         storeServer.beginTransaction();
         storeServer.insert(childBubble_201);
@@ -1352,8 +1352,8 @@ public class StoreSessionServerTest {
         storeServer.beginTransaction();
         storeServer.lock(childBubble_201.getBubbleId());
         logger.warn("Denne test forsøker å bryte integritetsskranke 'FK_CHILDFORPARENT_CHILD'. Hibernate (org.hibernate.util.JDBCExceptionReporter) logger en ERROR om dette, hvilket er ok.");
-        for (int i = 1000; i < 1000+MAX_SAVEPOINTS; i++) {
-            ParentBubble parentBubble = new ParentBubble(new ParentBubbleId(i));
+        for (long i = 1000; i < 1000+MAX_SAVEPOINTS; i++) {
+            ParentBubble parentBubble = new ParentBubble(new ParentBubbleId<>(i));
             parentBubble.setText("Insert parent" + i);
             storeServer.insert(parentBubble);
             try {
@@ -1367,21 +1367,23 @@ public class StoreSessionServerTest {
         }
         storeServer.commitTransaction();
         storeServer.clear();
-        assertEquals(storeServer.get(new ParentBubbleId<ParentBubble>(1000)).getText(), "Updated parent " + 1000);
-        assertEquals(storeServer.get(new ParentBubbleId<ParentBubble>(1000 + MAX_SAVEPOINTS - 1)).getText(),"Updated parent " + (1000 + MAX_SAVEPOINTS-1));
+        assertThat(storeServer.get(new ParentBubbleId<ParentBubble>(1000L)).getText())
+                .isEqualTo("Updated parent " + 1000);
+        assertThat(storeServer.get(new ParentBubbleId<ParentBubble>(1000L + MAX_SAVEPOINTS - 1)).getText())
+                .isEqualTo("Updated parent " + (1000 + MAX_SAVEPOINTS-1));
     }
 
     public void testAttemptDeleteManyCallsWithoutFail() {
         int MAX_SAVEPOINTS = 5;
-        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201);
-        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201);
+        ParentBubbleId<ParentBubble> parentBubbleId_201 = new ParentBubbleId<>(201L);
+        ChildBubbleId<ChildBubble> ChildBubbleId_201 = new ChildBubbleId<>(201L);
 
         ParentBubble parentBubble_201 = new ParentBubble(parentBubbleId_201);
         parentBubble_201.setText("Insert parent 1");
 
         ChildBubble childBubble_201 = new ChildBubble(ChildBubbleId_201);
         childBubble_201.setText("Insert child 1");
-        parentBubble_201.addChild(ChildBubbleId_201, (long) 201);
+        parentBubble_201.addChild(ChildBubbleId_201, 201L);
 
         storeServer.beginTransaction();
         storeServer.insert(childBubble_201);
@@ -1391,11 +1393,11 @@ public class StoreSessionServerTest {
 
         storeServer.beginTransaction();
         storeServer.lock(childBubble_201.getBubbleId());
-        ParentBubble previousParent= new ParentBubble(new ParentBubbleId(999));
+        ParentBubble previousParent= new ParentBubble(new ParentBubbleId<>(999L));
         previousParent.setText("Insert parent" + 999);
         storeServer.insert(previousParent);
-        for (int i = 1000; i < 1000+MAX_SAVEPOINTS; i++) {
-            ParentBubble parentBubble = new ParentBubble(new ParentBubbleId(i));
+        for (long i = 1000; i < 1000+MAX_SAVEPOINTS; i++) {
+            ParentBubble parentBubble = new ParentBubble(new ParentBubbleId<>(i));
             parentBubble.setText("Insert parent" + i);
             storeServer.insert(parentBubble);
             try {
@@ -2275,7 +2277,7 @@ public class StoreSessionServerTest {
         enableLazyLoading();
         storeServer.beginTransaction();
         try {
-            ParentBubbleEmptyColOptimizer parent = new ParentBubbleEmptyColOptimizer(new ParentBubbleEmptyColOptimizerId<>(101));
+            ParentBubbleEmptyColOptimizer parent = new ParentBubbleEmptyColOptimizer(new ParentBubbleEmptyColOptimizerId<>(101L));
             storeServer.insert(parent);
             assertThat(parent.getEmptyCollectionsFlag()).isEqualTo(3);
         } finally {

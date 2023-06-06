@@ -13,8 +13,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -515,9 +525,9 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
 
         @Override
         public int compareTo(TypeMapperMatch o) {
-            int relasjon = new Integer(fromDistance).compareTo(o.fromDistance);
+            int relasjon = Integer.compare(fromDistance, o.fromDistance);
             if (relasjon == 0) {
-                relasjon = new Integer(toDistance).compareTo(o.toDistance);
+                relasjon = Integer.compare(toDistance, o.toDistance);
             }
             return relasjon;
         }

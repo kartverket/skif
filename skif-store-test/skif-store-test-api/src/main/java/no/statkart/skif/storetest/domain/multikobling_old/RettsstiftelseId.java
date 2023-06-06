@@ -16,8 +16,4 @@ public class RettsstiftelseId<T extends Rettsstiftelse> extends AbstractStoreTes
         super(value, snapshotVersion);
     }
 
-    public static RettsstiftelseId<?> create(long value) {
-        return new RettsstiftelseId<Rettsstiftelse>(new Long(value));
-    }
-
 }

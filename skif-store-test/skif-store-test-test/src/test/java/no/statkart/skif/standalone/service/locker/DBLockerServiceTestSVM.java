@@ -10,7 +10,9 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Testklasse for DBLockerService. NB! Det finnes ikke noen webservice for denne tjenesten så testen kan kun kjøres i singleVM mode
@@ -30,7 +32,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
         long l = System.currentTimeMillis();
         LockInfo<Long> lock = service.lock(new LockKey<>("TestKlasse1", 1123L), "ingroa", 50);
         Assert.assertEquals(lock.getLockKey().discriminator, "TestKlasse1");
-        Assert.assertEquals(lock.getLockKey().keyValue, new Long(1123L));
+        Assert.assertEquals(lock.getLockKey().keyValue, Long.valueOf(1123L));
         Assert.assertEquals(lock.getOwner(), "ingroa");
         Assert.assertTrue(lock.getExpires().getTime() > l);
 

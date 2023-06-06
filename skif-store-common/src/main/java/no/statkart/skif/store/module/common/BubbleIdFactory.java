@@ -13,22 +13,18 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class BubbleIdFactory {
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, long idValue, SnapshotVersion snapshotVersion) {
-        return createInstance(idClass, new Long(idValue), snapshotVersion);
+        return createInstance(idClass, Long.valueOf(idValue), snapshotVersion);
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public static <I extends BubbleId<?>> I createInstance(Class<I> idClass, Object idValue, SnapshotVersion snapshotVersion) {
         try {
             Constructor<I> ctor = idClass.getDeclaredConstructor(idValue.getClass(), SnapshotVersion.class);
             ctor.setAccessible(true);
+            @SuppressWarnings("UnnecessaryLocalVariable")
             I id = ctor.newInstance(idValue, snapshotVersion);
             return id;
-        } catch (InstantiationException e) {
-            throw new ImplementationException(e);
-        } catch (IllegalAccessException e) {
-            throw new ImplementationException(e);
-        } catch (NoSuchMethodException e) {
-            throw new ImplementationException(e);
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new ImplementationException(e);
         }
     }

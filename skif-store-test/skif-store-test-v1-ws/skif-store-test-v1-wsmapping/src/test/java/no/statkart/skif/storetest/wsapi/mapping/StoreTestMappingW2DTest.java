@@ -6,11 +6,14 @@ import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.service.store.StoreService;
 import no.statkart.skif.storetest.wsapi.mapping.testutils.StoreTestMappingTestContext;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Henrik Fredholm
@@ -40,8 +43,7 @@ public class StoreTestMappingW2DTest {
 
         Integer source = 5;
         Integer target = map.w2d(source);
-        Assert.assertNotNull(target);
-        Assert.assertEquals(target, new Integer(5));
+        assertThat(target).isEqualTo(Integer.valueOf(5));
     }
 
     @Test
@@ -50,8 +52,7 @@ public class StoreTestMappingW2DTest {
 
         int source = 5;
         int target = map.w2d(source);
-        Assert.assertNotNull(target);
-        Assert.assertEquals(target, 5);
+        assertThat(target).isEqualTo(5);
     }
 
 
@@ -65,7 +66,7 @@ public class StoreTestMappingW2DTest {
         source.setId(sourceId);
         source.setText("Test");
         Simple target = map.w2d(source, Simple.class);
-        Assert.assertEquals(target.getId().getValue(), new Long(10));
+        assertThat(target.getId().getValue()).isEqualTo(10L);
         Assert.assertEquals(target.getText(), "Test");
     }
 
