@@ -19,7 +19,19 @@ import java.lang.reflect.ParameterizedType;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -457,7 +469,7 @@ public class AutomagicTest {
     protected <T> T createNewInstance(Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T t = null;
         if (clazz.equals(Long.class)) {
-            t = clazz.cast(new Long(randomGenerator.nextLong()));
+            t = clazz.cast(randomGenerator.nextLong()); // Caster for å unngå warning
         } else if (clazz.equals(BigInteger.class)) {
             t = clazz.cast(BigInteger.ONE); // Caster for å unngå warning
         } else {

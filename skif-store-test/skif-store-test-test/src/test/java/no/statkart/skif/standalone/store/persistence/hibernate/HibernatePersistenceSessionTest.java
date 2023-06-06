@@ -52,7 +52,7 @@ public class HibernatePersistenceSessionTest {
     private TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<>(11L, S3);
     private TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<>(11L, OLD);
 
-    private TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101);
+    private final TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101L);
 
     private HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
 
@@ -189,7 +189,7 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = persistenceSession.get(new TestBubbleId<>(101));
+            TestBubble testBubble = persistenceSession.get(new TestBubbleId<>(101L));
             testBubble.setText("updated");
             persistenceSession.update(testBubble);
             persistenceSession.commit();
@@ -208,7 +208,7 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101));
+            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101L));
             testBubble.setText("Updated");
             persistenceSession.update(testBubble);
             persistenceSession.commit();
@@ -232,7 +232,7 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101));
+            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101L));
             testBubble.setText("Updated");
             persistenceSession.get(testBubble.getId());
             persistenceSession.update(testBubble);
@@ -252,7 +252,7 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101));
+            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101L));
             testBubble.setText("Updated");
             persistenceSession.delete(testBubble);
             persistenceSession.commit();
@@ -276,7 +276,7 @@ public class HibernatePersistenceSessionTest {
         testInsertAndCommit();
         try {
             persistenceSession.beginTransaction();
-            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101));
+            TestBubble testBubble = new TestBubble(new TestBubbleId<>(101L));
             testBubble.setText("Updated");
             persistenceSession.get(testBubble.getId());
             persistenceSession.delete(testBubble);

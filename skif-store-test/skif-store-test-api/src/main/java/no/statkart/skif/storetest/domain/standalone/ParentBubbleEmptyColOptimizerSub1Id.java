@@ -4,14 +4,6 @@ import no.statkart.skif.store.SnapshotVersion;
 
 public class ParentBubbleEmptyColOptimizerSub1Id<T extends ParentBubbleEmptyColOptimizerSub1> extends ParentBubbleEmptyColOptimizerId<T> {
 
-    public ParentBubbleEmptyColOptimizerSub1Id() {
-        super();
-    }
-
-    public ParentBubbleEmptyColOptimizerSub1Id(int idValue) {
-        super(new Long(idValue));
-    }
-
     public ParentBubbleEmptyColOptimizerSub1Id(Long idValue) {
         super(idValue);
     }

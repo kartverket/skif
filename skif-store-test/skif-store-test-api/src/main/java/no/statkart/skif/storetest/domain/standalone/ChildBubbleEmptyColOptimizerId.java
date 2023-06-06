@@ -11,14 +11,6 @@ public class ChildBubbleEmptyColOptimizerId<T extends ChildBubbleEmptyColOptimiz
         return (Long) super.getValue();
     }
 
-    public ChildBubbleEmptyColOptimizerId() {
-        super();
-    }
-
-    public ChildBubbleEmptyColOptimizerId(int idValue) {
-        super(new Long(idValue));
-    }
-
     public ChildBubbleEmptyColOptimizerId(Long idValue) {
         super(idValue);
     }

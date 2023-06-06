@@ -15,14 +15,6 @@ public class TestBubbleWithHistoryId<T extends TestBubbleWithHistory> extends Ab
         return (Long) super.getValue();
     }
 
-    public TestBubbleWithHistoryId() {
-        super();
-    }
-
-    public TestBubbleWithHistoryId(int idValue) {
-        super(new Long(idValue));
-    }
-
     public TestBubbleWithHistoryId(Long idValue) {
         super(idValue);
     }

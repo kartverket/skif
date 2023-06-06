@@ -53,7 +53,7 @@ public class PersistenceSessionManagerTest {
     TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_S4 = new TestBubbleWithHistoryId<TestBubbleWithHistory>(11L, S4);
     TestBubbleWithHistoryId<TestBubbleWithHistory> TestBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<TestBubbleWithHistory>(11L, OLD);
 
-    TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<TestBubble>(101);
+    final TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101L);
 
     HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
 

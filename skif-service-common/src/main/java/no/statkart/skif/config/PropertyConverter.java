@@ -167,12 +167,7 @@ public final class PropertyConverter
         }
         else if (value instanceof String)
         {
-            Boolean b = InternalBooleanUtils.toBooleanObject((String) value);
-            if (b == null)
-            {
-                throw new PropertyConverterException("The value " + value + " can't be converted to a Boolean object");
-            }
-            return b;
+            return InternalBooleanUtils.toBooleanObject((String) value);
         }
         else
         {
@@ -196,7 +191,7 @@ public final class PropertyConverter
         }
         else
         {
-            return new Byte(n.byteValue());
+            return n.byteValue();
         }
     }
 
@@ -216,7 +211,7 @@ public final class PropertyConverter
         }
         else
         {
-            return new Short(n.shortValue());
+            return n.shortValue();
         }
     }
 
@@ -236,7 +231,7 @@ public final class PropertyConverter
         }
         else
         {
-            return new Integer(n.intValue());
+            return n.intValue();
         }
     }
 
@@ -256,7 +251,7 @@ public final class PropertyConverter
         }
         else
         {
-            return new Long(n.longValue());
+            return n.longValue();
         }
     }
 
@@ -276,7 +271,7 @@ public final class PropertyConverter
         }
         else
         {
-            return new Float(n.floatValue());
+            return n.floatValue();
         }
     }
 
@@ -296,7 +291,7 @@ public final class PropertyConverter
         }
         else
         {
-            return new Double(n.doubleValue());
+            return n.doubleValue();
         }
     }
 

@@ -25,8 +25,8 @@ public class KodeIdTest {
     public void testCreateId() {
         AEnumKodeId a = AEnumKodeId.KodeAId;
         KodelisteId<?> kodelisteId = AEnumKodeId.KODELISTE_ID;
-        assertEquals(a.getValue(), new Long(1));
-        assertEquals(kodelisteId.getValue(), new Long(1));
+        assertEquals(a.getValue(), Long.valueOf(1L));
+        assertEquals(kodelisteId.getValue(), 1L);
 
         // Id'er er ikke unike instanser
         AEnumKodeId aCopy = new AEnumKodeId(1L, SnapshotVersion.CURRENT);
@@ -62,8 +62,8 @@ public class KodeIdTest {
     @Test(invocationCount = 20)
     public void testCreateDbKodeId() {
         AEnumKodeId testId = null;
-        for (int i = 0; i < 100000; i++) {
-             testId = new AEnumKodeId(new Long(i), SnapshotVersion.CURRENT);
+        for (long i = 0; i < 100000; i++) {
+             testId = new AEnumKodeId(i, SnapshotVersion.CURRENT);
         }
         if (testId.getValue()==0) {
             fail("") ;
@@ -76,8 +76,8 @@ public class KodeIdTest {
     @Test(invocationCount = 20)
     public void testCreateDbKodeId2() {
         AEnumKodeId testId = null;
-        for (int i = 0; i < 100000; i++) {
-             testId = BubbleIds.createInstance(AEnumKodeId.class, new Long(i), SnapshotVersion.CURRENT);
+        for (long i = 0; i < 100000; i++) {
+             testId = BubbleIds.createInstance(AEnumKodeId.class, i, SnapshotVersion.CURRENT);
         }
         if (testId.getValue()==0) {
             fail("") ;
@@ -88,10 +88,10 @@ public class KodeIdTest {
      *  Tester at CDbKodeId(27) eq C1DbKodeId(27) eq C2DbKodeId(27)
      */
     public void testMangeKoderISammeTabellViaSubklassing() {
-        CDbKodeId id1 = BubbleIds.createInstance(CDbKodeId.class, new Long(27), SnapshotVersion.CURRENT);
-        CDbKodeId id2 = BubbleIds.createInstance(CDbKodeId.class, new Long(27), SnapshotVersion.CURRENT);
-        C1DbKodeId c1DbKodeId1 =  new C1DbKodeId(new Long(27), SnapshotVersion.CURRENT);
-        C2DbKodeId c2DbKodeId1 =  new C2DbKodeId(new Long(27), SnapshotVersion.CURRENT);
+        CDbKodeId id1 = BubbleIds.createInstance(CDbKodeId.class, 27L, SnapshotVersion.CURRENT);
+        CDbKodeId id2 = BubbleIds.createInstance(CDbKodeId.class, 27L, SnapshotVersion.CURRENT);
+        C1DbKodeId c1DbKodeId1 =  new C1DbKodeId(27L, SnapshotVersion.CURRENT);
+        C2DbKodeId c2DbKodeId1 =  new C2DbKodeId(27L, SnapshotVersion.CURRENT);
 
         assertEquals(id1, id2);
         assertEquals(id2, id1);
@@ -105,7 +105,7 @@ public class KodeIdTest {
         assertEquals(c1DbKodeId1, c2DbKodeId1);
         assertEquals(c2DbKodeId1, c1DbKodeId1);
 
-        CDbKodeId id28 = BubbleIds.createInstance(CDbKodeId.class, new Long(28), SnapshotVersion.CURRENT);
+        CDbKodeId id28 = BubbleIds.createInstance(CDbKodeId.class, 28L, SnapshotVersion.CURRENT);
         assertFalse(id1.equals(id28));
     }
 

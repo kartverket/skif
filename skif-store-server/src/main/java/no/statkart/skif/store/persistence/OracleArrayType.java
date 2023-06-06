@@ -21,7 +21,7 @@ import java.util.Collection;
  *
  * <p>Eksempel på bruk:
  * <pre>
- *    Collection<Long> eierIds = ImmutableList.of(new Long(1234));
+ *    Collection<Long> eierIds = List.of(1234L);
  *    Connection connection = OracleUtils.getOracleConnection(session.connection());
  *    statement = connection.prepareStatement("select e.id from Eier e where e.id in (select * from table(:idValues))");
  *    statement.setObject(1, OracleArrayType.getOracleNumberArray(connection, eierIds));

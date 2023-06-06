@@ -5,7 +5,7 @@ import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
@@ -28,7 +28,7 @@ public class IdServiceServerTest extends StoreTestServerTestCase {
             final Long idValue1 = Long.class.cast(idService.getNextIdValue(SimpleId.class));
             final Long idValue2 = Long.class.cast(idService.getNextIdValue(SimpleId.class));
             final Long idValue3 = Long.class.cast(idService.getNextIdValue(SimpleId.class));
-            assertEquals(new Long(idValue1+1), idValue2);
+            assertThat(idValue2).isEqualTo(idValue1 + 1L);
             assertTrue(idValue2 < idValue3);
         } finally {
             idService.setBlockSize(oldBlockSize);
@@ -48,7 +48,7 @@ public class IdServiceServerTest extends StoreTestServerTestCase {
             final Long idValue1 = nextId1.getValue();
             final Long idValue2 = nextId2.getValue();
             final Long idValue3 = nextId3.getValue();
-            assertEquals(new Long(idValue1+1), idValue2);
+            assertThat(idValue2).isEqualTo(idValue1 + 1L);
             assertTrue(idValue2 < idValue3);
         } finally {
             idService.setBlockSize(oldBlockSize);

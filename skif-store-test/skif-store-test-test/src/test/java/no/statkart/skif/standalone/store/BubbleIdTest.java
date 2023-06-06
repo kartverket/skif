@@ -6,7 +6,8 @@ import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * @author Henrik Fredholm
@@ -16,8 +17,8 @@ public class BubbleIdTest  {
 
     public void testTestBubbleId() {
         assertEquals(BubbleIds.getValueType(TestBubbleId.class), Long.class);
-        TestBubbleId<?> testBubbleId = BubbleIds.createInstance(TestBubbleId.class, new Long(10), SnapshotVersion.CURRENT);
-        assertEquals(testBubbleId.getValue(), new Long(10));
+        TestBubbleId<?> testBubbleId = BubbleIds.createInstance(TestBubbleId.class, 10L, SnapshotVersion.CURRENT);
+        assertEquals(testBubbleId.getValue(), Long.valueOf(10L));
         assertEquals(testBubbleId.getValueType(), Long.class);
         assertEquals(testBubbleId.getSnapshotVersion(), SnapshotVersion.CURRENT);
 

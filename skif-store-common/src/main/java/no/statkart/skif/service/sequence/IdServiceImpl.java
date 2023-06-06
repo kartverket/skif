@@ -57,7 +57,7 @@ public class IdServiceImpl implements IdService {
         entry.lastUsed += 1;
         value = entry.lastUsed;
         if (logger.isDebugEnabled()) logger.debug("Allocating id for class" + aClass.getName() + " Id=" + value);
-        return new Long(value);
+        return value;
     }
 
     /**
