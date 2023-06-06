@@ -1,14 +1,11 @@
 package no.statkart.skif.standalone.util.testsupport;
 
 import com.google.inject.util.Providers;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import no.statkart.skif.ConfigurationConverter;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.PropertiesConfiguration;
-import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.SkifConfiguration;
 import no.statkart.skif.config.SkifServerConfiguration;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.BubbleDependencyComparator;
@@ -35,13 +32,13 @@ import no.statkart.skif.storetest.domain.standalone.SelfBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleId;
 import no.statkart.skif.storetest.domain.standalone.TestBubbleWithHistory;
+import no.statkart.skif.util.JDBCHelper;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Environment;
 
 import javax.sql.DataSource;
-import java.beans.PropertyVetoException;
 import java.util.Properties;
 
 import static org.testng.FileAssert.fail;
@@ -85,24 +82,7 @@ public class StandAloneTestHelper {
 
         SkifConfiguration configuration = new SkifServerConfiguration();
 
-        DataSource pooledDataSource;
-        String username = ((Configuration) configuration).getString(SkifConfigConstants.DB_USERNAME);
-        String password = ((Configuration) configuration).getString(SkifConfigConstants.DB_PASSWORD);
-        String service = ((Configuration) configuration).getString(SkifConfigConstants.DB_SERVICE);
-        String hostname = ((Configuration) configuration).getString(SkifConfigConstants.DB_HOSTNAME);
-        String port = ((Configuration) configuration).getString(SkifConfigConstants.DB_PORT);
-        String url = String.format("jdbc:oracle:thin:@//%s:%s/%s", hostname, port, service);
-
-        try {
-            ComboPooledDataSource pool = new ComboPooledDataSource();
-            pool.setDriverClass("oracle.jdbc.OracleDriver");
-            pool.setJdbcUrl(url);
-            pool.setUser(username);
-            pool.setPassword(password);
-            pooledDataSource = pool;
-        } catch (PropertyVetoException e) {
-            throw new ImplementationException("Could not set up connection pool", e);
-        }
+        DataSource pooledDataSource = JDBCHelper.createPooledDataSource(configuration);
 
         hibernateProperties.setProperty(Environment.CONNECTION_PROVIDER, "no.statkart.skif.persistence.hibernate.PoolConnectionProvider");
         hibernateProperties.put(Environment.DATASOURCE, pooledDataSource);

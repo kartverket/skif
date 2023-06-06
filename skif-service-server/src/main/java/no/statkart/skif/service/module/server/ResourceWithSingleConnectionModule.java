@@ -1,4 +1,4 @@
-package no.statkart.skif.skiftest.config;
+package no.statkart.skif.service.module.server;
 
 import com.google.inject.Provider;
 import com.google.inject.Provides;

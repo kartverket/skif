@@ -7,8 +7,6 @@ dependencies {
     api project(':skif-service-server')
     api project(':skif-service-test:skif-service-test-api')
 
-    singlevmImplementation libraries.c3p0
-
     singlevmImplementation(project(':skif-service-server')) {
         capabilities {
             requireCapability("${project.group}:skif-service-server-singlevm")
