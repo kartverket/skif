@@ -17,7 +17,7 @@ pipeline {
         MAVEN_PUBLISH = credentials('MAVEN_DEPLOY_RELEASE_CANDIDATE')
     }
     tools {
-        jdk 'Java 8 Latest'
+        jdk 'Java 17 Latest'
     }
     stages {
         stage('Build') { 
