@@ -1,6 +1,7 @@
 package no.statkart.skif.store;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -37,7 +38,7 @@ public abstract class AbstractObject implements Serializable {
     }
 
     public final int hashCode() {
-       return (getId() != null ? getId().hashCode() : 0);
+        return Objects.hashCode(getId());
     }
 
     @Override

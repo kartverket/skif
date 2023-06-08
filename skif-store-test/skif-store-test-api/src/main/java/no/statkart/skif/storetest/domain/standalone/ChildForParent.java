@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.domain.standalone;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Denne boblen må kun brukes av lavnivå tester som går direkte mot databasen uten å bruke StoreTestServer modulen og
@@ -68,9 +69,9 @@ public class ChildForParent implements Serializable { //extends AbstractObject{
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (parentBubble != null ? parentBubble.hashCode() : 0);
-        result = 31 * result + (childBubbleId != null ? childBubbleId.hashCode() : 0);
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(parentBubble);
+        result = 31 * result + Objects.hashCode(childBubbleId);
         return result;
     }
 }

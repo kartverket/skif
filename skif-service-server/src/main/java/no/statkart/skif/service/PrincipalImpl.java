@@ -2,6 +2,7 @@ package no.statkart.skif.service;
 
 import java.io.Serializable;
 import java.security.Principal;
+import java.util.Objects;
 
 /**
  * @author Henrik Fredholm
@@ -32,7 +33,7 @@ public class PrincipalImpl implements Principal, Serializable {
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        return Objects.hashCode(name);
     }
 
 }

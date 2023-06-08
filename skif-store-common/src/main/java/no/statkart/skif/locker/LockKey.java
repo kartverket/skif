@@ -1,6 +1,7 @@
 package no.statkart.skif.locker;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Interface for LockKey. Brukes for låsing mot database
@@ -35,8 +36,8 @@ public class LockKey<T> implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = keyValue != null ? keyValue.hashCode() : 0;
-        result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
+        int result = Objects.hashCode(keyValue);
+        result = 31 * result + Objects.hashCode(discriminator);
         return result;
     }
 

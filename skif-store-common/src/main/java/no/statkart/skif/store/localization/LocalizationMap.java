@@ -5,7 +5,11 @@ import no.statkart.skif.domain.EqualsByFields;
 import no.statkart.skif.store.BubbleObject;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Logikk for at mange felter kan ha mange oversettelser, samlet i én tabell.
@@ -148,8 +152,8 @@ public class LocalizationMap implements Serializable, EqualityByFields {
 
         @Override
         public int hashCode() {
-            int result = name.hashCode();
-            result = 31 * result + (locale != null ? locale.hashCode() : 0);
+            int result = Objects.hashCode(name);
+            result = 31 * result + Objects.hashCode(locale);
             return result;
         }
 

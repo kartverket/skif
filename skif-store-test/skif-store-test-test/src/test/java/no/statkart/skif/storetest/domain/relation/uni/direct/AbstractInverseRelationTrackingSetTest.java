@@ -16,6 +16,7 @@ import org.testng.annotations.BeforeMethod;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,8 +92,8 @@ public class AbstractInverseRelationTrackingSetTest extends StoreTestTestCase {
 
         @Override
         public int hashCode() {
-            int result = ref1Id != null ? ref1Id.hashCode() : 0;
-            result = 31 * result + (ref2Id != null ? ref2Id.hashCode() : 0);
+            int result = Objects.hashCode(ref1Id);
+            result = 31 * result + Objects.hashCode(ref2Id);
             return result;
         }
     }
