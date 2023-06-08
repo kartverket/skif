@@ -85,12 +85,10 @@ public class BeloepValueObject implements ValueObject {
         if (o == null || getClass() != o.getClass()) return false;
 
         BeloepValueObject that = (BeloepValueObject) o;
-
-        if (verdi != that.verdi) return false;
-        if (kommentar != null ? !kommentar.equals(that.kommentar) : that.kommentar != null) return false;
-        if (!valuta.equals(that.valuta)) return false;
-
-        return true;
+        return (verdi == that.verdi)
+                && Objects.equals(kommentar, that.kommentar)
+                && valuta.equals(that.valuta)
+                ;
     }
 
     @Override

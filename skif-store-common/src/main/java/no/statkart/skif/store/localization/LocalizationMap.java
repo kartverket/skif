@@ -143,11 +143,9 @@ public class LocalizationMap implements Serializable, EqualityByFields {
             if (o == null || getClass() != o.getClass()) return false;
 
             LocalizationKey that = (LocalizationKey) o;
-
-            if (locale != null ? !locale.equals(that.locale) : that.locale != null) return false;
-            if (!name.equals(that.name)) return false;
-
-            return true;
+            return Objects.equals(locale, that.locale)
+                    && name.equals(that.name)
+                    ;
         }
 
         @Override

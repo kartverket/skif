@@ -2,6 +2,8 @@ package no.statkart.skif.store.multikobling;
 
 import no.statkart.skif.store.EntityComponent;
 
+import java.util.Objects;
+
 /**
  * Koblingsklasse for {@link Multikobling} hvor {@code V} er en {@link EntityComponent} med unik id for hver instans.
  * Dvs., to instanser av {@code V} er kun like hvis de har samme id. Rolle {@code R} er derfor ikke med i {@code equals}
@@ -37,8 +39,8 @@ public abstract class EntityKobling<R,V extends EntityComponent> extends Kobling
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EntityKobling kobling = (EntityKobling) o;
-        return getValue().equals(kobling.getValue());
+        EntityKobling<?, ?> kobling = (EntityKobling<?, ?>) o;
+        return Objects.equals(getValue(), kobling.getValue());
     }
 
     @Override
