@@ -25,10 +25,8 @@ public class PrincipalImpl implements Principal, Serializable {
         if (o == null || getClass() != o.getClass()) return false;
 
         PrincipalImpl principal = (PrincipalImpl) o;
-
-        if (name != null ? !name.equals(principal.name) : principal.name != null) return false;
-
-        return true;
+        return Objects.equals(name, principal.name)
+        ;
     }
 
     @Override

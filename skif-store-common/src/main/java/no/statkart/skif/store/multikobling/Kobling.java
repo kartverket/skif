@@ -37,13 +37,10 @@ public abstract class Kobling<R,V> implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Kobling kobling = (Kobling) o;
-
-        if (rolle != null ? !rolle.equals(kobling.rolle) : kobling.rolle != null) return false;
-        V value = getValue();
-        if (value != null ? !value.equals(kobling.getValue()) : kobling.getValue() != null) return false;
-
-        return true;
+        Kobling<?, ?> kobling = (Kobling<?, ?>) o;
+        return Objects.equals(rolle, kobling.rolle)
+                && Objects.equals(getValue(), kobling.getValue())
+                ;
     }
 
     @Override

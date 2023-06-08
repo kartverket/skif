@@ -83,10 +83,10 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     public final boolean equals(Object object) {
        if( this == object ) return true;
        if( !(object instanceof AbstractBubbleObject) ) return false;
-       if( !this.getClass().equals(object.getClass()) ) return false;
-       final AbstractBubbleObject bubbleObject = (AbstractBubbleObject) object;
-       if( this.getId() == null || bubbleObject.getId() == null ) return false;
-       return this.getId().equals(bubbleObject.getId());
+        final AbstractBubbleObject bubbleObject = (AbstractBubbleObject) object;
+        return Objects.equals(getClass(), object.getClass())
+                && Objects.equals(getId(), bubbleObject.getId())
+                ;
     }
 
     public final int hashCode() {

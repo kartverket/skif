@@ -57,14 +57,10 @@ public class ChildForParent implements Serializable { //extends AbstractObject{
         if (o == null || getClass() != o.getClass()) return false;
 
         ChildForParent that = (ChildForParent) o;
-
-        if (childBubbleId != null ? !childBubbleId.equals(that.childBubbleId) : that.childBubbleId != null)
-            return false;
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (parentBubble != null ? !parentBubble.equals(that.parentBubble) : that.parentBubble != null)
-            return false;
-
-        return true;
+        return Objects.equals(childBubbleId, that.childBubbleId)
+                && Objects.equals(id, that.id)
+                && Objects.equals(parentBubble, that.parentBubble)
+                ;
     }
 
     @Override

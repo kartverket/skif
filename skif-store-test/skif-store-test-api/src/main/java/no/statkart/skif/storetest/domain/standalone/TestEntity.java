@@ -33,11 +33,9 @@ public class TestEntity {
         if (!(o instanceof TestEntity)) return false;
 
         TestEntity that = (TestEntity) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (text != null ? !text.equals(that.text) : that.text != null) return false;
-
-        return true;
+        return Objects.equals(id, that.id)
+                && Objects.equals(text, that.text)
+                ;
     }
 
     @Override

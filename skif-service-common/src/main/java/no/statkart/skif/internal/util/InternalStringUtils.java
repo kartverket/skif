@@ -5,6 +5,7 @@ package no.statkart.skif.internal.util;
  *
  */
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * <p>Operations on {@link java.lang.String} that are
@@ -653,7 +654,7 @@ public class InternalStringUtils {
      *  both <code>null</code>
      */
     public static boolean equals(String str1, String str2) {
-        return (str1 == null ? str2 == null : str1.equals(str2));
+        return Objects.equals(str1, str2);
     }
 
     /**

@@ -31,10 +31,10 @@ public abstract class AbstractObject implements Serializable {
     public final boolean equals(Object object) {
        if( this == object ) return true;
        if( object == null || !(object instanceof AbstractObject) ) return false;
-       if( !this.getClass().equals(object.getClass()) ) return false;
-       final AbstractObject bubbleObject = (AbstractObject) object;
-       if( this.getId() == null || bubbleObject.getId() == null ) return false;
-       return this.getId().equals(bubbleObject.getId());
+        final AbstractObject bubbleObject = (AbstractObject) object;
+        return Objects.equals(getClass(), object.getClass())
+                && Objects.equals(getId(), bubbleObject.getId())
+                ;
     }
 
     public final int hashCode() {

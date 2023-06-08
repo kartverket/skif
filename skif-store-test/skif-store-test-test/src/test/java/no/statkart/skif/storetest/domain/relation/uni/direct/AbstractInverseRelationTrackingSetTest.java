@@ -83,11 +83,9 @@ public class AbstractInverseRelationTrackingSetTest extends StoreTestTestCase {
             if (o == null || getClass() != o.getClass()) return false;
 
             VO vo = (VO) o;
-
-            if (ref1Id != null ? !ref1Id.equals(vo.ref1Id) : vo.ref1Id != null) return false;
-            if (ref2Id != null ? !ref2Id.equals(vo.ref2Id) : vo.ref2Id != null) return false;
-
-            return true;
+            return Objects.equals(ref1Id, vo.ref1Id)
+                    && Objects.equals(ref2Id, vo.ref2Id)
+                    ;
         }
 
         @Override

@@ -25,13 +25,10 @@ public class LockKey<T> implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        LockKey lockKey = (LockKey) o;
-
-        if (discriminator != null ? !discriminator.equals(lockKey.discriminator) : lockKey.discriminator != null)
-            return false;
-        if (keyValue != null ? !keyValue.equals(lockKey.keyValue) : lockKey.keyValue != null) return false;
-
-        return true;
+        LockKey<?> lockKey = (LockKey<?>) o;
+        return Objects.equals(discriminator, lockKey.discriminator)
+                && Objects.equals(keyValue, lockKey.keyValue)
+                ;
     }
 
     @Override
