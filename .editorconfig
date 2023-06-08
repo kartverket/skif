@@ -2,6 +2,7 @@ root = true
 
 [*]
 charset = latin1
+insert_final_newline = true
 
 [*.java]
 ij_java_class_count_to_use_import_on_demand = 9999
