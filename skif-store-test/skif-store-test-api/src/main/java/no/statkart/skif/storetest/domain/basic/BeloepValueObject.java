@@ -97,7 +97,7 @@ public class BeloepValueObject implements ValueObject {
     public int hashCode() {
         int result = valuta.hashCode();
         result = 31 * result + verdi;
-        result = 31 * result + (kommentar != null ? kommentar.hashCode() : 0);
+        result = 31 * result + Objects.hashCode(kommentar);
         return result;
     }
 

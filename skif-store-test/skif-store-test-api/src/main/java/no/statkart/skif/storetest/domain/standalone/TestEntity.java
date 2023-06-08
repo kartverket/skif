@@ -1,5 +1,7 @@
 package no.statkart.skif.storetest.domain.standalone;
 
+import java.util.Objects;
+
 /**
  * Brukes kun for lavnivå session factory testing. Det finnes ett slik objekt i database og ingen tester lager
  * nye.
@@ -40,8 +42,8 @@ public class TestEntity {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (text != null ? text.hashCode() : 0);
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(text);
         return result;
     }
 }
