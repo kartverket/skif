@@ -63,14 +63,14 @@ public class DefaultClientCallLogger implements ClientCallLogger {
      * @return teksten som skal logges
      */
     protected CharSequence createCallMessage(Long callId, Method method, Object[] args) {
-        StringBuilder buf = new StringBuilder(200);
-        buf.append("Kaller [id=");
-        buf.append(callId);
-        buf.append("] ");
+        StringBuilder buf = new StringBuilder(200)
+            .append("Kaller [id=").append(callId).append("] ");
+
         appendMethod(buf, method, args);
-        buf.append(" [user=").append(loginUserHolder.get().getUsername()).append("]");
-        buf.append(" [").append(Thread.currentThread()).append("]");
-        return buf;
+
+        return buf.append(" [user=").append(loginUserHolder.get().getUsername()).append(']')
+            .append(" [").append(Thread.currentThread()).append(']')
+            ;
     }
 
     /**
@@ -83,12 +83,12 @@ public class DefaultClientCallLogger implements ClientCallLogger {
      * @param args   argumentene til metoden
      */
     protected void appendMethod(StringBuilder buf, Method method, Object[] args) {
-        buf.append(method.getDeclaringClass().getName());
-        buf.append(".");
-        buf.append(method.getName());
-        buf.append("(");
+        buf.append(method.getDeclaringClass().getName())
+            .append('.')
+            .append(method.getName())
+            .append('(');
         appendParameters(buf, method, args);
-        buf.append(")");
+        buf.append(')');
     }
 
     /**
@@ -130,13 +130,7 @@ public class DefaultClientCallLogger implements ClientCallLogger {
      */
     @SuppressWarnings("UnusedParameters")
     protected CharSequence createReturnMessage(Long callId, Method method, Object[] args, Object returnValue, long time) {
-        StringBuilder buf = new StringBuilder(200);
-        buf.append("<----- [id=");
-        buf.append(callId);
-        buf.append("] tok ");
-        buf.append(time);
-        buf.append(" ms");
-        return buf;
+        return "<----- [id=" + callId + "] tok " + time + " ms";
     }
 
     protected void logError(Long callId, Method method, Object[] args, Throwable t, long time) {
@@ -165,13 +159,7 @@ public class DefaultClientCallLogger implements ClientCallLogger {
      */
     @SuppressWarnings("UnusedParameters")
     protected CharSequence createErrorMessage(Long callId, Method method, Object[] args, Throwable t, long time) {
-        StringBuilder buf = new StringBuilder(200);
-        buf.append("<----- [id=");
-        buf.append(callId);
-        buf.append("] tok ");
-        buf.append(time);
-        buf.append(" ms og kastet exception: ");
-        return buf;
+        return "<----- [id=" + callId + "] tok " + time + " ms og kastet exception: ";
     }
 
     /**
@@ -186,13 +174,7 @@ public class DefaultClientCallLogger implements ClientCallLogger {
      */
     @SuppressWarnings("UnusedParameters")
     protected CharSequence createApplicationErrorMessage(Long callId, Method method, Object[] args, Throwable t, long time) {
-        StringBuilder buf = new StringBuilder(200);
-        buf.append("<----- [id=");
-        buf.append(callId);
-        buf.append("] tok ");
-        buf.append(time);
-        buf.append(" ms og kastet application exception: ");
-        return buf;
+        return "<----- [id=" + callId + "] tok " + time + " ms og kastet application exception: ";
     }
 
 
