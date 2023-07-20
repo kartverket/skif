@@ -73,16 +73,16 @@ public class DefaultServerCallLogger implements ServerCallLogger {
         ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
         ServiceRequestContext ownerServiceRequestContext = calculateOwner(serviceRequestContext);
 
-        StringBuilder buf = new StringBuilder(200);
-        buf.append("Kaller [id=");
-        buf.append(serviceRequestContext.getCallId());
-        buf.append(", owner=");
-        buf.append(ownerServiceRequestContext != null ? ownerServiceRequestContext.getCallId() : 0);
-        buf.append("] ");
+        StringBuilder buf = new StringBuilder(200)
+            .append("Kaller [id=").append(serviceRequestContext.getCallId())
+            .append(", owner=").append(ownerServiceRequestContext != null ? ownerServiceRequestContext.getCallId() : 0L)
+            .append("] ");
+
         appendMethod(buf, method, args);
-        buf.append(" [user=").append(serviceRequestContext.getCallerPrincipal().getName()).append("]");
-        buf.append(" [").append(Thread.currentThread()).append("]");
-        return buf;
+
+        return buf.append(" [user=").append(serviceRequestContext.getCallerPrincipal().getName()).append(']')
+            .append(" [").append(Thread.currentThread()).append(']')
+            ;
     }
 
     @Nullable
@@ -105,12 +105,12 @@ public class DefaultServerCallLogger implements ServerCallLogger {
      * @param args   argumentene til metoden
      */
     protected void appendMethod(StringBuilder buf, Method method, Object[] args) {
-        buf.append(method.getDeclaringClass().getName());
-        buf.append(".");
-        buf.append(method.getName());
-        buf.append("(");
+        buf.append(method.getDeclaringClass().getName())
+            .append('.')
+            .append(method.getName())
+            .append('(');
         appendParameters(buf, method, args);
-        buf.append(")");
+        buf.append(')');
     }
 
     /**
@@ -152,14 +152,7 @@ public class DefaultServerCallLogger implements ServerCallLogger {
     @SuppressWarnings("UnusedParameters")
     protected CharSequence createReturnMessage(Method method, Object[] args, Object returnValue, long time) {
         ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
-
-        StringBuilder buf = new StringBuilder(200);
-        buf.append("<----- [id=");
-        buf.append(serviceRequestContext.getCallId());
-        buf.append("] tok ");
-        buf.append(time);
-        buf.append(" ms");
-        return buf;
+        return "<----- [id=" + serviceRequestContext.getCallId() + "] tok " + time + " ms";
     }
 
     protected void logError(Method method, Object[] args, Throwable t, long time) {
@@ -188,14 +181,7 @@ public class DefaultServerCallLogger implements ServerCallLogger {
     @SuppressWarnings("UnusedParameters")
     protected CharSequence createErrorMessage(Method method, Object[] args, Throwable t, long time) {
         ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
-
-        StringBuilder buf = new StringBuilder(200);
-        buf.append("<----- [id=");
-        buf.append(serviceRequestContext.getCallId());
-        buf.append("] tok ");
-        buf.append(time);
-        buf.append(" ms og kastet exception: ");
-        return buf;
+        return "<----- [id=" + serviceRequestContext.getCallId() + "] tok " + time + " ms og kastet exception: ";
     }
 
     /**
@@ -210,14 +196,7 @@ public class DefaultServerCallLogger implements ServerCallLogger {
     @SuppressWarnings("UnusedParameters")
     protected CharSequence createApplicationErrorMessage(Method method, Object[] args, Throwable t, long time) {
         ServiceRequestContext serviceRequestContext = serviceRequestContextProvider.get();
-
-        StringBuilder buf = new StringBuilder(200);
-        buf.append("<----- [id=");
-        buf.append(serviceRequestContext.getCallId());
-        buf.append("] tok ");
-        buf.append(time);
-        buf.append(" ms og kastet application exception: ");
-        return buf;
+        return "<----- [id=" + serviceRequestContext.getCallId() + "] tok " + time + " ms og kastet application exception: ";
     }
 
     protected boolean firstEjbAfterWebService(ServiceRequestContext serviceRequestContext) {
