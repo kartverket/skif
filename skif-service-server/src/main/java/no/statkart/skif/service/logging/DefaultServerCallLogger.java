@@ -163,12 +163,12 @@ public class DefaultServerCallLogger implements ServerCallLogger {
     }
 
     protected void logError(Method method, Object[] args, Throwable t, long time) {
-        if (t != null && t instanceof ApplicationException) {
+        if (t instanceof ApplicationException) {
             CharSequence msg = createApplicationErrorMessage(method, args, t, time);
             if (getLogger().isDebugEnabled()) {
                 getLogger().debug(msg.toString(), t);
             } else if (getLogger().isInfoEnabled()) {
-                getLogger().info(msg.toString() + " '" + t.toString() + "'");
+                getLogger().info(msg.toString() + " '" + t + '\'');
             }
         } else {
             CharSequence msg = createErrorMessage(method, args, t, time);

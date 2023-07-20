@@ -32,8 +32,7 @@ public class UnitOfWork implements Closeable {
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null
-                && obj instanceof UnitOfWork
-                && this.unitOfWork==((UnitOfWork)obj).unitOfWork;
+        return obj instanceof UnitOfWork
+                && this.unitOfWork == ((UnitOfWork) obj).unitOfWork;
     }
 }

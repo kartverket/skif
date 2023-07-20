@@ -140,12 +140,12 @@ public class DefaultClientCallLogger implements ClientCallLogger {
     }
 
     protected void logError(Long callId, Method method, Object[] args, Throwable t, long time) {
-        if (t != null && t instanceof ApplicationException) {
+        if (t instanceof ApplicationException) {
             CharSequence msg = createApplicationErrorMessage(callId, method, args, t, time);
             if (getLogger().isDebugEnabled()) {
                 getLogger().debug(msg.toString(), t);
             } else if (getLogger().isInfoEnabled()) {
-                getLogger().info(msg.toString() + " '" + t.toString() + "'");
+                getLogger().info(msg.toString() + " '" + t + '\'');
             }
         } else {
             CharSequence msg = createErrorMessage(callId, method, args, t, time);

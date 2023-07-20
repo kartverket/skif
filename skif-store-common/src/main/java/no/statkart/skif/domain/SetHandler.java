@@ -1,7 +1,8 @@
 package no.statkart.skif.domain;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -12,14 +13,13 @@ import java.util.stream.Collectors;
  * Denne oppfyller kontrakten for {@link Set#equals(Object)}, som sier at settene må ha samme lengde, alle elementene i
  * det ene settet må ha en maken i det andre settet og alle elementene i det andre settet må ha en maken i det første.
  */
-@SuppressWarnings("unchecked")
-public class SetHandler implements EqualityHandler<Set> {
+public class SetHandler implements EqualityHandler<Set<?>> {
     @Override
-    public boolean checkEquals(Set o1, @Nullable Object o2, EqualsByFields comparator) {
+    public boolean checkEquals(Set<?> o1, @Nullable Object o2, EqualsByFields comparator) {
         if (o1 == o2) return true;
-        if (o2 == null || !(o2 instanceof Set)) return false;
+        if (!(o2 instanceof Set)) return false;
 
-        Set<?> s2 = (Set) o2;
+        Set<?> s2 = (Set<?>) o2;
 
         if (o1.size() != s2.size()) return false;
 
