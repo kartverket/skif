@@ -8,13 +8,13 @@ import java.util.Map;
  * og {@link Map.Entry#getValue()} ()}. Vi ønsker vanligvis ikke dette, men heller bruke {@link EqualsByFields} for å
  * sammenligne.
  */
-public class MapEntryHandler implements EqualityHandler<Map.Entry> {
+public class MapEntryHandler implements EqualityHandler<Map.Entry<?, ?>> {
     @Override
-    public boolean checkEquals(Map.Entry o1, @Nullable Object o2, EqualsByFields comparator) {
+    public boolean checkEquals(Map.Entry<?, ?> o1, @Nullable Object o2, EqualsByFields comparator) {
         if (o1 == o2) return true;
-        if (o2 == null || !(o2 instanceof Map.Entry)) return false;
+        if (!(o2 instanceof Map.Entry)) return false;
 
-        Map.Entry e2 = (Map.Entry) o2;
+        Map.Entry<?, ?> e2 = (Map.Entry<?, ?>) o2;
 
         return comparator.isEqualByFields(o1.getKey(), e2.getKey())
                 && comparator.isEqualByFields(o1.getValue(), e2.getValue());

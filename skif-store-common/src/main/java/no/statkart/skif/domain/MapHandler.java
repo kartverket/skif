@@ -10,11 +10,11 @@ import java.util.Map;
  * Denne oppfyller kontrakten for {@link Map#equals(Object)} ved å delegere til bruk av {@link SetHandler} på
  * {@link Map#entrySet()} pluss {@link MapEntryHandler}.
  */
-public class MapHandler implements EqualityHandler<Map> {
+public class MapHandler implements EqualityHandler<Map<?, ?>> {
     @Override
-    public boolean checkEquals(Map o1, @Nullable Object o2, EqualsByFields comparator) {
+    public boolean checkEquals(Map<?, ?> o1, @Nullable Object o2, EqualsByFields comparator) {
         if (o1 == o2) return true;
-        if (o2 == null || !(o2 instanceof Map)) return false;
+        if (!(o2 instanceof Map)) return false;
 
         Map<?, ?> m2 = (Map<?, ?>) o2;
 

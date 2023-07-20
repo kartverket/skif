@@ -104,7 +104,7 @@ public class RelationCache {
     }
 
     public <E> void onChangeRelation(int level, boolean inAttachedMode, RelationName relationName, BubbleId<?> sourceId, @Nullable E oldInverseValue, @Nullable E newInverseValue) {
-        if (oldInverseValue == null || !(oldInverseValue instanceof BubbleId)) {  // Vurdere å introdusere et Ident interface
+        if (!(oldInverseValue instanceof BubbleId)) {  // Vurdere å introdusere et Ident interface
             // For identer (valueobjekt) relasjoner skal gammel verdi alltid hentes fra cachen hvis den finnes. Ellers brukes null
             oldInverseValue = lookupCachedInverseValueAndMarkAsRemoved(level, relationName, sourceId);
         }
@@ -152,7 +152,6 @@ public class RelationCache {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private <E> void resolveAndSaveCurrentInverseValueForSourceIdsForOneRelation(RelationEntry inverseRelationEntry, int level, RelationName relationName, E inverseValue, BubbleId<?> sourceId) {
         BubbleId<?> resolvedBubbleId=sourceId;
         if (sourceId != null) {

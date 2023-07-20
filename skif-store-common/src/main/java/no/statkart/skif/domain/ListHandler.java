@@ -11,18 +11,19 @@ import java.util.List;
  * Denne oppfyller kontrakten for {@link List#equals(Object)}, som sier at listene må ha samme lengde og elementene må
  * parvis være like i listensrekkefølge.
  */
-public class ListHandler implements EqualityHandler<List> {
+public class ListHandler implements EqualityHandler<List<?>> {
     @Override
-    public boolean checkEquals(List o1, @Nullable Object o2, EqualsByFields comparator) {
+    public boolean checkEquals(List<?> o1, @Nullable Object o2, EqualsByFields comparator) {
         if (o1 == o2) return true;
-        if (o2 == null || !(o2 instanceof List)) return false;
+        if (!(o2 instanceof List)) return false;
 
-        List l2 = (List) o2;
+        List<?> l2 = (List<?>) o2;
 
-        if (o1.size() != l2.size()) return false; // Dette kan være dyrt for enkelte lister, men vi pleier å bruke lister som vet svaret på forhånd.
+        if (o1.size() != l2.size())
+            return false; // Dette kan være dyrt for enkelte lister, men vi pleier å bruke lister som vet svaret på forhånd.
 
-        Iterator i1 = o1.iterator();
-        Iterator i2 = l2.iterator();
+        Iterator<?> i1 = o1.iterator();
+        Iterator<?> i2 = l2.iterator();
 
         while (i1.hasNext() && i2.hasNext()) {
             Object e1 = i1.next();

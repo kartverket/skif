@@ -3,7 +3,12 @@ package no.statkart.skif.domain;
 import com.google.common.collect.Multimap;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class EqualsByFields {
     private final List<HandlerEntry> handlers = new ArrayList<>();
@@ -19,7 +24,7 @@ public class EqualsByFields {
         addHandler(Multimap.class, new MultimapHandler());
     }
 
-    public <O> void addHandler(Class<O> clazz, EqualityHandler<? super O> handler) {
+    public <O> void addHandler(Class<? super O> clazz, EqualityHandler<O> handler) {
         handlers.add(new HandlerEntry(clazz, handler));
     }
 

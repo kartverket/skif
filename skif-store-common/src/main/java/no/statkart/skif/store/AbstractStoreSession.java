@@ -481,7 +481,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
             StoreRelationCache relationCache = store.getRelationCache();
             if (relationCache.isEnabled()) {
-                if (oldInstance != null && oldInstance instanceof InverseRelationParticipation) {
+                if (oldInstance instanceof InverseRelationParticipation) {
                     relationCache.updateRemoved(oldInstance.getBubbleId(), (InverseRelationParticipation) oldInstance);
                 }
                 if (bubbleObject instanceof InverseRelationParticipation) {
@@ -543,7 +543,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             // TODO: Make oldInstance stale in order to detect continued usage of oldInstance
 
             if (relationCache.isEnabled()) {
-                if (oldInstance != null && oldInstance instanceof InverseRelationParticipation) {
+                if (oldInstance instanceof InverseRelationParticipation) {
                     relationCache.updateRemoved(oldInstance.getBubbleId(), (InverseRelationParticipation) oldInstance);
 
                 }
@@ -961,7 +961,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                         persistedBubbleObject = getPersistedBubbleObjectForLocked(storeEntry);
                         bubbleObject = storeEntry.getDerivedBubbleObject(level);
                         if (persistedBubbleObject != bubbleObject) {
-                            if (persistedBubbleObject != null && persistedBubbleObject instanceof InverseRelationParticipation) {
+                            if (persistedBubbleObject instanceof InverseRelationParticipation) {
                                 relationCache.updateRemoved(persistedBubbleObject.getBubbleId(), (InverseRelationParticipation) persistedBubbleObject, new WithoutUnitOfWorkExecutor());
                             }
                             if (bubbleObject instanceof InverseRelationParticipation) {
@@ -1005,7 +1005,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                         persistedBubbleObject = getPersistedBubbleObjectForLocked(storeEntry);
                         bubbleObject = storeEntry.getDerivedBubbleObject(level);
                         if (persistedBubbleObject != bubbleObject) {
-                            if (persistedBubbleObject != null && persistedBubbleObject instanceof InverseRelationParticipation) {
+                            if (persistedBubbleObject instanceof InverseRelationParticipation) {
                                 relationCache.updateRemoved(persistedBubbleObject.getBubbleId(), (InverseRelationParticipation) persistedBubbleObject, new WithoutUnitOfWorkExecutor());
                             }
                             if (bubbleObject instanceof InverseRelationParticipation) {
