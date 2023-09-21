@@ -82,18 +82,3 @@ ext.getProperties().findAll {(it.key as String).startsWith('includeBuild.')}.eac
     println 'Include build ' + file(it.value)
     includeBuild it.value
 }
-
-/**
- * Vedlikehold av wrapper via kommando. Feks:
- * gradle wrapper --gradle-version 2.12
- */
-gradle.afterProject { project ->
-    project.tasks.withType(Wrapper) {
-        doFirst {
-            // Company wide download service
-            distributionUrl = uri("https://devbin.statkart.no/gradle/dists/gradle-${gradleVersion}-all.zip")
-            jarFile = gradle.rootProject.file('gradle/wrapper/gradle-wrapper.jar')
-            scriptFile = gradle.rootProject.file('gradlew')
-        }
-    }
-}

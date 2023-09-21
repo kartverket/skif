@@ -1,7 +1,3 @@
-if (!['7.5'].findAll { gradle.gradleVersion == it }) {
-    logger.warn "WARNING: Du benytter en annen versjon av Gradle enn hva byggesystemet er testet med: ${gradle.gradleVersion}"
-}
-
 apply from: file('properties.gradle')
 
 allprojects {
