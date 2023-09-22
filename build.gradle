@@ -147,6 +147,10 @@ subprojects { Project project ->
         systemProperties "org.uncommons.reportng.stylesheet": "${project.rootProject.file('all/test/report/reportng-1.1.3/stylesheets/hudsonesque.css')}"
         systemProperties "org.uncommons.reportng.title": "${project.name} Report"
 
+        //Workaround SKIF-690: setter samme tidssone på tjeneren som på database instansen.
+        //Det er ikke implementert støtte for konvertering av dato/tid fra forskjellige tidssoner.
+        systemProperty('user.timezone', 'Europe/Oslo')
+
 
         inputs.property 'singleVm', singleVm //trigger re-kjøring av test ved endring av parameter
 

@@ -15,6 +15,8 @@ pipeline {
 
         //for publisering til sentralt maven repo bines opp via jenkins credential (secret text)
         MAVEN_PUBLISH = credentials('MAVEN_DEPLOY_RELEASE_CANDIDATE')
+
+        TZ = 'Europe/Oslo' //SKIF-760: workaround for historikk-tester
     }
     tools {
         jdk 'Java 17 Latest'
