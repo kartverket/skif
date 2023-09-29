@@ -18,8 +18,13 @@ pluginManagement {
             mavenLocal()
         }
         maven {
-            url System.getenv('MAVEN_REPO') ?: 'https://nexus.statkart.no/repository/public/'
+            name = 'intern-nexus'; url = 'https://nexus.statkart.no/repository/public/'
+            content {
+                includeGroupByRegex 'no\\.statkart\\.sktools(\\..*)?' //includeGroupAndSubgroups
+                includeGroupByRegex 'sktools(\\..*)?' ////includeGroupAndSubgroups
+            }
         }
+        mavenCentral()
     }
 }
 
