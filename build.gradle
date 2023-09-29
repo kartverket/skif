@@ -29,11 +29,15 @@ allprojects {
             println '...initializing MAVEN_LOCAL_FOR_PROJECT'
             mavenLocal()
         }
-        maven { name = 'public'; url = MAVEN_REPO }
-
-        if (!MAVEN_LOCAL_FOR_PROJECT) {
-            mavenLocal()
+        maven {
+            name = 'intern-nexus'; url = 'https://nexus.statkart.no/repository/public/'
+            content {
+                includeModule 'no.statkart.skif', 'skif-bubble-spi' //SKIF bubbleref hack
+                includeModule 'no.statkart.skif', 'skif-hibernate-support' //SKIF bubbleref hack
+                includeGroup 'org.hibernate' //SKIF bubbleref hack
+            }
         }
+        mavenCentral()
     }
 }
 
@@ -188,11 +192,6 @@ allprojects {
                         'Specification-Title': project.name,
                         'Specification-Vendor': 'Statens kartverk',
                         'Specification-Version': base_version,
-
-                        //misc build info
-                        'Build-By'     : System.getProperty('user.name'),
-                        'Build-Machine': java.net.InetAddress.localHost.hostName,
-                        'Build-Repo': MAVEN_REPO,
 
                         'Implementation-Title': "${project.name} bygget for ${(project.version == null || project.version.contains('-SNAPSHOT') || project.version.contains('-build')) ? 'TEST' : 'Produksjon'}",
                         'Implementation-Vendor': 'Statens kartverk',
