@@ -2,6 +2,7 @@
 <xs:schema
         version="1.0"
         targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"
+        xmlns:demokoder="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"
         xmlns:kodelistens="http://skif.statkart.no/storetest/wsapi/domain/kodeliste"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         elementFormDefault="qualified">
@@ -79,9 +80,16 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="TestC1DbKodeId">
+    <xs:complexType name="TestCDbKodeId">
         <xs:complexContent>
             <xs:extension base="kodelistens:KodeId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TestC1DbKodeId">
+        <xs:complexContent>
+            <xs:extension base="demokoder:TestCDbKodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -94,7 +102,7 @@
     </xs:complexType>
     <xs:complexType name="TestC2DbKodeId">
         <xs:complexContent>
-            <xs:extension base="kodelistens:KodeId">
+            <xs:extension base="demokoder:TestCDbKodeId">
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
