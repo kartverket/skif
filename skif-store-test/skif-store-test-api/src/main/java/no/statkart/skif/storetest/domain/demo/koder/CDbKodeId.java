@@ -19,7 +19,7 @@ import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeId;
  */
 public class CDbKodeId<T extends CDbKode> extends StoreTestDbKodeId<T> {
 
-    protected CDbKodeId(Long value, SnapshotVersion snapshotVersion) {
+    public CDbKodeId(Long value, SnapshotVersion snapshotVersion) {
         super(value, snapshotVersion);
     }
 
