@@ -14,7 +14,7 @@ def defaultProperties = [
 
         'skif.server_username': '<not set>',
         'skif.server_password': '<not set>',
-        'skif.server_url'     : "https://${-> wls_server}",
+        'skif.server_url'     : "http://${-> wls_server}",
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Database configuration
@@ -42,7 +42,7 @@ def defaultProperties = [
         wls_hostname          : "${-> LOCALHOSTNAME}",
         wls_port              : 7001,
         wls_sport             : 7002,
-        wls_server            : "${-> wls_hostname}:${-> wls_sport}",
+        wls_server            : "${-> wls_hostname}:${-> wls_port}",
 
         wls_deploy_targets    : 'AdminServer',
         wls_deploy_hostname   : "${-> wls_hostname}",
