@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.service.txcascade.ContainerManagedTxCMTCascadeService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.*;
@@ -15,7 +14,7 @@ import javax.interceptor.Interceptors;
  * @since 2.0
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "no.statkart.skif.skiftest.service.txcascade.ContainerManagedTxCMTShadowServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.service.txcascade.ContainerManagedTxCMTShadowServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class ContainerManagedTxCMTCascadeServiceEJBBean extends EJBTimedService implements ContainerManagedTxCMTCascadeService {

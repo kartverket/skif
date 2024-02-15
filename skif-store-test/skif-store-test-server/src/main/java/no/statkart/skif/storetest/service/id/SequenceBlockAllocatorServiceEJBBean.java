@@ -16,7 +16,7 @@ import javax.interceptor.Interceptors;
  * @since 2.0
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "no.statkart.skif.skiftest.service.id.SequenceBlockAllocatorServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.service.id.SequenceBlockAllocatorServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionManagement(TransactionManagementType.BEAN)
 public class SequenceBlockAllocatorServiceEJBBean extends EJBTimedService implements SequenceBlockAllocatorService {
