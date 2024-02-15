@@ -1,5 +1,5 @@
 def defaultProperties = [
-        base_version          : '3.4',
+        base_version          : '3.5',
         sub_version           : '-SNAPSHOT',
 
         hibernateVersion      : '3.6',
@@ -14,7 +14,7 @@ def defaultProperties = [
 
         'skif.server_username': '<not set>',
         'skif.server_password': '<not set>',
-        'skif.server_url'     : "http://${-> wls_server}",
+        'skif.server_url'     : "http://${-> jee_server}",
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Database configuration
@@ -34,20 +34,19 @@ def defaultProperties = [
         admin_db_password     : 'MATRIKKELADM',
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Application server configuration - weblogic
+// Application server configuration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        jee_hostname          : "${-> LOCALHOSTNAME}",
+        jee_port              : 7001, // WebLogic
+        jee_server            : "${-> jee_hostname}:${-> jee_port}",
+
+        // Weblogic
         wls_username          : 'admmatr',
         wls_password          : 'matrikkeladm1',
-
-        wls_hostname          : "${-> LOCALHOSTNAME}",
-        wls_port              : 7001,
-        wls_sport             : 7002,
-        wls_server            : "${-> wls_hostname}:${-> wls_port}",
-
         wls_deploy_targets    : 'AdminServer',
-        wls_deploy_hostname   : "${-> wls_hostname}",
+        wls_deploy_hostname   : "${-> jee_hostname}",
         wls_deploy_protocol   : 't3',
-        wls_deploy_port       : "${-> wls_port}",
+        wls_deploy_port       : "${-> jee_port}",
 ]
 
 defaultProperties.each { key, value ->
