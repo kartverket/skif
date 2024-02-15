@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-import no.statkart.skif.storetest.service.txbmt.BeanManagedTxAService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -17,7 +16,7 @@ import javax.interceptor.Interceptors;
  * @since 2.0
  */
 @RolesAllowed("Innsyn")
-@Stateless(name = "no.statkart.skif.skiftest.service.txbmt.BeanManagedTxAServiceEJBBean")
+@Stateless(name = "no.statkart.skif.storetest.service.txbmt.BeanManagedTxAServiceEJBBean")
 @Interceptors(StoreTestEJBInterceptorJEE.class)
 @TransactionManagement(TransactionManagementType.BEAN)
 public class BeanManagedTxAServiceEJBBean extends EJBTimedService implements BeanManagedTxAService {
