@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server port="${shutdown.port}" shutdown="${shutdown.command}">
+    <Listener className="org.apache.tomee.catalina.ServerListener"/>
+    <Service name="Catalina">
+        <Connector connectionTimeout="20000" port="${http.port}" protocol="HTTP/1.1"/>
+        <Engine defaultHost="localhost" name="Catalina">
+            <Realm className="org.apache.catalina.realm.MemoryRealm"/>
+            <Host appBase="webapps" autoDeploy="true" name="localhost" unpackWARs="true">
+                <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                       pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log." resolveHosts="false"
+                       suffix=".txt"/>
+            </Host>
+        </Engine>
+    </Service>
+</Server>

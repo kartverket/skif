@@ -16,6 +16,8 @@ dependencies {
     implementation libraries.jdbc //provided
     implementation libraries.hibernate
 
+    compileOnly libraries.openejb_core
+
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
 }

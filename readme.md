@@ -32,3 +32,13 @@ ORA-01031: utilstrekkelige privilegier
 ORA-01031: insufficient privileges
 ```
 Se filen [CreateUser.sql](database/src/main/sql/oracle/user/CreateUser.sql) for hvilke privilegier som trengs.
+
+#### Oppsett av TomEE
+tomee-subprosjektet bruker Gradles application-plugin for å sette opp en tjener med alle tre testprosjektene. Kan
+enten kjøres med `gradle run` eller ved å bygge applikasjonen med `gradle install` og kjøre den på den måten.
+
+Den bygde applikasjonen plukker opp databaseinnstillingene fra gradle.properties under bygging. Hvis man endrer på
+gradle.properties, så må man bygge applikasjonen på nytt for å få disse endringene inn.
+
+For å kjøre testene mot TomEE er det bare å legge inn riktig portnummer i gradle.properties og kjøre testene i
+JEE-modus.

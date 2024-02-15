@@ -7,6 +7,7 @@ def libVersion(String name, String defaultValue) {
 ext.SLF4J_VERSION = libVersion('slf4j', '1.7.25')
 ext.JAXB_VERSION = libVersion('jaxb', '2.2.7') // 2.2.10 har bug i håndtering av enum i Java-til-XSD
 ext.JAXWS_VERSION = libVersion('jaxws', '2.2.8') // Nyeste versjon som ikke krever nyere JAXB
+ext.TOMEE_VERSION = libVersion('tomee', '8.0.16')
 
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
@@ -96,9 +97,12 @@ libraries.weblogic = files(
         "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
 )
 
+libraries.tomee_embedded = "org.apache.tomee:tomee-embedded:${TOMEE_VERSION}"
+libraries.openejb_core = "org.apache.tomee:openejb-core:${TOMEE_VERSION}"
+
 
 allprojects {
-    configurations.all {
+    configurations.configureEach {
         resolutionStrategy {
             dependencySubstitution {
                 substitute(module('commons-logging:commons-logging')).because('SKIF bruker SLF4J').using(module(libraries.jcl_to_slf4j))
