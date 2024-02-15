@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openejb>
+    <Deployments dir="apps"/>
+
+    <Resource id="no.statkart.skif.Skif_CURRENT" type="DataSource">
+        jdbcDriver = oracle.jdbc.OracleDriver
+        jdbcUrl = ${skif.db_jdbc_url}
+        userName = ${skif.db_username}
+        password = ${skif.db_password}
+        jtaManaged = true
+    </Resource>
+    <Resource id="no.statkart.skif.Skif_OLD" type="DataSource">
+        jdbcDriver = oracle.jdbc.OracleDriver
+        jdbcUrl = ${skif.db_jdbc_url}
+        userName = ${skif.db_username}
+        password = ${skif.db_password}
+        jtaManaged = false
+    </Resource>
+</openejb>

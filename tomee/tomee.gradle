@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+dependencies {
+    implementation libraries.tomee_embedded
+    runtimeOnly libraries.jdbc
+}
+
+var deployments = [
+    ':skif-service-test:skif-service-test-ear:ear',
+    ':skif-store-test:skif-store-test-ear:ear',
+    ':skif-wsversioning:skif-wsversioning-ear:ear',
+]
+
+var tomeeSpec = project.copySpec {
+    into('apps') { a ->
+        deployments.forEach {
+            a.from(project.tasks.getByPath(it))
+        }
+    }
+    from(project.file('src/main/tomee'))
+}
+
+application {
+    mainClassName = 'no.statkart.skif.tomee.RunServer'
+    applicationDefaultJvmArgs = [
+        "-Dskif.db_jdbc_url=$db_jdbc_url",
+        "-Dskif.db_username=$db_username",
+        "-Dskif.db_password=$db_password",
+        "-Dskif.db_datasource=openejb:Resource/no.statkart.skif.Skif_CURRENT",
+        "-Dskif.db_datasource_old=openejb:Resource/no.statkart.skif.Skif_OLD",
+        '-Djava.naming.factory.initial=org.apache.openejb.core.OpenEJBInitialContextFactory',
+    ].collect { it.toString() }
+}
+
+distributions {
+    main {
+        contents {
+            with(tomeeSpec)
+        }
+    }
+}
+
+tasks.named('run', JavaExec).configure { JavaExec it ->
+    dependsOn deployments
+
+    var tmpDir = it.temporaryDir
+    it.environment("APP_HOME", tmpDir.absolutePath)
+
+    doFirst {
+        project.sync {
+            into(tmpDir)
+            with(tomeeSpec)
+        }
+    }
+}
+
+tasks.withType(CreateStartScripts).configureEach { task ->
+    task.doLast {
+        // Classpath blir for lang for Windows. La Java finne alle filene selv.
+        String text = task.windowsScript.text
+        text = text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
+        task.windowsScript.write text
+    }
+}

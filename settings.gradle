@@ -70,6 +70,8 @@ include ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsclien
 include ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-test'
 include ':skif-wsversioning:skif-wsversioning-ear'
 
+include ':tomee'
+
 
 rootProject.name = 'skif'
 

@@ -202,7 +202,7 @@ public class StoreTestServerModule extends SkifModule {
 
         {
             // Definer services som ikke bruker Store, men bare SQL connection
-            final List<Class<?>> servicesThatOnlyUseConnection = new ArrayList<Class<?>>();
+            final List<Class<?>> servicesThatOnlyUseConnection = new ArrayList<>();
             servicesThatOnlyUseConnection.addAll(new StoreTestLocalServices().getServices());
             servicesThatOnlyUseConnection.addAll(new StoreTestSequenceBlockAllocatorServices().getServices());
             final ServerServiceModule moduleThatOnlyUseConnection = new ServerServiceModule(moduleConfiguration, servicesThatOnlyUseConnection);
@@ -242,14 +242,14 @@ public class StoreTestServerModule extends SkifModule {
     @Provides
     @ServiceRequestScoped
     StoreServer provideStoreServer(PersistenceSessionManager persistenceSessionManager, Injector injector, BubbleDependencyComparator bubbleDependencyComparator, Provider<VersionFinder> versionFinderProvider, Provider<SnapshotVersion> snapshotVersionProvider, LockerStrategy lockerStrategy) {
-        List<StoreSessionReadListener> readListeners = ImmutableList.<StoreSessionReadListener>of(
+        List<StoreSessionReadListener> readListeners = ImmutableList.of(
                 new TestBubbleFilter()
         );
-        List<StoreSessionWriteListener> writeListeners = ImmutableList.<StoreSessionWriteListener>of(
+        List<StoreSessionWriteListener> writeListeners = ImmutableList.of(
                 new TestBubbleFilter(),
                 new AggregertObjektFilter()
         );
-        List<StoreSessionFinishListener> finishListeners = ImmutableList.<StoreSessionFinishListener>of(
+        List<StoreSessionFinishListener> finishListeners = ImmutableList.of(
                 new TestBubbleFinishFilter(),
                 injector.getInstance(EndringManager.class)
         );
@@ -276,12 +276,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Provides
     HibernateInterceptorFactory provideHibernateInterceptorFactory() {
-        return new HibernateInterceptorFactory() {
-            @Override
-            public Interceptor create(SnapshotVersionSeed snapshotVersionSeed) {
-                return new HibernateStoreInterceptor(snapshotVersionSeed);
-            }
-        };
+        return HibernateStoreInterceptor::new;
     }
 
     @Provides
@@ -384,7 +379,11 @@ public class StoreTestServerModule extends SkifModule {
             hibernatePropertiesOld = hibernatePropertiesCurrent;
         } else {
             hibernatePropertiesConfiguration.setProperty(AvailableSettings.TRANSACTION_COORDINATOR_STRATEGY, "jta");
-            hibernatePropertiesConfiguration.setProperty(AvailableSettings.JTA_PLATFORM , "org.hibernate.engine.transaction.jta.platform.internal.WeblogicJtaPlatform");
+            if ("org.apache.openejb.core.OpenEJBInitialContextFactory".equals(System.getProperty("java.naming.factory.initial"))) {
+                hibernatePropertiesConfiguration.setProperty(AvailableSettings.JTA_PLATFORM, "no.statkart.skif.util.TomEEJtaPlatform");
+            } else {
+                hibernatePropertiesConfiguration.setProperty(AvailableSettings.JTA_PLATFORM, "org.hibernate.engine.transaction.jta.platform.internal.WeblogicJtaPlatform");
+            }
             hibernatePropertiesCurrent = ConfigurationConverter.getProperties(hibernatePropertiesConfiguration);
 
             String datasourceCurrent = configuration.getString(SkifConfigConstants.DB_DATASOURCE);  //denne skal finnes i default konfigurasjon (filtreres inn via gradle.properties)

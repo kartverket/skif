@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcat-users>
+    <role rolename="Innsyn"/>
+    <role rolename="grunnbokuser"/>
+    <user username="enhetstest" password="matr57stat" roles="Innsyn,grunnbokuser"/>
+</tomcat-users>
