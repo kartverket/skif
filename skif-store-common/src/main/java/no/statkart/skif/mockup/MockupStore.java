@@ -60,6 +60,9 @@ public class MockupStore implements Store {
     private final MockupPersister mockupPersister;
     private final Collection<Class<? extends BubbleId>> ignoredIdClasses;
 
+    /**
+     * @param ignoredIdClasses id-klasser som ikke skal følges
+     */
     @Inject
     public MockupStore(Injector injector, TestNumber testNumber, IdService idService, @Named("ignoredIdClasses") Collection<Class<? extends BubbleId>> ignoredIdClasses) {
         this.injector = injector;
@@ -123,10 +126,8 @@ public class MockupStore implements Store {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> get(Collection<? extends I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
-            //noinspection unchecked
             bubbleObjects = get((Set<? extends I>) bubbleIds);
         } else if (bubbleIds instanceof List) {
-            //noinspection unchecked
             bubbleObjects = get((List<? extends I>) bubbleIds);
         } else {
             requireNonNull(bubbleIds, "bubbleIds");
@@ -162,10 +163,8 @@ public class MockupStore implements Store {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getOrdered(Collection<? extends I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
-            //noinspection unchecked
             bubbleObjects = getOrdered((Set<? extends I>) bubbleIds);
         } else if (bubbleIds instanceof List) {
-            //noinspection unchecked
             bubbleObjects = getOrdered((List<? extends I>) bubbleIds);
         } else {
             requireNonNull(bubbleIds, "bubbleIds");
@@ -201,10 +200,8 @@ public class MockupStore implements Store {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getIgnoreMissing(Collection<? extends I> bubbleIds) {
         Collection<T> bubbleObjects;
         if (bubbleIds instanceof Set) {
-            //noinspection unchecked
             bubbleObjects = getIgnoreMissing((Set<? extends I>) bubbleIds);
         } else if (bubbleIds instanceof List) {
-            //noinspection unchecked
             bubbleObjects = getIgnoreMissing((List<? extends I>) bubbleIds);
         } else {
             requireNonNull(bubbleIds, "bubbleIds");
@@ -409,9 +406,9 @@ public class MockupStore implements Store {
 
     public MockupTransfer getTransferForIds(Collection<? extends BubbleId> ids, SnapshotVersion snapshotVersion) {
         SnapshotVersion previousSnapshotVersion = getSnapshotVersion();
-        Set<BubbleId> linkedIds;
+        Set<BubbleId<?>> linkedIds;
         try {
-            linkedIds = findLinkedBubbleIds(get(ids), ignoredIdClasses);
+            linkedIds = findLinkedBubbleIds(get(ids));
         } finally {
             setSnapshotVersion(previousSnapshotVersion);
         }
@@ -422,17 +419,16 @@ public class MockupStore implements Store {
      * Finner alle id-ene til alle bobler referert til fra angitte bobleobjekt rekursivt.
      *
      * @param bubbleObjects    en eller flere bobleobjekt søket skal starte med
-     * @param ignoredIdClasses id-klasser som ikke skal følges
      * @return id-ene, inkludert de til gitte bobleobjekt
      */
-    private Set<BubbleId> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
+    private Set<BubbleId<?>> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects) {
         ArrayDeque<BubbleObject> uncheckedObjects = new ArrayDeque<>(bubbleObjects);
         Set<BubbleObject> linkedObjects = new LinkedHashSet<>(); // Ønsker å bevare insert rekkefølgen
 
         while (!uncheckedObjects.isEmpty()) {
             BubbleObject object = uncheckedObjects.remove();
 
-            Set<BubbleId> referencedBubbleIds = findReferencedBubbleIds(object, ignoredIdClasses);
+            Set<BubbleId<?>> referencedBubbleIds = findReferencedBubbleIds(object);
             Set<BubbleObject> referencedBubbles = get(referencedBubbleIds);
 
             referencedBubbles.removeAll(uncheckedObjects);
@@ -449,7 +445,7 @@ public class MockupStore implements Store {
             }
         }
 
-        Set<BubbleId> linkedIds = new LinkedHashSet<>(linkedObjects.size());
+        Set<BubbleId<?>> linkedIds = new LinkedHashSet<>(linkedObjects.size());
         for (BubbleObject linkedObject : linkedObjects) {
             linkedIds.add(linkedObject.getId());
         }
@@ -463,14 +459,13 @@ public class MockupStore implements Store {
      * Algoritmen tar høyde for at domenemodellen har doble eller sirkulære linker. Benytter derfor en {@code Stack} for å overkomme dette.
      *
      * @param object           objektet som skal granskes
-     * @param ignoredIdClasses id-klasser som ikke skal følges
      * @return alle id-er, inkludert potensielt objektets egen id
      */
-    private static Set<BubbleId> findReferencedBubbleIds(Object object, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
+    private Set<BubbleId<?>> findReferencedBubbleIds(Object object) {
         if (object == null) {
             return Collections.emptySet();
         } else {
-            Set<BubbleId> ids = new HashSet<>();
+            Set<BubbleId<?>> ids = new HashSet<>();
 
             Stack<Object> stack = new Stack<>();
             HashSet<Object> visitedObjects = new HashSet<>();
@@ -494,12 +489,12 @@ public class MockupStore implements Store {
                     } else { //dersom ikke array
 
                         if (o instanceof BubbleId) {  //id
-                            BubbleId id = (BubbleId) o;
-                            if (!isIdOfClass(id, ignoredIdClasses)) {
+                            BubbleId<?> id = (BubbleId<?>) o;
+                            if (ignoredIdClasses.stream().noneMatch(ignoredIdClass -> ignoredIdClass.isInstance(id))) {
                                 ids.add(id);
                             }
                         } else if (o instanceof Iterable) {  //collections ol
-                            for (Object objectIncollection : ((Iterable) o)) {
+                            for (Object objectIncollection : ((Iterable<?>) o)) {
                                 stack.push(objectIncollection);
                             }
                         } else if (!clazz.getName().startsWith("java")) {
@@ -533,23 +528,6 @@ public class MockupStore implements Store {
         }
     }
 
-    /**
-     * Sjekker om gitt {@link BubbleId} er en instans av en av de angitte bubbleid-klassene. Dette inkluderer av den er
-     * av en subtype av en av disse klassene.
-     *
-     * @param id               id som skal sjekkes
-     * @param ignoredIdClasses id-klasser som id skal sjekkes mot
-     * @return <code>true</code> dersom den er en instans
-     */
-    private static boolean isIdOfClass(BubbleId id, Collection<Class<? extends BubbleId>> ignoredIdClasses) {
-        for (Class<? extends BubbleId> clazz : ignoredIdClasses) {
-            if (clazz.isInstance(id)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public void register(Transfer<?> transfer) {
         throw new NotImplementedException();
@@ -560,7 +538,7 @@ public class MockupStore implements Store {
     }
 
     public SortedMap<SnapshotVersion, MockupTransfer> getAllTransfersForIds(Collection<? extends BubbleId> ids, SnapshotVersion beforeSnapshotVersion) {
-        Set<BubbleId> allReferencedIds = new LinkedHashSet<>(); // Ønsker å bevare rekkefølgen slik at den ikke avhenger av hashkoden til id-verdien
+        Set<BubbleId<?>> allReferencedIds = new LinkedHashSet<>(); // Ønsker å bevare rekkefølgen slik at den ikke avhenger av hashkoden til id-verdien
 
         SortedMap<SnapshotVersion, MockupTransfer> allCompleteTransfers = mockupPersister.getTransfersBefore(beforeSnapshotVersion);
         for (Map.Entry<SnapshotVersion, MockupTransfer> entry : allCompleteTransfers.entrySet()) {
@@ -575,7 +553,7 @@ public class MockupStore implements Store {
             SnapshotVersion previousSnapshotVersion = getSnapshotVersion();
             try {
                 setSnapshotVersion(entry.getKey());
-                allReferencedIds.addAll(findLinkedBubbleIds(allObjects, ignoredIdClasses));
+                allReferencedIds.addAll(findLinkedBubbleIds(allObjects));
             } finally {
                 setSnapshotVersion(previousSnapshotVersion);
             }
