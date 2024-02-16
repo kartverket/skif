@@ -1,6 +1,5 @@
 package no.statkart.skif.wsversioning.wsapi.v1.exception.mapping;
 
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ServerException;
 import no.statkart.skif.exception.SkifException;
 import no.statkart.skif.mapper.AbstractTypeMapper;
@@ -12,7 +11,6 @@ import no.statkart.skif.wsversioning.wsapi.v1.exception.StackTraceElementList;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -25,27 +23,18 @@ import java.util.Stack;
  * @since 2.0
  */
 public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceException, SkifException, WSVersioningExceptionMapping> {
-    private final Field causeField;
-
     private final Map<String, Class<? extends SkifException>> exceptionClassMap;
 
     public ServiceExceptionTypeMapper(Map<String, Class<? extends SkifException>> exceptionClassMap) {
         super(ServiceException.class, SkifException.class, WSVersioningExceptionMapping.class);
         this.exceptionClassMap = exceptionClassMap;
-
-        try {
-            causeField = Throwable.class.getDeclaredField("cause");
-            causeField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            throw new ImplementationException("Could not look-up cause field", e);
-        }
     }
 
 
     @Override
     public SkifException mapWsapiObject(ServiceException source) {
         ExceptionDetail rootExceptionDetail = source.getFaultInfo().getExceptionDetail();
-        Stack<ExceptionDetail> stack = new Stack<ExceptionDetail>();
+        Stack<ExceptionDetail> stack = new Stack<>();
         {
             ExceptionDetail exceptionDetail = rootExceptionDetail.getCause();
             while (exceptionDetail != null) {
@@ -60,7 +49,7 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
             cause = createServerException(exceptionDetail, cause);
         }
         SkifException target = getMapping().w2d(source.getFaultInfo(), SkifException.class);
-        setCause(target, cause);
+        target.initCause(cause);
         StackTraceElement[] serverStackTrace = generateStackTraceElements(rootExceptionDetail.getStackTraceElements());
         StackTraceElement[] clientStackTrace = source.getStackTrace();
         StackTraceElement[] combinedStackTrace = new StackTraceElement[serverStackTrace.length + clientStackTrace.length];
@@ -74,7 +63,7 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
     private Throwable createServerException(ExceptionDetail exceptionDetail, Throwable cause) {
         String message = "-> " + exceptionDetail.getClassName() + ": " + exceptionDetail.getMessage();
         ServerException serverException = new ServerException(message, cause);
-        serverException.setStackTrace(generateStackTraceElements(exceptionDetail.getStackTraceElements()) );
+        serverException.setStackTrace(generateStackTraceElements(exceptionDetail.getStackTraceElements()));
         return serverException;
     }
 
@@ -95,15 +84,15 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
     // methods that may be subclassed for extended mapping ->
 
     /**
+     * @param stackTraceElementList stack trace elementer
      * @return default nested string of print stacktrace with nested exceptions
      */
-
-    protected static StackTraceElement[] generateStackTraceElements(StackTraceElementList stackTraceElementList) {
+    protected static java.lang.StackTraceElement[] generateStackTraceElements(StackTraceElementList stackTraceElementList) {
         List<no.statkart.skif.wsversioning.wsapi.v1.exception.StackTraceElement> stackTraceElements = stackTraceElementList.getItem();
-        StackTraceElement[] mappedStackTraceElements = new StackTraceElement[stackTraceElements.size()];
+        java.lang.StackTraceElement[] mappedStackTraceElements = new java.lang.StackTraceElement[stackTraceElements.size()];
         for (int i = 0; i < mappedStackTraceElements.length; i++) {
             no.statkart.skif.wsversioning.wsapi.v1.exception.StackTraceElement stackTraceElement = stackTraceElements.get(i);
-            mappedStackTraceElements[i] = new StackTraceElement(stackTraceElement.getDeclaringClass(), stackTraceElement.getMethodName(), stackTraceElement.getFileName(), stackTraceElement.getLineNumber());
+            mappedStackTraceElements[i] = new java.lang.StackTraceElement(stackTraceElement.getDeclaringClass(), stackTraceElement.getMethodName(), stackTraceElement.getFileName(), stackTraceElement.getLineNumber());
         }
         return mappedStackTraceElements;
     }
@@ -120,6 +109,7 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
             root.setClassName(source.getClass().getName());
             root.setMessage(source.getMessage());
             root.setStackTraceElements(generateStackTraceElements(source.getStackTrace()));
+            //noinspection ObjectEquality
             if (source.getCause() != source) {
                 root.setCause(generateExceptionDetail(source.getCause()));
             }
@@ -131,8 +121,7 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
 
     private StackTraceElementList generateStackTraceElements(java.lang.StackTraceElement[] stackTrace) {
         StackTraceElementList list = new StackTraceElementList();
-        for (int i = 0; i < stackTrace.length; i++) {
-            StackTraceElement sourceElement = stackTrace[i];
+        for (StackTraceElement sourceElement : stackTrace) {
             no.statkart.skif.wsversioning.wsapi.v1.exception.StackTraceElement targetElement = new no.statkart.skif.wsversioning.wsapi.v1.exception.StackTraceElement();
             targetElement.setDeclaringClass(sourceElement.getClassName());
             targetElement.setMethodName(sourceElement.getMethodName());
@@ -159,21 +148,6 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
             }
         }
         throw new MappingException("Could not find category for exception class: " + source.getClass().getName()); //skal ikke kunne forekomme
-    }
-
-
-    /**
-     * cause kan kun settes én gang via {@code Throwable}s grensesnitt. I SkifException-hierarkiet blir cause satt til
-     * {@code null} av diverse konstruktører som går hit og dit. {@link Throwable#initCause(Throwable)} vil derfor feile.
-     * Mappingen har ingen måte å sende inn en cause som kan benyttes når underliggende mappere mapper selve exception,
-     * derfor må det dessverre hackes litt.
-     */
-    private void setCause(Throwable throwable, Throwable cause) {
-        try {
-            causeField.set(throwable, cause);
-        } catch (IllegalAccessException e) {
-            throw new MappingException("Could not set cause", e);
-        }
     }
 
 }

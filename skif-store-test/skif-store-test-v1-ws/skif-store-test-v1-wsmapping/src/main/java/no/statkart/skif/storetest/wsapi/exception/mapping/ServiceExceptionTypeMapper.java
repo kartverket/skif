@@ -63,7 +63,7 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
     private Throwable createServerException(ExceptionDetail exceptionDetail, Throwable cause) {
         String message = "-> " + exceptionDetail.getClassName() + ": " + exceptionDetail.getMessage();
         ServerException serverException = new ServerException(message, cause);
-        serverException.setStackTrace(generateStackTraceElements(exceptionDetail.getStackTraceElements()) );
+        serverException.setStackTrace(generateStackTraceElements(exceptionDetail.getStackTraceElements()));
         return serverException;
     }
 
@@ -84,9 +84,9 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
     // methods that may be subclassed for extended mapping ->
 
     /**
+     * @param stackTraceElementList stack trace elementer
      * @return default nested string of print stacktrace with nested exceptions
      */
-
     protected static java.lang.StackTraceElement[] generateStackTraceElements(StackTraceElementList stackTraceElementList) {
         List<no.statkart.skif.storetest.wsapi.exception.StackTraceElement> stackTraceElements = stackTraceElementList.getItem();
         java.lang.StackTraceElement[] mappedStackTraceElements = new java.lang.StackTraceElement[stackTraceElements.size()];
@@ -109,6 +109,7 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
             root.setClassName(source.getClass().getName());
             root.setMessage(source.getMessage());
             root.setStackTraceElements(generateStackTraceElements(source.getStackTrace()));
+            //noinspection ObjectEquality
             if (source.getCause() != source) {
                 root.setCause(generateExceptionDetail(source.getCause()));
             }
@@ -120,8 +121,7 @@ public class ServiceExceptionTypeMapper extends AbstractTypeMapper<ServiceExcept
 
     private StackTraceElementList generateStackTraceElements(java.lang.StackTraceElement[] stackTrace) {
         StackTraceElementList list = new StackTraceElementList();
-        for (int i = 0; i < stackTrace.length; i++) {
-            java.lang.StackTraceElement sourceElement = stackTrace[i];
+        for (StackTraceElement sourceElement : stackTrace) {
             no.statkart.skif.storetest.wsapi.exception.StackTraceElement targetElement = new no.statkart.skif.storetest.wsapi.exception.StackTraceElement();
             targetElement.setDeclaringClass(sourceElement.getClassName());
             targetElement.setMethodName(sourceElement.getMethodName());
