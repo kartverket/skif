@@ -37,4 +37,24 @@ public class MockupStoreTest {
                 .filteredOn(Flate.class::isInstance)
                 .isNotEmpty();
     }
+
+    /**
+     * Tester at det ikke krasjer med illegal reflection.
+     */
+    @Test
+    public void ikkeGravInnIKlasserFraJava() {
+        final MockupStore mockupStore = new MockupStore(null, new TestNumber(0, 0), null, Collections.emptyList());
+        final AdresseId adresseId = new AdresseId(1L);
+        final KretsId kretsId = new KretsId(2L);
+
+        Krets krets = new Krets(kretsId, null);
+        krets.navn = "Kretsen";
+        mockupStore.insert(krets);
+
+        Adresse adresse = new Adresse(adresseId, kretsId);
+        adresse.merknader.add("Test");
+        mockupStore.insert(adresse);
+
+        mockupStore.getAllTransfersForIds(Collections.singleton(adresseId), SnapshotVersion.CURRENT);
+    }
 }

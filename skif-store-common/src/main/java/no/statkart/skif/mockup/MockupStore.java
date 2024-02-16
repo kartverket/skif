@@ -439,7 +439,7 @@ public class MockupStore implements Store {
             referencedBubbles.removeAll(linkedObjects);
             referencedBubbles.remove(object);
 
-            if(referencedBubbles.isEmpty()) {
+            if (referencedBubbles.isEmpty()) {
                 linkedObjects.add(object);
             } else {
                 uncheckedObjects.addFirst(object);
@@ -502,13 +502,13 @@ public class MockupStore implements Store {
                             for (Object objectIncollection : ((Iterable) o)) {
                                 stack.push(objectIncollection);
                             }
-                        } else {
+                        } else if (!clazz.getName().startsWith("java")) {
                             //sjekker felter
                             visitedObjects.add(o);
-                            while (clazz != null && clazz != Object.class) {
+                            while (clazz != null && clazz != Object.class && clazz != Enum.class) {
                                 for (Field field : clazz.getDeclaredFields()) {
                                     if (((Modifier.TRANSIENT | Modifier.STATIC) & field.getModifiers()) == 0) {
-                                        if (!field.getType().isPrimitive() && !field.getType().getName().startsWith("java.lang.")) {
+                                        if (!field.getType().isPrimitive()) {
                                             try {
                                                 field.setAccessible(true);
                                                 Object component = field.get(o);
@@ -566,11 +566,11 @@ public class MockupStore implements Store {
         for (Map.Entry<SnapshotVersion, MockupTransfer> entry : allCompleteTransfers.entrySet()) {
             MockupTransfer transfer = entry.getValue();
             List<BubbleObject> allObjects = Stream
-                    .of(transfer.getInsertedObjects(), transfer.getUpdatedObjects(), transfer.getDeletedObjects())
-                    .flatMap(Collection::stream)
-                    .filter(bubbleObject -> ids.contains(bubbleObject.getId())
-                            || allReferencedIds.contains(bubbleObject.getId()))
-                    .collect(Collectors.toList());
+                .of(transfer.getInsertedObjects(), transfer.getUpdatedObjects(), transfer.getDeletedObjects())
+                .flatMap(Collection::stream)
+                .filter(bubbleObject -> ids.contains(bubbleObject.getId())
+                    || allReferencedIds.contains(bubbleObject.getId()))
+                .collect(Collectors.toList());
 
             SnapshotVersion previousSnapshotVersion = getSnapshotVersion();
             try {
