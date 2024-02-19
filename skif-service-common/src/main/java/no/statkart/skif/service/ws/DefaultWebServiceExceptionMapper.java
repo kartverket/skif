@@ -19,13 +19,15 @@ public class DefaultWebServiceExceptionMapper implements WebServiceExceptionMapp
         // Det kastes en intern exceptiontype, men den varierer ut fra implementasjonen. Teksten i den kan jo også
         // endre seg. Sjekker derfor HTTP-statuskoden direkte dersom det kastes en exception i det hele tatt.
         Integer responseCode = (Integer) responseContext.get(MessageContext.HTTP_RESPONSE_CODE);
-        String endpoint = (String) responseContext.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
-        if (responseCode == 401) {
-            return Optional.of(new InvalidUserException("HTTP 401 Unauthorized from " + endpoint, e));
-        } else if (responseCode == 403) {
-            return Optional.of(new PermissionDeniedException("HTTP 403 Forbidden from " + endpoint, e));
-        } else if (responseCode == 404 || responseCode == 502 || responseCode == 503) {
-            return Optional.of(new OperationalException("HTTP " + responseCode + " from " + endpoint, e));
+        if (responseCode != null) {
+            String endpoint = (String) responseContext.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+            if (responseCode == 401) {
+                return Optional.of(new InvalidUserException("HTTP 401 Unauthorized from " + endpoint, e));
+            } else if (responseCode == 403) {
+                return Optional.of(new PermissionDeniedException("HTTP 403 Forbidden from " + endpoint, e));
+            } else if (responseCode == 404 || responseCode == 502 || responseCode == 503) {
+                return Optional.of(new OperationalException("HTTP " + responseCode + " from " + endpoint, e));
+            }
         }
         return Optional.empty();
     }
