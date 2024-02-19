@@ -1,8 +1,10 @@
 package no.statkart.skif.mapping;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.mapper.*;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleTransfer;
 
@@ -20,6 +22,16 @@ import java.util.*;
  * @since 2.6.0
  */
 public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
+    private final Provider<? extends ServiceContext> serviceContextProvider;
+
+    public BubbleTransferTypeMapperFactory() {
+        serviceContextProvider = null;
+    }
+
+    public BubbleTransferTypeMapperFactory(Provider<? extends ServiceContext> serviceContextProvider) {
+        this.serviceContextProvider = serviceContextProvider;
+    }
+
     @Override
     public <WsapiT, DomainT> TypeMapper createTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken) {
         if (BubbleTransfer.class.isAssignableFrom(domainTypeToken.getRawType())) {
@@ -30,7 +42,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
             final TypeToken<?> resultTypeToken;
             if (transferType instanceof Class) {
                 // Isj
-                resultTypeToken = (TypeToken) TypeToken.of(Object.class);
+                resultTypeToken = TypeToken.of(Object.class);
             } else {
                 ParameterizedType parameterizedType = (ParameterizedType) transferType;
                 resultTypeToken = TypeToken.of(parameterizedType.getActualTypeArguments()[0]);
@@ -54,7 +66,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
                 return new ExternalTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultTypeToken, transferConstructor);
             } else {
                 //noinspection unchecked
-                return new InlineTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultTypeToken, transferConstructor);
+                return new InlineTransferTypeMapper(wsapiTypeToken, domainTypeToken, resultTypeToken, transferConstructor, serviceContextProvider);
             }
         } else {
             return null;
@@ -62,20 +74,18 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
     }
 
     public static class InlineTransferTypeMapper<WsapiT, ResultT, DomainT extends BubbleTransfer<ResultT>> extends AbstractTypeMapper<WsapiT, DomainT, Mapping> {
-        private final TypeToken<ResultT> resultTypeToken;
         private final DefaultTypeMapper<WsapiT, ResultT, Mapping> resultMapper;
         private final PropertyDescriptor bubbleObjectsProperty;
         private final PropertyDescriptor lockedIdsProperty;
         private final Constructor<DomainT> transferConstructor;
 
-        public InlineTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, TypeToken<ResultT> resultTypeToken, Constructor<DomainT> transferConstructor) {
+        public InlineTransferTypeMapper(TypeToken<WsapiT> wsapiTypeToken, TypeToken<DomainT> domainTypeToken, TypeToken<ResultT> resultTypeToken, Constructor<DomainT> transferConstructor, Provider<? extends ServiceContext> serviceContextProvider) {
             //noinspection unchecked
             super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), Mapping.class);
 
-            this.resultTypeToken = resultTypeToken;
             this.transferConstructor = transferConstructor;
 
-            resultMapper = new DefaultTypeMapper<WsapiT, ResultT, Mapping>(wsapiTypeToken, resultTypeToken, Mapping.class, Collections.<Class<?>>emptySet(), true) {
+            resultMapper = new DefaultTypeMapper<WsapiT, ResultT, Mapping>(wsapiTypeToken, resultTypeToken, Mapping.class, Collections.emptySet(), true, serviceContextProvider) {
                 @Override
                 protected Collection<Method> findGetters(Class<?> c) {
                     Collection<Method> getters = super.findGetters(c);
@@ -119,17 +129,13 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
 
             try {
                 bubbleObjectsProperty.getWriteMethod().invoke(target, bubbleObjectList);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during writing to " + bubbleObjectsProperty.getWriteMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during writing to " + bubbleObjectsProperty.getWriteMethod().toGenericString(), e);
             }
 
             try {
                 lockedIdsProperty.getWriteMethod().invoke(target, lockedIdsList);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during writing to " + lockedIdsProperty.getWriteMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during writing to " + lockedIdsProperty.getWriteMethod().toGenericString(), e);
             }
 
@@ -144,9 +150,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
 
             try {
                 bubbleObjectList = bubbleObjectsProperty.getReadMethod().invoke(source);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
             }
 
@@ -154,22 +158,16 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
 
             try {
                 lockedIdsList = lockedIdsProperty.getReadMethod().invoke(source);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during reading from " + lockedIdsProperty.getReadMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during reading from " + lockedIdsProperty.getReadMethod().toGenericString(), e);
             }
 
-            LinkedHashSet bubbleObjects = getMapping().w2d(bubbleObjectList, LinkedHashSet.class);
-            Set lockedIds = getMapping().w2d(lockedIdsList, Set.class);
+            LinkedHashSet<?> bubbleObjects = getMapping().w2d(bubbleObjectList, LinkedHashSet.class);
+            Set<?> lockedIds = getMapping().w2d(lockedIdsList, Set.class);
 
             try {
                 return transferConstructor.newInstance(result, bubbleObjects, lockedIds);
-            } catch (InstantiationException e) {
-                throw new MappingException(e);
-            } catch (IllegalAccessException e) {
-                throw new MappingException(e);
-            } catch (InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException(e);
             }
         }
@@ -190,7 +188,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
 
             PropertyDescriptor bubbleObjectsProperty = null;
             PropertyDescriptor lockedIdsProperty = null;
-            List<PropertyDescriptor> resultPropertyCandidates = new ArrayList<PropertyDescriptor>(1);
+            List<PropertyDescriptor> resultPropertyCandidates = new ArrayList<>(1);
             try {
                 BeanInfo beanInfo = Introspector.getBeanInfo(getWsapiClass(), Object.class);
                 for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
@@ -236,9 +234,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
 
             try {
                 resultProperty.getWriteMethod().invoke(target, targetResult);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during writing to " + resultProperty.getWriteMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during writing to " + resultProperty.getWriteMethod().toGenericString(), e);
             }
 
@@ -247,17 +243,13 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
 
             try {
                 bubbleObjectsProperty.getWriteMethod().invoke(target, bubbleObjectList);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during writing to " + bubbleObjectsProperty.getWriteMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during writing to " + bubbleObjectsProperty.getWriteMethod().toGenericString(), e);
             }
 
             try {
                 lockedIdsProperty.getWriteMethod().invoke(target, lockedIdsList);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during writing to " + lockedIdsProperty.getWriteMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during writing to " + lockedIdsProperty.getWriteMethod().toGenericString(), e);
             }
 
@@ -270,9 +262,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
             
             try {
                 resultSource = resultProperty.getReadMethod().invoke(source);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during reading from " + resultProperty.getReadMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during reading from " + resultProperty.getReadMethod().toGenericString(), e);
             }
 
@@ -280,9 +270,7 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
 
             try {
                 bubbleObjectList = bubbleObjectsProperty.getReadMethod().invoke(source);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during reading from " + bubbleObjectsProperty.getReadMethod().toGenericString(), e);
             }
 
@@ -290,23 +278,17 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
 
             try {
                 lockedIdsList = lockedIdsProperty.getReadMethod().invoke(source);
-            } catch (IllegalAccessException e) {
-                throw new MappingException("Error during reading from " + lockedIdsProperty.getReadMethod().toGenericString(), e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException("Error during reading from " + lockedIdsProperty.getReadMethod().toGenericString(), e);
             }
 
             ResultT result = (ResultT) getMapping().w2d(resultSource, TypeLiteral.get(resultTypeToken.getType()));
-            LinkedHashSet bubbleObjects = getMapping().w2d(bubbleObjectList, LinkedHashSet.class);
-            Set lockedIds = getMapping().w2d(lockedIdsList, Set.class);
+            LinkedHashSet<?> bubbleObjects = getMapping().w2d(bubbleObjectList, LinkedHashSet.class);
+            Set<?> lockedIds = getMapping().w2d(lockedIdsList, Set.class);
 
             try {
                 return transferConstructor.newInstance(result, bubbleObjects, lockedIds);
-            } catch (InstantiationException e) {
-                throw new MappingException(e);
-            } catch (IllegalAccessException e) {
-                throw new MappingException(e);
-            } catch (InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new MappingException(e);
             }
         }

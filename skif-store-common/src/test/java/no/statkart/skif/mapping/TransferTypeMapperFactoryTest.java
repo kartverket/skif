@@ -2,12 +2,16 @@ package no.statkart.skif.mapping;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 import no.statkart.skif.mapper.*;
+import no.statkart.skif.service.DefaultServiceContext;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.*;
 import no.statkart.skif.store.kodeliste.KodelisteLong;
 import no.statkart.skif.store.kodeliste.KodelisteLongId;
+import no.statkart.skif.util.Since;
 import org.assertj.core.api.Assertions;
 import org.testng.annotations.Test;
 
@@ -22,8 +26,8 @@ public class TransferTypeMapperFactoryTest {
     public void testTransfer() {
         Mapping mapping = new TransferTypeMapperFactoryTestMapper().getMapping();
 
-        DomainObjectId id1 = new DomainObjectId(1L);
-        DomainObjectId id2 = new DomainObjectId(2L);
+        DomainObjectId<?> id1 = new DomainObjectId<>(1L);
+        DomainObjectId<?> id2 = new DomainObjectId<>(2L);
         DomainObject object1 = new DomainObject();
         object1.setId(id1);
         object1.setText("A");
@@ -86,14 +90,14 @@ public class TransferTypeMapperFactoryTest {
 
         DomainBubbleTransfer domainTransfer = mapping.w2d(apiTransfer, DomainBubbleTransfer.class);
 
-        Assertions.assertThat((DomainObjectId) domainTransfer.getResult()).isEqualTo((DomainObjectId) id1);
+        Assertions.assertThat(domainTransfer.getResult()).isEqualTo(id1);
 
         Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
         Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
         for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
             DomainObject domainObject = (DomainObject) bubbleObject;
             funnetIds.add(domainObject.getId());
-            Assertions.assertThat((DomainObjectId) domainObject.getId()).isIn((DomainObjectId) id1, (DomainObjectId) id2);
+            Assertions.assertThat(domainObject.getId()).isIn(id1, id2);
             if (domainObject.getId().equals(id1)) {
                 Assertions.assertThat(domainObject.getText()).isEqualTo("A");
             } else if (domainObject.getId().equals(id2)) {
@@ -127,14 +131,14 @@ public class TransferTypeMapperFactoryTest {
 
         DomainBubbleTransfer domainTransfer = mapping.w2d(apiTransfer, DomainBubbleTransfer.class);
 
-        Assertions.assertThat((DomainObjectId) domainTransfer.getResult()).isEqualTo((DomainObjectId) id1);
+        Assertions.assertThat(domainTransfer.getResult()).isEqualTo(id1);
 
         Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
         Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
         for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
             DomainObject domainObject = (DomainObject) bubbleObject;
             funnetIds.add(domainObject.getId());
-            Assertions.assertThat((DomainObjectId) domainObject.getId()).isIn((DomainObjectId) id1, (DomainObjectId) id2);
+            Assertions.assertThat(domainObject.getId()).isIn(id1, id2);
             if (domainObject.getId().equals(id1)) {
                 Assertions.assertThat(domainObject.getText()).isEqualTo("A");
             } else if (domainObject.getId().equals(id2)) {
@@ -170,14 +174,14 @@ public class TransferTypeMapperFactoryTest {
 
         DomainBubbleTransfer2<DomainResult> domainTransfer = mapping.w2d(apiTransfer, new TypeLiteral<DomainBubbleTransfer2<DomainResult>>(){});
 
-        Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly((DomainObjectId) id1);
+        Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly(id1);
 
         Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
         Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
         for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
             DomainObject domainObject = (DomainObject) bubbleObject;
             funnetIds.add(domainObject.getId());
-            Assertions.assertThat((DomainObjectId) domainObject.getId()).isIn((DomainObjectId) id1, (DomainObjectId) id2);
+            Assertions.assertThat(domainObject.getId()).isIn(id1, id2);
             if (domainObject.getId().equals(id1)) {
                 Assertions.assertThat(domainObject.getText()).isEqualTo("A");
             } else if (domainObject.getId().equals(id2)) {
@@ -189,8 +193,8 @@ public class TransferTypeMapperFactoryTest {
     }
 
     @Test
-    public void testInternalBubbleTransferSubclass() {
-        Mapping mapping = new TransferTypeMapperFactoryTestMapper().getMapping();
+    public void testInternalBubbleTransferSubclass2_0() {
+        Mapping mapping = new TransferTypeMapperFactoryTestMapper("2.0").getMapping();
 
         TypeLiteral<DomainBubbleTransfer2<DomainResultSub>> domainType = new TypeLiteral<DomainBubbleTransfer2<DomainResultSub>>() {};
 
@@ -217,7 +221,7 @@ public class TransferTypeMapperFactoryTest {
 
         DomainBubbleTransfer2<DomainResultSub> domainTransfer = mapping.w2d(apiTransfer, domainType);
 
-        Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly((DomainObjectId) id1);
+        Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly(id1);
         Assertions.assertThat(domainTransfer.getResult().getInfo()).isEqualTo("Testing");
 
         Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
@@ -225,7 +229,55 @@ public class TransferTypeMapperFactoryTest {
         for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
             DomainObject domainObject = (DomainObject) bubbleObject;
             funnetIds.add(domainObject.getId());
-            Assertions.assertThat((DomainObjectId) domainObject.getId()).isIn((DomainObjectId) id1, (DomainObjectId) id2);
+            Assertions.assertThat(domainObject.getId()).isIn(id1, id2);
+            if (domainObject.getId().equals(id1)) {
+                Assertions.assertThat(domainObject.getText()).isEqualTo("A");
+            } else if (domainObject.getId().equals(id2)) {
+                Assertions.assertThat(domainObject.getText()).isEqualTo("B");
+            }
+        }
+        Assertions.assertThat(funnetIds).containsExactly(id1, id2);
+        Assertions.assertThat(domainTransfer.getLockedIds()).containsExactly(id1, id2);
+    }
+
+    @Test
+    public void testInternalBubbleTransferSubclass1_0() {
+        Mapping mapping = new TransferTypeMapperFactoryTestMapper("1.0").getMapping();
+
+        TypeLiteral<DomainBubbleTransfer2<DomainResultSub>> domainType = new TypeLiteral<DomainBubbleTransfer2<DomainResultSub>>() {};
+
+        DomainObjectId<?> id1 = new DomainObjectId<>(1L);
+        DomainObjectId<?> id2 = new DomainObjectId<>(2L);
+        DomainObject object1 = new DomainObject();
+        object1.setId(id1);
+        object1.setText("A");
+        DomainObject object2 = new DomainObject();
+        object2.setId(id2);
+        object2.setText("B");
+
+        DomainResultSub result = new DomainResultSub();
+        result.setIds(ImmutableSet.of(id1));
+        result.setInfo("Testing");
+        DomainBubbleTransfer2<DomainResultSub> transfer = new DomainBubbleTransfer2<>(result, ImmutableList.of(object1, object2), ImmutableSet.of(id1, id2));
+
+        ApiBubbleTransfer2Sub apiTransfer = (ApiBubbleTransfer2Sub) mapping.d2w(transfer, domainType.getType(), ApiBubbleTransfer2Sub.class);
+
+        Assertions.assertThat(apiTransfer.getIds().getItem()).containsExactly(new ApiObjectId("1"));
+        Assertions.assertThat(apiTransfer.getInfo()).isNull(); // Denne finnes ikke i 1.0
+        Assertions.assertThat(apiTransfer.getBubbleObjects().getItem()).containsExactly(new ApiObject(new ApiObjectId("1"), "A"), new ApiObject(new ApiObjectId("2"), "B"));
+        Assertions.assertThat(apiTransfer.getLockedIds().getItem()).containsExactly(new ApiObjectId("1"), new ApiObjectId("2"));
+
+        DomainBubbleTransfer2<DomainResultSub> domainTransfer = mapping.w2d(apiTransfer, domainType);
+
+        Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly(id1);
+        Assertions.assertThat(domainTransfer.getResult().getInfo()).isNull(); // Denne finnes ikke i 1.0
+
+        Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
+        Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
+        for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
+            DomainObject domainObject = (DomainObject) bubbleObject;
+            funnetIds.add(domainObject.getId());
+            Assertions.assertThat(domainObject.getId()).isIn(id1, id2);
             if (domainObject.getId().equals(id1)) {
                 Assertions.assertThat(domainObject.getText()).isEqualTo("A");
             } else if (domainObject.getId().equals(id2)) {
@@ -261,14 +313,14 @@ public class TransferTypeMapperFactoryTest {
 
         DomainBubbleTransfer3 domainTransfer = mapping.w2d(apiTransfer, DomainBubbleTransfer3.class);
 
-        Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly((DomainObjectId) id1);
+        Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly(id1);
 
         Set<DomainObjectId<?>> funnetIds = new LinkedHashSet<>(2);
         Assertions.assertThat(transfer.getBubbleObjects()).hasSize(2);
         for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
             DomainObject domainObject = (DomainObject) bubbleObject;
             funnetIds.add(domainObject.getId());
-            Assertions.assertThat((DomainObjectId) domainObject.getId()).isIn((DomainObjectId) id1, (DomainObjectId) id2);
+            Assertions.assertThat(domainObject.getId()).isIn(id1, id2);
             if (domainObject.getId().equals(id1)) {
                 Assertions.assertThat(domainObject.getText()).isEqualTo("A");
             } else if (domainObject.getId().equals(id2)) {
@@ -299,17 +351,25 @@ public class TransferTypeMapperFactoryTest {
         Assertions.assertThat(apiKodelisteTransfer.getKodelisterIds().getItem()).containsExactly(new ApiKodelisteId("1"));
         Assertions.assertThat(apiKodelisteTransfer.getBubbleObjects().getItem()).containsExactly(new ApiKodeliste(new ApiKodelisteId("1")));
 
-        KodelisteTransfer domeneKodelisteTransfer = mapping.w2d(apiKodelisteTransfer, KodelisteTransfer.class);
+        KodelisteTransfer<?> domeneKodelisteTransfer = mapping.w2d(apiKodelisteTransfer, KodelisteTransfer.class);
 
         //noinspection unchecked
-        Assertions.assertThat(domeneKodelisteTransfer.getKodelisterIds()).containsExactly(kodelisteId);
+        Assertions.assertThat((List<Object>) domeneKodelisteTransfer.getKodelisterIds()).containsExactly(kodelisteId);
         Assertions.assertThat((Map<?, ?>) domeneKodelisteTransfer.getBubbleObjects()).hasSize(1);
         Assertions.assertThat(domeneKodelisteTransfer.getBubbleObjects().get(kodelisteId)).isNotNull();
     }
 
     public static class TransferTypeMapperFactoryTestMapper extends AbstractMapper<Mapping> {
         public TransferTypeMapperFactoryTestMapper() {
+            this("2.0");
+        }
+
+        public TransferTypeMapperFactoryTestMapper(String version) {
             super(Mapping.class);
+
+            ServiceContext serviceContext = new DefaultServiceContext();
+            serviceContext.setSystemVersion(version);
+            Provider<ServiceContext> serviceContextProvider = Providers.of(serviceContext);
 
             MappingResolver mappingResolver = new MappingResolver();
             MappingOverrideBuilder mappingOverrideBuilder = new MappingOverrideBuilder();
@@ -323,10 +383,10 @@ public class TransferTypeMapperFactoryTest {
             addMapperFactory(new IdentityTypeMapperFactory().useIdentityMappingForBasicTypes());
             addMapperFactory(new BubbleIdTypeMapperFactory(ApiObjectId.class, Providers.of(SnapshotVersion.CURRENT)));
             addMapperFactory(new BubbleIdTypeMapperFactory(ApiKodelisteId.class, Providers.of(SnapshotVersion.CURRENT)));
-            addMapperFactory(new BubbleTransferTypeMapperFactory());
-            addMapperFactory(new TransferTypeMapperFactory());
+            addMapperFactory(new BubbleTransferTypeMapperFactory(serviceContextProvider));
+            addMapperFactory(new TransferTypeMapperFactory(serviceContextProvider));
             addMapperFactory(new CollectionMapperFactory());
-            addMapperFactory(new DefaultTypeMapperFactory());
+            addMapperFactory(new DefaultTypeMapperFactory(serviceContextProvider));
         }
     }
 
@@ -343,6 +403,7 @@ public class TransferTypeMapperFactoryTest {
     }
 
     public static class DomainResultSub extends DomainResult {
+        @Since("2.0")
         private String info;
 
         public String getInfo() {
@@ -388,30 +449,27 @@ public class TransferTypeMapperFactoryTest {
     }
 
     public static class DomainBubbleTransfer extends BubbleTransfer<DomainObjectId<?>> {
-//        public DomainBubbleTransfer(DomainObjectId<?> result, Iterable<? extends BubbleObject> objects) {
-//            super(result, objects);
-//        }
-
         @SuppressWarnings("deprecation")
-        public DomainBubbleTransfer(DomainObjectId<?> result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId> lockedIds) {
+        public DomainBubbleTransfer(DomainObjectId<?> result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId<?>> lockedIds) {
             super(result, objects, lockedIds);
         }
     }
 
     public static class DomainBubbleTransfer2<T extends DomainResult> extends BubbleTransfer<T> {
         @SuppressWarnings("deprecation")
-        public DomainBubbleTransfer2(T result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId> lockedIds) {
+        public DomainBubbleTransfer2(T result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId<?>> lockedIds) {
             super(result, objects, lockedIds);
         }
     }
 
     public static class DomainBubbleTransfer3 extends BubbleTransfer<DomainResult> {
         @SuppressWarnings("deprecation")
-        public DomainBubbleTransfer3(DomainResult result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId> lockedIds) {
+        public DomainBubbleTransfer3(DomainResult result, Iterable<? extends BubbleObject> objects, Iterable<? extends BubbleId<?>> lockedIds) {
             super(result, objects, lockedIds);
         }
     }
 
+    @SuppressWarnings("unused")
     public static class ApiObject {
         private ApiObjectId id;
         private String text;
@@ -531,6 +589,7 @@ public class TransferTypeMapperFactoryTest {
 
     }
 
+    @SuppressWarnings("unused")
     public static class ApiTransfer {
         private ApiObjectList bubbleObjects;
         private ApiIdList ids;
@@ -553,6 +612,7 @@ public class TransferTypeMapperFactoryTest {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class ApiBubbleTransfer {
         private ApiObjectList bubbleObjects;
         private ApiIdList lockedIds;
@@ -608,6 +668,7 @@ public class TransferTypeMapperFactoryTest {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class ApiBubbleTransferSub extends ApiAbstractBubbleTransfer {
         private ApiObjectId id;
 
@@ -620,6 +681,7 @@ public class TransferTypeMapperFactoryTest {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class ApiBubbleTransfer2 {
         private ApiObjectList bubbleObjects;
         private ApiIdList lockedIds;
@@ -652,6 +714,7 @@ public class TransferTypeMapperFactoryTest {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class ApiBubbleTransfer2Sub extends ApiBubbleTransfer2 {
         private String info;
 
@@ -687,6 +750,7 @@ public class TransferTypeMapperFactoryTest {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class DomainKodeliste extends KodelisteLong {
         private String text;
 
@@ -755,6 +819,7 @@ public class TransferTypeMapperFactoryTest {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class ApiKodeliste {
         private ApiKodelisteId id;
 
