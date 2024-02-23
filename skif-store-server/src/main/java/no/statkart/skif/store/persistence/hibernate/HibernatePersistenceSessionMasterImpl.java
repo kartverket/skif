@@ -43,7 +43,7 @@ import java.util.Set;
 /**
  * @author Henrik Fredholm
  */
-@SuppressWarnings({"ForLoopReplaceableByForEach", "WeakerAccess"})
+@SuppressWarnings({"WeakerAccess"})
 public class HibernatePersistenceSessionMasterImpl implements HibernatePersistenceSessionMaster {
     protected static Logger logger = LoggerFactory.getLogger(HibernatePersistenceSessionMasterImpl.class);
     private static final int CRITERIA_BATCH_POWER = 9;
@@ -102,7 +102,10 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
     @Override
     public void clear() {
-        hibernateLazySupport.clear();
+        // Ikke start en session bare for å si clear. Hvis det ikke er en session, så bør det ikke være noe å clear-e.
+        if (lazySession != null) {
+            hibernateLazySupport.clear();
+        }
     }
 
     @Override
