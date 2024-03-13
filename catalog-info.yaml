@@ -1,0 +1,33 @@
+# nonk8s
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: skif-team
+spec:
+  type: team
+  parent: Eiendom
+  children: [skif-security-champion]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: skif-security-champion
+  annotations:
+    github.com/user-login: lislei
+spec:
+  type: security-champion
+  parent: security-champions-Eiendom
+  members: [Matrikkel Grunnbok og Stedsnavn]
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: skif
+  links:
+    - url: https://github.com/kartverket/skif
+      title: skif på GitHub
+spec:
+  type: repo
+  lifecycle: production
+  owner: skif-team
