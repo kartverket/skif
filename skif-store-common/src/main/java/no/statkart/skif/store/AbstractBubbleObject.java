@@ -38,7 +38,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
         return id;
     }
 
-    public void setId(BubbleId<?> id ) {
+    public void setId(BubbleId<?> id) {
         this.id = id;
     }
 
@@ -53,7 +53,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     }
 
     public void register(Store store) {
-        checkState(this.store==null || this.store == store, "BubbleObject allerede registrert med en annen session: %s", this);
+        checkState(this.store == null || this.store == store, "BubbleObject allerede registrert med en annen session: %s", this);
         this.store = store;
     }
 
@@ -77,26 +77,31 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
         return store != null && store.getRelationCache().isEnabled();
     }
 
-    protected <T extends Set> T idAsSet() { return (T) ImmutableSet.of(getId()); }
+    protected <T extends Set> T idAsSet() {
+        return (T) ImmutableSet.of(getId());
+    }
 
     @SuppressWarnings("SimplifiableIfStatement")
     public final boolean equals(Object object) {
-       if( this == object ) return true;
-       if( !(object instanceof AbstractBubbleObject) ) return false;
+        if (this == object) return true;
+        if (!(object instanceof AbstractBubbleObject)) return false;
         final AbstractBubbleObject bubbleObject = (AbstractBubbleObject) object;
+        // Det finnes en del kode i applikasjonene som avhenger av at bobler uten id ikke er equals.
+        // Enten dette var intensjonen med den opprinnelige implementasjonen eller ikke, så må det være sånn inntil videre.
+        if (this.getId() == null || bubbleObject.getId() == null) return false;
         return Objects.equals(getClass(), object.getClass())
-                && Objects.equals(getId(), bubbleObject.getId())
-                ;
+            && Objects.equals(getId(), bubbleObject.getId())
+            ;
     }
 
     public final int hashCode() {
-       return Objects.hashCode(getId());
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + '{' +
-                "id=" + getId() +
-                '}';
+            "id=" + getId() +
+            '}';
     }
 }
