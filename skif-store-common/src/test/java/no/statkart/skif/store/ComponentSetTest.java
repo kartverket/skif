@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class ComponentSetTest {
     @Test
-    public void testIterator() throws Exception {
+    public void testIterator() {
         Bubble bubble = new Bubble();
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
@@ -31,7 +31,7 @@ public class ComponentSetTest {
     }
 
     @Test
-    public void testRemoveAll() throws Exception {
+    public void testRemoveAll() {
         Bubble bubble = new Bubble();
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
@@ -41,23 +41,27 @@ public class ComponentSetTest {
         bubble.getComponents().removeAll(Collections.singleton(a));
 
         Assert.assertNull(a.getOwner(), "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        // Ønsker overload for Object, ikke for Set eller Collection
+        //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         Bubble bubble = new Bubble();
         Component a = new Component(1, "A");
 
         bubble.getComponents().add(a);
 
-        Assert.assertEquals(a.getOwner(), bubble, "a.owner");
+        Assert.assertSame(a.getOwner(), bubble, "a.owner");
+        // Ønsker overload for Object, ikke for Set eller Collection
+        //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Collections.singleton(a), "aaComponents");
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         Bubble bubble = new Bubble();
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
@@ -67,25 +71,29 @@ public class ComponentSetTest {
         bubble.getComponents().remove(a);
 
         Assert.assertNull(a.getOwner(), "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        // Ønsker overload for Object, ikke for Set eller Collection
+        //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
 
     @Test
-    public void testAddAll() throws Exception {
+    public void testAddAll() {
         Bubble bubble = new Bubble();
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
 
         bubble.getComponents().addAll(Arrays.asList(a, b));
 
-        Assert.assertEquals(a.getOwner(), bubble, "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        Assert.assertSame(a.getOwner(), bubble, "a.owner");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        // Ønsker overload for Object, ikke for Set eller Collection
+        //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(a, b), "aaComponents");
     }
 
     @Test
-    public void testRetainAll() throws Exception {
+    public void testRetainAll() {
         Bubble bubble = new Bubble();
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
@@ -95,12 +103,14 @@ public class ComponentSetTest {
         bubble.getComponents().retainAll(Collections.singleton(b));
 
         Assert.assertNull(a.getOwner(), "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        // Ønsker overload for Object, ikke for Set eller Collection
+        //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
 
     @Test
-    public void testClear() throws Exception {
+    public void testClear() {
         Bubble bubble = new Bubble();
         Component a = new Component(1, "A");
         Component b = new Component(2, "B");
@@ -111,6 +121,8 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertNull(b.getOwner(), "b.owner");
+        // IntelliJ antar at collections oppfører seg riktig, men siden dette er vår implementasjon, så er det det vi vil sjekke
+        //noinspection ConstantValue
         Assert.assertEquals(bubble.getComponents().size(), 0, "aaComponents.size");
     }
 
@@ -128,8 +140,8 @@ public class ComponentSetTest {
         private static final long serialVersionUID = 1L;
 
         private Bubble owner;
-        private int number;
-        private String text;
+        private final int number;
+        private final String text;
 
         public Component(int number, String text) {
             this.number = number;
