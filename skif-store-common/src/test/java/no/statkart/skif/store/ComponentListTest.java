@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Test
 public class ComponentListTest {
     @Test
-    public void testAddIndex() throws Exception {
+    public void testAddIndex() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -27,12 +27,12 @@ public class ComponentListTest {
         bubble.getComponents().addAll(Arrays.asList(a, b));
         bubble.getComponents().add(1, c);
 
-        Assert.assertEquals(c.getOwner(), bubble, "c.owner");
+        Assert.assertSame(c.getOwner(), bubble, "c.owner");
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(a, c, b), "components");
     }
 
     @Test
-    public void testAddAllIndex() throws Exception {
+    public void testAddAllIndex() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -41,13 +41,13 @@ public class ComponentListTest {
         bubble.getComponents().add(c);
         bubble.getComponents().addAll(0, Arrays.asList(a, b));
 
-        Assert.assertEquals(a.getOwner(), bubble, "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        Assert.assertSame(a.getOwner(), bubble, "a.owner");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(a, b, c), "components");
     }
 
     @Test
-    public void testRemoveIndex() throws Exception {
+    public void testRemoveIndex() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -56,30 +56,30 @@ public class ComponentListTest {
         bubble.getComponents().remove(0);
 
         Assert.assertNull(a.getOwner(), "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(b), "components");
     }
 
     @Test
-    public void testSet() throws Exception {
+    public void testSet() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
         bubble.getComponents().add(a);
 
-        Assert.assertEquals(a.getOwner(), bubble, "a.owner");
+        Assert.assertSame(a.getOwner(), bubble, "a.owner");
         Assert.assertNull(b.getOwner(), "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Arrays.asList(a), "components");
+        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(a), "components");
 
         bubble.getComponents().set(0, b);
 
         Assert.assertNull(a.getOwner(), "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(b), "components");
     }
 
     @Test
-    public void testIterator() throws Exception {
+    public void testIterator() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -96,11 +96,11 @@ public class ComponentListTest {
 
         listIterator.remove();
 
-        Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
+        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(b), "components");
     }
 
     @Test
-    public void testIteratorAdd() throws Exception {
+    public void testIteratorAdd() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -112,13 +112,13 @@ public class ComponentListTest {
         Assert.assertSame(x, a);
         listIterator.add(b);
 
-        Assert.assertEquals(a.getOwner(), bubble, "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        Assert.assertSame(a.getOwner(), bubble, "a.owner");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(a, b), "components");
     }
 
     @Test
-    public void testIteratorSet() throws Exception {
+    public void testIteratorSet() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -132,12 +132,12 @@ public class ComponentListTest {
         listIterator.set(b);
 
         Assert.assertNull(a.getOwner(), "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(b), "components");
     }
 
     @Test
-    public void testIteratorRemovePrevious() throws Exception {
+    public void testIteratorRemovePrevious() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -151,11 +151,11 @@ public class ComponentListTest {
 
         listIterator.remove();
 
-        Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
+        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(b), "components");
     }
 
     @Test
-    public void testRemoveAll() throws Exception {
+    public void testRemoveAll() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -165,23 +165,23 @@ public class ComponentListTest {
         bubble.getComponents().removeAll(Collections.singleton(a));
 
         Assert.assertNull(a.getOwner(), "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(b), "components");
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
 
         bubble.getComponents().add(a);
 
-        Assert.assertEquals(a.getOwner(), bubble, "a.owner");
+        Assert.assertSame(a.getOwner(), bubble, "a.owner");
         Assert.assertEquals(bubble.getComponents(), Collections.singletonList(a), "components");
     }
 
     @Test
-    public void testRemove() throws Exception {
+    public void testRemove() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -190,25 +190,25 @@ public class ComponentListTest {
         bubble.getComponents().remove(a);
 
         Assert.assertNull(a.getOwner(), "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "components");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(b), "components");
     }
 
     @Test
-    public void testAddAll() throws Exception {
+    public void testAddAll() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
 
         bubble.getComponents().addAll(Arrays.asList(a, b));
 
-        Assert.assertEquals(a.getOwner(), bubble, "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
+        Assert.assertSame(a.getOwner(), bubble, "a.owner");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
         Assert.assertEquals(bubble.getComponents(), Arrays.asList(a, b), "components");
     }
 
     @Test
-    public void testRetainAll() throws Exception {
+    public void testRetainAll() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -218,12 +218,12 @@ public class ComponentListTest {
         bubble.getComponents().retainAll(Collections.singleton(b));
 
         Assert.assertNull(a.getOwner(), "a.owner");
-        Assert.assertEquals(b.getOwner(), bubble, "b.owner");
-        Assert.assertEquals(bubble.getComponents(), Arrays.asList(b), "aaComponents");
+        Assert.assertSame(b.getOwner(), bubble, "b.owner");
+        Assert.assertEquals(bubble.getComponents(), Collections.singletonList(b), "aaComponents");
     }
 
     @Test
-    public void testClear() throws Exception {
+    public void testClear() {
         Bubble bubble = new Bubble();
         Component a = new Component("A");
         Component b = new Component("B");
@@ -234,6 +234,8 @@ public class ComponentListTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertNull(b.getOwner(), "b.owner");
+        // IntelliJ antar at collections oppfører seg riktig, men siden dette er vår implementasjon, så er det det vi vil sjekke
+        //noinspection ConstantValue
         Assert.assertEquals(bubble.getComponents().size(), 0, "aaComponents.size");
     }
 
@@ -251,7 +253,7 @@ public class ComponentListTest {
         private static final long serialVersionUID = 1L;
 
         private Bubble owner;
-        private String text;
+        private final String text;
 
         public Component(String text) {
             this.text = text;
