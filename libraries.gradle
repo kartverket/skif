@@ -36,7 +36,7 @@ ext.libraries = [
 
 
         // Utility libraries
-        guava: "com.google.guava:guava:30.1.1-jre",
+        guava: "com.google.guava:guava:32.1.2-jre",
         jsr305: "com.google.code.findbugs:jsr305:1.3.9",
         xstream: 'com.thoughtworks.xstream:xstream:1.4.20',
         commons_pool: 'org.apache.commons:commons-pool2:2.11.1',
@@ -49,7 +49,7 @@ ext.libraries = [
         mockito: 'org.mockito:mockito-core:4.7.0',
         unitils: 'org.unitils:unitils-core:3.4.6',
         assertj: 'org.assertj:assertj-core:3.23.1',
-        reflections: 'org.reflections:reflections:0.9.11',
+        reflections: 'org.reflections:reflections:0.9.12',
 
         // JAXB
         jaxb_impl: "com.sun.xml.bind:jaxb-impl:${JAXB_VERSION}",
@@ -79,7 +79,7 @@ libraries.bubbleref_spi = [
 ]
 
 libraries.hibernate = [
-        'no.statkart.skif:skif-hibernate-support:1.0.2',
+        'no.statkart.skif:skif-hibernate-support:1.0.4',
         'org.hibernate:hibernate-core:5.3.25.Final.bubbleref.1',
 ]
 
