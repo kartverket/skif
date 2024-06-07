@@ -15,8 +15,8 @@ ext.TOMEE_VERSION = libVersion('tomee', '8.0.16')
 ext.libraries = [
 
         // Database
-        ojdbc: "com.oracle.database.jdbc:ojdbc8:${libVersion('oracle', '19.3.0.0')}@jar",
-        ojdbc_g: "com.oracle.database.jdbc.debug:ojdbc8_g:${libVersion('oracle', '19.3.0.0')}@jar",
+        ojdbc: "com.oracle.database.jdbc:ojdbc8:${libVersion('oracle', '19.12.0.0')}@jar",
+        ojdbc_g: "com.oracle.database.jdbc.debug:ojdbc8_g:${libVersion('oracle', '19.12.0.0')}@jar",
         c3p0: "com.mchange:c3p0:${libVersion('c3p0', '0.9.5.5')}",
 
         // Logging
