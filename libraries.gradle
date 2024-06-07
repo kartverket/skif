@@ -4,7 +4,7 @@ def libVersion(String name, String defaultValue) {
     project.findProperty('version.' + name) ?: defaultValue //development mode only
 }
 
-ext.SLF4J_VERSION = libVersion('slf4j', '1.7.25')
+ext.SLF4J_VERSION = libVersion('slf4j', '1.7.32')
 ext.JAXB_VERSION = libVersion('jaxb', '2.2.7') // 2.2.10 har bug i håndtering av enum i Java-til-XSD
 ext.JAXWS_VERSION = libVersion('jaxws', '2.2.8') // Nyeste versjon som ikke krever nyere JAXB
 ext.TOMEE_VERSION = libVersion('tomee', '8.0.16')
@@ -24,7 +24,7 @@ ext.libraries = [
         jcl_to_slf4j: "org.slf4j:jcl-over-slf4j:${SLF4J_VERSION}",
         jul_to_slf4j: "org.slf4j:jul-to-slf4j:${SLF4J_VERSION}",
         log4j_to_slf4j: "org.slf4j:log4j-over-slf4j:${SLF4J_VERSION}",
-        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.2.10')}",
+        logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.2.13')}",
 
         // Guice med extensions
         guice: "com.google.inject:guice:${libVersion('guice', '5.0.1')}",
