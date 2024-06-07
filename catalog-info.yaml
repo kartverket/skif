@@ -35,3 +35,29 @@ spec:
   owner: "security_champion_skif"
   dependencyOf:
   - "component:skif"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "Resource"
+metadata:
+  name: "skif-hibernate-support"
+  links:
+  - url: "https://github.com/kartverket/skif-hibernate-support"
+    title: "skif-hibernate-support på GitHub"
+spec:
+  type: "repo"
+  owner: "security_champion_skif"
+  dependencyOf:
+  - "component:skif"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "Resource"
+metadata:
+  name: "skif-bubble-spi"
+  links:
+  - url: "https://github.com/kartverket/skif-bubble-spi"
+    title: "skif-bubble-spi på GitHub"
+spec:
+  type: "repo"
+  owner: "security_champion_skif"
+  dependencyOf:
+  - "component:skif"
