@@ -37,6 +37,13 @@ allprojects {
                 includeGroup 'org.hibernate' //SKIF bubbleref hack
             }
         }
+        maven {
+            name = 'managecat'; url = 'https://nexus.statkart.no/repository/ManageCat/'
+            content {
+                includeGroup 'org.apache.tomee'
+                includeGroup 'org.apache.tomee.bom'
+            }
+        }
         mavenCentral()
     }
 }
