@@ -7,7 +7,7 @@ def libVersion(String name, String defaultValue) {
 ext.SLF4J_VERSION = libVersion('slf4j', '1.7.32')
 ext.JAXB_VERSION = libVersion('jaxb', '2.2.7') // 2.2.10 har bug i håndtering av enum i Java-til-XSD
 ext.JAXWS_VERSION = libVersion('jaxws', '2.2.8') // Nyeste versjon som ikke krever nyere JAXB
-ext.TOMEE_VERSION = libVersion('tomee', '8.0.16')
+ext.TOMEE_VERSION = libVersion('tomee', '8.0.19')
 
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
