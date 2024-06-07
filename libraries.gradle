@@ -27,12 +27,7 @@ ext.libraries = [
         logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.2.13')}",
 
         // Guice med extensions
-        guice: "com.google.inject:guice:${libVersion('guice', '5.0.1')}",
-        guice_throwingproviders: "com.google.inject.extensions:guice-throwingproviders:${libVersion('guice', '5.0.1')}",
-        guice_assistedinject: "com.google.inject.extensions:guice-assistedinject:${libVersion('guice', '5.0.1')}",
-        guice_grapher: "com.google.inject.extensions:guice-grapher:${libVersion('guice', '5.0.1')}",
-        // guice-servlet depends on servlet-api som her er provided via weblogic og derfor ikke skal være med her
-        guice_servlet: "com.google.inject.extensions:guice-servlet:${libVersion('guice', '5.0.1')}@jar",
+        guice: "com.google.inject:guice:${libVersion('guice', '5.1.0')}",
 
 
         // Utility libraries
