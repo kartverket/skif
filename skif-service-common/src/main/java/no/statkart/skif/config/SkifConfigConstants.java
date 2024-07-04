@@ -46,8 +46,6 @@ public class SkifConfigConstants {
     public static final String DB_DATASOURCE = "skif.db_datasource";
     public static final String DB_DATASOURCE_OLD = "skif.db_datasource_old";
 
-    public static final String HIBERNATE_MAPPRING_FILE_ROOT = "skif.hibernate_mapping_file_root";
-
     public static final String LOCK_TIMEOUT = "skif.lock_timeout";
     public static final String MAX_TRANSACTION_DURATION = "skif.max_transaction_duration";
 
