@@ -2,8 +2,6 @@ def defaultProperties = [
         base_version          : '3.5',
         sub_version           : '-SNAPSHOT',
 
-        hibernateVersion      : '3.6',
-
         service_mode          : 'SINGLE_VM',
 
         LOCALHOSTNAME         : java.net.InetAddress.localHost.canonicalHostName,

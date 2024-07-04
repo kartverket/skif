@@ -51,15 +51,6 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
         return ConfigurationConverter.getProperties(hibernateConfiguration);
     }
 
-//    protected StoreHibernateSessionFactoryBuilder createHibernateSessionFactoryBuilder() {
-//        Properties properties = getHibernateProperties();
-//        logger.trace("Properties used for configuring hibernate: '{}'", properties);
-//        String mappingFileDirectoryRoot = moduleConfiguration.getConfiguration().getString(SkifConfigConstants.HIBERNATE_MAPPRING_FILE_ROOT, mappingFileDirectoryRootDefault);
-//        return HibernateVersionFactory.Accessor.get().createStoreHibernateSessionFactoryBuilder(properties, mappingFileDirectoryRoot, new HibernateStoreInterceptor());
-//    }
-
-//    protected abstract void configureHibernate(StoreHibernateSessionFactoryBuilder factoryBuilderStore);
-
     @Override
     protected void configure() {
 
@@ -81,8 +72,8 @@ public abstract class ServerStoreModule extends ModuleWithStrategy<ServerStoreMo
 //        bind(ConnectionManager.class).to(HibernateSessionManager.class);
 //        bind(HibernateSessionManager.class).to(HibernateStoreSessionManager.class);
 //
-//        // TODO: Nok ikke riktig måte å gjøre det på. Må sjekke som det virkelig blir ServiceRequestScoped eller singleton her.
-//        bind(Connection.class).toProvider(new ConnectionProvider(SnapshotVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig å angi snapshotversion her?
+//        // TODO: Nok ikke riktig mï¿½te ï¿½ gjï¿½re det pï¿½. Mï¿½ sjekke som det virkelig blir ServiceRequestScoped eller singleton her.
+//        bind(Connection.class).toProvider(new ConnectionProvider(SnapshotVersion.CURRENT)).in(ServiceRequestScoped.class);     //TODO: Er det riktig ï¿½ angi snapshotversion her?
 //
 //        bind(HibernateStoreSessionManager.class).to(HibernateStoreSessionManagerSnapshotVersionImpl.class);
 //        bind(HibernateStoreSessionManagerSnapshotVersionImpl.class).in(ServiceRequestScoped.class);

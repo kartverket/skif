@@ -23,8 +23,6 @@ filterResources {
 
             db_lock_tablename: db_lock_tablename as String,
             db_sequence_tablename: db_sequence_tablename as String,
-
-            hibernateVersion: hibernateVersion as String,
     ]
     properties filterProperties
 }
