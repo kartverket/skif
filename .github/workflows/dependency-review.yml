@@ -1,0 +1,49 @@
+# Submits a dependency graph and performs dependency review on every pull request
+name: Dependency review for pull requests
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  dependency-submission:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Setter opp tilgang til nexus.statkart.no
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          version: "1.48.1"
+          tags: tag:github-runner
+
+      - name: Set up the JDK used to run Gradle
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Generate and submit dependency graph for the PR
+        uses: gradle/actions/dependency-submission@v3
+
+  dependency-review:
+    needs: dependency-submission
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setter opp tilgang til nexus.statkart.no
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          version: "1.48.1"
+          tags: tag:github-runner
+
+      - name: Perform dependency review
+        uses: actions/dependency-review-action@v4
+        with:
+          warn-only: true
