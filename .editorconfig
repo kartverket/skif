@@ -11,3 +11,5 @@ ij_java_class_count_to_use_import_on_demand = 9999
 ij_java_names_count_to_use_import_on_demand = 9999
 ij_java_packages_to_use_import_on_demand = java.awt.*,javax.swing.*
 
+[*.gradle]
+charset = utf-8
