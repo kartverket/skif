@@ -3,7 +3,7 @@ name: Publiser Gradle-avhengigheter
 on:
   push:
     branches:
-    - 'develop'
+    - 'trunk'
 jobs:
   dependency-submission:
     permissions:
