@@ -59,8 +59,7 @@ libraries.jaxb_api = "jakarta.xml.bind:jakarta.xml.bind-api:${JAXB_VERSION}"
 
 // JAXWS
 libraries.jaxws_api = "jakarta.xml.ws:jakarta.xml.ws-api:${JAXWS_VERSION}" //for kompilering
-libraries.jws_api = 'jakarta.jws:jakarta.jws-api:1.1.1'
-//libraries.jws_api = 'javax.jws:javax.jws-api:1.1'
+libraries.jws_api = 'jakarta.jws:jakarta.jws-api:3.0.0'
 libraries.jaxws_rt = [ //for kjøring utenfor container
         libraries.jaxb_impl,
         "com.sun.xml.ws:jaxws-rt:3.0.2",
