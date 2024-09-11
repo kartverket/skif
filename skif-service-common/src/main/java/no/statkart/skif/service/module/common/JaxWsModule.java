@@ -12,7 +12,7 @@ import no.statkart.skif.service.ws.WebServiceExceptionMapper;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.Handler;
 import java.util.List;
 import java.util.function.Function;
 

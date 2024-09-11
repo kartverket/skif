@@ -4,7 +4,7 @@ import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.*;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * @author Roar Ingebrigtsen

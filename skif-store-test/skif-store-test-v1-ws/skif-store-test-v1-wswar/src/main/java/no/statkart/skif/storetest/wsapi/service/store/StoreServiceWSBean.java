@@ -7,12 +7,12 @@ import no.statkart.skif.storetest.wsapi.domain.*;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceContext;
 
 /**
  * @author Henrik Fredholm

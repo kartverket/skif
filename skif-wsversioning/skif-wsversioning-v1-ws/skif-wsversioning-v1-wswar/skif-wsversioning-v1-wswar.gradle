@@ -17,6 +17,8 @@ dependencies {
     provided project(':skif-wsversioning:skif-wsversioning-server')
     provided libraries.jee
     provided libraries.jaxws_rt
+
+    jaxws "com.sun.xml.ws:jaxws-tools:$JAXWS_VERSION"
 }
 
 war {

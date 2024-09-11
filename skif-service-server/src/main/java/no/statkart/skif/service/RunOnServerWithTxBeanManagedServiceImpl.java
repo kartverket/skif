@@ -3,8 +3,8 @@ package no.statkart.skif.service;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
 
 /**
  * @author Henrik Fredholm

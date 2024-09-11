@@ -1,7 +1,7 @@
 package no.statkart.skif.util.testsupport;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.ws.WebFault;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.ws.WebFault;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;

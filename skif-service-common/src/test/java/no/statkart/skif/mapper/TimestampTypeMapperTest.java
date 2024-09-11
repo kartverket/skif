@@ -1,16 +1,14 @@
 package no.statkart.skif.mapper;
 
-import org.assertj.core.api.AbstractThrowableAssert;
-import org.assertj.core.api.Assertions;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -21,7 +19,6 @@ import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 import java.util.Random;
 import java.util.TimeZone;
-import java.util.function.Function;
 
 /**
  * Tester {@link TimestampTypeMapper}.

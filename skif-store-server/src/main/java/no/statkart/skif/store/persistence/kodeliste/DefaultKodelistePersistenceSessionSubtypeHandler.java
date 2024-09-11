@@ -11,8 +11,8 @@ import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import org.hibernate.Session;
 
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.metamodel.EntityType;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.metamodel.EntityType;
 import java.util.*;
 
 /**

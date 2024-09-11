@@ -16,14 +16,14 @@ import no.statkart.skif.util.CopyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
-import javax.ejb.NoSuchObjectLocalException;
-import javax.ejb.SessionContext;
-import javax.ejb.Timer;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-import javax.transaction.TransactionManager;
+import jakarta.annotation.Resource;
+import jakarta.ejb.NoSuchObjectLocalException;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
+import jakarta.transaction.TransactionManager;
 
 /**
  * Baseklasse for integrasjon mellom JEE og Guice, samt SKIFs custom scopes.

@@ -6,8 +6,8 @@
         xmlns="http://skif.statkart.no/wsversioning/wsapi/v1/exception"
         xmlns:domainns="http://skif.statkart.no/wsversioning/wsapi/v1/domain"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-        jaxb:version="2.1"
+        xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+        jaxb:version="3.0"
         >
 
     <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/wsversioning/wsapi/v1/domain"/>

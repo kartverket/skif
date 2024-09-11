@@ -23,6 +23,7 @@ dependencies {
 
     testImplementation libraries.jaxws_rt
     testImplementation libraries.reflections
+    testImplementation libraries.logback_classic
 }
 
 task testJar(type: Jar) {
@@ -65,5 +66,5 @@ task assertDependencies() {
         }
     }
 }
-test.dependsOn assertDependencies //kjøres som en test
+test.dependsOn assertDependencies //kjÃ¸res som en test
 

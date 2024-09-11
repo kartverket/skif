@@ -13,11 +13,11 @@ import no.statkart.skif.skiftest.wsapi.exception.impl.ServiceFaultInfo;
 import no.statkart.skif.skiftest.wsapi.exception.impl.StackTraceElementList;
 import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleNonMappedFaultInfo;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceContext;
 import java.lang.reflect.InvocationTargetException;
 
 /**

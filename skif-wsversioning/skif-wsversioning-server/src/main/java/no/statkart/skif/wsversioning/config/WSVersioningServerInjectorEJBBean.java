@@ -5,9 +5,9 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
 
 /**
  * Definere hvilken injector som skal brukes internt i serveren og hvordan denne konfigureres opp.

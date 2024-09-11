@@ -8,8 +8,8 @@ import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

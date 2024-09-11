@@ -15,7 +15,7 @@ plugins {
 dependencies {
     api project(':skif-store-test:skif-store-test-api')
     provided project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
-    // Trengs for Java 11 får å unngå 'warning: unknown enum constant XmlAccessType.FIELD'
+    // Trengs for Java 11 fÃ¥r Ã¥ unngÃ¥ 'warning: unknown enum constant XmlAccessType.FIELD'
     api libraries.jaxb_api
 
     testImplementation project(':skif-testsupport-common')

@@ -6,11 +6,11 @@ import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.Interceptors;
 import java.util.List;
 /**
  * @author Roar Ingebrigtsen

@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Provider;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.WebServiceException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.UndeclaredThrowableException;

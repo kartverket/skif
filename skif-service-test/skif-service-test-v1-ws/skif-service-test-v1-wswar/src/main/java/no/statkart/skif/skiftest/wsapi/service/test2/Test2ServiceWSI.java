@@ -5,7 +5,7 @@ import no.statkart.skif.skiftest.wsapi.domain.A;
 import no.statkart.skif.skiftest.wsapi.domain.B;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * @author Henrik Fredholm

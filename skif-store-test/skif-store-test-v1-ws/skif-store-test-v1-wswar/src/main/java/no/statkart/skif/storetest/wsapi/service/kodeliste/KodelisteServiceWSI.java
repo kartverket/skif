@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * @author Henrik Fredholm

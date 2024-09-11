@@ -4,8 +4,8 @@ import no.statkart.skif.service.StopRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.TimedObject;
-import javax.ejb.Timer;
+import jakarta.ejb.TimedObject;
+import jakarta.ejb.Timer;
 
 
 /**

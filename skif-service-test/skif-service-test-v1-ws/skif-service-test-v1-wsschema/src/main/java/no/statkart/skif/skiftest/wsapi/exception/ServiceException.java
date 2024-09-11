@@ -1,6 +1,6 @@
 package no.statkart.skif.skiftest.wsapi.exception;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 import no.statkart.skif.skiftest.wsapi.exception.impl.*;
 
 /**

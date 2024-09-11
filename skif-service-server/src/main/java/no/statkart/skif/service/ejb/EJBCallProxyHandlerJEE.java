@@ -5,7 +5,7 @@ import com.google.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.annotation.EJBBean;
 
-import javax.ejb.EJBException;
+import jakarta.ejb.EJBException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

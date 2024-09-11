@@ -7,13 +7,13 @@ import no.statkart.skif.wsversioning.wsapi.v2.context.WSVersioningContext;
 import no.statkart.skif.wsversioning.wsapi.v2.domain.*;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceContext;
 
 /**
  * Implementasjon av {@link StoreServiceWSI}.

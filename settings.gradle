@@ -83,7 +83,7 @@ void configureProject(ProjectDescriptor project) {
     project.children.each { configureProject(it) }
 }
 
-// Include build for arbeid på tvers av prosjekter
+// Include build for arbeid pÃ¥ tvers av prosjekter
 // - konfigureres feks via gradle.properties: includeBuild.wsclient=../matrikkel-wsclient
 ext.getProperties().findAll {(it.key as String).startsWith('includeBuild.')}.each {
     println 'Include build ' + file(it.value)

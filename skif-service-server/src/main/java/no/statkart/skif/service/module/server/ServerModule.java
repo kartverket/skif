@@ -15,7 +15,7 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 /**
  * @since 2.0

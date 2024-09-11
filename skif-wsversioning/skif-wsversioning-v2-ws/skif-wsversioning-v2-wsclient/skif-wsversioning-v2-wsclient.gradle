@@ -9,6 +9,7 @@ configurations {
 
 dependencies {
     wsdls project(path: ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar', configuration: 'wsdls')
+    jaxws "com.sun.xml.ws:jaxws-tools:3.0.2"
 
     implementation libraries.jaxws_rt
 }

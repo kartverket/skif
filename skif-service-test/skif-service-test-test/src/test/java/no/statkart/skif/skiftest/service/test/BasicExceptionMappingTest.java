@@ -86,7 +86,7 @@ public class BasicExceptionMappingTest extends SkifTestCase {
             } else if (serviceMode == ServiceMode.SINGLE_VM_XML) {
                 assertEquals(t.getClass(), MappingException.class);
             } else {
-                assertTrue(t instanceof javax.xml.ws.soap.SOAPFaultException);
+                assertTrue(t instanceof jakarta.xml.ws.soap.SOAPFaultException);
             }
         }
     }

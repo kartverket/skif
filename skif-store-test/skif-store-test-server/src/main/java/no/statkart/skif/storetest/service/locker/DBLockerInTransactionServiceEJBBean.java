@@ -4,11 +4,11 @@ import com.google.inject.Inject;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.Interceptors;
 
 /**
  * @author Tor Egil R. Strand

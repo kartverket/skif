@@ -1,5 +1,5 @@
 def defaultProperties = [
-        base_version          : '3.5',
+        base_version          : '4.5',
         sub_version           : '-SNAPSHOT',
 
         service_mode          : 'SINGLE_VM',
