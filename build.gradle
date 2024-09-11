@@ -35,6 +35,9 @@ allprojects {
                 includeModule 'no.statkart.skif', 'skif-bubble-spi' //SKIF bubbleref hack
                 includeModule 'no.statkart.skif', 'skif-hibernate-support' //SKIF bubbleref hack
                 includeGroup 'org.hibernate' //SKIF bubbleref hack
+                includeGroup 'org.opensaml'
+                includeGroup 'net.shibboleth.utilities'
+                includeGroup 'net.shibboleth'
             }
         }
         maven {
