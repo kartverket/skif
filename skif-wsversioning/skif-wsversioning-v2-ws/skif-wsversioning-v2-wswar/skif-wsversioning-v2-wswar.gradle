@@ -17,7 +17,7 @@ dependencies {
     provided libraries.jee
     provided libraries.jaxws_rt
 
-    jaxws "com.sun.xml.ws:jaxws-tools:3.0.2"
+    jaxws libraries.jaxws_tools
 }
 
 war {

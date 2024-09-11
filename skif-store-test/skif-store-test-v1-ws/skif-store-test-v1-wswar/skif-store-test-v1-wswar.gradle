@@ -21,7 +21,7 @@ dependencies {
 
     originalSchemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
 
-    jaxws "com.sun.xml.ws:jaxws-tools:$JAXWS_VERSION"
+    jaxws libraries.jaxws_tools
 }
 
 customizeWsdls {
