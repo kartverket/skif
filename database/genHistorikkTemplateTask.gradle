@@ -8,7 +8,7 @@
  *  - "UpdateHistorikkViewFor%.sql" inneholder views og triggere per tabell.
  *
  *
- * Parameterisering av denne tasken gjÃ¸res via:
+ * Parameterisering av denne tasken gjøres via:
  *   apply from: 'genHistorikkTemplateTask.gradle'
  *   genHistorikkTemplate.config {
  *     oracleConvention = project.convention.plugins['db'].dbToolSets['']
@@ -36,7 +36,7 @@ task genHistorikkTemplate(description: 'Genererer PLSQL template script for till
 
 //    Pseudo funksjonalitet for kodegenerering.
 //
-//    Disse scriptene forutsetter at de kjÃ¸res med en databasebruker som har tilgang til alle tabeller
+//    Disse scriptene forutsetter at de kjøres med en databasebruker som har tilgang til alle tabeller
 //
 //    ApplyHistorikkTo%.sql :
 //
@@ -299,7 +299,7 @@ CREATE OR REPLACE TRIGGER "T_${viewName}"\
           switch( it.toUpperCase() ) {
             case 'oppdateringsdato': return "t_Trans"
             case 'sluttdato': return 't_End'       //defaults to value defined for table
-            case 'versjonId': return 1         //nye objekter inserted via view fÃ¥r version=1 (default 0)
+            case 'versjonId': return 1         //nye objekter inserted via view får version=1 (default 0)
             default: return ":new.\"${it}\""
           }
         }.join(', ')
