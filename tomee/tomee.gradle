@@ -5,6 +5,8 @@ plugins {
 
 dependencies {
     implementation libraries.tomee_embedded
+    implementation('com.google.guava:guava:32.1.3-jre') //Workaround for https://github.com/google/guava/issues/6657
+
     runtimeOnly libraries.jdbc
 }
 

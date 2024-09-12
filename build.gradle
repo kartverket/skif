@@ -35,16 +35,15 @@ allprojects {
                 includeModule 'no.statkart.skif', 'skif-bubble-spi' //SKIF bubbleref hack
                 includeModule 'no.statkart.skif', 'skif-hibernate-support' //SKIF bubbleref hack
                 includeGroup 'org.hibernate' //SKIF bubbleref hack
-                includeGroup 'org.opensaml'
-                includeGroup 'net.shibboleth.utilities'
-                includeGroup 'net.shibboleth'
+
             }
         }
         maven {
-            name = 'managecat'; url = 'https://nexus.statkart.no/repository/ManageCat/'
+            name = 'jboss'; url = 'https://repository.jboss.org/nexus/content/groups/public/'
             content {
-                includeGroup 'org.apache.tomee'
-                includeGroup 'org.apache.tomee.bom'
+                includeGroup 'org.opensaml'
+                includeGroup 'net.shibboleth.utilities'
+                includeGroup 'net.shibboleth'
             }
         }
         mavenCentral()
