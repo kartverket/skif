@@ -23,7 +23,7 @@ dependencies {
         earlib project(path: it.key, configuration: 'earlib')
     }
 
-    // TODO: BÃ¸r noen av de andre modulene trekke med seg denne (de har den nÃ¥ pÃ¥ testCompile)?
+    // TODO: Bør noen av de andre modulene trekke med seg denne (de har den nå på testCompile)?
     earlib project(':skif-config')
 }
 
