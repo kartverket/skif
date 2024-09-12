@@ -51,7 +51,7 @@ configureDatabasePlugin {
     toolset(name: 'historikk', type: 'oracle', prefix: 'historikk') {
         //tasker for historikk mekanikk
         sqlTask('createSnapshotTrans', sqlFile: 'src/main/sql/oracle/historikk/CreateTemporaryTableSnapshotTrans.sql', failOnError: false) {
-            //feiler ikke dersom tabell allerede finnes fra før
+            //feiler ikke dersom tabell allerede finnes fra fÃ¸r
             mustRunAfter 'purge'
         }
         sqlTask('updatePackageSnapshotTime', sqlFile: 'src/main/sql/oracle/historikk/UpdatePackageSnapshotTime.sql') {
@@ -149,7 +149,7 @@ task applyHistorikk() {
             return ret
         }
 
-        // Drop alle fremmednøkler på tabeller som skal få historikk (antar at ingen ikke-historiske tabeller har fremmednøkler til historiske tabeller)
+        // Drop alle fremmednÃ¸kler pÃ¥ tabeller som skal fÃ¥ historikk (antar at ingen ikke-historiske tabeller har fremmednÃ¸kler til historiske tabeller)
         tables.each { String tableName ->
             findForeignKeys(db_username, tableName).each {
                 sql.execute("ALTER TABLE ${tableName} DROP CONSTRAINT ${it}".toString())
@@ -198,9 +198,9 @@ task applyHistorikk() {
     IF ANT = 0 THEN
       SELECT COUNT(*) INTO ANT FROM ${tableName}_H WHERE ${pkColumns.collect {it + '=:OLD.' + it}.join(' AND ')} AND SLUTTDATO = SNAPSHOT_TIME.GET_T_CURRENT();
       IF ANT = 1 THEN
-        RAISE_APPLICATION_ERROR(-20003,'Det er ikke lov å endre primærnøkkelen på objekter i SKIF.');
+        RAISE_APPLICATION_ERROR(-20003,'Det er ikke lov Ã¥ endre primÃ¦rnÃ¸kkelen pÃ¥ objekter i SKIF.');
       ELSE
-        RAISE_APPLICATION_ERROR(-20002,'Det er ikke lov å kjøre update på noe som ikke har en current versjon! Skal ikke komme her da man ikke skal finne noe når man angir noe som ikke finnes!');
+        RAISE_APPLICATION_ERROR(-20002,'Det er ikke lov Ã¥ kjÃ¸re update pÃ¥ noe som ikke har en current versjon! Skal ikke komme her da man ikke skal finne noe nÃ¥r man angir noe som ikke finnes!');
       END IF;
     ELSE
       IF :OLD.OPPDATERINGSDATO < T_TRANS THEN

@@ -59,4 +59,4 @@ task assertDependencies() {
         }
     }
 }
-test.dependsOn assertDependencies //kjøres som en test
+test.dependsOn assertDependencies //kjÃ¸res som en test
