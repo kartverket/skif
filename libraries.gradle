@@ -5,10 +5,7 @@ def libVersion(String name, String defaultValue) {
 }
 
 ext.SLF4J_VERSION = libVersion('slf4j', '1.7.32')
-ext.JAXB_VERSION = libVersion('jaxb', '3.0.1')
-ext.JAXWS_VERSION = libVersion('jaxws', '3.0.1')
 ext.TOMEE_VERSION = libVersion('tomee', '9.1.3')
-
 
 // build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
 // use. In that respect it serves a role similar to <dependencyManagement> in Maven
@@ -59,10 +56,10 @@ ext.libraries = [
 ]
 
 // JAXB
-libraries.jaxb_api = "jakarta.xml.bind:jakarta.xml.bind-api:${JAXB_VERSION}"
+libraries.jaxb_api = "jakarta.xml.bind:jakarta.xml.bind-api:3.0.1"
 
 // JAXWS
-libraries.jaxws_api = "jakarta.xml.ws:jakarta.xml.ws-api:${JAXWS_VERSION}" //for kompilering
+libraries.jaxws_api = "jakarta.xml.ws:jakarta.xml.ws-api:3.0.1" //for kompilering
 libraries.jws_api = 'jakarta.jws:jakarta.jws-api:3.0.0'
 libraries.jaxws_rt = [ //for kjøring utenfor container
         libraries.jaxb_impl,
