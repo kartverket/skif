@@ -15,10 +15,10 @@ dependencies {
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
-    provided libraries.jee
-    provided libraries.jaxws_rt
+    provided libs.bundles.jee
+    provided libs.bundles.jaxws.rt
 
-    jaxws libraries.jaxws_tools
+    jaxws libs.jaxws.tools
 }
 
 war {

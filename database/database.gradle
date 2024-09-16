@@ -14,7 +14,12 @@ def filterProperties = [
 ]
 
 configureDatabasePlugin {
-    useDrivers libraries.ojdbc
+
+    //TODO, hent modul direkte fra toml.
+    def ojdbcVersion = libs.versions.oracle.get() // Fetch the version
+    def ojdbcLib = "com.oracle.database.jdbc:ojdbc8:${ojdbcVersion}@jar"
+
+    useDrivers(ojdbcLib)
 
     toolset(name: '', type: 'oracle', prefix: '') {
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')

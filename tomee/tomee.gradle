@@ -4,10 +4,22 @@ plugins {
 }
 
 dependencies {
-    implementation libraries.tomee_embedded
+    implementation libs.tomee.embedded
     implementation('com.google.guava:guava:32.1.3-jre') //Workaround for https://github.com/google/guava/issues/6657
 
-    runtimeOnly libraries.jdbc
+    if(System.getenv('ORA-DEBUG') == 'true'){
+        runtimeOnly (libs.ojdbc.g){
+             artifact {
+                type = "jar"
+             }
+        }
+    } else {
+        runtimeOnly (libs.ojdbc){
+            artifact {
+                type = "jar"
+            }
+        }
+    }
 }
 
 var deployments = [

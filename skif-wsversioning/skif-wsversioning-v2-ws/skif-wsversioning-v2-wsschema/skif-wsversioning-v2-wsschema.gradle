@@ -4,11 +4,11 @@ plugins {
 }
 
 dependencies {
-  implementation libraries.jaxws_api
-  implementation libraries.jaxb_api
+  implementation libs.jaxws.api
+  implementation libs.jaxb.api
 
-  compileOnly libraries.jaxb_runtime
-  jaxb libraries.jaxb_xjc
+  compileOnly libs.jaxb.runtime
+  jaxb libs.jaxb.xjc
 }
 
 sourceSets {

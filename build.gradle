@@ -85,11 +85,13 @@ subprojects { Project project ->
     plugins.withType(JavaPlugin) {
         // Avhengigheter som trengs for testing (riktignok ikke alle overalt)
         project.dependencies {
-            testImplementation libraries.testng
-            testImplementation libraries.mockito
-            testImplementation libraries.assertj
+            testImplementation (libs.testing){
+                exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
+            }
+            testImplementation libs.mockito
+            testImplementation libs.assertj
 
-            compileOnly libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
+            compileOnly libs.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
         }
 
         project.java {

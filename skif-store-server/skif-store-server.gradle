@@ -7,16 +7,29 @@ plugins {
 dependencies {
     api project(':skif-store-common')
     api project(':skif-service-server')
-    api libraries.guava //pga Multimap
-    api libraries.hibernate
+    api libs.guava //pga Multimap
+    api libs.bundles.hibernate
 
-    provided libraries.jee
+    provided libs.bundles.jee
 
-    implementation libraries.jodatime
-    implementation libraries.jdbc //provided
-    implementation libraries.hibernate
+    implementation libs.jodatime
+        if(System.getenv('ORA-DEBUG') == 'true'){
+        implementation (libs.ojdbc.g){
+             artifact {
+                type = "jar"
+             }
+        }
+    } else {
+        implementation (libs.ojdbc){
+            artifact {
+                type = "jar"
+            }
+        }
+    }
 
-    compileOnly libraries.openejb_core
+    implementation libs.bundles.hibernate
+
+    compileOnly libs.openejb.core
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')

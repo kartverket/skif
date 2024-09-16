@@ -9,7 +9,7 @@ dependencies {
 
     provided project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar')
 
-    provided libraries.jee
+    provided libs.bundles.jee
 
     testImplementation project(':skif-wsversioning:skif-wsversioning-server')
     testImplementation project(':skif-testsupport-common')

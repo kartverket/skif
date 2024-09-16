@@ -7,9 +7,21 @@ dependencies {
     api project(':skif-service-server')
     api project(':skif-service-test:skif-service-test-api')
 
-    provided libraries.jee
-    provided libraries.c3p0
-    provided libraries.jdbc
+    provided libs.bundles.jee
+    provided libs.c3p0
+    if(System.getenv('ORA-DEBUG') == 'true'){
+    provided (libs.ojdbc.g){
+         artifact {
+            type = "jar"
+         }
+    }
+    } else {
+        provided (libs.ojdbc){
+            artifact {
+                type = "jar"
+            }
+        }
+    }
 
     testImplementation project(':skif-testsupport-common')
 

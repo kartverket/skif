@@ -11,13 +11,13 @@ configurations {
 
 dependencies {
     api project(':skif-service-common')
-    api libraries.bubbleref_spi
-    implementation libraries.guava
+    api libs.skif.bubble.spi
+    implementation libs.guava
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
 
-    testImplementation libraries.reflections
+    testImplementation libs.reflections
 
 }
 

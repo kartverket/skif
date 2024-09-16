@@ -9,14 +9,27 @@ description = 'Inneholder service-rammeverk klasser for tjener'
 dependencies {
     api project(':skif-service-common')
 
-    provided libraries.jee
-    provided libraries.jaxws_rt
+    provided libs.bundles.jee
+    provided libs.bundles.jaxws.rt
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
     testImplementation project(path: ':skif-service-common', configuration: 'testApi')
-    testImplementation libraries.jdbc
-    testImplementation libraries.c3p0
+    
+    if(System.getenv('ORA-DEBUG') == 'true'){
+        testImplementation (libs.ojdbc.g){
+             artifact {
+                type = "jar"
+             }
+        }
+    } else {
+        testImplementation (libs.ojdbc){
+            artifact {
+                type = "jar"
+            }
+        }
+    }
+    testImplementation libs.c3p0
 }
 
 publishing {

@@ -28,7 +28,7 @@ filterResources {
 }
 
 dependencies {
-    runtimeOnly libraries.jul_to_slf4j
-    runtimeOnly libraries.log4j_to_slf4j
-    runtimeOnly libraries.logback_classic
+    runtimeOnly libs.jul.to.slf4j
+    runtimeOnly libs.log4j.to.slf4j
+    runtimeOnly libs.logback.classic
 }

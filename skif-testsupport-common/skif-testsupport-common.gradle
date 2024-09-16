@@ -5,8 +5,10 @@ plugins {
 
 dependencies {
     api project(':skif-service-common')
-    api libraries.testng
-    compileOnly libraries.jaxws_api
+    api (libs.testing){
+        exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
+    }
+    compileOnly libs.jaxws.api
 }
 
 publishing {

@@ -5,5 +5,5 @@ plugins {
 
 dependencies {
     implementation project(':skif-wsversioning:skif-wsversioning-server')
-    provided libraries.jee
+    provided libs.bundles.jee
 }

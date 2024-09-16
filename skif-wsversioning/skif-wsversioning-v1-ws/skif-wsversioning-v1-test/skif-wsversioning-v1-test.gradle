@@ -10,7 +10,7 @@ dependencies {
     provided project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wscompat')
     provided project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wswar')
     provided project(':skif-wsversioning:skif-wsversioning-server')
-    provided libraries.jee
+    provided libs.bundles.jee
 
     testImplementation project(':skif-testsupport-common')
     testRuntimeOnly project(':skif-config')

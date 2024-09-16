@@ -11,7 +11,7 @@ dependencies {
     api project(':skif-wsversioning:skif-wsversioning-api')
     api project(':skif-store-server')
 
-    provided libraries.jee
+    provided libs.bundles.jee
 
     testImplementation project(':skif-testsupport-common')
 

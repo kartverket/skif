@@ -8,21 +8,33 @@ dependencies {
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     runtimeOnly project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient')
 
-    provided libraries.jee
-    provided libraries.c3p0
-    provided libraries.jdbc
+    provided libs.bundles.jee
+    provided libs.c3p0
+        if(System.getenv('ORA-DEBUG') == 'true'){
+        provided (libs.ojdbc.g){
+             artifact {
+                type = "jar"
+             }
+        }
+    } else {
+        provided (libs.ojdbc){
+            artifact {
+                type = "jar"
+            }
+        }
+    }
 
     testImplementation project(':skif-testsupport-common')
     testImplementation project(':skif-store-test:skif-store-test-server')
     testImplementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient')
 
 
-    testImplementation libraries.unitils //optional library for testing
-    testImplementation libraries.xstream // Brukes i test
+    testImplementation libs.unitils //optional library for testing
+    testImplementation libs.xstream // Brukes i test
 
     //internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
-    testImplementation libraries.logback_classic
+    testImplementation libs.logback.classic
 }
 
 task loadMockupData(type: JavaExec) {

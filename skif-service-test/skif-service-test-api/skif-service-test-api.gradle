@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api project(':skif-service-common')
-    api libraries.jodatime
+    api libs.jodatime
 
     testImplementation project(':skif-testsupport-common')
 
