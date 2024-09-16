@@ -9,7 +9,7 @@ import no.statkart.skif.service.ServerUrlHolder;
 import no.statkart.skif.service.ws.WebServiceExceptionMapper;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;
 import jakarta.xml.ws.handler.Handler;

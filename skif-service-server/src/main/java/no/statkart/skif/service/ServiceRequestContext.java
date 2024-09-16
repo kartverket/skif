@@ -6,7 +6,7 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 
 import javax.annotation.Nullable;
 import jakarta.ejb.TransactionAttributeType;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.io.Serializable;
 import java.security.Principal;
 

@@ -24,7 +24,7 @@ ext.libraries = [
         logback_classic: "ch.qos.logback:logback-classic:${libVersion('logback', '1.4.14')}",
 
         // Guice med extensions
-        guice: "com.google.inject:guice:${libVersion('guice', '6.0.0')}",
+        guice: "com.google.inject:guice:${libVersion('guice', '7.0.0')}",
 
         // Utility libraries
         guava: "com.google.guava:guava:32.1.2-jre",

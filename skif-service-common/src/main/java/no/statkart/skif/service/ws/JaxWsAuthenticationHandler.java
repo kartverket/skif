@@ -4,7 +4,7 @@ import no.statkart.skif.service.HttpRequestAuthenticationOverride;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.LogicalHandler;
 import jakarta.xml.ws.handler.LogicalMessageContext;

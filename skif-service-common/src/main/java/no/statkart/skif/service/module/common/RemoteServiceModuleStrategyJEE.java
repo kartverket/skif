@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import jakarta.jws.WebService;
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;

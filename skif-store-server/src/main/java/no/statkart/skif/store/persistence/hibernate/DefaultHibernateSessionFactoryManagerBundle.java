@@ -3,7 +3,7 @@ package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.service.sequence.IdService;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

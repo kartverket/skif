@@ -4,7 +4,7 @@ import no.statkart.skif.exception.InvalidUserException;
 import no.statkart.skif.exception.OperationalException;
 import no.statkart.skif.exception.PermissionDeniedException;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.WebServiceException;
 import jakarta.xml.ws.handler.MessageContext;

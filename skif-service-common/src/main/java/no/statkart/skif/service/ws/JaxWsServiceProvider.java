@@ -8,7 +8,7 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import jakarta.jws.WebService;
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;

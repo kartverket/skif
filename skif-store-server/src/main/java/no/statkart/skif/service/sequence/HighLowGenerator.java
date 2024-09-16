@@ -12,7 +12,7 @@ import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.Serializable;
 import java.util.Properties;
 
