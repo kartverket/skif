@@ -10,29 +10,3 @@ spec:
   lifecycle: "production"
   owner: "heimdall"
   system: "skif"
----
-apiVersion: "backstage.io/v1alpha1"
-kind: "Group"
-metadata:
-  name: "security_champion_skif"
-  title: "Security Champion skif"
-spec:
-  type: "security_champion"
-  parent: "eiendom_security_champions"
-  members:
-  - "lislei"
-  children:
-  - "resource:skif"
----
-apiVersion: "backstage.io/v1alpha1"
-kind: "Resource"
-metadata:
-  name: "skif"
-  links:
-  - url: "https://github.com/kartverket/skif"
-    title: "skif på GitHub"
-spec:
-  type: "repo"
-  owner: "security_champion_skif"
-  dependencyOf:
-  - "component:skif"
