@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Id klasse for {@link AbstractBubbleObject}
  * <p>
- * Subklasser må definere hvilken konkret type som skal brukes for {@code idValue}. Dette gjørs ved å la subtypen implementerer
+ * Subklasser mÃ¥ definere hvilken konkret type som skal brukes for {@code idValue}. Dette gjÃ¸rs ved Ã¥ la subtypen implementerer
  * metoden {@link #getValue()} med konkret return type (f.eks {@code Long} eller {@code String}.
  *
  * @author Henrik Fredholm
@@ -67,7 +67,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     private static Map<Class<?>, TypeInfo> typeInfoMap = new ConcurrentHashMap<>(100);
 
     // Cache the class for faster access. This actually matters
-    protected Class<?> clazz = getClass();
+    private transient Class<?> clazz = getClass();
 
 
     protected AbstractBubbleId() {
@@ -152,19 +152,19 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
     /**
-     * Må ha spesiell implementasjon. Årsaken til dette er at vi må håndtere id'er for hierarkier i modellen
-     * spesielt. I vår modell kan vi ha hierarkier i domenemodellen der super-klassen er en abstract klasse.
-     * Men hibernate gjør at når vi laster et objekt av klasse <code>Sub</code> som er subklasse av
-     * <code>Super</code>, vil objektet kunne få et id-objekt som er av id-typen til 'Super'.
+     * MÃ¥ ha spesiell implementasjon. Ã…rsaken til dette er at vi mÃ¥ hÃ¥ndtere id'er for hierarkier i modellen
+     * spesielt. I vÃ¥r modell kan vi ha hierarkier i domenemodellen der super-klassen er en abstract klasse.
+     * Men hibernate gjÃ¸r at nÃ¥r vi laster et objekt av klasse <code>Sub</code> som er subklasse av
+     * <code>Super</code>, vil objektet kunne fÃ¥ et id-objekt som er av id-typen til 'Super'.
      * <p>
-     * <p>Eksempel: I matrikkelen vil en grunneiendom få id av type MatrikkelenhetId i stedet for GrunneiendomId. I praksis er en id
+     * <p>Eksempel: I matrikkelen vil en grunneiendom fÃ¥ id av type MatrikkelenhetId i stedet for GrunneiendomId. I praksis er en id
      * av type MatrikkelenhetId lik en med type GrunneiendomId, dersom id'ens <code>value</code> er lik. I motsetning
-     * vil en VegadresseId og en GrunneiendomId være forskjellige selvom id'ene har samme value (gitt at id-verdier evt.
+     * vil en VegadresseId og en GrunneiendomId vÃ¦re forskjellige selvom id'ene har samme value (gitt at id-verdier evt.
      * kun er unike innenfor hver klasse/hierarki).
      *
      * @param id en annen Id
      * @return true dersom dette objektet er av samme type og har samme <code>value</code> som parameteren <code>id</code>
-     *         Objektene er av samme type også dersom dette objektet er en sub-type av <code>id</code> eller omvendt.
+     *         Objektene er av samme type ogsÃ¥ dersom dette objektet er en sub-type av <code>id</code> eller omvendt.
      */
     final public boolean equals(AbstractBubbleId id) {
         if (id == null) return false;
@@ -184,7 +184,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
      * To {@code BubbleId}'er er i utgangspunktet compatible hvis base typen for id'ene er den samme. Det er det samme
      * som at base typen for id'ens {@code BubbleObject}'er er like.
      * <p>
-     * I noen tilfeller kan det være nødvendig å overskrive denne metode, se {@link no.statkart.skif.store.kodeliste.Kodeliste}
+     * I noen tilfeller kan det vÃ¦re nÃ¸dvendig Ã¥ overskrive denne metode, se {@link no.statkart.skif.store.kodeliste.Kodeliste}
      *
      * @param id
      * @return
@@ -374,5 +374,6 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         if (copyHelperSnapshotVersion != null) {
             this.snapshotVersion = copyHelperSnapshotVersion; //rekursiv konfigurasjon av snapshotVersjon via CopyHelper
         }
+        clazz = getClass();
     }
 }
