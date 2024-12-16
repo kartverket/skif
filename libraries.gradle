@@ -59,7 +59,7 @@ ext.libraries = [
 libraries.jaxb_api = "javax.xml.bind:jaxb-api:2.3.1"
 
 // JAXWS
-libraries.jaxws_api = "jakarta.xml.ws:jakarta.xml.ws-api:${JAXWS_VERSION}" //for kompilering
+libraries.jaxws_api = "jakarta.xml.ws:jakarta.xml.ws-api:2.3.3" //for kompilering
 libraries.jws_api = 'javax.jws:javax.jws-api:1.1'
 libraries.jaxws_rt = [ //for kjøring utenfor container
         libraries.jaxb_impl,
