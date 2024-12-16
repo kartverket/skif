@@ -5,8 +5,8 @@ def libVersion(String name, String defaultValue) {
 }
 
 ext.SLF4J_VERSION = libVersion('slf4j', '1.7.32')
-ext.JAXB_VERSION = libVersion('jaxb', '2.2.7') // 2.2.10 har bug i håndtering av enum i Java-til-XSD
-ext.JAXWS_VERSION = libVersion('jaxws', '2.2.8') // Nyeste versjon som ikke krever nyere JAXB
+ext.JAXB_VERSION = libVersion('jaxb', '2.3.7')
+ext.JAXWS_VERSION = libVersion('jaxws', '2.3.3')
 ext.TOMEE_VERSION = libVersion('tomee', '8.0.19')
 
 
@@ -56,10 +56,10 @@ ext.libraries = [
 ]
 
 // JAXB
-libraries.jaxb_api = "javax.xml.bind:jaxb-api:${JAXB_VERSION}"
+libraries.jaxb_api = "javax.xml.bind:jaxb-api:2.3.1"
 
 // JAXWS
-libraries.jaxws_api = "javax.xml.ws:jaxws-api:${JAXWS_VERSION}" //for kompilering
+libraries.jaxws_api = "jakarta.xml.ws:jakarta.xml.ws-api:2.3.3" //for kompilering
 libraries.jws_api = 'javax.jws:javax.jws-api:1.1'
 libraries.jaxws_rt = [ //for kjøring utenfor container
         libraries.jaxb_impl,
