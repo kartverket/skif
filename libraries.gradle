@@ -43,7 +43,7 @@ ext.libraries = [
         },
         mockito: 'org.mockito:mockito-core:4.7.0',
         unitils: 'org.unitils:unitils-core:3.4.6',
-        assertj: 'org.assertj:assertj-core:3.23.1',
+        assertj: 'org.assertj:assertj-core:3.26.3',
         reflections: 'org.reflections:reflections:0.9.12',
 
         // JAXB
