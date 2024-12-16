@@ -56,7 +56,7 @@ ext.libraries = [
 ]
 
 // JAXB
-libraries.jaxb_api = "javax.xml.bind:jaxb-api:${JAXB_VERSION}"
+libraries.jaxb_api = "javax.xml.bind:jaxb-api:2.3.1"
 
 // JAXWS
 libraries.jaxws_api = "jakarta.xml.ws:jakarta.xml.ws-api:${JAXWS_VERSION}" //for kompilering
