@@ -15,7 +15,7 @@ Dersom hovedbranch representerer gjeldende underversjon så kan releasen versjons
 Hvis ikke, så cherry-pickes endringer ut på frittstående release-branch.
 
 ## Hvordan publisere ny versjon
-En oppretter en git tag for versjonsmerke og legger dette ut på en release-branch med navn på formen `<hovedversjon>.<underversjon>`.
+Versjonsmerke er allerede opprettet og finnes på en release-branch med navn på formen `<hovedversjon>.<underversjon>`.
 Deretter publiserer man release i Jenkins:
  * https://jenkins.matrikkel.no/job/Github%20SKIF/job/skif-release/
  * Klikk på "Scan Repository Now" dersom branchen ikke finnes i listen enda.
