@@ -15,12 +15,18 @@ Dersom hovedbranch representerer gjeldende underversjon så kan releasen versjons
 Hvis ikke, så cherry-pickes endringer ut på frittstående release-branch.
 
 ## Hvordan publisere ny versjon
-Versjonsmerke er allerede opprettet og finnes på en release-branch med navn på formen `<hovedversjon>.<underversjon>`.
-Deretter publiserer man release i Jenkins:
+Versjonsmerke defineres manuelt på release-branch med navn på formen `<hovedversjon>.<underversjon>`.
+Publiser release i Jenkins:
  * https://jenkins.matrikkel.no/job/Github%20SKIF/job/skif-release/
  * Klikk på "Scan Repository Now" dersom branchen ikke finnes i listen enda.
  * Start så jobb og sett vedlikeholdsversjon (starter på 0).
 
+### Tagge release på GitHub
+ * Definer er ny release https://github.com/kartverket/skif/releases/new
+ * Versjonsmerke (tag) skal være på formen `<hovedversjon>.<underversjon>.<vedlikeholdsversjon>`
+   * Hovedversjon og underversjon stammer fra branchnavn.
+   * Vedlikeholdsversjon stammer fra input til publiseringsjobb.
+ * Target skal være commit (hash) til publiseringsjobb.
 
 # Lokal utvikling på tvers av prosjekter
 For enkelt å teste endringer i andre gradle prosjekt kan disse inkluderes som "composite builds" i byggesystemet.
