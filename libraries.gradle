@@ -43,8 +43,8 @@ ext.libraries = [
         },
         mockito: 'org.mockito:mockito-core:4.7.0',
         unitils: 'org.unitils:unitils-core:3.4.6',
-        assertj: 'org.assertj:assertj-core:3.23.1',
-        reflections: 'org.reflections:reflections:0.9.12',
+        assertj: 'org.assertj:assertj-core:3.26.3',
+        reflections: 'org.reflections:reflections:0.10.2',
 
         // JAXB
         jaxb_impl: "com.sun.xml.bind:jaxb-impl:3.0.2",

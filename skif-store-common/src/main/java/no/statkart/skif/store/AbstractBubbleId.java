@@ -67,7 +67,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     private static Map<Class<?>, TypeInfo> typeInfoMap = new ConcurrentHashMap<>(100);
 
     // Cache the class for faster access. This actually matters
-    protected Class<?> clazz = getClass();
+    private transient Class<?> clazz = getClass();
 
 
     protected AbstractBubbleId() {
@@ -374,5 +374,6 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
         if (copyHelperSnapshotVersion != null) {
             this.snapshotVersion = copyHelperSnapshotVersion; //rekursiv konfigurasjon av snapshotVersjon via CopyHelper
         }
+        clazz = getClass();
     }
 }

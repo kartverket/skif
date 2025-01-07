@@ -16,12 +16,6 @@ allprojects {
         options.encoding = 'windows-1252'
     }
 
-    tasks.withType(Test) {
-        if (JavaVersion.current().isJava9Compatible()) {
-            jvmArgs += ['--add-opens', 'java.base/java.lang=ALL-UNNAMED']
-        }
-    }
-
     apply plugin: 'idea'
 
     repositories {
