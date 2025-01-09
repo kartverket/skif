@@ -87,11 +87,6 @@ libraries.jee = [
         'org.glassfish:javax.ejb:3.1.1',
 ]
 
-// Oracle Weblogic dependencies for deployment
-libraries.weblogic = files(
-        "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
-)
-
 libraries.tomee_embedded = "org.apache.tomee:tomee-embedded:${TOMEE_VERSION}"
 libraries.openejb_core = "org.apache.tomee:openejb-core:${TOMEE_VERSION}"
 

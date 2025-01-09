@@ -1,7 +1,6 @@
 plugins {
     id 'ear'
     id 'java-base'
-    id 'sktools.weblogic-deploy'
 }
 
 def warMap = [
@@ -36,21 +35,4 @@ deploymentDescriptor {
         def p = project(it.key)
         webModule(p.name + '-' + p.version + '.war', it.value)
     }
-}
-
-weblogicDeploy {
-  classpath = libraries.weblogic
-  url(host: wls_deploy_hostname, port: wls_deploy_port, protocol: wls_deploy_protocol)
-  targets = wls_deploy_targets
-  username = wls_username
-  password = wls_password
-
-  file = ear
-  name = archivesBaseName
-
-  undeployTask('undeploy', description: "Undeployer ${name} til ${url}")
-
-  deployTask('deploy', dependsOn: [undeployTask], description: "Deployer ${name} til ${url}") {
-    deployerTimeout = 1200000
-  }
 }
