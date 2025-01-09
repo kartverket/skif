@@ -8,16 +8,6 @@ includeBuild.hibernate-orm=../hibernate-orm
 includeBuild.hibernate-support=../skif-hibernate-support
 ```
 
-
-#### Oppsett av WEBLOGIC_HOME
-Konfigurasjon av biblioteker til weblogic gjøres i `gradle.properties`:  
-``` properties
-Brukes ved deploy
-WEBLOGIC_HOME=C:\\wls1213
-WEBLOGIC_VERSION=12.1.3
-``` 
-
-
 #### Oppsett av testdatabase
 Bruker opprettes via `gradle dbCreateUser`. Hvor tablespacefilen skal legges bestemmes
 av property `db_dataroot_dir`.
