@@ -34,11 +34,11 @@ public abstract class EJBInterceptorJEE {
     @Resource
     private SessionContext sessionContext;
 
-    @Resource(mappedName = "javax.transaction.TransactionManager")
+    @Resource(mappedName = "jakarta.transaction.TransactionManager")
     private TransactionManager transactionManager;
 
     /**
-     * Prosjektene må implementere denne til å returnere sin server-injector.
+     * Prosjektene mï¿½ implementere denne til ï¿½ returnere sin server-injector.
      */
     protected abstract Injector getInjector();
 
@@ -176,4 +176,3 @@ public abstract class EJBInterceptorJEE {
 
 
 }
-
