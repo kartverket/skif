@@ -31,7 +31,7 @@ pipeline {
             // første bygg. Hvis første bygg feiler tidlig nok, heller ikke på andre bygg, osv.
             steps {
                 script {
-                    if (SKIF_VERSION !=~ /\d+\.\d+\.\d+/) {
+                    if (!(SKIF_VERSION ==~ /\d+\.\d+\.\d+/)) {
                         error("vedlikeholdsversjon er ikke angitt")
                     }
                 }
