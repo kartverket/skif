@@ -11,7 +11,7 @@ import no.statkart.skif.storetest.domain.basic.HistSimple;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

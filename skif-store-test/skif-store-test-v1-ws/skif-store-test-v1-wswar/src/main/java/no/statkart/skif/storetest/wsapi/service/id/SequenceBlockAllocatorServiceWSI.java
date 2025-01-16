@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.wsapi.service.id;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * @author Roar Ingebrigtsen

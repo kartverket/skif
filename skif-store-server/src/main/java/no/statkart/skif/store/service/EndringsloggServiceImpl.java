@@ -5,6 +5,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Root;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.AbstractBubbleId;
@@ -20,22 +24,13 @@ import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
-import no.statkart.skif.store.kodeliste.AbstractKodeliste;
 import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.metadata.ClassMetadata;
 
 import javax.annotation.Nullable;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
-import javax.persistence.metamodel.EntityType;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -128,9 +123,9 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
                     CriteriaBuilder cb = session.getCriteriaBuilder();
                     CriteriaQuery<E> cq = (CriteriaQuery<E>) (CriteriaQuery<?>) cb.createQuery(endringClass);
                     Root<? extends AbstractEndring> root = cq.from(endringClass);
-                    if (endringer.getSisteEndringIdProsessert() == null){
+                    if (endringer.getSisteEndringIdProsessert() == null) {
                         cq.where(cb.greaterThan(root.get("id"), id));
-                    }   else {
+                    } else {
                         cq.where(cb.greaterThan(root.get("id"), endringer.getSisteEndringIdProsessert()));
                     }
                     cq.orderBy(cb.asc(root.get("id")));

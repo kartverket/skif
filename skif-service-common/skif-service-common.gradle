@@ -23,6 +23,7 @@ dependencies {
 
     testImplementation libraries.jaxws_rt
     testImplementation libraries.reflections
+    testImplementation libraries.logback_classic
 }
 
 task testJar(type: Jar) {

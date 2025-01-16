@@ -8,7 +8,7 @@ import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1BBOneIdList
 import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1CCManyIdList;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * @author Thomas Berg

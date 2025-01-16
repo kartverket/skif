@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
  * objektet. slik at relevant context state blir lagt inn {@code ServiceContext}.
  * <p>
  * Adapteren har også exception håndtering dersom denne er tildelt og satt (ikke null).
- * Alle {@link Exception}s annotert med {@link javax.xml.ws.WebFault} blir mappet over til korresponderende exceptions ihht til mapper.
+ * Alle {@link Exception}s annotert med {@link jakarta.xml.ws.WebFault} blir mappet over til korresponderende exceptions ihht til mapper.
  * All andre exceptions blir fanget og wrappet til {@link no.statkart.skif.exception.ImplementationException}.
  *
  * @author Henrik Fredholm

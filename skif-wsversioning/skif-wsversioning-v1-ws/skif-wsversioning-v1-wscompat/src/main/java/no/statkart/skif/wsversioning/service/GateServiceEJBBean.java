@@ -6,8 +6,8 @@ import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.wsversioning.config.WSVersioningV1EJBInterceptorJEE;
 import no.statkart.skif.wsversioning.domain.VegId;
 
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 import java.util.Set;
 
 /**

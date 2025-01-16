@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.config;
 import com.google.inject.Injector;
 import no.statkart.skif.service.ejb.EJBInterceptorJEE;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 /**
  * EJB Interceptor som definere hvilken injector EJB'ene i skif-store-test serveren skal bruke

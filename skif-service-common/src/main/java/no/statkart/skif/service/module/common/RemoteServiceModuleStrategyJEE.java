@@ -21,11 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Singleton;
-import javax.jws.WebService;
+import jakarta.inject.Singleton;
+import jakarta.jws.WebService;
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;
-import javax.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.Handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

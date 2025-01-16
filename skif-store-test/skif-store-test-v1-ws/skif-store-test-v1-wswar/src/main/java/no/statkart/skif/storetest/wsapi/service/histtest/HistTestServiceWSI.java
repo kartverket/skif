@@ -9,7 +9,7 @@ import no.statkart.skif.storetest.wsapi.domain.basic.HistSimpleIdToHistWithRelat
 import no.statkart.skif.storetest.wsapi.domain.basic.HistWithRelationIdList;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
-import javax.jws.WebParam;
+import jakarta.jws.WebParam;
 
 /**
  * @author Roar Ingebrigtsen

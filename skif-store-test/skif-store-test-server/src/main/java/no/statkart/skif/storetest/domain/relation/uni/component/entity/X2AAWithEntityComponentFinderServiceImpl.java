@@ -9,7 +9,7 @@ import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.*;
 import org.hibernate.type.StandardBasicTypes;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;

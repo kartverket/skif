@@ -6,8 +6,8 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.hibernate.engine.transaction.jta.platform.internal.AbstractJtaPlatform;
 
 import javax.naming.NamingException;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
 
 /**
  * Det følger med en OpenEJBJtaPlatform2 i TomEE, men siden den arver fra AbstractJtaPlatform, som ikke følger med, så

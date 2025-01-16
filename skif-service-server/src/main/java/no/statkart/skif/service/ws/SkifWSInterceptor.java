@@ -7,7 +7,7 @@ import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 
-import javax.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceContext;
 import java.lang.reflect.Method;
 
 /**

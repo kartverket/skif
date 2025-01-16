@@ -1,9 +1,9 @@
 package no.statkart.skif.skiftest.wsapi.service.types;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 /**
  * Denne tjenesten er kun her for å teste ut hvordan andre rammeverk takler forskjellige typer. Den benytter ikke SKIF

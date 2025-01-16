@@ -10,7 +10,7 @@ import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestSimpleEx
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;

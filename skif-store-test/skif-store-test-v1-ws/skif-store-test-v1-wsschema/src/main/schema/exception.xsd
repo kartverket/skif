@@ -7,8 +7,8 @@
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
         xmlns:basetypens="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
         xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
-        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-        jaxb:version="2.1"
+        xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+        jaxb:version="3.0"
         >
 
     <xs:import schemaLocation="basetyper.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/basetyper"/>

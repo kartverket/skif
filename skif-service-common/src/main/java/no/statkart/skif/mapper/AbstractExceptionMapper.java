@@ -30,7 +30,7 @@ public abstract class AbstractExceptionMapper<M extends ExceptionMapping> extend
             Throwable t = (Throwable) args[0];
 
             // Kan ikke bruke instanceof på EJBAccessException, for den klassen finnes ikke på klientsiden, kun tjenersiden (og singlevm)
-            if (t.getClass().getName().equals("javax.ejb.EJBAccessException")) {
+            if (t.getClass().getName().equals("jakarta.ejb.EJBAccessException")) {
                 PermissionDeniedException e = new PermissionDeniedException(t.getMessage(), t);
                 e.setStackTrace(t.getStackTrace());
                 return super.d2w(method, new Object[]{e});

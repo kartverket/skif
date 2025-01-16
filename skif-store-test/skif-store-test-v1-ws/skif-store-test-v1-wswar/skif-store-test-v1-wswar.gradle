@@ -20,6 +20,8 @@ dependencies {
     provided libraries.jaxws_rt
 
     originalSchemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
+
+    jaxws libraries.jaxws_tools
 }
 
 customizeWsdls {

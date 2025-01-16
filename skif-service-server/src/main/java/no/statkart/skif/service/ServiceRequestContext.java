@@ -5,8 +5,8 @@ import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 
 import javax.annotation.Nullable;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
 import java.io.Serializable;
 import java.security.Principal;
 

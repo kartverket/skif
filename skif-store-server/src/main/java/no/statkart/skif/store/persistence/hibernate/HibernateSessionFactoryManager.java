@@ -5,7 +5,7 @@ import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Properties;
 
 /**

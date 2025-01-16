@@ -17,6 +17,8 @@ dependencies {
 
     provided libraries.jee
     provided libraries.jaxws_rt
+
+    jaxws libraries.jaxws_tools
 }
 
 war {

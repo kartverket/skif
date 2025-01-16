@@ -4,7 +4,7 @@ import no.statkart.skif.SkifUtil;
 import no.statkart.skif.store.relation.cache.annotation.Relation;
 import no.statkart.skif.store.relation.cache.annotation.RelationType;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 

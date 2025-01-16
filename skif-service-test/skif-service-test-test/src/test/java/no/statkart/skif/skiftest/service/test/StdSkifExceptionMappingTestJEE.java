@@ -12,7 +12,7 @@ import no.statkart.skif.skiftest.service.testd.DService;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
-import javax.xml.ws.soap.SOAPFaultException;
+import jakarta.xml.ws.soap.SOAPFaultException;
 
 import static org.testng.Assert.*;
 

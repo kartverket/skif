@@ -9,6 +9,7 @@ configurations {
 
 dependencies {
     wsdls project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wswar', configuration: 'wsdls')
+    jaxws libraries.jaxws_tools
 
     implementation libraries.jaxws_rt
 }

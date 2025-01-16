@@ -17,7 +17,7 @@ import org.hibernate.Session;
 import org.hibernate.type.CustomType;
 import org.hibernate.type.StandardBasicTypes;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
