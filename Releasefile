@@ -11,11 +11,11 @@ pipeline {
         }
     }
     parameters {
-        string(name: 'SUBVERSION', defaultValue: '0')
+        string(name: 'vedlikeholdsversjon', defaultValue: '0')
     }
     environment {
-        SKIF_VERSION = "${env.BRANCH_NAME}.${params.SUBVERSION}"
-        GRADLE_ARGS = "-Pbase_version=$BRANCH_NAME -Psub_version=.${params.SUBVERSION} -Pdb_jdbc_url=$SKIF_19C_JDBC_URL -Pdb_username=JENKINS_SKIF_${schemaNumber()}"
+        SKIF_VERSION = "${env.BRANCH_NAME}.${params.vedlikeholdsversjon}"
+        GRADLE_ARGS = "-Pbase_version=${env.BRANCH_NAME} -Psub_version=.${params.vedlikeholdsversjon} -Pdb_jdbc_url=$SKIF_19C_JDBC_URL -Pdb_username=JENKINS_SKIF_${schemaNumber()}"
 
         //for publisering til sentralt maven repo bines opp via jenkins credential (secret text)
         MAVEN_PUBLISH = credentials('MAVEN_DEPLOY_RELEASES')
@@ -31,8 +31,8 @@ pipeline {
             // første bygg. Hvis første bygg feiler tidlig nok, heller ikke på andre bygg, osv.
             steps {
                 script {
-                    if (!params.SUBVERSION) {
-                        error("SUBVERSION er ikke angitt")
+                    if (SKIF_VERSION !=~ /\d+\.\d+\.\d+/) {
+                        error("vedlikeholdsversjon er ikke angitt")
                     }
                 }
             }
