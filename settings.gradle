@@ -5,7 +5,6 @@ pluginManagement {
         id 'sktools.dbtools' version "$SKTOOLS_VERSION"
         id 'sktools.filter-resources' version "$SKTOOLS_VERSION"
         id 'sktools.provided' version "$SKTOOLS_VERSION"
-        id 'sktools.weblogic-deploy' version "$SKTOOLS_VERSION"
         id 'sktools.wsimport' version "$SKTOOLS_VERSION"
         id 'sktools.wsdl-customizer' version "$SKTOOLS_VERSION"
         id 'sktools.wsgen' version "$SKTOOLS_VERSION"

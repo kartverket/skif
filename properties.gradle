@@ -7,8 +7,6 @@ def defaultProperties = [
         LOCALHOSTNAME         : java.net.InetAddress.localHost.canonicalHostName,
         MAVEN_LOCAL_FOR_PROJECT : Boolean.parseBoolean(System.getenv('MAVEN_LOCAL')) || Boolean.parseBoolean(System.getenv('MAVEN_LOCAL_FOR_PROJECT')),
         ORA_DEBUG             : System.getenv('ORA_DEBUG') == 'true',
-        WEBLOGIC_HOME         : System.getenv('WEBLOGIC_HOME'),
-        WEBLOGIC_VERSION      : System.getenv('WEBLOGIC_VERSION'),
 
         'skif.server_username': '<not set>',
         'skif.server_password': '<not set>',
@@ -35,16 +33,8 @@ def defaultProperties = [
 // Application server configuration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         jee_hostname          : "${-> LOCALHOSTNAME}",
-        jee_port              : 7001, // WebLogic
+        jee_port              : 7001,
         jee_server            : "${-> jee_hostname}:${-> jee_port}",
-
-        // Weblogic
-        wls_username          : 'admmatr',
-        wls_password          : 'matrikkeladm1',
-        wls_deploy_targets    : 'AdminServer',
-        wls_deploy_hostname   : "${-> jee_hostname}",
-        wls_deploy_protocol   : 't3',
-        wls_deploy_port       : "${-> jee_port}",
 ]
 
 defaultProperties.each { key, value ->

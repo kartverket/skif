@@ -87,11 +87,6 @@ libraries.jee = [
         'jakarta.interceptor:jakarta.interceptor-api:2.1.0',
 ]
 
-// Oracle Weblogic dependencies for deployment
-libraries.weblogic = files(
-        "${WEBLOGIC_HOME}/wlserver/server/lib/weblogic.jar",
-)
-
 libraries.tomee_embedded = "org.apache.tomee:tomee-embedded:${TOMEE_VERSION}"
 libraries.openejb_core = "org.apache.tomee:openejb-core:${TOMEE_VERSION}"
 
