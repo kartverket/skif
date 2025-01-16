@@ -47,21 +47,19 @@ publishing {
     }
 }
 
-task assertDependencies() {
+def assertDependencies = tasks.register("assertDependencies") {
     doFirst {
-        configurations.runtimeElements.copyRecursive{it instanceof ExternalDependency}.dependencies.each { Dependency dependency ->
+        configurations.apiElements.getAllDependencies().each { Dependency dependency ->
+            if (dependency instanceof SelfResolvingDependency) return
             boolean godkjent = [
-                    'joda-time',
-                    'org.slf4j',
-                    'com.google.code.findbugs:jsr305',
-                    'com.google.inject:guice',
-                    'com.google.guava:guava',
-                    'com.google.inject.extensions:guice-',
-                    'org.apache.commons:commons-pool2'
+                'org.slf4j',
+                'com.google.code.findbugs:jsr305',
+                'com.google.inject:guice',
+                'com.google.guava:guava',
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 
             if (!godkjent) {
-                throw new TaskExecutionException(it, new RuntimeException('Ukjent avhengighet: ' + dependency)) //avhengighet ikke i godkjent-liste
+                throw new TaskExecutionException(it, new RuntimeException('Ukjent avhengighet: ' + dependency))
             }
         }
     }
