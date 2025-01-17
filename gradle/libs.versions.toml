@@ -7,7 +7,7 @@ slf4j = '1.7.32'
 tomee = '9.1.3'
 oracle = '19.12.0.0'
 logback = '1.4.14'
-guice = '6.0.0'
+guice = '7.0.0'
 
 # build a map of the dependency artifacts to use. Allows centralized definition of the versions of artifacts to
 # use. In that respect it serves a role similar to <dependencyManagement> in Maven
