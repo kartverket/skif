@@ -49,7 +49,7 @@ testing = { module = 'org.testng:testng', version = '6.14.3' } #husk exclude gro
 mockito     = { module = 'org.mockito:mockito-core', version = '4.7.0' }
 unitils     = { module = 'org.unitils:unitils-core', version = '3.4.6' }
 assertj     = { module = 'org.assertj:assertj-core', version = '3.23.1' }
-reflections = { module = 'org.reflections:reflections', version = '0.9.12' }
+reflections = { module = 'org.reflections:reflections', version = '0.10.2' }
 
 # JAXB
 xml-bind-jaxb-impl   = { module = 'com.sun.xml.bind:jaxb-impl', version = '3.0.2' }
