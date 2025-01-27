@@ -1,6 +1,5 @@
 plugins {
     id 'sktools.wsgen'
-    id 'sktools.provided'
 }
 
 configurations {
@@ -15,8 +14,11 @@ dependencies {
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
-    provided libraries.jee
-    provided libraries.jaxws_rt
+    compileOnly libraries.jee
+    compileOnly libraries.jaxws_rt
+
+    testImplementation libraries.jee
+    testImplementation libraries.jaxws_rt
 
     jaxws libraries.jaxws_tools
 }

@@ -1,15 +1,15 @@
 plugins {
     id 'java-library'
-    id 'sktools.provided'
 }
 
 dependencies {
     implementation project(':skif-service-test:skif-service-test-api')
-    provided project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
+    compileOnly project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
     // Trengs for Java 11 får å unngå 'warning: unknown enum constant XmlAccessType.FIELD'
     api libraries.jaxb_api
 
+    testImplementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
     testImplementation project(':skif-testsupport-common')
     testImplementation libraries.unitils //optional library for testing
 

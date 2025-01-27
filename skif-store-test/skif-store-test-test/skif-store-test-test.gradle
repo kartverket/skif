@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'sktools.provided'
 }
 
 dependencies {
@@ -8,15 +7,18 @@ dependencies {
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     runtimeOnly project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient')
 
-    provided libraries.jee
-    provided libraries.c3p0
-    provided libraries.jdbc
+    compileOnly libraries.jee
+    compileOnly libraries.c3p0
+    compileOnly libraries.jdbc
 
     testImplementation project(':skif-testsupport-common')
     testImplementation project(':skif-store-test:skif-store-test-server')
     testImplementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient')
 
 
+    testImplementation libraries.jee
+    testImplementation libraries.c3p0
+    testImplementation libraries.jdbc
     testImplementation libraries.unitils //optional library for testing
     testImplementation libraries.xstream // Brukes i test
 

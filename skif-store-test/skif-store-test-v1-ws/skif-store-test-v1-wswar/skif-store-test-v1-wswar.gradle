@@ -1,7 +1,6 @@
 plugins {
     id 'sktools.wsgen'
     id 'sktools.wsdl-customizer'
-    id 'sktools.provided'
 }
 
 configurations {
@@ -16,8 +15,11 @@ dependencies {
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
-    provided libraries.jee
-    provided libraries.jaxws_rt
+    compileOnly libraries.jee
+    compileOnly libraries.jaxws_rt
+
+    testImplementation libraries.jee
+    testImplementation libraries.jaxws_rt
 
     originalSchemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
 
