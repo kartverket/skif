@@ -1,32 +1,50 @@
 plugins {
     id 'java-library'
-    id 'sktools.filter-resources'
 }
 
-sourceSets.main {
-  filterResources.srcDir 'src/main/resources.filtered'
+tasks.register("filtered", Copy) {
+    from("src/main/resources.filtered/skif-client.properties")
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+        "service_mode"        : project.getProperty("service_mode") as String,
+        "skif.server_username": project.getProperty("skif.server_username") as String,
+        "skif.server_password": project.getProperty("skif.server_password") as String,
+        "skif.server_url"     : project.getProperty("skif.server_url") as String,
+        "skif.server_username": project.getProperty("skif.server_username") as String,
+        "skif.server_password": project.getProperty("skif.server_password" as String)
+    ])
+    into('build/filterResources/main/')
+
+    from("src/main/resources.filtered/skif-server.properties")
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+        service_mode         : project.getProperty("service_mode") as String,
+        db_username          : project.getProperty("db_username") as String,
+        db_password          : project.getProperty("db_password") as String,
+        db_jdbc_url          : project.getProperty("db_jdbc_url") as String,
+        db_datasource        : project.getProperty("db_datasource") as String,
+        db_datasource_old    : project.getProperty("db_datasource_old") as String,
+        db_lock_tablename    : project.getProperty("db_lock_tablename") as String,
+        db_sequence_tablename: project.getProperty("db_sequence_tablename") as String,
+    ])
+    into('build/filterResources/main/')
+
+    // Ensure the task always runs
+    outputs.upToDateWhen { false }
+    doLast {
+        println "Filtering resources completed."
+    }
 }
 
-filterResources {
-    Map filterProperties = [
-            service_mode: service_mode as String,
-
-            'skif.server_username': project.property('skif.server_username') as String,
-            'skif.server_password': project.property('skif.server_password') as String,
-            'skif.server_url': project.property('skif.server_url') as String,
-
-            db_username: db_username as String,
-            db_password: db_password as String,
-            db_jdbc_url: db_jdbc_url as String,
-            db_datasource: db_datasource as String,
-            db_datasource_old: db_datasource_old as String,
-
-            db_lock_tablename: db_lock_tablename as String,
-            db_sequence_tablename: db_sequence_tablename as String,
-    ]
-    properties filterProperties
+sourceSets {
+    main {
+        resources {
+            srcDirs += ('build/filterResources/main/')
+        }
+    }
 }
+tasks.named("processResources").configure {
+    dependsOn("filtered")
 
+}
 dependencies {
     runtimeOnly libraries.jul_to_slf4j
     runtimeOnly libraries.log4j_to_slf4j
