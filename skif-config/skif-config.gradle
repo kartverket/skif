@@ -1,5 +1,30 @@
 plugins {
     id 'java-library'
+    id 'sktools.filter-resources'
+}
+
+sourceSets.main {
+  filterResources.srcDir 'src/main/resources.filtered'
+}
+
+filterResources {
+    Map filterProperties = [
+            service_mode: service_mode as String,
+
+            'skif.server_username': project.property('skif.server_username') as String,
+            'skif.server_password': project.property('skif.server_password') as String,
+            'skif.server_url': project.property('skif.server_url') as String,
+
+            db_username: db_username as String,
+            db_password: db_password as String,
+            db_jdbc_url: db_jdbc_url as String,
+            db_datasource: db_datasource as String,
+            db_datasource_old: db_datasource_old as String,
+
+            db_lock_tablename: db_lock_tablename as String,
+            db_sequence_tablename: db_sequence_tablename as String,
+    ]
+    properties filterProperties
 }
 
 dependencies {
