@@ -15,10 +15,7 @@ dependencies {
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
     compileOnly libraries.jee
-    compileOnly libraries.jaxws_rt
-
-    testImplementation libraries.jee
-    testImplementation libraries.jaxws_rt
+    compileOnly libraries.jaxws_api
 
     jaxws libraries.jaxws_tools
 }

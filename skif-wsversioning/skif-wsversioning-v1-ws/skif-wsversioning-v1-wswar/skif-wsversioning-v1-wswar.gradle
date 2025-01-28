@@ -13,13 +13,9 @@ dependencies {
     implementation project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsschema')
     implementation project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsmapping')
 
-    compileOnly project(':skif-wsversioning:skif-wsversioning-server')
+    implementation project(':skif-wsversioning:skif-wsversioning-server')
     compileOnly libraries.jee
-    compileOnly libraries.jaxws_rt
-
-    testImplementation project(':skif-wsversioning:skif-wsversioning-server')
-    testImplementation libraries.jee
-    testImplementation libraries.jaxws_rt
+    compileOnly libraries.jaxws_api
 
     jaxws libraries.jaxws_tools
 }

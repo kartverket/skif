@@ -16,10 +16,7 @@ dependencies {
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
     compileOnly libraries.jee
-    compileOnly libraries.jaxws_rt
-
-    testImplementation libraries.jee
-    testImplementation libraries.jaxws_rt
+    compileOnly libraries.jaxws_api
 
     originalSchemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
 
