@@ -1,7 +1,6 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'sktools.provided'
 }
 
 dependencies {
@@ -10,7 +9,7 @@ dependencies {
     api libraries.guava //pga Multimap
     api libraries.hibernate
 
-    provided libraries.jee
+    compileOnly libraries.jee
 
     implementation libraries.jodatime
     implementation libraries.jdbc //provided
@@ -18,6 +17,7 @@ dependencies {
 
     compileOnly libraries.openejb_core
 
+    testImplementation libraries.jee
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
 }

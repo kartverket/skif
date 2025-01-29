@@ -1,9 +1,9 @@
 plugins {
     id 'java-library'
-    id 'sktools.provided'
 }
 
 dependencies {
     implementation project(':skif-wsversioning:skif-wsversioning-server')
-    provided libraries.jee
+    compileOnly libraries.jee
+    testImplementation libraries.jee
 }

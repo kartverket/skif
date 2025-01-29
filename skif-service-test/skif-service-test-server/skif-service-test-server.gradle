@@ -1,18 +1,20 @@
 plugins {
     id 'java-library'
-    id 'sktools.provided'
 }
 
 dependencies {
     api project(':skif-service-server')
     api project(':skif-service-test:skif-service-test-api')
 
-    provided libraries.jee
-    provided libraries.c3p0
-    provided libraries.jdbc
+    compileOnly libraries.jee
+    compileOnly libraries.c3p0
+    compileOnly libraries.jdbc
 
     testImplementation project(':skif-testsupport-common')
 
     //internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
+    testImplementation libraries.jee
+    testImplementation libraries.c3p0
+    testImplementation libraries.jdbc
 }

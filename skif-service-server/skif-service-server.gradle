@@ -1,7 +1,6 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'sktools.provided'
 }
 
 description = 'Inneholder service-rammeverk klasser for tjener'
@@ -9,14 +8,17 @@ description = 'Inneholder service-rammeverk klasser for tjener'
 dependencies {
     api project(':skif-service-common')
 
-    provided libraries.jee
-    provided libraries.jaxws_rt
+    compileOnly libraries.jee
+    compileOnly libraries.jaxws_rt
 
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
     testImplementation project(path: ':skif-service-common', configuration: 'testApi')
     testImplementation libraries.jdbc
     testImplementation libraries.c3p0
+    testImplementation libraries.jee
+    testImplementation libraries.jaxws_rt
+
 }
 
 publishing {
