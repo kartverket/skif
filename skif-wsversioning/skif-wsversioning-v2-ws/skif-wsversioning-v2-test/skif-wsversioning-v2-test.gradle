@@ -6,11 +6,9 @@ dependencies {
     implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsmapping')
     implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wsclient')
 
-    compileOnly project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar')
-    compileOnly libraries.jee
+    implementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar')
+    implementation libraries.jee
 
-    testImplementation libraries.jee
-    testImplementation project(':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar')
     testImplementation project(':skif-wsversioning:skif-wsversioning-server')
     testImplementation project(':skif-testsupport-common')
     testRuntimeOnly project(':skif-config')

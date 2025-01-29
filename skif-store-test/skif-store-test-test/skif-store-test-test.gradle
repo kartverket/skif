@@ -7,18 +7,14 @@ dependencies {
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     runtimeOnly project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient')
 
-    compileOnly libraries.jee
-    compileOnly libraries.c3p0
-    compileOnly libraries.jdbc
+    implementation libraries.jee
+    implementation libraries.c3p0
+    implementation libraries.jdbc
 
     testImplementation project(':skif-testsupport-common')
     testImplementation project(':skif-store-test:skif-store-test-server')
     testImplementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient')
 
-
-    testImplementation libraries.jee
-    testImplementation libraries.c3p0
-    testImplementation libraries.jdbc
     testImplementation libraries.unitils //optional library for testing
     testImplementation libraries.xstream // Brukes i test
 
