@@ -7,9 +7,9 @@ dependencies {
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsclient')
 
-    testImplementation libraries.jee
-    testImplementation libraries.c3p0
-    testImplementation libraries.jdbc
+    implementation libraries.jee
+    implementation libraries.c3p0
+    implementation libraries.jdbc
 
     testImplementation project(':skif-testsupport-common')
     testImplementation project(':skif-service-test:skif-service-test-server') //trenger denne avhengighet for testing av servicer
