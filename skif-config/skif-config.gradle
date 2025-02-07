@@ -43,8 +43,12 @@ sourceSets {
 }
 tasks.named("processResources").configure {
     dependsOn("filtered")
-
 }
+
+tasks.named("sourcesJar").configure {
+    dependsOn("filtered")
+}
+
 dependencies {
     runtimeOnly libraries.jul_to_slf4j
     runtimeOnly libraries.log4j_to_slf4j
