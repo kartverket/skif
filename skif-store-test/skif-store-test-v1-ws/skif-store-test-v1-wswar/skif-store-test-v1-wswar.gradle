@@ -20,12 +20,11 @@ dependencies {
 
     originalSchemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
 
-    jaxws libraries.jaxws_tools
 }
 
 customizeWsdls {
     dependsOn genWsdls
-    generatedWsdlAndSchemaFiles files(tasks.genWsdls.destinationDirectory).asFileTree.matching {
+    generatedWsdlAndSchemaFiles files(tasks.genWsdls).asFileTree.matching {
         include '**/*.wsdl', '**/*.xsd'
         exclude '**/*Internal*ServiceWS*'
     }

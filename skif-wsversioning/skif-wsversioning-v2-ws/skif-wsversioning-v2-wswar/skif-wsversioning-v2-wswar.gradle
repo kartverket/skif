@@ -16,7 +16,6 @@ dependencies {
     compileOnly libraries.jee
     compileOnly libraries.jaxws_api
 
-    jaxws libraries.jaxws_tools
 }
 
 war {

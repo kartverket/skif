@@ -32,8 +32,6 @@ ext.libraries = [
         xstream: 'com.thoughtworks.xstream:xstream:1.4.20',
         commons_pool: 'org.apache.commons:commons-pool2:2.11.1',
 
-
-        jaxws_tools: "com.sun.xml.ws:jaxws-tools:3.0.2",
         jaxb_runtime: "org.glassfish.jaxb:jaxb-runtime:3.0.2",
         jaxb_xjc: "org.glassfish.jaxb:jaxb-xjc:3.0.2",
 
