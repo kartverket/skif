@@ -9,7 +9,7 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 
 /**
- * Denne implementasjonen benytter {@link SnapshotVersionSessionHelper} til å hente ut transaksjonstidspunkt fra
+ * Denne implementasjonen benytter {@link SnapshotVersionSessionHelper} til Ã¥ hente ut transaksjonstidspunkt fra
  * en standard historikkimplementasjon i databasen.
  *
  * @since 2.8.0

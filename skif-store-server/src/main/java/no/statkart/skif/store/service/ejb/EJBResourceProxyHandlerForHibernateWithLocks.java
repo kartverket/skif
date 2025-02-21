@@ -58,7 +58,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                     transactionManagerProvider.get().getTransaction().registerSynchronization(new Synchronization() {
                         @Override
                         public void beforeCompletion() {
-                            // Ingenting å gjøre
+                            // Ingenting Ã¥ gjÃ¸re
                         }
 
                         @Override
@@ -94,7 +94,7 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                 storeServerProvider.get().finish();
             }
 
-            // Dersom dette er ytterste metode i et transaksjonelt scope, skal alle låser frigis i transaksjonen
+            // Dersom dette er ytterste metode i et transaksjonelt scope, skal alle lÃ¥ser frigis i transaksjonen
             if (serviceRequestContext.isNewTx()) {
                 lockerStrategyProvider.get().consumeAllLocks();
             }
@@ -103,12 +103,12 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                 resourceManager.commit();
             }
 
-            // Ved ytterste metode i et scope er det noen ekstra ting som skal gjøres
+            // Ved ytterste metode i et scope er det noen ekstra ting som skal gjÃ¸res
             if (!serviceRequestContext.isContinuation()) {
                 resourceManager.close();
                 resourceManager.shutdown();
 
-                // Dersom dette er ytterste metode i et ikke-transaksjonelt scope, så skal de låser frigis som i scopet eksplisitt har blitt låst opp
+                // Dersom dette er ytterste metode i et ikke-transaksjonelt scope, sÃ¥ skal de lÃ¥ser frigis som i scopet eksplisitt har blitt lÃ¥st opp
                 if (!serviceRequestContext.isTransactional()) {
                     lockerStrategyProvider.get().releaseLocksOnNonTransactionalScopeCompletion();
                 }
@@ -135,14 +135,14 @@ public class EJBResourceProxyHandlerForHibernateWithLocks<S> extends EJBResource
                 }
             }
 
-            // Dersom er scope feiler, så skal alle låser tatt i løpet av det, frigis igjen.
+            // Dersom er scope feiler, sÃ¥ skal alle lÃ¥ser tatt i lÃ¸pet av det, frigis igjen.
             if (!serviceRequestContext.isContinuation()) {
                 lockerStrategyProvider.get().releaseLocksOnRollback();
             }
 
             //resourceManager.get().endAllocateConnectionsViaHibernateSession();
-        } catch (Exception e) { // Bevisst valg å la Error forbli ufanget
-            // SKIF-158: Spis exceptions som kommer inni her, siden abortService() blir kalt pga. en annen exception som det anses for viktigere å kaste videre
+        } catch (Exception e) { // Bevisst valg Ã¥ la Error forbli ufanget
+            // SKIF-158: Spis exceptions som kommer inni her, siden abortService() blir kalt pga. en annen exception som det anses for viktigere Ã¥ kaste videre
             log.error("Ny exception ved abortService()", e);
         } finally {
             if (!serviceRequestContext.isContinuation()) {

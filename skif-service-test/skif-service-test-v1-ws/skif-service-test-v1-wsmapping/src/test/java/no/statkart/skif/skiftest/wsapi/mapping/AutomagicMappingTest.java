@@ -14,14 +14,14 @@ import java.io.IOException;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Denne testklassen går gjennom alle klasser som ligger i den angitte wsapiPkg eller under og tester mappingen av de, ved å:
+ * Denne testklassen gÃ¥r gjennom alle klasser som ligger i den angitte wsapiPkg eller under og tester mappingen av de, ved Ã¥:
  * <ul>
- * <li>Opprette et testobjekt ved å instansiere klassen og fylle inn vilkårlige verdier i alle felter</li>
- * <li>Dersom feltet er av en abstrakt type så settes det inn en verdi med en vilkårlig konkret subklasse av den abstrakte typen</li>
+ * <li>Opprette et testobjekt ved Ã¥ instansiere klassen og fylle inn vilkÃ¥rlige verdier i alle felter</li>
+ * <li>Dersom feltet er av en abstrakt type sÃ¥ settes det inn en verdi med en vilkÃ¥rlig konkret subklasse av den abstrakte typen</li>
  * <li>Klasser som er angitt i skipTestingForTheseClasses testes ikke</li>
- * <li>Klasser som er abstrakte, enten i wsapi modellen, eller den motstående klassen i domenemodellen, testes ikke.</li>
- * <li>Klasser som er lister, basert på at klassenavnet i wsapi-modellen slutter på *List, testes ikke.</li>
- * <li>For de resterende mappes klassen fra wsapi-modellen, til domenemodellen, og tilbake. Så sjekkes det at det opprinnelige og remappede objektet er like.</li>
+ * <li>Klasser som er abstrakte, enten i wsapi modellen, eller den motstÃ¥ende klassen i domenemodellen, testes ikke.</li>
+ * <li>Klasser som er lister, basert pÃ¥ at klassenavnet i wsapi-modellen slutter pÃ¥ *List, testes ikke.</li>
+ * <li>For de resterende mappes klassen fra wsapi-modellen, til domenemodellen, og tilbake. SÃ¥ sjekkes det at det opprinnelige og remappede objektet er like.</li>
  * </ul>
  *
  * @author Steinar Hansen
@@ -47,7 +47,7 @@ public class AutomagicMappingTest extends AutomagicTest {
         getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.LocalDateTime");
         getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.LocalTime");
         getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.Timestamp");
-        getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.AMap"); // Denne automagiske greia takler ikke denne ute av kontekst pga. nøstet collection, men den tas som del av M.
+        getSkipTestingForTheseClasses().add("no.statkart.skif.skiftest.wsapi.domain.AMap"); // Denne automagiske greia takler ikke denne ute av kontekst pga. nÃ¸stet collection, men den tas som del av M.
 
         discoverClassHierarchy();
     }

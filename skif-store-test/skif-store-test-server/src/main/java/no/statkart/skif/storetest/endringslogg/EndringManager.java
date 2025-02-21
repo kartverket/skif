@@ -14,7 +14,7 @@ import java.sql.Connection;
 /**
  * Genererer endringer for et utvalg objekter.
  * <p/>
- * Implementasjonen demonstrerer hvordan en kan sette ekstra informasjon på endring i form av brukernavn for transaksjonen. Se {@link Endring#brukernavn}.
+ * Implementasjonen demonstrerer hvordan en kan sette ekstra informasjon pÃ¥ endring i form av brukernavn for transaksjonen. Se {@link Endring#brukernavn}.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0

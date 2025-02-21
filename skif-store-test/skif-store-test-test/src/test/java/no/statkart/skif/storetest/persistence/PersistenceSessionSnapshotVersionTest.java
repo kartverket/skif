@@ -37,7 +37,7 @@ public class PersistenceSessionSnapshotVersionTest extends StoreTestServerTestCa
 
         BubbleWithKodeId<?> idCurrent = mockupFacade.getBubbleWithKodeMockupFactory().getBubbleWithKodeId1();
         BubbleWithKodeId<?> idOld = idCurrent.asSnapshotVersionOld();
-        BubbleWithKodeId<?> idHist = idCurrent.asSnapshotVersion(SnapshotVersion.START); // I SKIF så kjøres historikk på OLD-session
+        BubbleWithKodeId<?> idHist = idCurrent.asSnapshotVersion(SnapshotVersion.START); // I SKIF sÃ¥ kjÃ¸res historikk pÃ¥ OLD-session
 
         BubbleWithKode objectCurrent = store.get(idCurrent);
         BubbleWithKode objectOld = store.get(idOld);

@@ -40,16 +40,16 @@ public interface TestdataService {
      * Lagrer ett enkelt snapshot. Denne er kun ment for intern bruk og skal ikke kalles fra klienter.
      *
      * @param snapshotVersion tidspunkt for snapshot
-     * @param mockupTransfer  transfer med alle objekter som endres på gitt tidspunkt
+     * @param mockupTransfer  transfer med alle objekter som endres pÃ¥ gitt tidspunkt
      */
     @SuppressSnapshotVersionMapping
     void saveSnapshotTransfer(SnapshotVersion snapshotVersion, MockupTransfer mockupTransfer);
 
     /**
-     * Sjekker om objekt med gitt id finnes i databasen fra før. Klienter skal sende inn id til første objekt
-     * i et readmockupsett før den eventuelt sender over en hel transfer.
+     * Sjekker om objekt med gitt id finnes i databasen fra fÃ¸r. Klienter skal sende inn id til fÃ¸rste objekt
+     * i et readmockupsett fÃ¸r den eventuelt sender over en hel transfer.
      *
-     * @param id id til første objekt i mockupsett
+     * @param id id til fÃ¸rste objekt i mockupsett
      * @return {@code true} dersom (i alle fall deler av) mockupsettet allerede ligger i databasen
      * @since 2.3.0
      */

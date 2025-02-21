@@ -42,13 +42,13 @@ public class BubbleIds {
      * Returnerer hvilke klasse som BubbleId-klassen bruker som idvalue. Typisk Long eller String.
      */
     public static Class getValueType(Class<? extends BubbleId> clazz) {
-        // TODO: bruke reflection på clazz istedet for å gå mot direkte AbstractBubbleId
+        // TODO: bruke reflection pÃ¥ clazz istedet for Ã¥ gÃ¥ mot direkte AbstractBubbleId
         return AbstractBubbleId.getValueType(clazz);
     }
 
     //public static <T extends BubbleObject, I extends BubbleId<? extends T>> Class<? extends T> getBaseType(Class<I> clazz) {
     public static Class<? extends BubbleObject> getBaseType(Class<? extends BubbleId<?>> clazz) {
-        // TODO: bruke reflection på clazz istedet for å gå mot direkte AbstractBubbleId
+        // TODO: bruke reflection pÃ¥ clazz istedet for Ã¥ gÃ¥ mot direkte AbstractBubbleId
         return AbstractBubbleId.getTypeInfo(clazz).baseType;
     }
 

@@ -284,7 +284,7 @@ public class StoreTypeChangeTest {
 
     /**
      * Dette kan i praksis ikke virke likt som {@link #testGetRightSubThenWrongSubTogether()}, da man stort sett
-     * benytter {@link Set}, og da har den andre id-en forsvunnet før SKIF har muligheten til å oppdage situasjonen.
+     * benytter {@link Set}, og da har den andre id-en forsvunnet fÃ¸r SKIF har muligheten til Ã¥ oppdage situasjonen.
      */
     @Test
     public void testGetWrongSubThenRightSubTogether() {
@@ -298,7 +298,7 @@ public class StoreTypeChangeTest {
                 new SubType1Id(1L, SnapshotVersion.CURRENT)
         ));
 
-        // Ikke ideelt, men vanskelig å endre på.
+        // Ikke ideelt, men vanskelig Ã¥ endre pÃ¥.
         Assertions.assertThat(objects).isEmpty();
     }
 

@@ -23,8 +23,8 @@ import static org.testng.Assert.assertSame;
 /**
  * Tester for {@link ResourceManager} som styrer PersistenceSessions og Connections som er hentes ut via hibernate.
  * <p>
- * Dette er en stand-alone-test som går direkte mot databasen uten å bruke StoreTestServer modulen. Mest naturlig at testene
- * kjøres i singleVM mode.
+ * Dette er en stand-alone-test som gÃ¥r direkte mot databasen uten Ã¥ bruke StoreTestServer modulen. Mest naturlig at testene
+ * kjÃ¸res i singleVM mode.
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -66,7 +66,7 @@ public class ResourceManagerUsingHibernateTest {
     }
 
     /**
-     * Tester oppslag på resource via implementasjonsklasse og interface
+     * Tester oppslag pÃ¥ resource via implementasjonsklasse og interface
      */
     public void testGetResource() throws SQLException {
         ConnectionManager connectionManager = resourceManager.getResource(ConnectionManagerUsingHibernate.class);
@@ -81,7 +81,7 @@ public class ResourceManagerUsingHibernateTest {
         assertSame(persistenceSessionManager,resourceManager.getResource(PersistenceSessionManager.class) );
         Connection connectionFromSession = resourceManager.getResource(PersistenceSessionManager.class).getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class).reserveSession().connection();
 
-        // Hibernate putter på en wrapper når man henter ut en connection. Men det er samme underliggende connection
+        // Hibernate putter pÃ¥ en wrapper nÃ¥r man henter ut en connection. Men det er samme underliggende connection
         assertSame(connectionFromSession.unwrap(Connection.class), connectionViaConnectionManager.unwrap(Connection.class));
    }
 

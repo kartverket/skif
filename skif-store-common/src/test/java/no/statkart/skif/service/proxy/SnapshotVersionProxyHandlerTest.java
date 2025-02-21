@@ -43,7 +43,7 @@ public class SnapshotVersionProxyHandlerTest {
         assertEquals(SnapshotVersionContext.getInstance().getSnapshotVersion(), SnapshotVersion.CURRENT);
         try {
             testService.test(SnapshotVersion.OLD);
-            fail("Skulle fått exception");
+            fail("Skulle fÃ¥tt exception");
         } catch (TestException ignored) {
         }
         assertEquals(SnapshotVersionContext.getInstance().getSnapshotVersion(), SnapshotVersion.CURRENT);

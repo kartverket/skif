@@ -37,7 +37,7 @@ public class WSVersioningWSv1Test extends SkifTestCase {
         WSVersioningContext context = createContext();
 
         GateIdList alleGater = gateService.findAlleGater(context);
-        Assert.assertEquals(alleGater.getItem().get(0).getValue(), 1, "Første gateId");
+        Assert.assertEquals(alleGater.getItem().get(0).getValue(), 1, "FÃ¸rste gateId");
         Assert.assertEquals(alleGater.getItem().get(1).getValue(), 2, "Andre gateId");
     }
 

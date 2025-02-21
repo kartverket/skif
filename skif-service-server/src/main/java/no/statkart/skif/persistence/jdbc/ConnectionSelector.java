@@ -5,11 +5,11 @@ import no.statkart.skif.store.SnapshotVersion;
 import java.sql.Connection;
 
 /**
- * Klasse for å hente ut en JDBC connection og låse denne til å bruke en gitt snapshotversion. Når man er
- * ferdig med å bruke connectionen må den frigis slik at den senere kan gjenbrukes for en annen snapshotversion.
- * Dette skjer automatisk når man skifter snapshotversion via selectoren samt når selectoren lukkes.
+ * Klasse for Ã¥ hente ut en JDBC connection og lÃ¥se denne til Ã¥ bruke en gitt snapshotversion. NÃ¥r man er
+ * ferdig med Ã¥ bruke connectionen mÃ¥ den frigis slik at den senere kan gjenbrukes for en annen snapshotversion.
+ * Dette skjer automatisk nÃ¥r man skifter snapshotversion via selectoren samt nÃ¥r selectoren lukkes.
  * <p>
- * <strong>Eksempel på bruk</strong>
+ * <strong>Eksempel pÃ¥ bruk</strong>
  * <pre>
  *     class ConnectionSelectorUsage {
  *         &#064;Inject
@@ -30,13 +30,13 @@ import java.sql.Connection;
  */
 public interface ConnectionSelector extends AutoCloseable {
     /**
-     * Returnerer en connection som er låst til en gitt snapshotversion og som kun er gyldig sålenge det
+     * Returnerer en connection som er lÃ¥st til en gitt snapshotversion og som kun er gyldig sÃ¥lenge det
      * ikke hentes ut en connection for en annen snapshotversion via selectoren.
      */
     Connection get(SnapshotVersion snapshotVersion);
 
     /**
-     * Frigir inneværende connection dersom en slik har blit allokert og lukker selectoren slik at den ikke lengre kan brukes
+     * Frigir innevÃ¦rende connection dersom en slik har blit allokert og lukker selectoren slik at den ikke lengre kan brukes
      */
     @Override
     void close();

@@ -33,7 +33,7 @@ public class Level2EntityComponent implements EntityComponentWithOwnerReference<
     }
 
     /**
-     * Brukes for testing av stjålne id
+     * Brukes for testing av stjÃ¥lne id
      */
     public void setIdForTesting(Long id) {
         this.id = id;

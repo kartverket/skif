@@ -9,20 +9,20 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * Abstrakt superklasse for {@link ProxyHandler} som kan inngå i en kjede av {@code ProxyHandler}s, også kalt
- * en {@code ServiceChain}. Formålet med en {@code ServiceChain} er å utfører operasjoner i forkant eller etterkant
+ * Abstrakt superklasse for {@link ProxyHandler} som kan inngÃ¥ i en kjede av {@code ProxyHandler}s, ogsÃ¥ kalt
+ * en {@code ServiceChain}. FormÃ¥let med en {@code ServiceChain} er Ã¥ utfÃ¸rer operasjoner i forkant eller etterkant
  * av servicekallet.
  *
  * <p>
- *    I en {@code ServiceChain} vil alle {@code ProxyHandler}-ledd på nær det siste normalt være av subtypen
- *    {@link ChainedProxyHandler} og siste ledd vil normalt vil være av subtypen {@link TerminatingProxyHandler}.
+ *    I en {@code ServiceChain} vil alle {@code ProxyHandler}-ledd pÃ¥ nÃ¦r det siste normalt vÃ¦re av subtypen
+ *    {@link ChainedProxyHandler} og siste ledd vil normalt vil vÃ¦re av subtypen {@link TerminatingProxyHandler}.
  *    Dette er dog ikke noe formelt krav. En {@code ServiceChain} representeres ikke av en egen klasse men ved den
- *    første {@code ProxyHandler} i kjeden. Det er mulig å utvide en {@code ServiceChain} ved å legge på flere
- *    {@code ProxyHandlere} foran en eksisterende {@code ServiceChain}, men det er ingen funksjonalitet for å
- *    legge på {@code ProxyHandler} bak en eksisterende {@code ServiceChain}.
+ *    fÃ¸rste {@code ProxyHandler} i kjeden. Det er mulig Ã¥ utvide en {@code ServiceChain} ved Ã¥ legge pÃ¥ flere
+ *    {@code ProxyHandlere} foran en eksisterende {@code ServiceChain}, men det er ingen funksjonalitet for Ã¥
+ *    legge pÃ¥ {@code ProxyHandler} bak en eksisterende {@code ServiceChain}.
  * </p>
- * Klassen implementere en hjelpemetode {@link #buildProxy(Class)} for å lage en proxy som implementerer
- * interface {@code <S>} for første ledd i kjeden.
+ * Klassen implementere en hjelpemetode {@link #buildProxy(Class)} for Ã¥ lage en proxy som implementerer
+ * interface {@code <S>} for fÃ¸rste ledd i kjeden.
  *
  * @author Henrik Fredholm
  */

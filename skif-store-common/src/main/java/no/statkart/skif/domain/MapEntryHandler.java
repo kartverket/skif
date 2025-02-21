@@ -4,8 +4,8 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
- * {@link Map.Entry#equals(Object)} kaller {@link Object#equals(Object)} på {@link Map.Entry#getKey()}
- * og {@link Map.Entry#getValue()} ()}. Vi ønsker vanligvis ikke dette, men heller bruke {@link EqualsByFields} for å
+ * {@link Map.Entry#equals(Object)} kaller {@link Object#equals(Object)} pÃ¥ {@link Map.Entry#getKey()}
+ * og {@link Map.Entry#getValue()} ()}. Vi Ã¸nsker vanligvis ikke dette, men heller bruke {@link EqualsByFields} for Ã¥
  * sammenligne.
  */
 public class MapEntryHandler implements EqualityHandler<Map.Entry<?, ?>> {

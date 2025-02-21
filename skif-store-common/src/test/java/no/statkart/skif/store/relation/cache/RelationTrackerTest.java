@@ -230,8 +230,8 @@ public class RelationTrackerTest {
     }
 
     /**
-     * Tester 'commitInto' for umaterialisert relasjon på level 1 hvor relasjon for level 0 er realisert for en
-     * 'one'-relation. Resultatet etter commit skal være den siste verdien som ble lagt til level 1 relasjonen.
+     * Tester 'commitInto' for umaterialisert relasjon pÃ¥ level 1 hvor relasjon for level 0 er realisert for en
+     * 'one'-relation. Resultatet etter commit skal vÃ¦re den siste verdien som ble lagt til level 1 relasjonen.
      */
     public void commitIntoMaterialisedOneRelation() {
         RelationTracker t = new RelationTracker();

@@ -6,8 +6,8 @@ import jakarta.jws.WebResult;
 import jakarta.jws.WebService;
 
 /**
- * Denne tjenesten er kun her for å teste ut hvordan andre rammeverk takler forskjellige typer. Den benytter ikke SKIF
- * på noen måte.
+ * Denne tjenesten er kun her for Ã¥ teste ut hvordan andre rammeverk takler forskjellige typer. Den benytter ikke SKIF
+ * pÃ¥ noen mÃ¥te.
  */
 @WebService(
         name = "TypeService",

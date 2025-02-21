@@ -12,7 +12,7 @@ public class MockupStoreTest {
 
 
     /**
-     * Oppdaterer et objekt på et senere tidspunkt som utvider objektgraf.
+     * Oppdaterer et objekt pÃ¥ et senere tidspunkt som utvider objektgraf.
      * Objekter som kobles til senere tas med i transfer.
      */
     @Test

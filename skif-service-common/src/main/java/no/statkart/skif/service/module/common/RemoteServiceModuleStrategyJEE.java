@@ -111,15 +111,15 @@ public class RemoteServiceModuleStrategyJEE extends RemoteServiceModuleStrategy 
     }
 
     /**
-     * Finner riktig webservice port klasse basert på navnekonvensjon:
+     * Finner riktig webservice port klasse basert pÃ¥ navnekonvensjon:
      * <ul>
      *     <li>det finnes en portklasse/interface med samme navn som tjenesteklassen, eller</li>
      *     <li>det finnes en portklasse/interface med samme navn som tjenesten etterfulgt av WSI</li>
      * </ul>
      * <p/>
-     * Portklassen/interfacet må være annotert med @{@linkplain WebService}
+     * Portklassen/interfacet mÃ¥ vÃ¦re annotert med @{@linkplain WebService}
      * <p/>
-     * Transformerer java pakkenavn basert på {@link #classWSPackageMappings}<
+     * Transformerer java pakkenavn basert pÃ¥ {@link #classWSPackageMappings}<
      */
     protected Class<?> findWebServicePortClass(Class<?> domainServiceClass) {
         String serviceClassname = domainServiceClass.getName();

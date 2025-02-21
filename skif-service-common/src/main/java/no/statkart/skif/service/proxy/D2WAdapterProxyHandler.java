@@ -14,10 +14,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
- * Adapter proxy som adapterer domain interface T til webservice interface A ved å mappe metoder med samme navn til hverandre og transformere
+ * Adapter proxy som adapterer domain interface T til webservice interface A ved Ã¥ mappe metoder med samme navn til hverandre og transformere
  * argumentene og resultatet vha et mapping2 objekt
  * <p>
- * Adapteren har også exception håndtering dersom denne er tildelt og satt (ikke null).
+ * Adapteren har ogsÃ¥ exception hÃ¥ndtering dersom denne er tildelt og satt (ikke null).
  * Alle {@link Exception}s annotert med {@link WebFault} blir mappet over til korresponderende exceptions ihht til mapper. All andre exceptions blir fanget og wrappet til
  * {@link ImplementationException}.
  *
@@ -113,7 +113,7 @@ public class D2WAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
      * Mapper argumenter i args slik at de kan brukes som innput parametre til  metode {@code toMethod}.
      * Det opprettes like mange parametre som det {@code toMethod} krever, men det mappes kun {@code length}
      * antall argumenter fra {@code args}. Metoden er laget slik fordi {@code toMethod} kan ha en ekstra context
-     * parameter som det må settes plass av til og videre så kan {@code fromMethod} kan ha en {@code SnapshotVersion}
+     * parameter som det mÃ¥ settes plass av til og videre sÃ¥ kan {@code fromMethod} kan ha en {@code SnapshotVersion}
      * parameter som skal mappes via context parameteren og derfor ikke skal mappes her.
      */
     protected Object[] mapArgs(Object[] args, Method fromMethod, Method toMethod, int length) {

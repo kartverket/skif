@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.Stack;
 
 /**
- * Mapper som må instansieres for hver type exception som skal mappes ut.
+ * Mapper som mÃ¥ instansieres for hver type exception som skal mappes ut.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @author Tor Egil R. Strand
  * @since 2.0
  */

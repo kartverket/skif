@@ -23,11 +23,11 @@ import java.util.*;
  * via Hibernate. For Kodelister gjelder tilsvarende. Hvis {@link EnumKodelisteManager} ikke inneholder instansen
  * for en kodelisteId da antas det at kodelisteinstansen skal hentes fra databasen.
  * <p>
- * I den nåværende implementasjon er det litt forskjell på hvordan kodelistene fylles ut med sine koders id-er. For
- * enumkoder så er kodeid-ene allerede fylt ut fra EnumKodelisteManager, men for databasekoder så må kodene lastes fra
+ * I den nÃ¥vÃ¦rende implementasjon er det litt forskjell pÃ¥ hvordan kodelistene fylles ut med sine koders id-er. For
+ * enumkoder sÃ¥ er kodeid-ene allerede fylt ut fra EnumKodelisteManager, men for databasekoder sÃ¥ mÃ¥ kodene lastes fra
  * databasen med eksplisitt kall til Hibernate.
  * <p>
- * TODO: Hadde vært fint om håndteringen av enum og database basert koder var mer likt hverandre.
+ * TODO: Hadde vÃ¦rt fint om hÃ¥ndteringen av enum og database basert koder var mer likt hverandre.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -68,7 +68,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 // Kodeliste for EnumKode
                 Kodeliste kodeliste = (Kodeliste) bubble;
                 if (kodeliste.getKoderIds() == null) {
-                    // Dette er et tegn på at kodelisten er statisk, men kodene ligger i databasen
+                    // Dette er et tegn pÃ¥ at kodelisten er statisk, men kodene ligger i databasen
                     loadKodeIds(kodeliste);
                 }
             } else {
@@ -107,7 +107,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
                     // Kodeliste for EnumKode
                     Kodeliste kodeliste = (Kodeliste) bubble;
                     if (kodeliste.getKoderIds() == null) {
-                        // Dette er et tegn på at kodelisten er statisk, men kodene ligger i databasen
+                        // Dette er et tegn pÃ¥ at kodelisten er statisk, men kodene ligger i databasen
                         loadKodeIds(kodeliste);
                     }
                 } else {
@@ -133,9 +133,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Laster kodeids for en enkelt kodeliste. Hvis kodelisten allerede har fått beregnet kodeids så lastes
-     * kodene ikke på nytt. Algoritmen laster ikke koder for andre kodelister. Dersom mange kodelister skal lastes
-     * bør {@link #loadKodeIds(java.util.Collection)} brukes istedet.
+     * Laster kodeids for en enkelt kodeliste. Hvis kodelisten allerede har fÃ¥tt beregnet kodeids sÃ¥ lastes
+     * kodene ikke pÃ¥ nytt. Algoritmen laster ikke koder for andre kodelister. Dersom mange kodelister skal lastes
+     * bÃ¸r {@link #loadKodeIds(java.util.Collection)} brukes istedet.
      */
     protected void loadKodeIds(Kodeliste kodeliste) {
         if (kodeliste.getKoderIds() != null && !kodeliste.getKoderIds().isEmpty()) return;
@@ -164,11 +164,11 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Laster kodeids for et sett av database baserte kodelister på effektiv. For hver kodeliste beregnes hvilken
-     * tabell kodene ligger. Dernest lastes alle koder i hver tabell og kodene legge inn i deres tilhørende
-     * kodeliste dersom kodelisten skal lastes. Denne algoritme sikre at kodelister som kode tabell får laster
-     * alle koder via en felles sql. Koder som tilhører kodelister som ikke lastes ignoreres. Kodelister som allerede
-     * har fått beregne tilhørende kodeIds får ikke beregnet deres kodeIds på nytt.
+     * Laster kodeids for et sett av database baserte kodelister pÃ¥ effektiv. For hver kodeliste beregnes hvilken
+     * tabell kodene ligger. Dernest lastes alle koder i hver tabell og kodene legge inn i deres tilhÃ¸rende
+     * kodeliste dersom kodelisten skal lastes. Denne algoritme sikre at kodelister som kode tabell fÃ¥r laster
+     * alle koder via en felles sql. Koder som tilhÃ¸rer kodelister som ikke lastes ignoreres. Kodelister som allerede
+     * har fÃ¥tt beregne tilhÃ¸rende kodeIds fÃ¥r ikke beregnet deres kodeIds pÃ¥ nytt.
      *
      * @param kodelister database kodelister som skal lastes
      */
@@ -219,10 +219,10 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Legger til kode i kodelisten. Overskriv denne metode for å filtrerer koder bort som ikke skal være med for
-     * en gitt snapshot versjon, for eksempel basert på kodens gyldighetsdatoer.
+     * Legger til kode i kodelisten. Overskriv denne metode for Ã¥ filtrerer koder bort som ikke skal vÃ¦re med for
+     * en gitt snapshot versjon, for eksempel basert pÃ¥ kodens gyldighetsdatoer.
      *
-     * @param kodeIds Liste av kodeids som skal inngå i kodelisten
+     * @param kodeIds Liste av kodeids som skal inngÃ¥ i kodelisten
      * @param t       kode som skal legges til
      */
     protected void addFilterKodeForSnapshot(List<KodeId<?>> kodeIds, Kode t) {
@@ -359,7 +359,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Laster alle database baserte kodelister. Kodelistene kodeIds beregnes og lastes ikke. Dette må gjøres via
+     * Laster alle database baserte kodelister. Kodelistene kodeIds beregnes og lastes ikke. Dette mÃ¥ gjÃ¸res via
      * kall til {@link #loadKodeIds(no.statkart.skif.store.kodeliste.Kodeliste)}} eller
      * {@link #loadKodeIds(java.util.Collection)}
      *
@@ -383,7 +383,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     /**
      * Finner alle entiteter definert i prosjektet som subklasser AbstractKodeliste.
-     * Dette kan være flere entiteter, og de kan mappe til forskjellige tabeller.
+     * Dette kan vÃ¦re flere entiteter, og de kan mappe til forskjellige tabeller.
      */
     private Collection<Class<? extends AbstractKodeliste>> kodelisteEntiteter(Session session) {
         Collection<Class<? extends AbstractKodeliste>> result = new HashSet<>();

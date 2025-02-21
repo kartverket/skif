@@ -13,7 +13,7 @@ import java.sql.Types;
 import java.util.Locale;
 
 /**
- * Hibernates standard Locale-mapping støtter ikke {@link Locale#ROOT} på Oracle, siden strengrepresentasjonen er en tom
+ * Hibernates standard Locale-mapping stÃ¸tter ikke {@link Locale#ROOT} pÃ¥ Oracle, siden strengrepresentasjonen er en tom
  * streng. Benytter istedenfor {@code "_"} som representasjon.
  */
 public class LocaleType implements UserType {
@@ -21,7 +21,7 @@ public class LocaleType implements UserType {
 
     @Override
     public int[] sqlTypes() {
-        return SQL_TYPES.clone(); // Lag klone for å beskytte originalen fra endringer utenfra
+        return SQL_TYPES.clone(); // Lag klone for Ã¥ beskytte originalen fra endringer utenfra
     }
 
     @Override

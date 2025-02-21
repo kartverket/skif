@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TestServerModule med støtte for å kjøre tjenester på serveren
+ * TestServerModule med stÃ¸tte for Ã¥ kjÃ¸re tjenester pÃ¥ serveren
  * @author Henrik Fredholm
  * @since 2.0
  */

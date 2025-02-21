@@ -11,7 +11,7 @@ import no.statkart.skif.storetest.domain.mockup.FooId;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 
 /**
- * Utfører diverse operasjoner som skal føre til låsing og opplåsing av låser.
+ * UtfÃ¸rer diverse operasjoner som skal fÃ¸re til lÃ¥sing og opplÃ¥sing av lÃ¥ser.
  *
  * @author Tor Egil R. Strand
  * @since 2.1
@@ -33,7 +33,7 @@ public class LockingTestServiceImpl implements LockingTestService {
 
     @Override
     public void update(int importantNumber) {
-        // Ingenting å gjøre her. Det viktige er at rammeverket låser opp alle brukerens låser.
+        // Ingenting Ã¥ gjÃ¸re her. Det viktige er at rammeverket lÃ¥ser opp alle brukerens lÃ¥ser.
     }
 
     @Override
@@ -56,7 +56,7 @@ public class LockingTestServiceImpl implements LockingTestService {
     public void loseALock() {
         lockerStrategy.lock(new SimpleId(100L));
 
-        // Frigi låsen uten av lockerStrategy får det med seg. Dette vil tilsvare at et annet, eller samme, brukstilfelle har fullført samtidig.
+        // Frigi lÃ¥sen uten av lockerStrategy fÃ¥r det med seg. Dette vil tilsvare at et annet, eller samme, brukstilfelle har fullfÃ¸rt samtidig.
         lockerService.unlock(new LockKey<Long>(FooId.class.getName(), 100L), serviceRequestContext.getUserName());
     }
 

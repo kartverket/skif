@@ -4,7 +4,7 @@ import no.statkart.skif.store.AbstractEntityBubbleComponentWithOwner;
 import no.statkart.skif.store.Components;
 
 /**
- * En entity som inngår i en composite component, som ligger i et sett og som har
+ * En entity som inngÃ¥r i en composite component, som ligger i et sett og som har
  * {@code BubbleWithEntityInCompositeComponent} som owner.
  *
  * @author Henrik Fredholm

@@ -7,9 +7,9 @@ import java.util.Locale;
  * Implementasjon hentet ifra Apache Commons Lang 3.1
  * <p>
  * SKIF-462:
- * Tilpasset med støtte for Locale.ROOT, som representeres som tom streng.
+ * Tilpasset med stÃ¸tte for Locale.ROOT, som representeres som tom streng.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @author Tor Egil R. Strand
  * @since 2.2
  */

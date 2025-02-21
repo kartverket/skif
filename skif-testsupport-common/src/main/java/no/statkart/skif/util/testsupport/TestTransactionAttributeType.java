@@ -7,8 +7,8 @@ import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.RunOnServerService;
 
 /**
- * Enumerasjon som angir hvilken transaksjonsstøtte som en server-test-metode skal avvikles under på serveren. Hver
- * enumerert verdi er avhengig av serveren implementere en gitt service den ønskede transaksjonsstøtten
+ * Enumerasjon som angir hvilken transaksjonsstÃ¸tte som en server-test-metode skal avvikles under pÃ¥ serveren. Hver
+ * enumerert verdi er avhengig av serveren implementere en gitt service den Ã¸nskede transaksjonsstÃ¸tten
  *
  * @author Henrik Fredholm
  * @see  TestTransactionAttribute

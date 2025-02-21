@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
- * Baseklasse for tester som skal kjøre i tjenermodus. Injiserbare felter blir injisert med tjener-injektoren før hver
+ * Baseklasse for tester som skal kjÃ¸re i tjenermodus. Injiserbare felter blir injisert med tjener-injektoren fÃ¸r hver
  * testmetode, og nullstilt etter hvert kall.
  *
  * @author Henrik Fredholm
@@ -59,7 +59,7 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
     @Override
     protected String calcConfigurationKey() {
         String key = super.calcConfigurationKey();
-        // Bruk samme nøkkel som superklasse hvis disse properties ikke er satt slik at server instans gjenbrukes
+        // Bruk samme nÃ¸kkel som superklasse hvis disse properties ikke er satt slik at server instans gjenbrukes
         if (serverModuleExtClass!=null || ejbServiceChainExtClass!=null) {
             key += ":" + serverModuleExtClass + ":" + ejbServiceChainExtClass;
         }
@@ -146,12 +146,12 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
                 }
             });
         } catch (SkifServerTestCaseTestException ignore) {
-            // Denne exeption ble kastet bare for å rydde opp på tjenersiden. Skal ikke kastes videre.
+            // Denne exeption ble kastet bare for Ã¥ rydde opp pÃ¥ tjenersiden. Skal ikke kastes videre.
         }
     }
 
     /**
-     * Kalles før hver testmetode og bør brukes til å nullstille pålogget bruker. Overskriv denne metode hvis
+     * Kalles fÃ¸r hver testmetode og bÃ¸r brukes til Ã¥ nullstille pÃ¥logget bruker. Overskriv denne metode hvis
      * modulen ikke krever login eller krever annen form for login.
      *
      * @since 2.3.0
@@ -167,7 +167,7 @@ public class SkifServerTestCase extends AbstractSkifTestCase implements IHookabl
 
 /**
  * Exception som kastes fra {@link RunOnServerMethod} dersom testen feilet, slik at eventuelle transaksjoner rulles
- * tilbake fremfor å committes. Denne exception må fanges opp på klientsiden slik at den ikke kommer tilbake til TestNG.
+ * tilbake fremfor Ã¥ committes. Denne exception mÃ¥ fanges opp pÃ¥ klientsiden slik at den ikke kommer tilbake til TestNG.
  * TestNG skal nemlig benytte den exception som ligger i {@link ITestResult}.
  */
 class SkifServerTestCaseTestException extends RuntimeException {

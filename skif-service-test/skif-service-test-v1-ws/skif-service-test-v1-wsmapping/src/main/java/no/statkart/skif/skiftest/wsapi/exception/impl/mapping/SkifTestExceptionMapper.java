@@ -13,7 +13,7 @@ import java.util.*;
 public class SkifTestExceptionMapper extends AbstractExceptionMapper<SkifTestExceptionMapping> {
 
     /**
-     * Definisjon av hvordan man mapper tilbake til domenet basert på 'category'
+     * Definisjon av hvordan man mapper tilbake til domenet basert pÃ¥ 'category'
      *
      * NB: insertion order er viktig. legg superklasser til sist!
      */
@@ -63,7 +63,7 @@ public class SkifTestExceptionMapper extends AbstractExceptionMapper<SkifTestExc
     /**
      * Kategorisering av exceptions
      *
-     * @author Leif Lislegård
+     * @author Leif LislegÃ¥rd
      * @since 2.0
      */
     public enum Kategori {

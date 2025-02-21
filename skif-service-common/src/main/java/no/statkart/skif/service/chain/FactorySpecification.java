@@ -4,11 +4,11 @@ import com.google.inject.Binder;
 import no.statkart.skif.exception.ImplementationException;
 
 /**
- * En spesifikasjon som angir en ServiceChainFactory klasse med tilhørende Guice bindinger som må til for å binde opp
+ * En spesifikasjon som angir en ServiceChainFactory klasse med tilhÃ¸rende Guice bindinger som mÃ¥ til for Ã¥ binde opp
  * ProxyHandlere som factoryen anvender for hver service.
  * <p>
- * Klassen har også en hjelpemetode {@link #requireBinding(com.google.inject.Binder, Class)} som gjør de mulig å angi
- * andre bindinger som factoryen avhenger av og som allerede må være bundet opp.
+ * Klassen har ogsÃ¥ en hjelpemetode {@link #requireBinding(com.google.inject.Binder, Class)} som gjÃ¸r de mulig Ã¥ angi
+ * andre bindinger som factoryen avhenger av og som allerede mÃ¥ vÃ¦re bundet opp.
  *
  * @author Henrik Fredholm
  */
@@ -16,7 +16,7 @@ public abstract class FactorySpecification<T extends ServiceChainFactory> implem
     protected Class<? extends T> factoryClass;
 
     /**
-     * Metode for å binde opp ProxyHandlere som inngår i ServiceChain'en som factoryen produserer.
+     * Metode for Ã¥ binde opp ProxyHandlere som inngÃ¥r i ServiceChain'en som factoryen produserer.
      */
     public abstract <S> void bindProxyHandlersForService(Binder binder, Class<S> service);
 

@@ -48,19 +48,19 @@ public class ModuleBuilder {
     private static Logger logger = LoggerFactory.getLogger(ModuleBuilder.class);
 
     /**
-     * En {@code Configuration}-instans som inneholder de properties som settes programatisk på builderen. Hver module
-     * som builderen produserer får sin egen kopi av disse properties slik at senere endringer av builderens properties
-     * ikke påvirker allerede produserte moduler. Properties som settes programmatisk kan ikke overstyres på noen måte,
-     * heller ikke via systemproperties. Properties som settes på builderen nulstilles ikke når builderen produserer
-     * en modul, men det er mulig å nullstille dem manuelt.
+     * En {@code Configuration}-instans som inneholder de properties som settes programatisk pÃ¥ builderen. Hver module
+     * som builderen produserer fÃ¥r sin egen kopi av disse properties slik at senere endringer av builderens properties
+     * ikke pÃ¥virker allerede produserte moduler. Properties som settes programmatisk kan ikke overstyres pÃ¥ noen mÃ¥te,
+     * heller ikke via systemproperties. Properties som settes pÃ¥ builderen nulstilles ikke nÃ¥r builderen produserer
+     * en modul, men det er mulig Ã¥ nullstille dem manuelt.
      */
     private MapConfiguration builderConfiguration;
 
     /**
-     * En {@code Configuration}-instans som inneholder systemproperties og som overstyrer alle andre properties på nær de som har blitt
-     * satt programatisk direkte på builderen (se {@link #builderConfiguration}). SystemConfiguration
+     * En {@code Configuration}-instans som inneholder systemproperties og som overstyrer alle andre properties pÃ¥ nÃ¦r de som har blitt
+     * satt programatisk direkte pÃ¥ builderen (se {@link #builderConfiguration}). SystemConfiguration
      * brukes av alle moduler som produseres av builderen (inkl. singleVmServer-moduler) dersom den settes i
-     * constructoren når builderen opprettes. Moduler som deler {@code Configuration}-instans bruker samme
+     * constructoren nÃ¥r builderen opprettes. Moduler som deler {@code Configuration}-instans bruker samme
      * {@code SystemConfiguration}-instans. Moduler som ikke deler {@code Configuration}-instans bruker hver sin
      * SystemConfiguration kopi. SingleVmServer moduler deler for eksempel ikke {@code Configuration}-instans med
      * klienter har derfor sin egen {@code SystemConfiguration}-instans.
@@ -70,7 +70,7 @@ public class ModuleBuilder {
 
     /**
      * Configration som inneholder properties for moduler som builderen skal produsere.
-     * Dersom builderen brukes til å produsere flere moduler vil configuration-instansen deles av alle moduler som blir produsert
+     * Dersom builderen brukes til Ã¥ produsere flere moduler vil configuration-instansen deles av alle moduler som blir produsert
      * inntil en ny configuration settes. Denne instansen brukes ikke for singleVmServer-moduler
      */
     private Configuration configuration;
@@ -83,13 +83,13 @@ public class ModuleBuilder {
 
     /**
      * StrategyFactory instans som modulen skal bruke dersom feltet er satt. Hvis feltet er null vil builderen
-     * opprette ModuleStrategyFactory instans basert på hvilken ModuleStrategyFactoryClass som er spesifisert.
+     * opprette ModuleStrategyFactory instans basert pÃ¥ hvilken ModuleStrategyFactoryClass som er spesifisert.
      */
     private ModuleStrategyFactory moduleStrategyFactory;
 
     /**
      * StrategyFactory instans som singleVmServer-modulen skal bruke dersom feltet er satt. Hvis feltet er null vil builderen
-     * opprette ModuleStrategyFactory instans basert på hvilken SingleVmServerModuleStrategyFactoryClass som er spesifisert.
+     * opprette ModuleStrategyFactory instans basert pÃ¥ hvilken SingleVmServerModuleStrategyFactoryClass som er spesifisert.
      */
     private ModuleStrategyFactory singleVmServerModuleStrategyFactory;
 
@@ -121,10 +121,10 @@ public class ModuleBuilder {
     }
 
     /**
-     * Oppretten CompositeConfiguration on demand. Hvergang en ny configuration settes på builderen må
+     * Oppretten CompositeConfiguration on demand. Hvergang en ny configuration settes pÃ¥ builderen mÃ¥
      * {@code composisteConfiguration} nullstilles slik at det blir laget en ny compositeConfigurasjon
-     * som bruker en egen kopi av {@code systemConfiguration}. Ved å gjøre access til {@code compositeConfiguration}
-     * lazy unngås unødig kopiering av {@code systemConfiguration}.
+     * som bruker en egen kopi av {@code systemConfiguration}. Ved Ã¥ gjÃ¸re access til {@code compositeConfiguration}
+     * lazy unngÃ¥s unÃ¸dig kopiering av {@code systemConfiguration}.
      */
     private CompositeConfiguration getCompositeConfiguration() {
         if (compositeConfiguration == null) {
@@ -186,7 +186,7 @@ public class ModuleBuilder {
 
     /**
      * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
-     * @param filename navn på konfigurasjonsfil
+     * @param filename navn pÃ¥ konfigurasjonsfil
      * @return <code>this</code>
      */
     public ModuleBuilder setConfigurationFilename(String filename) {
@@ -223,7 +223,7 @@ public class ModuleBuilder {
     }
 
     /**
-     * Angir om moduler skal bruke samme singleVmServer instans når modulenes singlevmServer konfigurasjon er uendret
+     * Angir om moduler skal bruke samme singleVmServer instans nÃ¥r modulenes singlevmServer konfigurasjon er uendret
      */
     public boolean isUseSharedServer() {
         return getCompositeConfiguration().getBoolean(USE_SHARED_SERVER, true);
@@ -513,7 +513,7 @@ public class ModuleBuilder {
             }
             ModuleBuilder singleVmServerModuleBuilder = new ModuleBuilder(singleVmServerSystemConfiguration);
 
-            // Sett builder spesifikke properties på singleVmServerModuleBuilder fra denne builder
+            // Sett builder spesifikke properties pÃ¥ singleVmServerModuleBuilder fra denne builder
             singleVmServerModuleBuilder.setServiceMode(ServiceMode.SINGLE_VM);
             String moduleClassname = getSingleVmServerModuleClassname();
             if (moduleClassname != null) {

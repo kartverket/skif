@@ -29,8 +29,8 @@ import java.sql.Connection;
 import java.util.*;
 
 /**
- * Server-modul for WSVersioning-prosjektet. Den underbygger Store med et statisk map og støtter hverken id-generering
- * eller låsing.
+ * Server-modul for WSVersioning-prosjektet. Den underbygger Store med et statisk map og stÃ¸tter hverken id-generering
+ * eller lÃ¥sing.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0

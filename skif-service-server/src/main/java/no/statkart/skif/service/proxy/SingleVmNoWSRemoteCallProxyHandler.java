@@ -10,7 +10,7 @@ import no.statkart.skif.service.SingleVmServer;
  * i for service av type {@code <S>}. {@code ProxyHandler}en henter ut en {@code EJBProxyHandler<S>} fra serveren og
  * sender kall videre til denne.
  * <p>
- * Denne klassen tilbyr standard funksjonalitet, dvs spesial håndtering av argumenter.
+ * Denne klassen tilbyr standard funksjonalitet, dvs spesial hÃ¥ndtering av argumenter.
  *
  * @author Henrik Fredholm
  * @since 2.0

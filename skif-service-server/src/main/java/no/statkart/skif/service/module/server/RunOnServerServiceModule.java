@@ -14,8 +14,8 @@ import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import java.util.*;
 
 /**
- * ServerServiceModule som i SingleVm mode installere tjenester i serveren som gjøre det mulig for en klient å kjøre
- * vilkårlig kode på serveren uten først å måtte definere en service som inneholder koden.
+ * ServerServiceModule som i SingleVm mode installere tjenester i serveren som gjÃ¸re det mulig for en klient Ã¥ kjÃ¸re
+ * vilkÃ¥rlig kode pÃ¥ serveren uten fÃ¸rst Ã¥ mÃ¥tte definere en service som inneholder koden.
  *
  * Denne modul brukes for testing og patching i SingleVm mode. I JEE mode installerer modulen ingen tjenester.
  *

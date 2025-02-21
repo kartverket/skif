@@ -13,8 +13,8 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
- * Tester at mappinglogikken klarer å mappe ut disse {@link Set}-ene som {@link Multikobling#get(Object)} returnerer.
- * Disse kan ikke mappes inn, da brukes vanlige {@code Set}, så det trenger ikke testes.
+ * Tester at mappinglogikken klarer Ã¥ mappe ut disse {@link Set}-ene som {@link Multikobling#get(Object)} returnerer.
+ * Disse kan ikke mappes inn, da brukes vanlige {@code Set}, sÃ¥ det trenger ikke testes.
  */
 public class MultikoblingMappingTest {
     private final StoreTestMapper mapper = new StoreTestMapper(() -> null);
@@ -33,7 +33,7 @@ public class MultikoblingMappingTest {
     }
 
     /**
-     * Dette er en metode så testen kan hente typeinformasjon ut fra signaturen.
+     * Dette er en metode sÃ¥ testen kan hente typeinformasjon ut fra signaturen.
      */
     private Set<String> getKobling(Multikobling<String, String, ?> multikobling, String rolle) {
         return multikobling.get(rolle);

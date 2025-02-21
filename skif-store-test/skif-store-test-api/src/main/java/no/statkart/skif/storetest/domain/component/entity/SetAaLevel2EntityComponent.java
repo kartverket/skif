@@ -39,7 +39,7 @@ public class SetAaLevel2EntityComponent implements EntityComponentWithOwnerRefer
     }
 
     /**
-     * Brukes for testing av stjålne id
+     * Brukes for testing av stjÃ¥lne id
      */
     public void setIdForTesting(Long id) {
         this.id = id;

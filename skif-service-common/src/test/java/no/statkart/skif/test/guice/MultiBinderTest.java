@@ -24,7 +24,7 @@ import static org.testng.Assert.assertEquals;
 public class MultiBinderTest {
 
     /**
-     * Bind opp mange kopier av TestService på tvers av 2 moduler
+     * Bind opp mange kopier av TestService pÃ¥ tvers av 2 moduler
      */
     public void testMultibinderConsept() {
         final Module module1 = new AbstractModule() {

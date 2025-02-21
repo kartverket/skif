@@ -39,25 +39,25 @@ import static org.testng.Assert.assertTrue;
 
 /**
  * Tester relationcaching gjennom Store, herunder samspillet med relation cachingen og Unit of Work konseptet. Store
- * støtter at relation caching kan slås av og på, dog pt med den begrensningen at caching ikke kan slås av hvis
- * den er slått på for underliggende Unit of Work.
+ * stÃ¸tter at relation caching kan slÃ¥s av og pÃ¥, dog pt med den begrensningen at caching ikke kan slÃ¥s av hvis
+ * den er slÃ¥tt pÃ¥ for underliggende Unit of Work.
  * <p/>
- * Et sentralt konsept i Unit of Work konseptet er at de endringer som gjøres innefor en unit of work begrenses til denne
+ * Et sentralt konsept i Unit of Work konseptet er at de endringer som gjÃ¸res innefor en unit of work begrenses til denne
  * i en vis forstand. Med hensyn til transaksjoner er det at endringer committes til underliggende session ved commit og
- * at endringene rulles tilbake (dvs ikke påvirker underliggende lag) ved abort. For caching betyder det at cachet
- * relasjoner må oppdateres riktig slik at endringer blir med ved commit og ikke med ved abort. Med hensyn til enabling
- * og disabling av relation caching skal en Unit of Work når den avsluttes ikke endre på underliggendes sessions setting.
- * Dvs hvis underliggende session har caching slått på skal den forbli slått på og hvis underliggende session har den
- * slått av skal caching automatisk slås av når Unit of Work avsluttes, hvis den ble slått på i Unit of Work. Når en
- * Unit of Work startes skal den arve den underliggende sessions cache setting. Endelig, når relation caching slås på må
- * den ta hensyn til at Store allerede kan inneholde endret objekter som caching må ta hensyn til for at resultatet
- * for relasjonen skal bli riktig. Her er det viktig å forstå at cachingen må se på alle låste objekter som er lastet.
- * Dvs et objekt kan være endret, men Store.update er ennå ikke kallt på det tidspunkt hvor cachingen slås på. Siden
- * relation cachingen opererer synkront når den er enablet, virker det riktigst at algoritmen  for enabling av
- * cachen tar hensyn til disse  objektene også.
+ * at endringene rulles tilbake (dvs ikke pÃ¥virker underliggende lag) ved abort. For caching betyder det at cachet
+ * relasjoner mÃ¥ oppdateres riktig slik at endringer blir med ved commit og ikke med ved abort. Med hensyn til enabling
+ * og disabling av relation caching skal en Unit of Work nÃ¥r den avsluttes ikke endre pÃ¥ underliggendes sessions setting.
+ * Dvs hvis underliggende session har caching slÃ¥tt pÃ¥ skal den forbli slÃ¥tt pÃ¥ og hvis underliggende session har den
+ * slÃ¥tt av skal caching automatisk slÃ¥s av nÃ¥r Unit of Work avsluttes, hvis den ble slÃ¥tt pÃ¥ i Unit of Work. NÃ¥r en
+ * Unit of Work startes skal den arve den underliggende sessions cache setting. Endelig, nÃ¥r relation caching slÃ¥s pÃ¥ mÃ¥
+ * den ta hensyn til at Store allerede kan inneholde endret objekter som caching mÃ¥ ta hensyn til for at resultatet
+ * for relasjonen skal bli riktig. Her er det viktig Ã¥ forstÃ¥ at cachingen mÃ¥ se pÃ¥ alle lÃ¥ste objekter som er lastet.
+ * Dvs et objekt kan vÃ¦re endret, men Store.update er ennÃ¥ ikke kallt pÃ¥ det tidspunkt hvor cachingen slÃ¥s pÃ¥. Siden
+ * relation cachingen opererer synkront nÃ¥r den er enablet, virker det riktigst at algoritmen  for enabling av
+ * cachen tar hensyn til disse  objektene ogsÃ¥.
  * <p/>
- * Ovenstående prinsipper bør testes for klient og server. Det finnes mange kombinasjoner så ikke alle blir nødvendigvis
- * testet. Fokus har vært på å få testet de mest vanlige patterns på klient og server.
+ * OvenstÃ¥ende prinsipper bÃ¸r testes for klient og server. Det finnes mange kombinasjoner sÃ¥ ikke alle blir nÃ¸dvendigvis
+ * testet. Fokus har vÃ¦rt pÃ¥ Ã¥ fÃ¥ testet de mest vanlige patterns pÃ¥ klient og server.
  *
  * @author Henrik Fredholm
  * @since 2.7
@@ -205,11 +205,11 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at relation cachen beregner relasjoner riktig når den enables etter at objekter i Store er endret. I
-     * testcasen starter vi med en situasjon hvor a1->b2Id. Så endres a1->bNewId. Så lenge caching ikke er
-     * enablet vil servicen lese det som står i databasen. Dvs for b2Id finner vi {a1Id} og for bNewId finner vi {}.
-     * Når cachen enables må algoritmen innse at a1 er endret. Dvs den gamle versjon av a1 (hvor a1->b2Id) gjelder ikke
-     * lengre. Istedet gjelder den oppdaterte versjonen av a1 (a1->bNewId). Algoritmen må innse at koblingen a1->b2Id er
+     * Tester at relation cachen beregner relasjoner riktig nÃ¥r den enables etter at objekter i Store er endret. I
+     * testcasen starter vi med en situasjon hvor a1->b2Id. SÃ¥ endres a1->bNewId. SÃ¥ lenge caching ikke er
+     * enablet vil servicen lese det som stÃ¥r i databasen. Dvs for b2Id finner vi {a1Id} og for bNewId finner vi {}.
+     * NÃ¥r cachen enables mÃ¥ algoritmen innse at a1 er endret. Dvs den gamle versjon av a1 (hvor a1->b2Id) gjelder ikke
+     * lengre. Istedet gjelder den oppdaterte versjonen av a1 (a1->bNewId). Algoritmen mÃ¥ innse at koblingen a1->b2Id er
      * 'removed' og koblingen a1->bNewId er 'added'
      * <p/>
      * <p>Videre, etter at UnitOfWork er aborted skal relasjonene svare det opprinnelige
@@ -244,7 +244,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
 
     /**
      * Denne testen er det samme som {@link #testClientUpdateMedEtterfoelgedeRelationCachingEnabling()} med den tvist
-     * at update ikke blir kall. Cachingen skal likevel få det riktig
+     * at update ikke blir kall. Cachingen skal likevel fÃ¥ det riktig
      */
     public void testClientUpdateUtenFaktiskUpdateMedEtterfoelgedeRelationCachingEnabling() {
         assertFalse(storeClient.getRelationCache().isEnabled());
@@ -320,11 +320,11 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at relation cachen beregner relasjoner riktig når den enables etter at objekter i Store er slettet. I
-     * testcasen starter vi med en situasjon hvor a1->b2Id. Så slettes a1. Så lenge caching ikke er enablet vil servicen
-     * lese det som står i databasen. Dvs for b2Id finner vi {a1Id}. Når cachen enables må
+     * Tester at relation cachen beregner relasjoner riktig nÃ¥r den enables etter at objekter i Store er slettet. I
+     * testcasen starter vi med en situasjon hvor a1->b2Id. SÃ¥ slettes a1. SÃ¥ lenge caching ikke er enablet vil servicen
+     * lese det som stÃ¥r i databasen. Dvs for b2Id finner vi {a1Id}. NÃ¥r cachen enables mÃ¥
      * algoritmen innse at a1 er slettet. Dvs den gamle versjon av a1 (hvor a1->b2Id) gjelder ikke
-     * lengre. Algoritmen må innse at koblingen a1->b2Id er 'removed'
+     * lengre. Algoritmen mÃ¥ innse at koblingen a1->b2Id er 'removed'
      */
     public void testClientDeleteMedEtterfoelgedeRelationCachingEnabling() {
         assertFalse(storeClient.getRelationCache().isEnabled());
@@ -335,7 +335,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
             X1AA a1 = storeClient.lock(a1Id);
             Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsBefore = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
             assertEquals(invSomeBBIdsBefore.get(b2Id), Collections.singleton(a1Id));
-            storeClient.delete(a1); // Objektet er kun slettet i klienten, ikke på serveren
+            storeClient.delete(a1); // Objektet er kun slettet i klienten, ikke pÃ¥ serveren
             Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsAfterChange = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
             assertEquals(invSomeBBIdsAfterChange.get(b2Id), Collections.singleton(a1Id));
             storeClient.getRelationCache().setEnabled(true);
@@ -349,14 +349,14 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at relation cachen beregner relasjoner riktig når den enables etter at objekter i Store er endret en en
+     * Tester at relation cachen beregner relasjoner riktig nÃ¥r den enables etter at objekter i Store er endret en en
      * ytre unit of work.
      * <p/>
-     * I testcasen starter vi men en situasjon hvor a1->b2Id. Så endres a1->bNewId i ytre unit of work og til
-     * a1-b2NewId i indre unit of work. Så lenge caching ikke er enablet vil servicen lese det som står i databasen.
+     * I testcasen starter vi men en situasjon hvor a1->b2Id. SÃ¥ endres a1->bNewId i ytre unit of work og til
+     * a1-b2NewId i indre unit of work. SÃ¥ lenge caching ikke er enablet vil servicen lese det som stÃ¥r i databasen.
      * Dvs for b2Id finner vi {a1Id} og for bNewId  og b2NewId finner vi {}.
-     * Når cachen enables må algoritmen innse at a1 er endret. Dvs den gamel versjon av a1 (hvor a1->b2Id) gjelder ikke
-     * lengre. Istedet gjelder den oppdaterte versjonen av a1 (a1->b2NewId). Algoritmen må innse at koblingen a1->b2Id er
+     * NÃ¥r cachen enables mÃ¥ algoritmen innse at a1 er endret. Dvs den gamel versjon av a1 (hvor a1->b2Id) gjelder ikke
+     * lengre. Istedet gjelder den oppdaterte versjonen av a1 (a1->b2NewId). Algoritmen mÃ¥ innse at koblingen a1->b2Id er
      * 'removed' og koblingen a1->b2NewId er 'added', mens koblingen a1->bNewId er irrelevant.
      * <p/>
      * <p>Videre, etter at UnitOfWork er aborted skal relasjonene svare det opprinnelige
@@ -397,7 +397,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
                 storeClient.commitUnitOfWork(inner);
             }
             assertEquals(((X1AA) storeClient.get(a1Id)).getSomeBBId(), b2NewId);
-            // Caching er ikke enablet får vi får det som er lagret på serveren
+            // Caching er ikke enablet fÃ¥r vi fÃ¥r det som er lagret pÃ¥ serveren
             Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsOuterUoW = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2NewId, bNewId, b2Id));
             assertEquals(invSomeBBIdsOuterUoW.get(b2NewId), Collections.emptySet());
             assertEquals(invSomeBBIdsOuterUoW.get(bNewId), Collections.emptySet());
@@ -416,7 +416,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at enabling av relation cachen virker for objekter som bare er låst i StoreServerSession
+     * Tester at enabling av relation cachen virker for objekter som bare er lÃ¥st i StoreServerSession
      */
     public void testStoreSessionServerLockObjectMedEtterfoelgedeRelationCachingEnabling() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -433,7 +433,7 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
             @Override
             public Object run() {
                 serverStore.lock(a1Id);
-                // RelationCache onEnable-algoritmen vil se a1. men ikke ta hensyn til den siden den vil være i synk
+                // RelationCache onEnable-algoritmen vil se a1. men ikke ta hensyn til den siden den vil vÃ¦re i synk
                 serverStore.getRelationCache().setEnabled(true);
                 Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsAfterEnabled = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
                 assertEquals(invSomeBBIdsAfterEnabled.get(b2Id), Collections.singleton(a1Id));
@@ -462,17 +462,17 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
                 storeServer.get(a1Id);
                 X1AA a1 = storeServer.lock(a1Id);
                 a1.setSomeBBId(null);
-                // RelationCache onEnable-algoritmen vil se a1, men ikke ta hensyn til den siden den vil være i synk fordi flush kalles automatisk
+                // RelationCache onEnable-algoritmen vil se a1, men ikke ta hensyn til den siden den vil vÃ¦re i synk fordi flush kalles automatisk
                 storeServer.getRelationCache().setEnabled(true);
                 Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsAfterEnabled = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
                 assertEquals(invSomeBBIdsAfterEnabled.get(b2Id), Collections.emptySet());
 
-                // Trenger ingen update her for å se endringen side relation tracking skjer synkront.
+                // Trenger ingen update her for Ã¥ se endringen side relation tracking skjer synkront.
                 a1.setSomeBBId(b2Id);
                 Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsChange = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
                 assertEquals(invSomeBBIdsChange.get(b2Id), Collections.singleton(a1Id));
 
-                // finder kall blir fortsatt riktig siden endringen flushes til database før søk
+                // finder kall blir fortsatt riktig siden endringen flushes til database fÃ¸r sÃ¸k
                 storeServer.getRelationCache().setEnabled(false);
                 Map<X1BBOneId<?>, Set<X1AAId<?>>> invSomeBBIdsChange2 = x1AAFinderService.findInvSomeBBIds(ImmutableList.of(b2Id));
                 assertEquals(invSomeBBIdsChange2.get(b2Id), Collections.singleton(a1Id));
@@ -483,8 +483,8 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at ident cachen virker på riktig nivå, altså at når enabling av caching collecter opprinnelige relasjoner,
-     * så skal Store.get() navigere på nivå 0.
+     * Tester at ident cachen virker pÃ¥ riktig nivÃ¥, altsÃ¥ at nÃ¥r enabling av caching collecter opprinnelige relasjoner,
+     * sÃ¥ skal Store.get() navigere pÃ¥ nivÃ¥ 0.
      */
     public void testRiktigIdentCachingVedOppdateringAvAvledetDelAvIdentFoerRelationCachingEnabling() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -516,10 +516,10 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at invers relasjon av type One-relation ikke blir 'null' når identer swappes. Dvs under swappen, etter
-     * at 'a1.setUniqueOnX1AA(uniqueOnA2)' er utført så vil relation tracking for uniqueOnA2 mappe til a1 (dvs. ikke
-     * lengre til a2). Når a2 etterpå endres fra å peke på uniqueA2 til å peke på uniqueA1, så skal invers trackingen
-     * for uniqueA2 ikke settes til 'null', siden den nå allerede er satt til å mappe til a1.
+     * Tester at invers relasjon av type One-relation ikke blir 'null' nÃ¥r identer swappes. Dvs under swappen, etter
+     * at 'a1.setUniqueOnX1AA(uniqueOnA2)' er utfÃ¸rt sÃ¥ vil relation tracking for uniqueOnA2 mappe til a1 (dvs. ikke
+     * lengre til a2). NÃ¥r a2 etterpÃ¥ endres fra Ã¥ peke pÃ¥ uniqueA2 til Ã¥ peke pÃ¥ uniqueA1, sÃ¥ skal invers trackingen
+     * for uniqueA2 ikke settes til 'null', siden den nÃ¥ allerede er satt til Ã¥ mappe til a1.
      */
     public void testSwapUniqueIdents() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -547,9 +547,9 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at kall til {@link no.statkart.skif.store.Store#evictAll()} ikke feiler når relation caching er enabled
-     * uten for en unit of work. Utenfor en unit of work er det ikke lov å låse objekter på klienten så det er ikke
-     * behov får å test endringer på objekter.
+     * Tester at kall til {@link no.statkart.skif.store.Store#evictAll()} ikke feiler nÃ¥r relation caching er enabled
+     * uten for en unit of work. Utenfor en unit of work er det ikke lov Ã¥ lÃ¥se objekter pÃ¥ klienten sÃ¥ det er ikke
+     * behov fÃ¥r Ã¥ test endringer pÃ¥ objekter.
      */
     public void testEvictAllMedRelationCachingUtenforUnitOfWorkSkalIkkeFeile() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -566,9 +566,9 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at kall til {@link no.statkart.skif.store.Store#evictAll()} i UnitOfWork ikke feiler når relation caching
-     * er enabled og Store inneholder oppdaterte objekter som dermed ikke evictes. Videre skal evictall ikke føre til
-     * at oppslag på releasjoner som er endret blir feil.
+     * Tester at kall til {@link no.statkart.skif.store.Store#evictAll()} i UnitOfWork ikke feiler nÃ¥r relation caching
+     * er enabled og Store inneholder oppdaterte objekter som dermed ikke evictes. Videre skal evictall ikke fÃ¸re til
+     * at oppslag pÃ¥ releasjoner som er endret blir feil.
      */
     public void testEvictAllMedRelationCachingIUnitOfWorkSkalIkkeFeile() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -612,8 +612,8 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at cachet relasjoner blir riktige når relasjonene endres via klienten og man kaller endUnitOfWork
-     * etter utført oppdatering på server. Denne test er relatert til SKIF-625.
+     * Tester at cachet relasjoner blir riktige nÃ¥r relasjonene endres via klienten og man kaller endUnitOfWork
+     * etter utfÃ¸rt oppdatering pÃ¥ server. Denne test er relatert til SKIF-625.
      */
     @SuppressWarnings("Duplicates")
     public void testCachetRelasjonSomOppdateresViaKlientBlirAutomatiskRiktigVedKallTilEndUnitOfWork() {
@@ -656,8 +656,8 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at cachet relasjoner ikke automatisk blir riktige uten kall til evictAll når relasjonene endres
-     * på server utenom klienten. Denne test er relatert til SKIF-625.
+     * Tester at cachet relasjoner ikke automatisk blir riktige uten kall til evictAll nÃ¥r relasjonene endres
+     * pÃ¥ server utenom klienten. Denne test er relatert til SKIF-625.
      */
     public void testCachetRelasjonSomOppdateresUtenOmKlientMaaEvictesEksplisitt() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -700,6 +700,6 @@ public class StoreRelationCacheTest extends StoreTestMixedTestCase {
         });
     }
 
-// TODO: Det er fortsatt flere testcaser som bør skrives, blant annet transfer fra klient til server og update/sletting med detached objekt
+// TODO: Det er fortsatt flere testcaser som bÃ¸r skrives, blant annet transfer fra klient til server og update/sletting med detached objekt
 
 }

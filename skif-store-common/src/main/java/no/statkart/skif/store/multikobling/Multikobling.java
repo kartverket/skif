@@ -9,17 +9,17 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * En datastruktur som inneholder et sett av koblinger til objekter av type {@code V} sortert på roller av type {@code R},
+ * En datastruktur som inneholder et sett av koblinger til objekter av type {@code V} sortert pÃ¥ roller av type {@code R},
  * hvor koblingen er en subtype {@code Kobling<R,V>} som opprettes av {@code koblingFactory}.
  *
- * På samme måte som et {@code Set<V>} brukes til å modellere referanser fra et eiende domeneobjekt, {@code E}, til et
- * mængde av relaterte objekter {@code <V>}, så brukes {@code Multikobling<R,V,K>} til å modellere referanser fra
- * {@code E} til en mengde av {@code V} for gitt rolle {@code R}. Fordelen med å bruke denne datastrukturen er at det
- * kun trengs et sett for å modellere alle rollene frem for ett sett for hver rolle. På databasenivå mappes
- * datastrukturen til en linktabell med tre nøkler: id for {@code E}, id eller navn for rolle {@code R}, og id for
+ * PÃ¥ samme mÃ¥te som et {@code Set<V>} brukes til Ã¥ modellere referanser fra et eiende domeneobjekt, {@code E}, til et
+ * mÃ¦ngde av relaterte objekter {@code <V>}, sÃ¥ brukes {@code Multikobling<R,V,K>} til Ã¥ modellere referanser fra
+ * {@code E} til en mengde av {@code V} for gitt rolle {@code R}. Fordelen med Ã¥ bruke denne datastrukturen er at det
+ * kun trengs et sett for Ã¥ modellere alle rollene frem for ett sett for hver rolle. PÃ¥ databasenivÃ¥ mappes
+ * datastrukturen til en linktabell med tre nÃ¸kler: id for {@code E}, id eller navn for rolle {@code R}, og id for
  * {@code V}.
  *
- * I nåværende implementasjon inneholder datastrukturen både et {@code Set} objekt og et {@code SetMultimap}. Grunnen
+ * I nÃ¥vÃ¦rende implementasjon inneholder datastrukturen bÃ¥de et {@code Set} objekt og et {@code SetMultimap}. Grunnen
  * til dette er at det pt ikke finnes noen hibernate implementasjon for persistering av {@code SetMultimap} direkte.
  *
  * @author Henrik Fredholm
@@ -29,20 +29,20 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
     private static final long serialVersionUID = 1L;
 
     /**
-     * Sett av koblinger som brukes mot hibernate for persistering. Endring som utføres direkte på dette objektet
-     * må etterfølges av et kall til {@link #setKoblinger(java.util.Set)} for å sikre riktig synkronisering mellom
+     * Sett av koblinger som brukes mot hibernate for persistering. Endring som utfÃ¸res direkte pÃ¥ dette objektet
+     * mÃ¥ etterfÃ¸lges av et kall til {@link #setKoblinger(java.util.Set)} for Ã¥ sikre riktig synkronisering mellom
      * variablene {@code koblinger} og {@code delegate.}
      */
     private Set<K> koblinger = new HashSet<>();
 
-    /** Multimap som inneholder koblinger sortert på rolle. Gjenoppfriskes lazy ved endring av {@code koblinger} */
+    /** Multimap som inneholder koblinger sortert pÃ¥ rolle. Gjenoppfriskes lazy ved endring av {@code koblinger} */
     transient private SetMultimap<R, V> delegate = HashMultimap.create();
 
-    /** Factory som brukes for å opprette koblingsobjekter av riktig type */
+    /** Factory som brukes for Ã¥ opprette koblingsobjekter av riktig type */
     private KoblingFactory<R, V, K> koblingFactory;
 
     /**
-     * Angir om variablen {@code delegate} må oppfriskes før bruk. Settes til true hver gang
+     * Angir om variablen {@code delegate} mÃ¥ oppfriskes fÃ¸r bruk. Settes til true hver gang
      * {@link #setKoblinger(java.util.Set)} kalles
      */
     transient private boolean refreshNeeded;
@@ -73,14 +73,14 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
     }
 
     /**
-     * Kalles ved for persistering for å hente ut koblingssett
+     * Kalles ved for persistering for Ã¥ hente ut koblingssett
      */
     public Set<K> getKoblinger() {
         return koblinger;
     }
 
     /**
-     * Kalles ved persistering for å sette koblingssett
+     * Kalles ved persistering for Ã¥ sette koblingssett
      */
     public void setKoblinger(Set<K> koblinger) {
         this.koblinger = koblinger;
@@ -241,15 +241,15 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
 
             @Override
             public V next() {
-                // remove() må vite hva gjeldende element er
+                // remove() mÃ¥ vite hva gjeldende element er
                 current = super.next();
                 return current;
             }
 
             @Override
             public void remove() {
-                // Å bruke Multikobling.this.remove() vil gi ConcurrentModificationException.
-                // Må derfor la delegert iterator oppdatere SetMultimap, og ta koblinger manuelt.
+                // Ã… bruke Multikobling.this.remove() vil gi ConcurrentModificationException.
+                // MÃ¥ derfor la delegert iterator oppdatere SetMultimap, og ta koblinger manuelt.
                 super.remove();
                 koblinger.remove(koblingFactory.create(rolle, current));
             }
@@ -260,7 +260,7 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
         delegate = HashMultimap.create();
         refreshNeeded = true;
 
-        // SKIF-619 Workaround. Vi ønsker et HashSet som har defalut defalut størrelse slik at loadfaktor og rekkefølge har størst mulighet for å ble den sammen. Dette her er en løsning som sikkert ikke vil virke i alle tilfeller.
+        // SKIF-619 Workaround. Vi Ã¸nsker et HashSet som har defalut defalut stÃ¸rrelse slik at loadfaktor og rekkefÃ¸lge har stÃ¸rst mulighet for Ã¥ ble den sammen. Dette her er en lÃ¸sning som sikkert ikke vil virke i alle tilfeller.
         if (koblinger instanceof HashSet) {
           Set<K> koblinger1 = new HashSet<>();
           koblinger1.addAll(koblinger);
@@ -270,7 +270,7 @@ public class Multikobling<R, V, K extends Kobling<R,V>> extends ForwardingSetMul
     }
 
     /**
-     * Sjekker kun delegate for å matche kontrakten for Multimap. Altså at <code>Multimap.equals(Multikobling)</code>
+     * Sjekker kun delegate for Ã¥ matche kontrakten for Multimap. AltsÃ¥ at <code>Multimap.equals(Multikobling)</code>
      * alltid gir samme svar som <code>Multikobling.equals(Multimap)</code>.
      */
     @Override

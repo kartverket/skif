@@ -3,8 +3,8 @@ package no.statkart.skif.util.testsupport;
 import java.lang.reflect.Method;
 
 /**
- * Hjelpeklasse for å hente ut [@code TestTransactionAttributeType} for en metode. Annotasjonen kan
- * enten stå på selve metoden eller på klassen metoden tilhører.
+ * Hjelpeklasse for Ã¥ hente ut [@code TestTransactionAttributeType} for en metode. Annotasjonen kan
+ * enten stÃ¥ pÃ¥ selve metoden eller pÃ¥ klassen metoden tilhÃ¸rer.
  * </p>
  * Hvis ingen annotasjon er spesifisert anvendes {@code TestServerMethodTransactionAttributeType.TX_REQUIRED}.
  *

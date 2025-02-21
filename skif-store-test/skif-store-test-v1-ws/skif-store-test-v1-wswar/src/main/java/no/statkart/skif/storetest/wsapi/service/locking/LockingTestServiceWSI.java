@@ -8,7 +8,7 @@ import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 import jakarta.jws.WebParam;
 
 /**
- * Service for testing av låsing.
+ * Service for testing av lÃ¥sing.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

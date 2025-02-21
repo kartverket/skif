@@ -11,17 +11,17 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Klasse for å test unidireksjonelle relasjoner. Klasen har 5 forskjellige typer relasjoner
+ * Klasse for Ã¥ test unidireksjonelle relasjoner. Klasen har 5 forskjellige typer relasjoner
  * <ul>
  * <li>Enkelt relasjon {@link #getSomeBBId()} - med invers relasjon {@link X1BBOne#findInvSomeBBIds()}</li>
  * <li>Mange relasjon til {@code X1CCMany}: 'someCCs' </li>
  * <li>En-til-en relasjon til {@code X1DDUnique}: 'myUniqueDD' (TODO)</li>
  * <li>En verdi som brukes som en unik index for klassen</li>
  * <li>En verdi som brukes som en ikke-unik index for klassen</li>
- * <li>En verdi som sammen med verdi fra {@code X1BBOne} utgjør en unik index for klassen (bruker {@code nr} fra begge)</li>
+ * <li>En verdi som sammen med verdi fra {@code X1BBOne} utgjÃ¸r en unik index for klassen (bruker {@code nr} fra begge)</li>
  * </ul>
  * <p/>
- * De 3 relaterte klassene implementerer en finder for å navigere relasjonen i motsatt retning. Det finnes ingen
+ * De 3 relaterte klassene implementerer en finder for Ã¥ navigere relasjonen i motsatt retning. Det finnes ingen
  * klasser for indexene. De bruker String klassen. Oppslag for disse skjer via service-findermetoder.
  *
  * @author Henrik Fredholm

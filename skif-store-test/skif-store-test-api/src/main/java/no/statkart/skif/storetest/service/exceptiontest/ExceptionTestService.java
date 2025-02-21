@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 import java.sql.Timestamp;
 
 /**
- * Service for å teste exception-mapping fra SoapUI og .NET. Enhetstester for exceptionmapping jobber rett på mapperen.
+ * Service for Ã¥ teste exception-mapping fra SoapUI og .NET. Enhetstester for exceptionmapping jobber rett pÃ¥ mapperen.
  */
 public interface ExceptionTestService {
     void throwImplementationException(String message) throws ImplementationException;

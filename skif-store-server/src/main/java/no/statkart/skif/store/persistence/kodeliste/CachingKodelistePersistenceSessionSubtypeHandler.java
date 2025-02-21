@@ -26,33 +26,33 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * En PersistendeSessionSubtypeHandler for Kodeliste og Kode som henter disse bobler fra en global cachet transfer
- * slik at objektene ikke trenger å bli lastet inn på nytt fra databasen for ny session Antagelsen er at Kode og Kodeliste
- * objektene endres seg lite og derfor kan gjenanvendes på tvers av sessioner og det er raskere enn å laste dem inn på
- * nytt hver gang. Når det gjøres endringer på Kode så invaliderer handleren (som det finnes en av per session)
- * den globale cachen ved commit. Deretter må den globale cachen lastes inn på nytt ved en senere lejlighet. Det sker
- * ved første anledning hvor en handleren trenger en kode som ikke allerede er lastet. Da lastes inn alle kodene på nytt
- * og dersom den handler som anvendes ikke inneholder endringer på kodene kan transferen som ble lastet caches globalt.
+ * slik at objektene ikke trenger Ã¥ bli lastet inn pÃ¥ nytt fra databasen for ny session Antagelsen er at Kode og Kodeliste
+ * objektene endres seg lite og derfor kan gjenanvendes pÃ¥ tvers av sessioner og det er raskere enn Ã¥ laste dem inn pÃ¥
+ * nytt hver gang. NÃ¥r det gjÃ¸res endringer pÃ¥ Kode sÃ¥ invaliderer handleren (som det finnes en av per session)
+ * den globale cachen ved commit. Deretter mÃ¥ den globale cachen lastes inn pÃ¥ nytt ved en senere lejlighet. Det sker
+ * ved fÃ¸rste anledning hvor en handleren trenger en kode som ikke allerede er lastet. Da lastes inn alle kodene pÃ¥ nytt
+ * og dersom den handler som anvendes ikke inneholder endringer pÃ¥ kodene kan transferen som ble lastet caches globalt.
  * Dersom det er gjort endringer caches transferen ikke globalt. Ved caching lages det en kopi av transferen slik at
- * objektene som blir cachet ikke får binning til Store. Oobjektene som ligger i den transfer instans som handleren selv
- * anvender vil få binning til Store og bør derfor ikke caches.
+ * objektene som blir cachet ikke fÃ¥r binning til Store. Oobjektene som ligger i den transfer instans som handleren selv
+ * anvender vil fÃ¥ binning til Store og bÃ¸r derfor ikke caches.
  *
- * <p>Når objekter fra den globale cachen gjenbrukes så lages en kopi slik av objektet slik at det kan knyttes til Store
- * uten at objektet i cachen "ødelegges". For å unngå ta en kopi av hele den globale cachen hver gang en ny session
- * trenger å bli initialisert, men samtidig ha et konsistent view kodelister og tilhørende koder, så lagrer handleren
+ * <p>NÃ¥r objekter fra den globale cachen gjenbrukes sÃ¥ lages en kopi slik av objektet slik at det kan knyttes til Store
+ * uten at objektet i cachen "Ã¸delegges". For Ã¥ unngÃ¥ ta en kopi av hele den globale cachen hver gang en ny session
+ * trenger Ã¥ bli initialisert, men samtidig ha et konsistent view kodelister og tilhÃ¸rende koder, sÃ¥ lagrer handleren
  * en lokal peker {@code localCache} til den globale cachen. Denne danner utgangspunkt for all uthenting av cachet
- * koder og kodelister. Dersom den globale cachen blir invalidert senere tidspunkt vil det ikke påvirke handleren.
- * Handleren vil kun bli påvirket ved kall til evict eller ved modifikasjoner på kode.
+ * koder og kodelister. Dersom den globale cachen blir invalidert senere tidspunkt vil det ikke pÃ¥virke handleren.
+ * Handleren vil kun bli pÃ¥virket ved kall til evict eller ved modifikasjoner pÃ¥ kode.
  *
- * <p>Koder som tilhører handleren ligger i en lokal map {@code localBubbleMap}. Når handleren skal finne en kode så
- * så sikre handleren at denne er initialisert og laster koden der fra. I forbindelse med initialiseringen så sjekker
- * handleren om mappen allerede er initialisert og om den allerede inneholder koden. Hvis ikke så hentes koden fra
+ * <p>Koder som tilhÃ¸rer handleren ligger i en lokal map {@code localBubbleMap}. NÃ¥r handleren skal finne en kode sÃ¥
+ * sÃ¥ sikre handleren at denne er initialisert og laster koden der fra. I forbindelse med initialiseringen sÃ¥ sjekker
+ * handleren om mappen allerede er initialisert og om den allerede inneholder koden. Hvis ikke sÃ¥ hentes koden fra
  * cachen og den legges inn i den lokale mappen.
  *
- * <p>Ved kall til evict så fjernes koden og tilhørende kodeliste fra {@code localBubbleMap} og den hentes på nytt
- * fra den globale cachen (som kan være oppdatert).
+ * <p>Ved kall til evict sÃ¥ fjernes koden og tilhÃ¸rende kodeliste fra {@code localBubbleMap} og den hentes pÃ¥ nytt
+ * fra den globale cachen (som kan vÃ¦re oppdatert).
  *
- * <p>Ved kall til insert, update og delete så husker handleren at den er {@code motifisert} og slutter å bruke den
- * globale cachen og går over til kun å bruke {@code localBubbleMap} og {@code localCache} som da vil peke på samme
+ * <p>Ved kall til insert, update og delete sÃ¥ husker handleren at den er {@code motifisert} og slutter Ã¥ bruke den
+ * globale cachen og gÃ¥r over til kun Ã¥ bruke {@code localBubbleMap} og {@code localCache} som da vil peke pÃ¥ samme
  * underliggende map instans.
  * <p>
  *
@@ -61,13 +61,13 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class CachingKodelistePersistenceSessionSubtypeHandler implements KodelistePersistenceSessionSubtypeHandler {
     /**
-     * Transfer cachet på tvers av sessioner. Inneholder objekter som ikke er knyttet til noen Store
+     * Transfer cachet pÃ¥ tvers av sessioner. Inneholder objekter som ikke er knyttet til noen Store
      */
     private static volatile KodelisteTransfer<KodelisteId<?>> globalCachedTransfer;
 
     /**
-     * Cache som brukes for denne handler. Vil normalt peke på samme eller en tidligere instans av globalCachedTransfer.
-     * Hvis handleren inneholder modifiserte Koder vil denne peke må samme map som {@code localBubbleMap}
+     * Cache som brukes for denne handler. Vil normalt peke pÃ¥ samme eller en tidligere instans av globalCachedTransfer.
+     * Hvis handleren inneholder modifiserte Koder vil denne peke mÃ¥ samme map som {@code localBubbleMap}
      */
     private Map<BubbleId, BubbleObject> localCache;
 
@@ -77,16 +77,16 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     private final KodelistePersistenceSessionSubtypeHandler handler;
 
     /**
-     * Kode og Kodeliste bobler knyttet til inneværende session, inkl. endringer på Kode og Kodeliste for inneværende
-     * session. Objektene i denne map vil være knyttet til Store.
+     * Kode og Kodeliste bobler knyttet til innevÃ¦rende session, inkl. endringer pÃ¥ Kode og Kodeliste for innevÃ¦rende
+     * session. Objektene i denne map vil vÃ¦re knyttet til Store.
      */
     private Map<BubbleId, BubbleObject> localBubbleMap;
 
     private List<? extends KodelisteId<?>> kodelisteIdList;
 
     /**
-     * Angir om en Kode har blitt endret i inneværende session, slik at handleren ikke kan brukes for caching
-     * av global transfer som skal brukes på tvers av sessioner.
+     * Angir om en Kode har blitt endret i innevÃ¦rende session, slik at handleren ikke kan brukes for caching
+     * av global transfer som skal brukes pÃ¥ tvers av sessioner.
      */
     private boolean modified;
 
@@ -102,7 +102,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Denne metode må være synkronisert slik at et invalidate kall ikke overskrives med en eldre ugyldig transfer fordi
+     * Denne metode mÃ¥ vÃ¦re synkronisert slik at et invalidate kall ikke overskrives med en eldre ugyldig transfer fordi
      * lasting av transferen tok tid.
      */
     @SuppressWarnings("UnusedDeclaration")
@@ -112,7 +112,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
 
     /**
      * Laster kodelister og koder fra underliggende handler og bygger opp en transfer med kode og kodelister som
-     * returners. Dersom inneværende sessionen ikke inneholder modifikasjoner på kode caches også transferen
+     * returners. Dersom innevÃ¦rende sessionen ikke inneholder modifikasjoner pÃ¥ kode caches ogsÃ¥ transferen
      * globalt.
      */
     private synchronized KodelisteTransfer<KodelisteId<?>> loadKodelisteTransfer() {
@@ -134,7 +134,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Denne metode trenger ikke å være synkronisert. Synkronisering må skje der hvor denne metode kalles fra.
+     * Denne metode trenger ikke Ã¥ vÃ¦re synkronisert. Synkronisering mÃ¥ skje der hvor denne metode kalles fra.
      */
     @SuppressWarnings("UnusedDeclaration")
     public void setCachedTransfer(KodelisteTransfer<KodelisteId<?>> transfer) {
@@ -142,8 +142,8 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Returnerer kodeliste transfer hvis den er ajour, ellers null.  Denne metode treger ikke å
-     * være synkronisert. Det verste som kan skje er enten at en annen eller denne tråd setter {@code
+     * Returnerer kodeliste transfer hvis den er ajour, ellers null.  Denne metode treger ikke Ã¥
+     * vÃ¦re synkronisert. Det verste som kan skje er enten at en annen eller denne trÃ¥d setter {@code
      * globalCachedTransfer} til null selv om den egentlig er ajour.
      */
     private KodelisteTransfer<KodelisteId<?>> getCachedTransfer() {
@@ -154,7 +154,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     public boolean isCachedTransferUptodate() {
-        // TODO: check uptodate ved clustering, f.eks via check mot siste endringsnummer for kode i Endringslogg eller via automatisk refresh etter et gitt tidsrom. Kun nødvendig ved clustering
+        // TODO: check uptodate ved clustering, f.eks via check mot siste endringsnummer for kode i Endringslogg eller via automatisk refresh etter et gitt tidsrom. Kun nÃ¸dvendig ved clustering
         return true;  //To change body of created methods use File | Settings | File Templates.
     }
 
@@ -163,8 +163,8 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
      * ikke finnes {@code localBubbleMap} hentes fra {@code localCache} hvis den er satt. Hvis den ikke er satt
      * initialiseres {@code localCache} enten fra {@code globalCachedTransfer} hvis den er satt eller fra en transfer
      * som lastes inn via den underliggende handler. Dersom en id (mot forventning) ikke blir funnet vil den automatisk
-     * bli lastet via underliggende handler og bli lagt inn i {@code localBubleMap} på et senere tidspunkt slik at det
-     * ikke vil være et problemt. Det skjer uten for denne metoden.
+     * bli lastet via underliggende handler og bli lagt inn i {@code localBubleMap} pÃ¥ et senere tidspunkt slik at det
+     * ikke vil vÃ¦re et problemt. Det skjer uten for denne metoden.
      */
     private void ensureLocalMapInitialized(Collection<? extends BubbleId<?>> bubbleIds) {
         Collection<? extends BubbleId<?>> missingIds = findMissingIds(bubbleIds);
@@ -178,7 +178,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
                 }
             }
             if (localCache == null) {
-                // Last localCache transfer via sessionen. Denne vil også inneholde alle tidligere endringer gjort i sessionen
+                // Last localCache transfer via sessionen. Denne vil ogsÃ¥ inneholde alle tidligere endringer gjort i sessionen
                 KodelisteTransfer<KodelisteId<?>> transfer = loadKodelisteTransfer();
                 kodelisteIdList = transfer.getResult();
                 localCache = Maps.newHashMap(transfer.getBubbleObjects());
@@ -250,7 +250,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
         markModified();
         localBubbleMap.put(bubble.getId(), bubble);
         if(bubble instanceof Kode) {
-            // Kodelisten må lastes på nytt fra underliggende session
+            // Kodelisten mÃ¥ lastes pÃ¥ nytt fra underliggende session
             localBubbleMap.remove(((Kode) bubble).getKodelisteId());
         }
     }
@@ -270,7 +270,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
         markModified();
         localBubbleMap.remove(bubble.getId());
         if(bubble instanceof Kode) {
-            // Kodelisten må lastes på nytt fra underliggende session
+            // Kodelisten mÃ¥ lastes pÃ¥ nytt fra underliggende session
             localBubbleMap.remove(((Kode) bubble).getKodelisteId());
         }
     }
@@ -361,7 +361,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandler implements Kodelis
     }
 
     /**
-     * Denne metode bør kalles av rammeverket ved commit
+     * Denne metode bÃ¸r kalles av rammeverket ved commit
      */
     public void afterTransactionCommit() {
         if (modified) {

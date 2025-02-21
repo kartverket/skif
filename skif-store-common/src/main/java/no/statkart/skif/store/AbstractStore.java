@@ -275,11 +275,11 @@ public abstract class AbstractStore implements Store {
 
     @Override
     public UnitOfWork beginUnitOfWork() {
-        // Oppretter alt først
+        // Oppretter alt fÃ¸rst
         StoreUnitOfWork storeUnitOfWork = storeSession.beginUnitOfWork();
         UnitOfWork unitOfWork = new UnitOfWork(storeUnitOfWork);
 
-        // Så det som ikke kan feile
+        // SÃ¥ det som ikke kan feile
         storeSession = storeUnitOfWork;
         storeRelationCache.onBeginUnitOfWork();
         return unitOfWork;
@@ -303,7 +303,7 @@ public abstract class AbstractStore implements Store {
     @Override
     public void abortUnitOfWork(UnitOfWork unitOfWork) {
         validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
-        // Hvis det kastes en exception her, så er løpet kjørt. Da må Store forkastes.
+        // Hvis det kastes en exception her, sÃ¥ er lÃ¸pet kjÃ¸rt. Da mÃ¥ Store forkastes.
         storeSession = storeUnitOfWork().abortUnitOfWork();
         storeRelationCache.onAbortUnitOfWork();
     }
@@ -340,7 +340,7 @@ public abstract class AbstractStore implements Store {
         validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), false);
         int level = storeSession.getLevel();
         if (level>0 && storeRelationCache.isEnabled(level-1)) {
-            // Hvis underliggende session har caching enables på caching enables for inneværende unit of work før commit
+            // Hvis underliggende session har caching enables pÃ¥ caching enables for innevÃ¦rende unit of work fÃ¸r commit
             // for at cachingen for underliggende session skal bli riktig.
             storeRelationCache.setEnabled(true);
         }
@@ -351,7 +351,7 @@ public abstract class AbstractStore implements Store {
     @Override
     public void closeUnitOfWork(UnitOfWork unitOfWork) {
         validateUnitOfWorkCurrent(unitOfWork.getUnitOfWork(), true);
-        // Hvis det kastes en exception her, så er løpet kjørt. Da må Store forkastes.
+        // Hvis det kastes en exception her, sÃ¥ er lÃ¸pet kjÃ¸rt. Da mÃ¥ Store forkastes.
         if (isUnitOfWorkActive(unitOfWork.getUnitOfWork())) {
             while (storeSession != unitOfWork.getUnitOfWork()) {
                 storeSession = storeUnitOfWork().abortUnitOfWork();
@@ -373,7 +373,7 @@ public abstract class AbstractStore implements Store {
             throw new ImplementationException("UnitOfWork does not belong to this Store");
         }
         if (storeSession != storeUnitOfWork) {
-            // Dersom det er ok med inaktive unit-of-works, så må det sjekkes om den er aktiv
+            // Dersom det er ok med inaktive unit-of-works, sÃ¥ mÃ¥ det sjekkes om den er aktiv
             if (!ignoreInactive || isUnitOfWorkActive(storeUnitOfWork)) {
                 throw new ImplementationException("UnitOfWork is not current");
             }
@@ -381,7 +381,7 @@ public abstract class AbstractStore implements Store {
     }
 
     /**
-     * Sjekker om gitt unit-of-work er aktiv, men ikke nødvendigvis gjeldende.
+     * Sjekker om gitt unit-of-work er aktiv, men ikke nÃ¸dvendigvis gjeldende.
      *
      * @return <code>true</code> dersom unit-of-work ligger i kjeden
      */
@@ -397,10 +397,10 @@ public abstract class AbstractStore implements Store {
     }
 
     /**
-     * Returnerer en transfer med alle objekter som er lastet i Store med angivelse av om objektet er låst eller ikke.
-     * Dersom objektet er modifisert returneres den versjon som ble lastet fra server hvis man er på klienten og
-     * den versjon som tilsvarer det som ligger i databasen hvis man er på server. Dersom alle endringer utføres i en
-     * unit of work vil det alltid være den umodifiserte versjonen
+     * Returnerer en transfer med alle objekter som er lastet i Store med angivelse av om objektet er lÃ¥st eller ikke.
+     * Dersom objektet er modifisert returneres den versjon som ble lastet fra server hvis man er pÃ¥ klienten og
+     * den versjon som tilsvarer det som ligger i databasen hvis man er pÃ¥ server. Dersom alle endringer utfÃ¸res i en
+     * unit of work vil det alltid vÃ¦re den umodifiserte versjonen
      * @return transfer med alle lastede objekter
      */
     @Override
@@ -409,10 +409,10 @@ public abstract class AbstractStore implements Store {
     }
 
     /**
-     * Returnerer en Transfer med alle objekter som er lastet i Store med angivelse av om objektet er låst eller ikke.
-     * Dersom objektet er modifisert returneres den versjon som ble lastet fra server hvis man er på klienten og
-     * den versjon som tilsvarer det som ligger i databasen hvis man er på server. Dersom alle endringer utføres i en
-     * unit of work vil det alltid være den umodifiserte versjonen
+     * Returnerer en Transfer med alle objekter som er lastet i Store med angivelse av om objektet er lÃ¥st eller ikke.
+     * Dersom objektet er modifisert returneres den versjon som ble lastet fra server hvis man er pÃ¥ klienten og
+     * den versjon som tilsvarer det som ligger i databasen hvis man er pÃ¥ server. Dersom alle endringer utfÃ¸res i en
+     * unit of work vil det alltid vÃ¦re den umodifiserte versjonen
      * @return transfer med alle lastede objekter
      */
     @Override

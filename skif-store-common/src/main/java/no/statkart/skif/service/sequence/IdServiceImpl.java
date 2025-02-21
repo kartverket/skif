@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Denne klassen implementerer <code>IdService</code>, se dokumentasjon på {@link IdService denne}
+ * Denne klassen implementerer <code>IdService</code>, se dokumentasjon pÃ¥ {@link IdService denne}
  *
  * @author Henrik Fredholm
  */

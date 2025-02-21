@@ -89,7 +89,7 @@ public class StoreClientTest {
 
         try {
             store.endUnitOfWork(unitOfWork2);
-            Assert.fail("Skulle fått feilmelding");
+            Assert.fail("Skulle fÃ¥tt feilmelding");
         } catch (ImplementationException e) {
             Assert.assertTrue(e.getMessage().contains("In nested UnitOfWork"));
         }
@@ -103,14 +103,14 @@ public class StoreClientTest {
 
         UnitOfWork unitOfWork = store.beginUnitOfWork();
         store.lock(id);
-        Assert.assertTrue(store.isLocked(id), "Objektet ble ikke låst");
+        Assert.assertTrue(store.isLocked(id), "Objektet ble ikke lÃ¥st");
         store.getUnitOfWorkTransfer();
         store.endUnitOfWork(unitOfWork);
 
-        // Simuler at tjeneren åpner alle låser for brukeren
+        // Simuler at tjeneren Ã¥pner alle lÃ¥ser for brukeren
         injector.getInstance(StoreClientTestStoreService.class).clearLocks();
 
-        Assert.assertFalse(store.isLocked(id), "Objektet er fortsatt låst");
+        Assert.assertFalse(store.isLocked(id), "Objektet er fortsatt lÃ¥st");
     }
 
     public void unlockOnAbortUnitOfWork() {
@@ -123,13 +123,13 @@ public class StoreClientTest {
         UnitOfWork unitOfWork = store.beginUnitOfWork();
         store.lock(id);
 
-        Assert.assertTrue(store.isLocked(id), "Objektet er ikke låst");
-        Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke låst ordentlig");
+        Assert.assertTrue(store.isLocked(id), "Objektet er ikke lÃ¥st");
+        Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke lÃ¥st ordentlig");
 
         store.abortUnitOfWork(unitOfWork);
 
-        Assert.assertFalse(store.isLocked(id), "Objektet ble ikke låst opp");
-        Assert.assertFalse(storeService.isLocked(id), "Objektet ble ikke låst opp ordentlig");
+        Assert.assertFalse(store.isLocked(id), "Objektet ble ikke lÃ¥st opp");
+        Assert.assertFalse(storeService.isLocked(id), "Objektet ble ikke lÃ¥st opp ordentlig");
     }
 
     public void dontUnlockOnCommitUnitOfWork() {
@@ -146,13 +146,13 @@ public class StoreClientTest {
 
         store.lock(id);
 
-        Assert.assertTrue(store.isLocked(id), "Objektet er ikke låst");
-        Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke låst ordentlig");
+        Assert.assertTrue(store.isLocked(id), "Objektet er ikke lÃ¥st");
+        Assert.assertTrue(storeService.isLocked(id), "Objektet er ikke lÃ¥st ordentlig");
 
         store.commitUnitOfWork(unitOfWork2);
 
-        Assert.assertTrue(store.isLocked(id), "Objektet ble låst opp");
-        Assert.assertTrue(storeService.isLocked(id), "Objektet ble låst opp");
+        Assert.assertTrue(store.isLocked(id), "Objektet ble lÃ¥st opp");
+        Assert.assertTrue(storeService.isLocked(id), "Objektet ble lÃ¥st opp");
     }
 
     public void commitLevel1NotAllowed() {
@@ -162,7 +162,7 @@ public class StoreClientTest {
         UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
             store.commitUnitOfWork(unitOfWork);
-            Assert.fail("Skulle fått feilmelding");
+            Assert.fail("Skulle fÃ¥tt feilmelding");
         } catch (ImplementationException e) {
             Assert.assertTrue(e.getMessage().contains("Commit of UnitOfWork directly against server is not supported"));
         }
@@ -177,13 +177,13 @@ public class StoreClientTest {
         TestBubble testBubble1 = store.get(id);
         TestBubble testBubble2 = store.get(id);
 
-        Assert.assertSame(testBubble2, testBubble1, "Fikk to forskjellige objekter, altså ingen caching");
+        Assert.assertSame(testBubble2, testBubble1, "Fikk to forskjellige objekter, altsÃ¥ ingen caching");
 
         UnitOfWork unitOfWork = store.beginUnitOfWork();
         TestBubble testBubble3 = store.get(id);
         store.abortUnitOfWork(unitOfWork);
 
-        Assert.assertSame(testBubble3, testBubble1, "Fikk to forskjellige objekter, altså ingen caching");
+        Assert.assertSame(testBubble3, testBubble1, "Fikk to forskjellige objekter, altsÃ¥ ingen caching");
     }
 
     public void evict() {
@@ -193,7 +193,7 @@ public class StoreClientTest {
         TestBubbleId<?> id = new TestBubbleId(1L);
 
         TestBubble testBubble1 = store.get(id);
-        Assert.assertTrue(store.evict(id), "Evict at ikke låst boble skal gi true");
+        Assert.assertTrue(store.evict(id), "Evict at ikke lÃ¥st boble skal gi true");
         TestBubble testBubble2 = store.get(id);
 
         Assert.assertNotSame(testBubble2, testBubble1, "Fikk tilbake samme objekt");
@@ -207,7 +207,7 @@ public class StoreClientTest {
             TestBubbleId<?> id = new TestBubbleId(1L);
 
             TestBubble testBubble1 = store.lock(id);
-            Assert.assertFalse(store.evict(id), "Evict at låst boble skal gi false");
+            Assert.assertFalse(store.evict(id), "Evict at lÃ¥st boble skal gi false");
             TestBubble testBubble2 = store.get(id);
 
             Assert.assertSame(testBubble2, testBubble1, "Fikk ikke tilbake samme objekt");
@@ -242,7 +242,7 @@ public class StoreClientTest {
         TestBubble testBubble1 = store.get(id);
 
         try (UnitOfWork ignore = store.beginUnitOfWork()) {
-            Assert.assertTrue(store.evict(id), "Evict at ikke låst boble skal gi true");
+            Assert.assertTrue(store.evict(id), "Evict at ikke lÃ¥st boble skal gi true");
             TestBubble testBubble2 = store.get(id);
 
             Assert.assertNotSame(testBubble2, testBubble1, "Fikk tilbake samme objekt");
@@ -259,7 +259,7 @@ public class StoreClientTest {
         ImmutableList<TestBubbleId<?>> ids = ImmutableList.of(id1, id2);
 
         List<TestBubble> testBubbles = store.getOrdered(ids);
-        Assert.assertTrue(store.evict(ids), "Evict av ikke låst boble skal gi true");
+        Assert.assertTrue(store.evict(ids), "Evict av ikke lÃ¥st boble skal gi true");
         List<TestBubble> testBubbles2 = store.getOrdered(ids);
 
         Assert.assertNotSame(testBubbles.get(0), testBubbles2.get(0), "Fikk tilbake samme objekt");
@@ -277,7 +277,7 @@ public class StoreClientTest {
 
             List<TestBubble> testBubbles = store.getOrdered(ids);
             TestBubble lockedBubble = store.lock(id2);
-            Assert.assertFalse(store.evict(ids), "Evict med låst boble skal gi false");
+            Assert.assertFalse(store.evict(ids), "Evict med lÃ¥st boble skal gi false");
             List<TestBubble> testBubbles2 = store.getOrdered(ids);
 
             Assert.assertNotSame(testBubbles.get(0), testBubbles2.get(0), "Fikk tilbake samme objekt");
@@ -430,7 +430,7 @@ public class StoreClientTest {
         }
     }
 
-    // At refresh blir kalt enkeltvis er en implementasjonsdetalj, ikke slik det skal være
+    // At refresh blir kalt enkeltvis er en implementasjonsdetalj, ikke slik det skal vÃ¦re
     public void testLockMultipleUngotten() {
         SimpleId<?> id1 = new SimpleId<>(1L);
         SimpleId<?> id2 = new SimpleId<>(2L);
@@ -529,7 +529,7 @@ public class StoreClientTest {
         Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
     }
 
-    // Denne testen er foreløpig ikke mulig, da klienten ikke ser forskjell på nye og gamle låser.
+    // Denne testen er forelÃ¸pig ikke mulig, da klienten ikke ser forskjell pÃ¥ nye og gamle lÃ¥ser.
     @Test(enabled = false)
     public void testLockMultipleAllPrelocked() {
         SimpleId<?> id1 = new SimpleId<>(1L);
@@ -578,7 +578,7 @@ public class StoreClientTest {
         Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
     }
 
-    // Denne testen er foreløpig ikke mulig, da klienten ikke ser forskjell på nye og gamle låser.
+    // Denne testen er forelÃ¸pig ikke mulig, da klienten ikke ser forskjell pÃ¥ nye og gamle lÃ¥ser.
     @Test(enabled = false)
     public void testLockMultipleOnePrelockedOtherUngotten() {
         SimpleId<?> id1 = new SimpleId<>(1L);
@@ -624,7 +624,7 @@ public class StoreClientTest {
         Mockito.verifyNoMoreInteractions(storeService, lockService, idService);
     }
 
-    // Denne testen er foreløpig ikke mulig, da klienten ikke ser forskjell på nye og gamle låser.
+    // Denne testen er forelÃ¸pig ikke mulig, da klienten ikke ser forskjell pÃ¥ nye og gamle lÃ¥ser.
     @Test(enabled = false)
     public void testLockMultipleOnePrelockedOtherGotten() {
         SimpleId<?> id1 = new SimpleId<>(1L);

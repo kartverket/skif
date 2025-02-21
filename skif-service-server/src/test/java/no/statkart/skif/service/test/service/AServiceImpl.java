@@ -8,9 +8,9 @@ import jakarta.ejb.TransactionAttributeType;
 import java.util.List;
 
 /**
- * Transaction attribute annotasjon ligger på implementasjosklassen siden det i dette tilfelle ikke finnes noen EJBBean
- * klasse, dvs implementasjonen kan kun brukes i SingleVm mode (dersom det hadde vært en EJBBean klasse hentes annotasjonene
- * derfra alltid - også i SingleVm mode)
+ * Transaction attribute annotasjon ligger pÃ¥ implementasjosklassen siden det i dette tilfelle ikke finnes noen EJBBean
+ * klasse, dvs implementasjonen kan kun brukes i SingleVm mode (dersom det hadde vÃ¦rt en EJBBean klasse hentes annotasjonene
+ * derfra alltid - ogsÃ¥ i SingleVm mode)
  *
  * @author Henrik Fredholm
  * @since 2.0

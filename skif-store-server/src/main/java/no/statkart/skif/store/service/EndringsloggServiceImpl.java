@@ -146,9 +146,9 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
                         }
                     }
                     if (!accumulatedBubbleObjects.isEmpty()) {
-                        store.evict(accumulatedBubbleObjects.keySet());   //Det er greit å evicte ids som ikke finnes i store
+                        store.evict(accumulatedBubbleObjects.keySet());   //Det er greit Ã¥ evicte ids som ikke finnes i store
                     }
-                    //Noen objekter kan ha blitt fjernet på et senere tidspunkt, må derfor bruke getIgnoreMissing
+                    //Noen objekter kan ha blitt fjernet pÃ¥ et senere tidspunkt, mÃ¥ derfor bruke getIgnoreMissing
                     List<BubbleObject> bubbleObjects = store.getIgnoreMissing(endretIds);
 
                     for (BubbleObject object : bubbleObjects) {
@@ -160,7 +160,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
                         if (!accumulatedEndringer.isEmpty()) {
                             endringer.setSisteEndringIdProsessert(accumulatedEndringer.get(accumulatedEndringer.size() - 1).getId());
                         }
-                        // Kanskje, må sjekke at endringsnummeret ikke har endret seg
+                        // Kanskje, mÃ¥ sjekke at endringsnummeret ikke har endret seg
                         EI nytSisteEndringId = findSisteEndringId(session);
                         if (nytSisteEndringId.equals(sisteEndringId) || endringList.isEmpty()) {
                             // Det har ikke kommet nye endringer. Stopper her.
@@ -223,7 +223,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
                     .setParameter("antall", antall);
 
             Kontroll result = new Kontroll();
-            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell pÃ¥ datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
@@ -246,7 +246,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
                     .setParameter("ids", ids, new OracleLongBubbleIdArrayCustomType());
 
             Kontroll result = new Kontroll();
-            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell pÃ¥ datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();

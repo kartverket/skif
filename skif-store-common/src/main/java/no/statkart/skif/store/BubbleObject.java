@@ -11,10 +11,10 @@ import java.io.Serializable;
 public interface BubbleObject extends SkifBubbleObject {
 
     /**
-     * Gir tilbake bubbleId for dette bubbleObject og skal implementeres på det høyeste nivået for å gi en så generell id
+     * Gir tilbake bubbleId for dette bubbleObject og skal implementeres pÃ¥ det hÃ¸yeste nivÃ¥et for Ã¥ gi en sÃ¥ generell id
      * som mulig.
      * <p/>
-     * Denne funksjonen brukes fra HibernateStoreInterceptor for å kunne gi id-er riktige subtyper ved henting fra databasen.
+     * Denne funksjonen brukes fra HibernateStoreInterceptor for Ã¥ kunne gi id-er riktige subtyper ved henting fra databasen.
      *
      * @return Id for objektet med generell type
      */

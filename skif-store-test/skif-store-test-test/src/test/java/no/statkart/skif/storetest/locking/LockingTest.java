@@ -10,9 +10,9 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import static org.testng.Assert.*;
 
 /**
- * Tester at låsing oppheves når man kaller transaksjonelle metoder, men ikke når man ikke gjøre det.
+ * Tester at lÃ¥sing oppheves nÃ¥r man kaller transaksjonelle metoder, men ikke nÃ¥r man ikke gjÃ¸re det.
  * <p>
- * Testen bruker en test service {@code LockingTestService} som utfører diverse låse operasjoner. Testen
+ * Testen bruker en test service {@code LockingTestService} som utfÃ¸rer diverse lÃ¥se operasjoner. Testen
  * anvender SimpleId klassen, men krever ikke at det finnes objekter i database for de id'er som brukes.
  *
  * @author Tor Egil R. Strand
@@ -28,7 +28,7 @@ public class LockingTest extends StoreTestTestCase {
 
             lockingTestService.lock(id);
 
-            assertTrue(lockingTestService.isLockedByMe(id), "Objektet forble ikke låst");
+            assertTrue(lockingTestService.isLockedByMe(id), "Objektet forble ikke lÃ¥st");
         } finally {
             lockingTestService.releaseAllLocks();
         }
@@ -42,7 +42,7 @@ public class LockingTest extends StoreTestTestCase {
 
             lockingTestService.update(100);
 
-            assertFalse(lockingTestService.isLockedByMe(id), "Objektet er fortsatt låst");
+            assertFalse(lockingTestService.isLockedByMe(id), "Objektet er fortsatt lÃ¥st");
         } finally {
             lockingTestService.releaseAllLocks();
         }
@@ -61,8 +61,8 @@ public class LockingTest extends StoreTestTestCase {
                 assertEquals("TestABC123", e.getMessage(), "Feil exception");
             }
 
-            assertFalse(lockingTestService.isLockedByMe(id100), "Objektet er fortsatt låst");
-            assertNotNull(lockingTestService.isLockedByMe(id101), "Objektet er ikke lenger låst");
+            assertFalse(lockingTestService.isLockedByMe(id100), "Objektet er fortsatt lÃ¥st");
+            assertNotNull(lockingTestService.isLockedByMe(id101), "Objektet er ikke lenger lÃ¥st");
         } finally {
             lockingTestService.releaseAllLocks();
         }
@@ -91,8 +91,8 @@ public class LockingTest extends StoreTestTestCase {
                 assertEquals("TestABC123", e.getMessage(), "Feil exception");
             }
 
-            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet er ikke lenger låst");
-            assertFalse(lockingTestService.isLockedByMe(id101), "Objektet forble låst");
+            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet er ikke lenger lÃ¥st");
+            assertFalse(lockingTestService.isLockedByMe(id101), "Objektet forble lÃ¥st");
         } finally {
             lockingTestService.releaseAllLocks();
         }
@@ -104,8 +104,8 @@ public class LockingTest extends StoreTestTestCase {
             final SimpleId id101 = new SimpleId(101L);
 
             lockingTestService.lock(id100);
-            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble ikke låst");
-            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble låst opp av låsesjekk");
+            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble ikke lÃ¥st");
+            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble lÃ¥st opp av lÃ¥sesjekk");
 
             try {
                 lockingTestService.nonTransactionalUnlockingFail(id100, id101);
@@ -113,8 +113,8 @@ public class LockingTest extends StoreTestTestCase {
                 assertEquals("TestABC123", e.getMessage(), "Feil exception");
             }
 
-            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble låst opp likevel");
-            assertFalse(lockingTestService.isLockedByMe(id101), "Objektet ble ikke låst opp");
+            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble lÃ¥st opp likevel");
+            assertFalse(lockingTestService.isLockedByMe(id101), "Objektet ble ikke lÃ¥st opp");
         } finally {
             lockingTestService.releaseAllLocks();
         }
@@ -127,13 +127,13 @@ public class LockingTest extends StoreTestTestCase {
 
             lockingTestService.lock(id100);
 
-            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble ikke låst");
-            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble låst opp av låsesjekk");
+            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble ikke lÃ¥st");
+            assertTrue(lockingTestService.isLockedByMe(id100), "Objektet ble lÃ¥st opp av lÃ¥sesjekk");
 
             lockingTestService.nonTransactionalUnlocking(id100, id101);
 
-            assertFalse(lockingTestService.isLockedByMe(id100), "Objektet ble ikke låst opp");
-            assertFalse(lockingTestService.isLockedByMe(id101), "Objektet ble ikke låst opp");
+            assertFalse(lockingTestService.isLockedByMe(id100), "Objektet ble ikke lÃ¥st opp");
+            assertFalse(lockingTestService.isLockedByMe(id101), "Objektet ble ikke lÃ¥st opp");
         } finally {
             lockingTestService.releaseAllLocks();
         }

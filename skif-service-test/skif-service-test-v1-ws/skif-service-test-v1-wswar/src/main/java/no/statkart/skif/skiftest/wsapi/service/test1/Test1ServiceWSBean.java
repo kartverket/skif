@@ -41,7 +41,7 @@ public class Test1ServiceWSBean extends SkifWebService<Test1ServiceWSI> implemen
     @WebMethod
     public String helloWorld(@WebParam(name = "message") String message, @WebParam(name = "skifTestContext") SkifTestContext skifTestContext) throws ServiceException {
 //        System.out.println("here : " + ctx.isUserInRole("Innsyn"));
-//        System.out.println("here : " + ctx.isUserInRole("Matrikkelfører"));
+//        System.out.println("here : " + ctx.isUserInRole("MatrikkelfÃ¸rer"));
 //        System.out.println("here : " + ctx.isUserInRole("Posten"));
 //        System.out.println("In Test1ServiceWSBean: helloWorld");
         return wsServiceChain.helloWorld(message, skifTestContext);

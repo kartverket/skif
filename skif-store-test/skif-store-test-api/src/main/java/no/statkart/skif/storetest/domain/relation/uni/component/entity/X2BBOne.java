@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Pekt på av {@link X2EntityComponentOne}
+ * Pekt pÃ¥ av {@link X2EntityComponentOne}
  *
  * @author Henrik Fredholm
  * @since 2.4

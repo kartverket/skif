@@ -10,9 +10,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Finner EJB hørende til service {@code S} og gjør et kall på den. Konverterer EJB spesifikke exceptions til
- * rammeverk spesifikke exceptions og også bruke i SingleVm mode slik at det blir transparent at kallet ble
- * utført via en EJB.
+ * Finner EJB hÃ¸rende til service {@code S} og gjÃ¸r et kall pÃ¥ den. Konverterer EJB spesifikke exceptions til
+ * rammeverk spesifikke exceptions og ogsÃ¥ bruke i SingleVm mode slik at det blir transparent at kallet ble
+ * utfÃ¸rt via en EJB.
  * <p/>
  * TODO: Implementer EJB exception konvertering
  *

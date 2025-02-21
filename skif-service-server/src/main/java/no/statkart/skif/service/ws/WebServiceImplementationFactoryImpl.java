@@ -7,12 +7,12 @@ import no.statkart.skif.service.chain.WSServiceChainFactory;
 import jakarta.xml.ws.WebServiceContext;
 
 /**
- * Factory for å få tak i {@code WSServiceChain} for Web Service av type {@code <W>}.
+ * Factory for Ã¥ fÃ¥ tak i {@code WSServiceChain} for Web Service av type {@code <W>}.
  * <p>
  * For hver gang {@link WebServiceImplementationFactory#getService(jakarta.xml.ws.WebServiceContext, Class)} kalles
- * oppretter factoryen en ny {@code WSServiceChain} med tilhørende proxy av type {@code W}.
+ * oppretter factoryen en ny {@code WSServiceChain} med tilhÃ¸rende proxy av type {@code W}.
  * <p>
- * {@code WSServiceChain}'en konstrueres ved å sette sammen en en {@code SkifWSInterceptor<W>} med ProxyHandlere
+ * {@code WSServiceChain}'en konstrueres ved Ã¥ sette sammen en en {@code SkifWSInterceptor<W>} med ProxyHandlere
  * fra {@code WSServiceChainFactory}.
  *
  * @since 2.0

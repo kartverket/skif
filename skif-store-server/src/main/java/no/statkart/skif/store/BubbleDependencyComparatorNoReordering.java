@@ -1,7 +1,7 @@
 package no.statkart.skif.store;
 
 /**
- * DependencyComparator som ikke endre på rekkefølgen
+ * DependencyComparator som ikke endre pÃ¥ rekkefÃ¸lgen
  * @author Henrik Fredholm
  * @since 2.1
  */

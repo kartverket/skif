@@ -17,7 +17,7 @@ import jakarta.jws.WebService;
 import jakarta.xml.ws.WebServiceContext;
 
 /**
- * Service for å støtte UnitOfWork testing
+ * Service for Ã¥ stÃ¸tte UnitOfWork testing
  *
  * @author Henrik Fredholm
  * @since 2.9

@@ -14,9 +14,9 @@ import java.util.Collection;
 /**
  * Tjeneste for lesing av endringslogg for bobler som er endret.
  * <p/>
- * Hvilke subtyper som støttes for filtrering av bobleklasser er implementasjonsavhengig og ikke alle subtyper vil
- * nødvendigvis være støttet. Hvis en subtype ikke er støttet må supertypen brukes i stedet og ytereligere filtrering må
- * skje på klienten etter at boblen har blitt lastet over på klienten.
+ * Hvilke subtyper som stÃ¸ttes for filtrering av bobleklasser er implementasjonsavhengig og ikke alle subtyper vil
+ * nÃ¸dvendigvis vÃ¦re stÃ¸ttet. Hvis en subtype ikke er stÃ¸ttet mÃ¥ supertypen brukes i stedet og ytereligere filtrering mÃ¥
+ * skje pÃ¥ klienten etter at boblen har blitt lastet over pÃ¥ klienten.
  * <p/>
  * For noen bobleklasser kan det finnes spesifikke filtre som filtrerer yterligere hva som returneres. Filtre som ikke
  * er relevant for en bobleklasse ignoreres mens filtre som er ukjente gir ImplementationException.
@@ -35,9 +35,9 @@ public interface EndringsloggService<E extends AbstractEndring<EI, ?>, EI extend
     EI findSisteEndringId();
 
     /**
-     * Henter alle endringsobjekter etter gitt {@code id} for bobler av gitt type eller subtype. Endringsobjekter hørende til {@code id} er ikke inkludert.
+     * Henter alle endringsobjekter etter gitt {@code id} for bobler av gitt type eller subtype. Endringsobjekter hÃ¸rende til {@code id} er ikke inkludert.
      *
-     * @param id id før første id som skal hentes. Kan være null.
+     * @param id id fÃ¸r fÃ¸rste id som skal hentes. Kan vÃ¦re null.
      * @param bobleklasse bobleklasse eller subtype herav for endringer som skal hentes.
      * @param filter boblespesifikt filter som kan reduserere yterligere hvilke endringer som returneres
      * @param returnerBobler angir om metoden skal returnere bobler i tillegg til endringer.
@@ -49,9 +49,9 @@ public interface EndringsloggService<E extends AbstractEndring<EI, ?>, EI extend
     /**
      * Beregner kontroll for endringsobjekter
      *
-     * @param id id før første id som skal hentes, kan være null
-     * @param bobleklasse klasse som skal hentes. Hvilke bobleklasse som støttes er implementasjonsavhengig
-     * @param filter angir filter på endring
+     * @param id id fÃ¸r fÃ¸rste id som skal hentes, kan vÃ¦re null
+     * @param bobleklasse klasse som skal hentes. Hvilke bobleklasse som stÃ¸ttes er implementasjonsavhengig
+     * @param filter angir filter pÃ¥ endring
      * @param antall     maksimalt antall endringer som skal hentes
      * @return beregnet kontroll
      *
@@ -62,7 +62,7 @@ public interface EndringsloggService<E extends AbstractEndring<EI, ?>, EI extend
      * Beregner kontroll for bobler med id-er i liste
      *
      * @param ids id-er som skal danne grunnlag for beregningen
-     * @param bobleklasse klasse som skal hentes. Hvilke bobleklasse som støttes er implementasjonsavhengig
+     * @param bobleklasse klasse som skal hentes. Hvilke bobleklasse som stÃ¸ttes er implementasjonsavhengig
      * @return beregnet kontroll
      *
      */

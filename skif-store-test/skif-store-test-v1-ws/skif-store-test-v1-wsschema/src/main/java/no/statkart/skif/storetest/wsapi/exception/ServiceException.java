@@ -5,7 +5,7 @@ import jakarta.xml.ws.WebFault;
 /**
  * Se dokumentasjon i {@link ServiceFaultInfo}
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 @WebFault(name = "ServiceException", targetNamespace = "http://skif.statkart.no/storetest/wsapi/exception")

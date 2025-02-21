@@ -25,8 +25,8 @@ import static org.testng.Assert.*;
 /**
  * Tester opprettelse og frigivelse av Hibernate SessionFactory og Session via HibernateSessionFactoryBuilder.
  * <p>
- * I Oracle 10.2.0.3 har det tidligere vært et problem at  databasen løpe tør for database connections fordi databasen
- * muligvis ikke frigir connections rask nok når sessions opprettes rask etter hverandre. Løsningen her var å
+ * I Oracle 10.2.0.3 har det tidligere vÃ¦rt et problem at  databasen lÃ¸pe tÃ¸r for database connections fordi databasen
+ * muligvis ikke frigir connections rask nok nÃ¥r sessions opprettes rask etter hverandre. LÃ¸sningen her var Ã¥
  * legge inn en forsinkelse i Oracle's listener "(RATE_LIMIT=25)":
  * <pre>
  *    LISTENER =
@@ -37,8 +37,8 @@ import static org.testng.Assert.*;
  *     )
  * </pre>
  * <p>
- * Dette er en stand-alone-test som går direkte mot databasen uten å bruke StoreTestServer modulen. Mest naturlig at testene
- * kjøres i singleVM mode.
+ * Dette er en stand-alone-test som gÃ¥r direkte mot databasen uten Ã¥ bruke StoreTestServer modulen. Mest naturlig at testene
+ * kjÃ¸res i singleVM mode.
  *
  * @author Henrik Fredholm
  * @since 2.1

@@ -73,8 +73,8 @@ public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, 
         } else if (owner instanceof ComponentWithOwnerReference) {
             return getOwner(((ComponentWithOwnerReference) owner).getOwner());
         } else {
-            // Ingen mulighet for å navigere til eiende boble fra denne type objekt, for eksempel EntityComponent.
-            // Hvis dette objektet har collections som bruker flagget, vil flagget først oppdateres når finish blir kalt.
+            // Ingen mulighet for Ã¥ navigere til eiende boble fra denne type objekt, for eksempel EntityComponent.
+            // Hvis dette objektet har collections som bruker flagget, vil flagget fÃ¸rst oppdateres nÃ¥r finish blir kalt.
             return null;
         }
     }

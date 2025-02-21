@@ -1,7 +1,7 @@
 package no.statkart.skif.storetest.service.locker;
 
 /**
- * EJB må implementeres i applikasjonen.
+ * EJB mÃ¥ implementeres i applikasjonen.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

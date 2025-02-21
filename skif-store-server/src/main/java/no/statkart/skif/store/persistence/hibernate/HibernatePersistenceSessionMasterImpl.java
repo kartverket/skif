@@ -102,7 +102,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
     @Override
     public void clear() {
-        // Ikke start en session bare for å si clear. Hvis det ikke er en session, så bør det ikke være noe å clear-e.
+        // Ikke start en session bare for Ã¥ si clear. Hvis det ikke er en session, sÃ¥ bÃ¸r det ikke vÃ¦re noe Ã¥ clear-e.
         if (lazySession != null) {
             hibernateLazySupport.clear();
         }
@@ -176,7 +176,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
 
     /**
-     * Laster en boble basert på boblens id.
+     * Laster en boble basert pÃ¥ boblens id.
      *
      * @param bubbleId id for boblen som skal hentes
      * @return en domeneboble av typen <code>MatrikkelBubbleObject</code>
@@ -198,7 +198,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * Laster et set av domenebobler basert på boblenes id'er. Dersom alle finnes i minne vil det ikke bli gjort kald til
+     * Laster et set av domenebobler basert pÃ¥ boblenes id'er. Dersom alle finnes i minne vil det ikke bli gjort kald til
      * databasen
      *
      * @param bubbleIds ider for bobler som skal lastes.
@@ -230,7 +230,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         if (idsToLoad.size() > 0) {
             FlushMode oldFlushMode = session().getHibernateFlushMode();
             try {
-                // Disable flush. Det søkes kun etter objekter som allerede finnes i databasen
+                // Disable flush. Det sÃ¸kes kun etter objekter som allerede finnes i databasen
                 session().setHibernateFlushMode(FlushMode.MANUAL);
 
                 result = loadAllFromDatabase(idsToLoad);
@@ -272,23 +272,23 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     /**
      * Oppdaterer underliggende hibernate session med verdiene fra {@code bubbleObject}. Dersom {@code bubbleObject} allerede er
      * knyttet til sessionen returneres samme instans. Dersom {@code bubbleObject} ikke er knyttet til sessionen kastes den gamle
-     * instansen og den nye knyttes til sessionen. I den forbindelse gjøres det et større rydde arbeide for å sikre at entity
+     * instansen og den nye knyttes til sessionen. I den forbindelse gjÃ¸res det et stÃ¸rre rydde arbeide for Ã¥ sikre at entity
      * componenter som ikke lengre er i bruk blir slettet automatisk. Videre blir alle collections konvertert til
      * PersistentCollections og snapshot fra opprinnelig objekt blir satt slik at Hibernate kan slette referanse som
      * ikke lenger er en del av collectionen.
      * <p>
-     * Endringer blir først utført ved senere kall til flush()
+     * Endringer blir fÃ¸rst utfÃ¸rt ved senere kall til flush()
      */
     @Override
     public <T extends BubbleObject> void update(T bubbleObject) {
         hibernateDetachedSupport.update(bubbleObject);
-        // Hvis alle collections er tomme i original og ny detached boble, så genererer Hibernate ikke en
+        // Hvis alle collections er tomme i original og ny detached boble, sÃ¥ genererer Hibernate ikke en
         // onPreUpdateCollectionEvent som trigger beregning av emptycollectionsflagget. Tilsvarende, ved update av
-        // en attached boble hvor flagget har blitt nullstilt, for eksempel i en ekstern prosess før boblen ble
-        // lest, så vil flagget ikke bli beregnet på nytt hvis alle collections er uendret. Ved alltid å beregne
-        // flagget her så sikrer vi at disse spesialtilfeller håndteres. Der er mulig å utelate denne beregningen,
-        // men da vil flagget forbli uendret for disse tilfeller. Overhead ved kallet er lavt så det er enklere at
-        // disse tilfeller også håndteres.
+        // en attached boble hvor flagget har blitt nullstilt, for eksempel i en ekstern prosess fÃ¸r boblen ble
+        // lest, sÃ¥ vil flagget ikke bli beregnet pÃ¥ nytt hvis alle collections er uendret. Ved alltid Ã¥ beregne
+        // flagget her sÃ¥ sikrer vi at disse spesialtilfeller hÃ¥ndteres. Der er mulig Ã¥ utelate denne beregningen,
+        // men da vil flagget forbli uendret for disse tilfeller. Overhead ved kallet er lavt sÃ¥ det er enklere at
+        // disse tilfeller ogsÃ¥ hÃ¥ndteres.
        emptyCollectionsFlagUpdater.updateEmptyCollectionsFlag(session(), bubbleObject);
     }
 
@@ -296,8 +296,8 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
      * Sletter objekt som har samme id som {@code bubbleObject} fra underliggende hibernate session. Ved senere kall til
      * flush() vil endringene bli sendt til databasen.
      * <p>
-     * Slettingen utføres med det objektet som ligger i Hibernate (det lastes eventuelt inn hvis det ikke allerede er
-     * lastet), ikke med det objektet som kommer inn, som kan være en annen detached instans.
+     * Slettingen utfÃ¸res med det objektet som ligger i Hibernate (det lastes eventuelt inn hvis det ikke allerede er
+     * lastet), ikke med det objektet som kommer inn, som kan vÃ¦re en annen detached instans.
      *
      * @param bubbleObject objekt som inneholder id for det objekt som skal slettes
      */
@@ -322,17 +322,17 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
     @Override
     public <T extends BubbleObject> T refresh(BubbleId<? extends T> bubbleId) {
-        //TODO: På grunn av feilen beskrevet i SKIF-231 har vi valgt å ikke bruke refresh på session her inntil videre.
+        //TODO: PÃ¥ grunn av feilen beskrevet i SKIF-231 har vi valgt Ã¥ ikke bruke refresh pÃ¥ session her inntil videre.
         evict(bubbleId);
         return get(bubbleId);
     }
 
     @Override
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<? extends T> refresh(Collection<I> bubbleIds) {
-        // TODO: Det er raskere å gjøre en evict etterfulgt av en get, men dette er egentlig problematisk da objektreferansen til
-        // boblen blir skiftet ut. Da er det bedre å iterere over allerede lastede bobler å gjøre en refresh. Men hvorfor ta denne metode
-        // en collection av id-er når refresh tar en boble som argument?. Per i dag er denne metode ikke i bruk så det har ikke
-        // som mye å si.
+        // TODO: Det er raskere Ã¥ gjÃ¸re en evict etterfulgt av en get, men dette er egentlig problematisk da objektreferansen til
+        // boblen blir skiftet ut. Da er det bedre Ã¥ iterere over allerede lastede bobler Ã¥ gjÃ¸re en refresh. Men hvorfor ta denne metode
+        // en collection av id-er nÃ¥r refresh tar en boble som argument?. Per i dag er denne metode ikke i bruk sÃ¥ det har ikke
+        // som mye Ã¥ si.
 
         for (I bubbleId : bubbleIds) {
             evict(bubbleId);
@@ -366,7 +366,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * Laster alle fra database via criteria søk per type
+     * Laster alle fra database via criteria sÃ¸k per type
      */
     private <T extends BubbleObject, I extends BubbleId<? extends T>> Set<T> loadAllFromDatabase(Set<I> ids) throws ObjectNotFoundException {
         Set<T> allEntities = new HashSet<>(ids.size());
@@ -385,9 +385,9 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * Lager <code>Criteria</code>-objekter for lasting av domenebobler basert på deres id'er.
+     * Lager <code>Criteria</code>-objekter for lasting av domenebobler basert pÃ¥ deres id'er.
      *
-     * @param ids et sett av id'er som det skal lages spørringer for
+     * @param ids et sett av id'er som det skal lages spÃ¸rringer for
      * @return en liste av <code>Criteria</code>-objekter der hver criteria laster domenebobler av en
      *         bestemt type.
      */
@@ -413,9 +413,9 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         for (I id : ids) {
             @SuppressWarnings("unchecked")
             Class<T> entityClazz = id.getBaseType(); //Class name for the entity owning the id
-            // Endringer ligger i mange forskjellige tabeller. Hvis vi gjør query via basetype må
-            // Hibernate gjøre en masse joins.
-            // TODO: Bruke Hibernate metadata til å finne ut av dette. Pt er Endring den eneste klasse som er slik.
+            // Endringer ligger i mange forskjellige tabeller. Hvis vi gjÃ¸r query via basetype mÃ¥
+            // Hibernate gjÃ¸re en masse joins.
+            // TODO: Bruke Hibernate metadata til Ã¥ finne ut av dette. Pt er Endring den eneste klasse som er slik.
             //if (entityClazz == Endring.class) {
             //    entityClazz = id.getType();
             //}
@@ -447,8 +447,8 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * Sørger for at objektet er fullstendig lastet. Dvs. at objektets  assosiasjoner er lastet
-     * fra databasen. Hvis en assosiasjon er definert som cascade vil de assosierte objektene også
+     * SÃ¸rger for at objektet er fullstendig lastet. Dvs. at objektets  assosiasjoner er lastet
+     * fra databasen. Hvis en assosiasjon er definert som cascade vil de assosierte objektene ogsÃ¥
      * bli initialisert.
      *
      * @param bubble helt eller delvis initialisert bubble objekt
@@ -459,8 +459,8 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
     /**
      * Lager <code>Criteria</code>-objekter for lasting av objekter av en angitt type. Pga.
-     * begrensninger i Oracle for hvor mange uttrykk det kan være i en WHERE-claus så deles
-     * spørringen opp i flere søk/criteria-objekter dersom listen over id'er er over størrelsen
+     * begrensninger i Oracle for hvor mange uttrykk det kan vÃ¦re i en WHERE-claus sÃ¥ deles
+     * spÃ¸rringen opp i flere sÃ¸k/criteria-objekter dersom listen over id'er er over stÃ¸rrelsen
      * definert i <code>OracleUtils.SQL_EXPRESSION_MAX_SIZE</code>.
      * <p>
      *
@@ -473,11 +473,11 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         Iterator<? extends Serializable> idIterator = ids.iterator();
         int size = ids.size();
 
-        // Ved collection størrelse på 128, 256 eller mer sliter oracle. Deler derfor query opp i biter på 64 eller mindre.
-        // For å reduserer antall prepared statements brukes størrelse på 64,32,16,15,...
-        // Prøver med 512 likevel
+        // Ved collection stÃ¸rrelse pÃ¥ 128, 256 eller mer sliter oracle. Deler derfor query opp i biter pÃ¥ 64 eller mindre.
+        // For Ã¥ reduserer antall prepared statements brukes stÃ¸rrelse pÃ¥ 64,32,16,15,...
+        // PrÃ¸ver med 512 likevel
         for (int i = CRITERIA_BATCH_POWER; i >= 0; i--) {
-            // Hvis collection har mindre enn 16 elementer tilbake hentes ut alle ved en spørring istedet for å dele opp i mindre biter
+            // Hvis collection har mindre enn 16 elementer tilbake hentes ut alle ved en spÃ¸rring istedet for Ã¥ dele opp i mindre biter
             final int length = (size > 0 && size < 16) ? size : (1 << i);
 
             while (size >= length) {
@@ -497,7 +497,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * Metode for å sjekke om objektet allerede er lastet av hibernate uten at hibernate forsøker å laste objektet eller lager
+     * Metode for Ã¥ sjekke om objektet allerede er lastet av hibernate uten at hibernate forsÃ¸ker Ã¥ laste objektet eller lager
      * en proxy.
      *
      * @param aClass      Persistent Objektklasse for <code>hibernateId</code> Eks. Tedm for TedmPK
@@ -513,10 +513,10 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * Metode for å sjekke om objektet allerede er lastet av hibernate uten at hibernate forsøker å laste objektet eller lager
+     * Metode for Ã¥ sjekke om objektet allerede er lastet av hibernate uten at hibernate forsÃ¸ker Ã¥ laste objektet eller lager
      * en proxy.
      * <p>
-     * TODO: Vurder om dette kan gjøres smartere. Evt vedlikeholde en egen map av objekter som helt sikkert er lastet via en listener
+     * TODO: Vurder om dette kan gjÃ¸res smartere. Evt vedlikeholde en egen map av objekter som helt sikkert er lastet via en listener
      *
      * @return true hvis objektet er lastet
      */
@@ -531,7 +531,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     private EntityPersister lastResultForClass;
 
     /**
-     * Lager <code>EntityPersister</code> for <code>theClass</code>. Har støtte for caching av siste hentede persister
+     * Lager <code>EntityPersister</code> for <code>theClass</code>. Har stÃ¸tte for caching av siste hentede persister
      * som en optimalisering.
      *
      * @param theClass Class vi vil hente persister for
@@ -550,11 +550,11 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * Returnere true hvis denne instans av HibernatedSessionWrapper har lov til å returnere bobler
-     * som kun er delvis initialisert. Hvis metoden returnerer true bør metoden {@link #ensureFullyLoaded} kalles
-     * manuelt for bobler som skal returneres til klienten slik at deres verdier blir satt før sessionen lukkes
+     * Returnere true hvis denne instans av HibernatedSessionWrapper har lov til Ã¥ returnere bobler
+     * som kun er delvis initialisert. Hvis metoden returnerer true bÃ¸r metoden {@link #ensureFullyLoaded} kalles
+     * manuelt for bobler som skal returneres til klienten slik at deres verdier blir satt fÃ¸r sessionen lukkes
      *
-     * @return true hvis HibernatedSessionWrapper har lov til å returnere bobler som kun er delvis
+     * @return true hvis HibernatedSessionWrapper har lov til Ã¥ returnere bobler som kun er delvis
      *         initialisert
      */
     public boolean isLazyLoadedBubblesAllowed() {
@@ -563,7 +563,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
 
 
     /**
-     * Setter om denne instance av HibernateSessionWrapper har lov til å retunere bobler som kun er
+     * Setter om denne instance av HibernateSessionWrapper har lov til Ã¥ retunere bobler som kun er
      * delvis initialisert.
      */
     public void setLazyLoadedBubblesAllowed(boolean lazyLoadedBubblesAllowed) {
@@ -606,7 +606,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     /**
-     * Hjelpemetode for å sjekke tilstand etter evict. Er egentlig en testmetode, men kan være nyttig å ha som
+     * Hjelpemetode for Ã¥ sjekke tilstand etter evict. Er egentlig en testmetode, men kan vÃ¦re nyttig Ã¥ ha som
      * et sanity check.
      */
     @Override

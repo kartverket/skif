@@ -80,7 +80,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Test container managed transactions. Klient kalder CMT ejb som for noen av metodene kaller videre på annen CMT ejb.
+     * Test container managed transactions. Klient kalder CMT ejb som for noen av metodene kaller videre pÃ¥ annen CMT ejb.
      * Metodene put og get kaller ikke videre. Denne testen verifiserer at basis put og get virker.
      */
     @Test
@@ -94,7 +94,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen CMT ejb.
      * Metoden containerTest1 anvender TransactionAttributeType.REQUIRED.
      */
     @Test
@@ -108,7 +108,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen CMT ejb.
      * Siden kallet til den andre ejb feiler skal ingen av de to endringer commites.
      */
     @Test(enabled = true)
@@ -126,7 +126,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen CMT ejb.
      * Metoden containerTest1 anvender TransactionAttributeType.SUPPORTS.
      */
     @Test
@@ -143,8 +143,8 @@ public class StoreTestTxManagementTest extends SkifTestCase {
 
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
-     * Siden containerTest2 metoden kun har SUPPORTS og kall nr 2 til den andre ejb feiler, skal kun den første endring committes.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen CMT ejb.
+     * Siden containerTest2 metoden kun har SUPPORTS og kall nr 2 til den andre ejb feiler, skal kun den fÃ¸rste endring committes.
      */
     @Test
     public void testCascadedContainerManagedTxTest2_cascadedPut_rollback() {
@@ -161,7 +161,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen CMT ejb.
      * Metoden containerTest3 anvender TransactionAttributeType.REQUIRED.
      */
     @Test
@@ -175,7 +175,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen CMT ejb.
      * Siden containerTest3 metoden kun har REQUIRED og kall nr 2 til den andre ejb feiler, skal ingen endringer committes.
      */
     @Test
@@ -193,7 +193,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen CMT ejb.
      * Metoden containerTest4 anvender default transaction attribute, hvilket er det samme som TransactionAttributeType.REQUIRED.
      */
     @Test
@@ -207,7 +207,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen CMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen CMT ejb.
      * Metoden containerTest4 anvender default atransaction type. Siden kall nr 2 til den andre ejb feiler, skal ingen av  endringene committes.
      */
     @Test
@@ -228,7 +228,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     /////////////////////////// Container Managed Transaction kaller Bean Managed Transaction /////////////////
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen BMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen BMT ejb.
      * Metoden containerTest1 anvender TransactionAttributeType.REQUIRED.
      */
     @Test
@@ -242,7 +242,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen BMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen BMT ejb.
      * Siden kallet til den andre ejb feiler skal ingen av de to endringer commites.
      */
     @Test
@@ -260,7 +260,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen BMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen BMT ejb.
      * Metoden containerTest1 anvender TransactionAttributeType.SUPPORTS.
      */
     @Test
@@ -275,8 +275,8 @@ public class StoreTestTxManagementTest extends SkifTestCase {
 
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen BMT ejb.
-     * Siden containerTest2 metoden kun har SUPPORTS og kall nr 2 til den andre ejb feiler, skal kun den første endring committes.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen BMT ejb.
+     * Siden containerTest2 metoden kun har SUPPORTS og kall nr 2 til den andre ejb feiler, skal kun den fÃ¸rste endring committes.
      */
     @Test
     public void testCascadedBeanManagedTxTest2_cascadedPut_rollback() {
@@ -293,7 +293,7 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen BMT ejb.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen BMT ejb.
      * Metoden containerTest1 anvender TransactionAttributeType.REQUIRED.
      */
     @Test
@@ -307,9 +307,9 @@ public class StoreTestTxManagementTest extends SkifTestCase {
     }
 
     /**
-     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre på annen BMT ejb.
-     * Metoden beanTest3 har REQUIRES og kall nr 2 til den andre ejb feiler, men første kall har allerede blitt committet
-     * siden ejben det blir kallt på bruker bean managed transactions og kjører alle kall i egen transaksjon.
+     * Tester container managed transactions. Klient kalder CMT ejb som kaller videre pÃ¥ annen BMT ejb.
+     * Metoden beanTest3 har REQUIRES og kall nr 2 til den andre ejb feiler, men fÃ¸rste kall har allerede blitt committet
+     * siden ejben det blir kallt pÃ¥ bruker bean managed transactions og kjÃ¸rer alle kall i egen transaksjon.
      */
     @Test
     public void testCascadedBeanManagedTxTest3_cascadedPut_rollback() {

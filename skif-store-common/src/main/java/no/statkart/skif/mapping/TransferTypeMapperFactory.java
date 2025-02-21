@@ -70,7 +70,7 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
             super((Class<WsapiT>) wsapiTypeToken.getRawType(), (Class<DomainT>) domainTypeToken.getRawType(), Mapping.class);
 
             try {
-                // Første parameter er Object pga. type erasure
+                // FÃ¸rste parameter er Object pga. type erasure
                 transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(Object.class, Iterable.class);
             } catch (NoSuchMethodException e) {
                 throw new MappingException("No suitable constructor for " + domainTypeToken.getRawType());
@@ -158,7 +158,7 @@ public class TransferTypeMapperFactory implements TypeMapperFactory {
                 transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(resultTypeToken.getRawType(), Iterable.class);
             } catch (NoSuchMethodException ignore) {
                 try {
-                    // Første parameter er sannsynligvis Object pga. type erasure
+                    // FÃ¸rste parameter er sannsynligvis Object pga. type erasure
                     transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(Object.class, Iterable.class);
                 } catch (NoSuchMethodException e) {
                     throw new MappingException("No suitable constructor for " + domainTypeToken.getRawType());

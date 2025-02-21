@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.domain.relation.uni.direct;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubbleWithHistory;
 
 /**
- * Boble som inngår i en sett-relasjon som ligger i {@link X1A}. Boblen kan ligge i flere sett om gangen.
+ * Boble som inngÃ¥r i en sett-relasjon som ligger i {@link X1A}. Boblen kan ligge i flere sett om gangen.
  * Relasjon er implementer i database via egen link tabellen for X1A og X1EManyMany.
  *
  * @author Henrik Fredholm

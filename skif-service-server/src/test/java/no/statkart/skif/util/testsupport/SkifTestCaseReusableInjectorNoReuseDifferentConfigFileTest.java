@@ -15,8 +15,8 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Tester ut at server injectoren i en SingleVm konfigurasjonen ikke blir gjenbukt på tvers av testmetoder og testcases
- * når bruker en annen config file
+ * Tester ut at server injectoren i en SingleVm konfigurasjonen ikke blir gjenbukt pÃ¥ tvers av testmetoder og testcases
+ * nÃ¥r bruker en annen config file
  *  
  * @author Henrik Fredholm
  * @since 2.0
@@ -46,17 +46,17 @@ public class SkifTestCaseReusableInjectorNoReuseDifferentConfigFileTest extends 
     @Override
     protected String[] getConfigurationFilenames() {
         // Returner property som ikke hedder "skif.properties" slik at configurationKey som beregnes av SkifTestCase blir
-        // forskjellig fra den brukt av tidligere tester. Det vil fører til at server instansen ikke gjenbrukes
+        // forskjellig fra den brukt av tidligere tester. Det vil fÃ¸rer til at server instansen ikke gjenbrukes
         return new String[]{"no/statkart/skif/util/testsupport/empty.properties"};
     }
 
     @Override
     protected void resetLogin() {
-        // Støtter ikke login for denne test
+        // StÃ¸tter ikke login for denne test
     }
 
     /**
-     * Denne test sjekker at listen på serveren er en tom instans
+     * Denne test sjekker at listen pÃ¥ serveren er en tom instans
      */
     public void firstTestMethod() {
         assertNotNull(injector);

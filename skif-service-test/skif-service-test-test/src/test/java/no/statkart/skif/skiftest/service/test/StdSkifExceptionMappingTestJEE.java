@@ -18,10 +18,10 @@ import static org.testng.Assert.*;
 
 /**
  * Tester mapping av skifs standard exception hierarki. Et viktig aspekt av exception mappingen er at det i stor
- * grad skal være transparent om JEE eller SINGLE_VM mode brukes.
+ * grad skal vÃ¦re transparent om JEE eller SINGLE_VM mode brukes.
  *
- * Denne testen viser også hvordan skif kan konfigureres slik at  serveren  automatisk wrapper alle ukjente runtime
- * exceptions i en ImplementationException. Dette skjer både i JEE og SINGLE_VM mode.
+ * Denne testen viser ogsÃ¥ hvordan skif kan konfigureres slik at  serveren  automatisk wrapper alle ukjente runtime
+ * exceptions i en ImplementationException. Dette skjer bÃ¥de i JEE og SINGLE_VM mode.
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -38,9 +38,9 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Test kall til Web service virker når det ikke genereres exception.
+     * Test kall til Web service virker nÃ¥r det ikke genereres exception.
      * <p>
-     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
+     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjÃ¸r ikke kall videre
      */
     @Test(groups = "server-required")
     public void testNoExceptionNonMappedWSCall() throws SimpleException, SimpleNonMappedException {
@@ -49,10 +49,10 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Web service kaster en runtime exception som JAX-WS Web service rammeverket på serveren automatisk gjør om
-     * til en SOAPFaultException. På klienten mappes denne med en IdentityMapper.
+     * Web service kaster en runtime exception som JAX-WS Web service rammeverket pÃ¥ serveren automatisk gjÃ¸r om
+     * til en SOAPFaultException. PÃ¥ klienten mappes denne med en IdentityMapper.
      * <p>
-     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
+     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjÃ¸r ikke kall videre
      */
     @Test(groups = "server-required")
     public void testThrowNonMappedRuntimeExceptionNonMappedWSCall() throws SimpleException, SimpleNonMappedException {
@@ -65,10 +65,10 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Web service kaster en checked exception som JAX-WS Web service rammeverket på serveren sender videre uforandret
-     * siden den er annotert med @WebFault. På klienten mappes denne ikke og det produseres en MappingException.
+     * Web service kaster en checked exception som JAX-WS Web service rammeverket pÃ¥ serveren sender videre uforandret
+     * siden den er annotert med @WebFault. PÃ¥ klienten mappes denne ikke og det produseres en MappingException.
      * <p>
-     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
+     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjÃ¸r ikke kall videre
      */
     @Test(groups = "server-required")
     public void testThrowNonMappedCheckedExceptionNonMappedWSCall() throws SimpleException, SimpleNonMappedException {
@@ -83,11 +83,11 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Web service kaster en checked exception som JAX-WS Web service rammeverket på serveren sender videre uforandret
-     * siden den er annotert med @WebFault. På klienten gjenkjennes denne og mappes til en domene runtime exception med
+     * Web service kaster en checked exception som JAX-WS Web service rammeverket pÃ¥ serveren sender videre uforandret
+     * siden den er annotert med @WebFault. PÃ¥ klienten gjenkjennes denne og mappes til en domene runtime exception med
      * tilsvarende navn.
      * <p>
-     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
+     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjÃ¸r ikke kall videre
      */
     @Test(groups = "server-required")
     public void testThrowMappedExceptionNonMappedWSCall() throws SimpleException, SimpleNonMappedException {
@@ -103,9 +103,9 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
 
 
     /**
-     * Test kall til Web service virker når det ikke genereres exception.
+     * Test kall til Web service virker nÃ¥r det ikke genereres exception.
      * <p>
-     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
+     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjÃ¸r ikke kall videre
      */
     @Test(groups = "server-required")
     public void testNoExceptionNonMappedEJBCall() throws SimpleException, SimpleNonMappedException {
@@ -114,10 +114,10 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Web service kaster en runtime exception som JAX-WS Web service rammeverket på serveren automatisk gjør om
-     * til en SOAPFaultException. På klienten mappes denne med en IdentityMapper.
+     * Web service kaster en runtime exception som JAX-WS Web service rammeverket pÃ¥ serveren automatisk gjÃ¸r om
+     * til en SOAPFaultException. PÃ¥ klienten mappes denne med en IdentityMapper.
      * <p>
-     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
+     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjÃ¸r ikke kall videre
      */
     @Test(groups = "server-required")
     public void testThrowNonMappedRuntimeExceptionNonMappedEJBCall() throws SimpleException, SimpleNonMappedException {
@@ -128,8 +128,8 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
             assertEquals(e.getMessage(), "abc");
             assertTrue(e.getCause().getClass()==RuntimeException.class || e.getCause().getClass()==ServerException.class);
 
-            // Server mapper automatisk ukjendte exception ved å wrapped dem i en  ImplementationException først.
-            // Stacktrace settes til det samme som opprindelig exception slik at det er enklet å se hvor feilen opprindelig forekom
+            // Server mapper automatisk ukjendte exception ved Ã¥ wrapped dem i en  ImplementationException fÃ¸rst.
+            // Stacktrace settes til det samme som opprindelig exception slik at det er enklet Ã¥ se hvor feilen opprindelig forekom
             final StackTraceElement stackTraceElement = e.getStackTrace()[0];
             assertEquals(stackTraceElement.getClassName(), "no.statkart.skif.skiftest.service.testd.DServiceEJBBean");
             assertEquals(stackTraceElement.getFileName(), "DServiceEJBBean.java");
@@ -150,11 +150,11 @@ public class StdSkifExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Web service kaster en checked exception som JAX-WS Web service rammeverket på serveren sender videre uforandret
-     * siden den er annotert med @WebFault. På klienten gjenkjennes denne og mappes til en domene runtime exception med
+     * Web service kaster en checked exception som JAX-WS Web service rammeverket pÃ¥ serveren sender videre uforandret
+     * siden den er annotert med @WebFault. PÃ¥ klienten gjenkjennes denne og mappes til en domene runtime exception med
      * tilsvarende navn.
      * <p>
-     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjør ikke kall videre
+     * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og gjÃ¸r ikke kall videre
      */
     @Test(groups = "server-required")
     public void testThrowMappedExceptionNonMappedEJBCall() throws SimpleException, SimpleNonMappedException {

@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Angir at noen objekt med gitte id-er ikke finnes. Det kan f.eks være fordi de har blitt slettet.
+ * Angir at noen objekt med gitte id-er ikke finnes. Det kan f.eks vÃ¦re fordi de har blitt slettet.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0

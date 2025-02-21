@@ -12,10 +12,10 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Superklasse for å hente tekster fra <code>ResourceBundles</code>. Denne klassen kan kun brukes
+ * Superklasse for Ã¥ hente tekster fra <code>ResourceBundles</code>. Denne klassen kan kun brukes
  * via en subklasse. <p>
  * <p>
- * Internasjonalisering håndteres ved å plassere alle tekster i en resourcebundle som navngis etter
+ * Internasjonalisering hÃ¥ndteres ved Ã¥ plassere alle tekster i en resourcebundle som navngis etter
  * den Javapakken hvor den plasseres og det lokale som resourcebundlen representerer. For eksempel
  * for pakken <code>no.statkart.matrikkel.presentasjon.adresse</code> lages det en resoucebundle
  * propertyfil som heter <code>AdresseMsg_no_NO_B.properties</code>. I tillegg lages det en
@@ -28,20 +28,20 @@ import java.util.ResourceBundle;
  * <li>Hvis en pakke ikke har noen resourcebundle brukes superpakkens resourcebundle.
  * </ul>
  * <p>
- * Det er mulig å kjede resourcebundles sammen så en resourcebundleklasse leter i flere
- * resourcebundles. For eksempel kan <code>AdresseMsg</code> settes opp til først å lete i
+ * Det er mulig Ã¥ kjede resourcebundles sammen sÃ¥ en resourcebundleklasse leter i flere
+ * resourcebundles. For eksempel kan <code>AdresseMsg</code> settes opp til fÃ¸rst Ã¥ lete i
  * resourcebundlen <code>no.statkart.matrikkel.presentasjon.adresse.AdresseMsg</code> og dernest i
- * <code>no.statkart.matrikkel.MatrikkelMsg</code>. Får å få dette til må
- * <code>AdresseMsg</code> settes opp til å bruke begge resourcebundles.<p>
+ * <code>no.statkart.matrikkel.MatrikkelMsg</code>. FÃ¥r Ã¥ fÃ¥ dette til mÃ¥
+ * <code>AdresseMsg</code> settes opp til Ã¥ bruke begge resourcebundles.<p>
  * <p>
  * Konvensjon for navngivning av tekster:
  * <ul>
- * <li>For generelle tekster som brukes av mange klasser skrives nøkkelen med små bokstaver og
- * "_" for å skille ord. Eksempel: <code>"generell_tekst"</code>, <code>"adressekode"</code>.
- * <li>For klassespecifikke tekster prefikses nøkkelen med klassenavnet.
+ * <li>For generelle tekster som brukes av mange klasser skrives nÃ¸kkelen med smÃ¥ bokstaver og
+ * "_" for Ã¥ skille ord. Eksempel: <code>"generell_tekst"</code>, <code>"adressekode"</code>.
+ * <li>For klassespecifikke tekster prefikses nÃ¸kkelen med klassenavnet.
  * Eksempel: <code>"VegView.gatenr_ikke_nummer_numerisk"</code>
- * <li>For klassespesifikke tekster prefikses nøkkelen med klassenavnet.
- * <li>For klassespesifikke tekster prefikses nøkkelen med klassenavnet.
+ * <li>For klassespesifikke tekster prefikses nÃ¸kkelen med klassenavnet.
+ * <li>For klassespesifikke tekster prefikses nÃ¸kkelen med klassenavnet.
  * Eksempel: <code>"VegView.adressekode_ikke_nummer_numerisk"</code>
  * </ul><p>
  * <p>
@@ -155,11 +155,11 @@ public abstract class ResourceMsg {
     }
 
     /**
-     * Lager en melding som ikke skal være label i GUI.
+     * Lager en melding som ikke skal vÃ¦re label i GUI.
      *
-     * @param key             nøkkel for meldingen
+     * @param key             nÃ¸kkel for meldingen
      * @param args            verdier som skal flettes inn i meldingen
-     * @param postFix         tegn som skal legges til på slutten av meldingen. F.eks. ':' for label i GUI
+     * @param postFix         tegn som skal legges til pÃ¥ slutten av meldingen. F.eks. ':' for label i GUI
      * @return en ferdig lokalisert melding
      */
     private String createLocalizedMessage(String key, String postFix, Object[] args, Locale locale) {
@@ -169,7 +169,7 @@ public abstract class ResourceMsg {
         } catch (MissingResourceException e) {
             return "!" + key + "!";
         }
-        //Ønsker ikke 'null' i meldingen, erstatter med ''
+        //Ã˜nsker ikke 'null' i meldingen, erstatter med ''
         for (int i = 0; i < args.length; i++) {
             if (args[i] == null)
                 args[i] = "";

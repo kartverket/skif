@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 /**
  * Connection factory for bruk av et fast pool. Tilsvarer {@link ConnectionFactoryUsingDataSource}, bortsett fra at
- * denne holder på en fast referanse fremfor å gjøre JNDI-lookup.
+ * denne holder pÃ¥ en fast referanse fremfor Ã¥ gjÃ¸re JNDI-lookup.
  *
  * @since 2.7.0
  */

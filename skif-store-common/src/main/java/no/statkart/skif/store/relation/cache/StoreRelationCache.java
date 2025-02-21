@@ -25,7 +25,7 @@ import java.util.concurrent.Executor;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * En facade for håndtering av relation caching i Store. Klassen henter ut aktivt UnitOfWork level fra Store og
+ * En facade for hÃ¥ndtering av relation caching i Store. Klassen henter ut aktivt UnitOfWork level fra Store og
  * bruker dette level i kall videre til {@link RelationCache}.
  *
  * @author Henrik Fredholm
@@ -70,7 +70,7 @@ public abstract class StoreRelationCache {
         int level = getLevel();
         if (enabled != relationCache.isEnabled(level)) {
             if (enabled) {
-                // Store enables her og alle underliggende UnitOfWork er disabled (fordi cachinging auto enables når
+                // Store enables her og alle underliggende UnitOfWork er disabled (fordi cachinging auto enables nÃ¥r
                 // underliggende UnitOfWork har caching enabled og i slike tilfeller kan caching ikke disables).
                 relationCache.setEnabled(level, true);
                 AbstractStoreSession storeSession = (AbstractStoreSession) getStoreSession();
@@ -97,7 +97,7 @@ public abstract class StoreRelationCache {
 
 
     /**
-     * Hjelpemetode for testing som ikke ellers bør brukes
+     * Hjelpemetode for testing som ikke ellers bÃ¸r brukes
      */
     public <E> RelationTracker peekRelationTracker(RelationName relationName, E value) {
         checkState(isEnabled());
@@ -128,14 +128,14 @@ public abstract class StoreRelationCache {
     }
 
     public void materialiseRequestedRelations(Collection<? extends BubbleObject> bubbleObjects) {
-        // TODO: Optimaliser. Sorter på type og umaterialisert. Bruk finder til å hente verdier og sette cachet verdi direkte.
+        // TODO: Optimaliser. Sorter pÃ¥ type og umaterialisert. Bruk finder til Ã¥ hente verdier og sette cachet verdi direkte.
         for (BubbleObject bubbleObject : bubbleObjects) {
             materialiseRequestedRelations(bubbleObject);
         }
     }
 
     private List<InverseRelation<?>> getInverseRelations(BubbleObject bubbleObject) {
-        // TODO: opptimaliser. Cache relasjons-metoder per klasse i trådsikker singleton
+        // TODO: opptimaliser. Cache relasjons-metoder per klasse i trÃ¥dsikker singleton
         List<InverseRelation<?>> result = Lists.newArrayList();
         for (Method method : bubbleObject.getClass().getMethods()) {
             if (InverseRelation.class.isAssignableFrom(method.getReturnType())) {
@@ -158,8 +158,8 @@ public abstract class StoreRelationCache {
             for (InverseRelation<?> inverseRelation : getInverseRelations(bubbleObject)) {
                 if (inverseRelation.isMaterialised()) {
                     if (isEnabled()) {
-                        // TODO: Her må vi egentlig vite om oppdateringen kommer fra en UnitOfWorkTransfer (som kan inneholde endret state) eller en Transfer (som ikke kan inneholde endret state).
-                        // TODO: Hvis vi har endret state skal verdienen ikke settes på underliggende levels. Det blir feil ved abort.
+                        // TODO: Her mÃ¥ vi egentlig vite om oppdateringen kommer fra en UnitOfWorkTransfer (som kan inneholde endret state) eller en Transfer (som ikke kan inneholde endret state).
+                        // TODO: Hvis vi har endret state skal verdienen ikke settes pÃ¥ underliggende levels. Det blir feil ved abort.
                         relationCache.materialiseRelation(level, inverseRelation.getName(), bubbleObject.getId(), inverseRelation.getCached());
                     }
                     inverseRelation.setCached(null);
@@ -209,8 +209,8 @@ public abstract class StoreRelationCache {
     }
 
     public void onIdentRemoved(BubbleObjectWithIdent<?> bubbleObjectWithIdent) {
-        // SKIF-599: Nødvendig med kall til 'onIdentChanged' her for å fremtvinge at det opprettes en entry
-        // i relationCache hvis det ikke finnes en fra før. Derved kan 'onSourceIdRemoved' kan plukke opp
+        // SKIF-599: NÃ¸dvendig med kall til 'onIdentChanged' her for Ã¥ fremtvinge at det opprettes en entry
+        // i relationCache hvis det ikke finnes en fra fÃ¸r. Derved kan 'onSourceIdRemoved' kan plukke opp
         // relationname og ident for boblen og angi at identen ikke lengre er koplet til boblen.
         bubbleObjectWithIdent.onIdentChanged();
         relationCache.onSourceIdRemoved(getLevel(), bubbleObjectWithIdent.getId());
@@ -239,7 +239,7 @@ public abstract class StoreRelationCache {
     public void evictAll() {
         if (isEnabled()) {
             setEnabled(false);  // Ved disabling evictes cachen automatisk
-            setEnabled(true);   // Ved enabling så gjenberegnes caching for låste objekter og har hensyn til endret relasjoner i disse
+            setEnabled(true);   // Ved enabling sÃ¥ gjenberegnes caching for lÃ¥ste objekter og har hensyn til endret relasjoner i disse
         }
     }
 }

@@ -11,10 +11,10 @@ import java.util.Set;
 /**
  * Abstract implementasjon av {@link ComponentCollection} for wrapping av {@link java.util.Set}.
  * <p/>
- * Bemerk: I definisjonen av denne klassen burde {@code <O>} egentlig extende både {@code BubbleObject} og
- * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da må subklassen {@link ComponentBubbleIdSet}
+ * Bemerk: I definisjonen av denne klassen burde {@code <O>} egentlig extende bÃ¥de {@code BubbleObject} og
+ * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da mÃ¥ subklassen {@link ComponentBubbleIdSet}
  * eksplisitt angi den eiende bobleklassen i tillegg til den direkte eiende klassen og det blir og det blir veldig
- * tungvint. Har derfor i stedet valgt å lage en package private hjelpemetode {@link Bubbles#onChangeRelationImpl}
+ * tungvint. Har derfor i stedet valgt Ã¥ lage en package private hjelpemetode {@link Bubbles#onChangeRelationImpl}
  * som kun krever at {@code owner} er av type BubbleObject.
  *
  * @author Henrik Fredholm

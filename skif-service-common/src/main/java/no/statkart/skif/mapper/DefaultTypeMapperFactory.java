@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Factory for å lage helt generiske {@link DefaultTypeMapper}e.
+ * Factory for Ã¥ lage helt generiske {@link DefaultTypeMapper}e.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
@@ -40,7 +40,7 @@ public class DefaultTypeMapperFactory implements TypeMapperFactory {
     }
 
     /**
-     * Metode for å angi en klasse som skal ignoreres ved mapping.
+     * Metode for Ã¥ angi en klasse som skal ignoreres ved mapping.
      *
      * @param className Fully qualified class name.
      */
@@ -65,10 +65,10 @@ public class DefaultTypeMapperFactory implements TypeMapperFactory {
     }
 
     /**
-     * Angir om det skal kastes en exception dersom det finnes en getter på wsapi-siden som ikke har tilsvarende setter
-     * på domene-siden. Dette er vanligvis en feil, og standardverdien er <code>true</code>.
+     * Angir om det skal kastes en exception dersom det finnes en getter pÃ¥ wsapi-siden som ikke har tilsvarende setter
+     * pÃ¥ domene-siden. Dette er vanligvis en feil, og standardverdien er <code>true</code>.
      *
-     * @param failIfMissingDomainProperties <code>true</code> for å skru på sjekk, <code>false</code> for å skru av.
+     * @param failIfMissingDomainProperties <code>true</code> for Ã¥ skru pÃ¥ sjekk, <code>false</code> for Ã¥ skru av.
      */
     public void setFailIfMissingDomainProperties(boolean failIfMissingDomainProperties) {
         this.failIfMissingDomainProperties = failIfMissingDomainProperties;

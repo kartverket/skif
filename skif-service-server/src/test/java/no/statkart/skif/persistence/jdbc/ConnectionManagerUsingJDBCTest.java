@@ -60,7 +60,7 @@ public class ConnectionManagerUsingJDBCTest {
         try {
             Connection unwrappedConnection = connectionForSnapshotVersion.reserve();
             assertFalse(unwrappedConnection.getAutoCommit());
-            OracleConnection oracleConnection = unwrappedConnection.unwrap(OracleConnection.class);// Sjekk at vi har muligheten for å få tak i denne
+            OracleConnection oracleConnection = unwrappedConnection.unwrap(OracleConnection.class);// Sjekk at vi har muligheten for Ã¥ fÃ¥ tak i denne
             assertEquals(oracleConnection.getClass().getName(), "oracle.jdbc.driver.T4CConnection");
         } finally {
             connectionForSnapshotVersion.release();
@@ -136,7 +136,7 @@ public class ConnectionManagerUsingJDBCTest {
         }
     }
 
-    //todo ta inn denne testen når snapshot_time er på plass
+    //todo ta inn denne testen nÃ¥r snapshot_time er pÃ¥ plass
 //    /**
 //     * Sjekke en enkel read fra foo view
 //     *
@@ -162,7 +162,7 @@ public class ConnectionManagerUsingJDBCTest {
 //                     assertNotNull(str);
 //                     System.out.println(intger + " - " + str);
 //                 }
-//                 assertTrue(returned > 0,"Det skulle ha vært returnert rader i fra foo, mulig set snapshot_time ikke er implementert.......");
+//                 assertTrue(returned > 0,"Det skulle ha vÃ¦rt returnert rader i fra foo, mulig set snapshot_time ikke er implementert.......");
 //             }
 //         } finally {
 //            forSnapshotVersion.release();
@@ -250,7 +250,7 @@ public class ConnectionManagerUsingJDBCTest {
                 //sjekk at vi kan lese tilbake de nye data.....
                 String retNavn = getNavn(unwrappedConnection, 101, 2);
                 if (unavn.equals(retNavn)) {
-                    //Hvis navnet forsatt er likt, er ikke rollback kjørt.
+                    //Hvis navnet forsatt er likt, er ikke rollback kjÃ¸rt.
                     feilet = true;
                 }
             }
@@ -259,7 +259,7 @@ public class ConnectionManagerUsingJDBCTest {
             e.printStackTrace();
             fail(e.getMessage());
         } finally {
-            //reset i tilfelle noe ikke virker så andre tester kan kjøre uforstyrret.
+            //reset i tilfelle noe ikke virker sÃ¥ andre tester kan kjÃ¸re uforstyrret.
             try {
                 if (unwrappedConnection != null) {
                     //resett etter testen.

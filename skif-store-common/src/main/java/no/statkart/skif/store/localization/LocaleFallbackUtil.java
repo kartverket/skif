@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Logikk for hvordan Locale skal falle tilbake på mer generelle.
+ * Logikk for hvordan Locale skal falle tilbake pÃ¥ mer generelle.
  *
  * @since 2.4.4
  */

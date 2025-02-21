@@ -3,7 +3,7 @@ package no.statkart.skif.exception;
 import org.slf4j.Logger;
 
 /**
- * @author Oddbjørn Kvalsund
+ * @author OddbjÃ¸rn Kvalsund
  * @since 2.0
  */
 public class ValidationException extends ApplicationException {

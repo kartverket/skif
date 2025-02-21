@@ -13,32 +13,32 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- * Hjelpe klasse for å slå på logging for Oracle JDBC driver som bruker Java Logging Framework. Det er mulig å
- * styre logging level, men det er ikke umiddelbar mulig å styre hvilke loggere som skal produserer output. Dermed blir det
- * fort alt for mye eller for lite log output. Denne hjelpeklasse bruker derfor et logging Filter til å velge bort
- * LogRecords som ikke skal vises. Når logging er disabled kommer det ingen output. Når logging enables logges
- * sql statements når verbose mode er satt til [@code VerboseMode.OFF}.  Ved å sette verbose mode til {@code VerboseMode.ON}
- * logges også bind parametre. I denne mode settes logging level til {@code Level.FINE} og genereres det veldig mye
- * LogRecords som må filtreres bort. Derfor går det væsentlig tregere å kjøre med {@code VerboseMode-ON} logging.
- * Endelig er det mulig å sette verbose mode til {@code VerboseMode.FULL}. I denne mode logges alle log records. Siden
- * logging uansett er tregt kan det være nødvendig å slå av logging i deler av koden hvor logging ikke er interessant,
- * for eksemple i forbindelse med lesing fra scroll iteratorer. Det dette formålet brukes metodene {@link #pause()()} og
- * {@link #resume(boolean)} som midlertidig kan slå av og på logging. Det finnes også metoder {@link #setTraceState(boolean)}
- * og {@link #getTraceState()} som globalt fullstendig kan slå av og på logging, og som gjør at ingen av de andre
+ * Hjelpe klasse for Ã¥ slÃ¥ pÃ¥ logging for Oracle JDBC driver som bruker Java Logging Framework. Det er mulig Ã¥
+ * styre logging level, men det er ikke umiddelbar mulig Ã¥ styre hvilke loggere som skal produserer output. Dermed blir det
+ * fort alt for mye eller for lite log output. Denne hjelpeklasse bruker derfor et logging Filter til Ã¥ velge bort
+ * LogRecords som ikke skal vises. NÃ¥r logging er disabled kommer det ingen output. NÃ¥r logging enables logges
+ * sql statements nÃ¥r verbose mode er satt til [@code VerboseMode.OFF}.  Ved Ã¥ sette verbose mode til {@code VerboseMode.ON}
+ * logges ogsÃ¥ bind parametre. I denne mode settes logging level til {@code Level.FINE} og genereres det veldig mye
+ * LogRecords som mÃ¥ filtreres bort. Derfor gÃ¥r det vÃ¦sentlig tregere Ã¥ kjÃ¸re med {@code VerboseMode-ON} logging.
+ * Endelig er det mulig Ã¥ sette verbose mode til {@code VerboseMode.FULL}. I denne mode logges alle log records. Siden
+ * logging uansett er tregt kan det vÃ¦re nÃ¸dvendig Ã¥ slÃ¥ av logging i deler av koden hvor logging ikke er interessant,
+ * for eksemple i forbindelse med lesing fra scroll iteratorer. Det dette formÃ¥let brukes metodene {@link #pause()()} og
+ * {@link #resume(boolean)} som midlertidig kan slÃ¥ av og pÃ¥ logging. Det finnes ogsÃ¥ metoder {@link #setTraceState(boolean)}
+ * og {@link #getTraceState()} som globalt fullstendig kan slÃ¥ av og pÃ¥ logging, og som gjÃ¸r at ingen av de andre
  * kall til OracleLogHelper har noen effekt. Et kall {@code OracleLogHelper.setTraceState(false)} i starten av ett
- * program vil slå av all logging. Programkode som skal gjenbrukes skal ikke inneholde kall til {@code setTraceState()}
- * og bør fortrinsvis bare inneholde kall til {@code pause()} og {@code resume(boolean)}.
+ * program vil slÃ¥ av all logging. Programkode som skal gjenbrukes skal ikke inneholde kall til {@code setTraceState()}
+ * og bÃ¸r fortrinsvis bare inneholde kall til {@code pause()} og {@code resume(boolean)}.
  *
  * <p>
- * Logging sendes til konsolen som default, men det er mulig å sende logging til en fil i stedet. Hvis det skal sendes
- * til fil må man kalle {@link #initHandler(String)} før {@link #enableTrace(Verbose)} kalles første gang.
+ * Logging sendes til konsolen som default, men det er mulig Ã¥ sende logging til en fil i stedet. Hvis det skal sendes
+ * til fil mÃ¥ man kalle {@link #initHandler(String)} fÃ¸r {@link #enableTrace(Verbose)} kalles fÃ¸rste gang.
  * <p>
- * For at det skal komme noe logging i det hele tatt må man bruke ojdbc*_g versjonen av Oracle driveren og det er
- * viktig å sjekke at ikke andre bibliotekter med oracle driver (f.eks weblogic ) er først i classpath. Dette kan
- * f.eks sjekkes ved å inspisere oracle.jdbc.driver.OracleLog.class.getProtectionDomain().getCodeSource()
+ * For at det skal komme noe logging i det hele tatt mÃ¥ man bruke ojdbc*_g versjonen av Oracle driveren og det er
+ * viktig Ã¥ sjekke at ikke andre bibliotekter med oracle driver (f.eks weblogic ) er fÃ¸rst i classpath. Dette kan
+ * f.eks sjekkes ved Ã¥ inspisere oracle.jdbc.driver.OracleLog.class.getProtectionDomain().getCodeSource()
  * <p>
- * Ved overgang til ny versjon  av Oracle JDBC driver må filtrene i denne logger oftest skrives om pga interne endringer
- * i driveren fører til at det genereres andre log records. Her gjelder det og oppdatere OracleLogHelper til å plukke
+ * Ved overgang til ny versjon  av Oracle JDBC driver mÃ¥ filtrene i denne logger oftest skrives om pga interne endringer
+ * i driveren fÃ¸rer til at det genereres andre log records. Her gjelder det og oppdatere OracleLogHelper til Ã¥ plukke
  * ut de riktige records slik at kun sql og bindingsparametre vises.
  * bort de
  *
@@ -59,7 +59,7 @@ public class OracleLogHelper {
     public enum Verbose {
         /** Kun sql statements */
         ON,
-        /** Også bindingsparametre */
+        /** OgsÃ¥ bindingsparametre */
         OFF,
         /** Alle log records */
         FULL
@@ -74,7 +74,7 @@ public class OracleLogHelper {
     private static synchronized void configureOracleJDBCLogging() {
         if (filter != null) return;
 
-        // Sett opp et filter som velger bort alle FINE records untatt noen få utvalgte
+        // Sett opp et filter som velger bort alle FINE records untatt noen fÃ¥ utvalgte
         filter = new OracleLogFilter();
         if (handler == null) {
             handler = new ConsoleHandler();
@@ -91,9 +91,9 @@ public class OracleLogHelper {
     }
 
     /**
-     * Initialiser Logger for "oracle.jdbc" til å bruke en FileHandler istedet for ConsoleHandler som er default. Denne metoden må
-     * kalles før første kall til {@link #enableTrace(Verbose)} og kan kun kalle en gang. Bruke evt {@link #isHandlerInitialized()}
-     * til å sjekke om en handler allerede er satt.
+     * Initialiser Logger for "oracle.jdbc" til Ã¥ bruke en FileHandler istedet for ConsoleHandler som er default. Denne metoden mÃ¥
+     * kalles fÃ¸r fÃ¸rste kall til {@link #enableTrace(Verbose)} og kan kun kalle en gang. Bruke evt {@link #isHandlerInitialized()}
+     * til Ã¥ sjekke om en handler allerede er satt.
      *
      * @param filename
      */
@@ -110,7 +110,7 @@ public class OracleLogHelper {
 
 
     /**
-     * Slå på sql logging, med mindre at {@code traceState} er {@code false}.
+     * SlÃ¥ pÃ¥ sql logging, med mindre at {@code traceState} er {@code false}.
      *
      * @param mode OFF hvis kun sql statements skal logges. ON for mer detaljert logging info, inkl parameter binning
      */
@@ -131,7 +131,7 @@ public class OracleLogHelper {
     }
 
     /**
-     * Slår av sql logging
+     * SlÃ¥r av sql logging
      */
     public static void disableTrace() {
         logger.log(Level.INFO, "OracleLogHelper: Trace disabled");
@@ -176,7 +176,7 @@ public class OracleLogHelper {
                         }
                     } else {
                         if (methodname.equals("StringToCharBytes") && classname.equals("oracle.jdbc.driver.DBConversion") && record.getMessage().contains(" Enter: \"")) {
-                            // Logger sql statement hvor alle bindingsvariable har fått nummer
+                            // Logger sql statement hvor alle bindingsvariable har fÃ¥tt nummer
                             result = true;
                         } else {
                             if (classname.equals("oracle.jdbc.driver.OraclePreparedStatement")) {
@@ -202,7 +202,7 @@ public class OracleLogHelper {
     }
 
     /**
-     * Gir mulighet for å pause tracingen uavhenging av om tracing er på eller av. Dette kan være nødvendig fordi
+     * Gir mulighet for Ã¥ pause tracingen uavhenging av om tracing er pÃ¥ eller av. Dette kan vÃ¦re nÃ¸dvendig fordi
      * tracing er treg.
      *
      * @return oldState
@@ -221,7 +221,7 @@ public class OracleLogHelper {
     }
 
     /**
-     * Global setting for å slå tracing fullstendig av også for fremtidig kall til {@link #enableTrace(Verbose)}.
+     * Global setting for Ã¥ slÃ¥ tracing fullstendig av ogsÃ¥ for fremtidig kall til {@link #enableTrace(Verbose)}.
      *
      * @param state bestemmer tracing
      */
@@ -230,7 +230,7 @@ public class OracleLogHelper {
     }
 
     /**
-     * Returnerer traceState som forteller om logging er på eller av.
+     * Returnerer traceState som forteller om logging er pÃ¥ eller av.
      */
     public static boolean getTraceState() {
         return traceState;

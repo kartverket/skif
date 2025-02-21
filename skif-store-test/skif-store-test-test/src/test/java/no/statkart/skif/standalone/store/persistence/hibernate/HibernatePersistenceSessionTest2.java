@@ -40,7 +40,7 @@ public class HibernatePersistenceSessionTest2 extends StoreTestServerTestCase {
         PersistenceSessionManager persistenceSessionManager = resourceManager.getResource(PersistenceSessionManager.class);
         HibernatePersistenceSessionMasterImpl hibernatePersistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
 
-        // Den viktige forutsetningen her er at get() skal sørge for at det den returnerer ikke inneholder noe lazy
+        // Den viktige forutsetningen her er at get() skal sÃ¸rge for at det den returnerer ikke inneholder noe lazy
         Assert.assertFalse(hibernatePersistenceSessionMaster.isLazyLoadedBubblesAllowed());
 
         BubbleWithEntityComponentId<?> id = mockupFacade.getBubbleWithEntityComponentMockupFactory().getWithNullLevel2Id();

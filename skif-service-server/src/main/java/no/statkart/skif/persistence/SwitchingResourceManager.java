@@ -5,7 +5,7 @@ import no.statkart.skif.exception.ImplementationException;
 /**
  * @author Henrik Fredholm
  * @since 2.1
- * @deprecated Denne ser ut til å ha en grov rekursjonsfeil i {@link #selected()}!
+ * @deprecated Denne ser ut til Ã¥ ha en grov rekursjonsfeil i {@link #selected()}!
  */
 public class SwitchingResourceManager implements ResourceManager {
     private ResourceManager selected;

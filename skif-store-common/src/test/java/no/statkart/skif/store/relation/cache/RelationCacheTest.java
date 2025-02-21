@@ -85,7 +85,7 @@ public class RelationCacheTest {
     }
 
     /**
-     * Relasjoner som er cachet og har fått endret verdier men ikke materialisert skal returnere false
+     * Relasjoner som er cachet og har fÃ¥tt endret verdier men ikke materialisert skal returnere false
      */
     public void isMaterialisedForRelationThatIsNotMaterialised_Variant2() {
         RelationCache cache = new RelationCache();
@@ -106,7 +106,7 @@ public class RelationCacheTest {
     }
 
     /**
-     * Relasjoner som er cachet og materialisert på et høyere level blir også materialisert for underliggende levels
+     * Relasjoner som er cachet og materialisert pÃ¥ et hÃ¸yere level blir ogsÃ¥ materialisert for underliggende levels
      */
     public void isMaterialisedForRelationThatIsMaterialisedAtLevel2() {
         RelationCache cache = new RelationCache();
@@ -116,7 +116,7 @@ public class RelationCacheTest {
     }
 
     /**
-     * Relasjoner som er cachet og eksplisitt kun materialisert på et høyere level blir ikke  materialisert for underliggende levels
+     * Relasjoner som er cachet og eksplisitt kun materialisert pÃ¥ et hÃ¸yere level blir ikke  materialisert for underliggende levels
      */
     public void isMaterialisedForRelationThatIsExclusivelyMaterialisedAtHigherLevel() {
         RelationCache cache = new RelationCache();
@@ -145,7 +145,7 @@ public class RelationCacheTest {
             assertThat(cache.getRelationValueHolder(0, Role.rel1, KEY)).isNotNull();
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
-            assertThat(e).hasMessageContaining("Forventet å finne en eller flere RelationTrackers i RelationEntry for level 0");
+            assertThat(e).hasMessageContaining("Forventet Ã¥ finne en eller flere RelationTrackers i RelationEntry for level 0");
         }
     }
 
@@ -160,7 +160,7 @@ public class RelationCacheTest {
     }
 
     /**
-     * Uthenting av RelationValueHolder for cachet relasjon som eksplisitt er materialisert for et høyere level  skal
+     * Uthenting av RelationValueHolder for cachet relasjon som eksplisitt er materialisert for et hÃ¸yere level  skal
      * gi relasjonen i et holder objekt for dette level og exception for lavere levels
      */
     public void getRelationValueHolderForExclusivelyMaterialisedRelationAtHigherLevel() {
@@ -173,13 +173,13 @@ public class RelationCacheTest {
             assertThat(cache.getRelationValueHolder(0, Role.rel1, KEY)).isNotNull();
             failBecauseExceptionWasNotThrown(ImplementationException.class);
         } catch (ImplementationException e) {
-            assertThat(e).hasMessageContaining("Forventet å finne en eller flere RelationTrackers i RelationEntry for level 0");
+            assertThat(e).hasMessageContaining("Forventet Ã¥ finne en eller flere RelationTrackers i RelationEntry for level 0");
         }
     }
 
     /**
-     * Oppretter ny relasjon og materialiserer med et Set som inneholder 2 verdier fra før for level 0. Uthenging for
-     * alle levels skal bruke samme instans av Set. Alle relations[i>0] skal ikke være materialisert.
+     * Oppretter ny relasjon og materialiserer med et Set som inneholder 2 verdier fra fÃ¸r for level 0. Uthenging for
+     * alle levels skal bruke samme instans av Set. Alle relations[i>0] skal ikke vÃ¦re materialisert.
      */
     @SuppressWarnings("unchecked")
     public void materialiseRelationValueNewRelationLevel0() {
@@ -202,9 +202,9 @@ public class RelationCacheTest {
     }
 
     /**
-     * Oppretter ny relasjon og materialiserer med et Set som inneholder 2 verdier fra før. Dette skjer for level 2.
-     * Det at relasjonen blir materialisert for level 2 har ikke noe å si. Matrialisering skjer for level 0.
-     * Uthenging for alle levels skal bruke samme instans av Set. Alle relations[i>0] skal ikke være materialisert.
+     * Oppretter ny relasjon og materialiserer med et Set som inneholder 2 verdier fra fÃ¸r. Dette skjer for level 2.
+     * Det at relasjonen blir materialisert for level 2 har ikke noe Ã¥ si. Matrialisering skjer for level 0.
+     * Uthenging for alle levels skal bruke samme instans av Set. Alle relations[i>0] skal ikke vÃ¦re materialisert.
      */
     @SuppressWarnings("unchecked")
     public void materialiseRelationValueNewRelationLevel2() {
@@ -229,8 +229,8 @@ public class RelationCacheTest {
 
     /**
      * Oppretter ny relasjon og legger inn 'add' verdier for level 0. Materialiserer deretter en relasjon som har en
-     * verdi fra før. Uthenting skal gi alle 3 verdier. Uthenging for alle levels skal bruke samme instans av Set.
-     * Alle relations[i>0] skal ikke være materialisert.
+     * verdi fra fÃ¸r. Uthenting skal gi alle 3 verdier. Uthenging for alle levels skal bruke samme instans av Set.
+     * Alle relations[i>0] skal ikke vÃ¦re materialisert.
      */
     @SuppressWarnings("unchecked")
     public void materialiseRelationForExistingRelationWithChangesLevel0() {
@@ -254,8 +254,8 @@ public class RelationCacheTest {
 
     /**
      * Oppretter ny relasjon og legger inn 'add' verdier for level 0 og 1. Materialiserer deretter en relasjon som har en
-     * verdi fra før for level 2. Uthenting skal gi alle 3 verdier for level 2. Relasjonen på level 2 må
-     * materialiseres siden den materialiserte relasjonen for level 0 er forskjellig pga. operasjoner på level 1.
+     * verdi fra fÃ¸r for level 2. Uthenting skal gi alle 3 verdier for level 2. Relasjonen pÃ¥ level 2 mÃ¥
+     * materialiseres siden den materialiserte relasjonen for level 0 er forskjellig pga. operasjoner pÃ¥ level 1.
      */
     @SuppressWarnings("unchecked")
     public void materialiseRelationForExistingRelationLevelNVariant1() {
@@ -279,8 +279,8 @@ public class RelationCacheTest {
 
     /**
      * Oppretter ny relasjon. Legge inn 'add' verdier for level 0 og 2. Materialiserer deretter en relasjon som har en
-     * verdi fra før for level 2. Uthenting skal gi alle 3 verdier for level 2. Relasjonen på level 2 må
-     * materialiseres siden den materialiserte relasjonen for level 0 er forskjellig pga. operasjoner på level 2.
+     * verdi fra fÃ¸r for level 2. Uthenting skal gi alle 3 verdier for level 2. Relasjonen pÃ¥ level 2 mÃ¥
+     * materialiseres siden den materialiserte relasjonen for level 0 er forskjellig pga. operasjoner pÃ¥ level 2.
      */
     @SuppressWarnings("unchecked")
     public void materialiseRelationForExistingRelationLevelNVariant2() {
@@ -304,8 +304,8 @@ public class RelationCacheTest {
 
     /**
      * Oppretter ny relasjon og legger inn 'add' verdier for level 0 og 2. Materialiserer deretter en relasjon som har en
-     * verdi fra før for level 4. Uthenting skal gi alle 3 verdier for level 4 . Relasjonen på level 4 må
-     * materialiseres siden den materialiserte relasjonen for level 0 er forskjellig pga operasjoner på level 2.
+     * verdi fra fÃ¸r for level 4. Uthenting skal gi alle 3 verdier for level 4 . Relasjonen pÃ¥ level 4 mÃ¥
+     * materialiseres siden den materialiserte relasjonen for level 0 er forskjellig pga operasjoner pÃ¥ level 2.
      */
     @SuppressWarnings("unchecked")
     public void materialiseRelationForExistingRelationLevelNVariant3() {
@@ -329,8 +329,8 @@ public class RelationCacheTest {
 
     /**
      * Oppretter ny relasjon og legger inn 'add' verdier for level 0 og 2. Materialiserer deretter en relasjon som har en
-     * verdi fra før for level 0. Henter deretter ut relasjon for level 2. Legger inn en 'add' operasjon for level 3 og
-     * henter deretter ut for level 4. Da skal level 0, 2, 4 være materialiser.
+     * verdi fra fÃ¸r for level 0. Henter deretter ut relasjon for level 2. Legger inn en 'add' operasjon for level 3 og
+     * henter deretter ut for level 4. Da skal level 0, 2, 4 vÃ¦re materialiser.
      */
     @SuppressWarnings("unchecked")
     public void materialiseRelationForExistingRelationLevelNVariant4() {

@@ -7,10 +7,10 @@ import java.io.PrintWriter;
  *
  * Klassen skal ikke eksponeres ut.
  *
- * Denne blir benyttet for å representere nested exceptions på server uavhenging av hvilke bibliotek exceptions blir kastet ifra.
+ * Denne blir benyttet for Ã¥ representere nested exceptions pÃ¥ server uavhenging av hvilke bibliotek exceptions blir kastet ifra.
  *
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 public class ServerException extends RuntimeException {

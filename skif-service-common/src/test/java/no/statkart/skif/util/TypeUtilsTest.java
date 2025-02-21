@@ -103,7 +103,7 @@ public class TypeUtilsTest {
 
     /**
      * {@code Function<String, String>} x {@code UnaryOperator} = {@code UnaryOperator<String>} fordi typeparameteren
-     * til {@code UnaryOperator} blir bruk til å fylle inn begge typeparameterene til superinterfacet {@code Function}.
+     * til {@code UnaryOperator} blir bruk til Ã¥ fylle inn begge typeparameterene til superinterfacet {@code Function}.
      */
     @Test
     public void getSubtype_lessTypeParameters() throws NoSuchFieldException {
@@ -116,7 +116,7 @@ public class TypeUtilsTest {
     }
 
     /**
-     * {@code BubbleId<?>} x {@code SomeEnumId} = {@code SomeEnumId}. Typeparameteren til {@code BubbleId} blir låst
+     * {@code BubbleId<?>} x {@code SomeEnumId} = {@code SomeEnumId}. Typeparameteren til {@code BubbleId} blir lÃ¥st
      * av {@code SomeEnumId}, som selv ikke har noen typeparametre.
      */
     @Test
@@ -156,7 +156,7 @@ public class TypeUtilsTest {
     }
 
     /**
-     * Inner static kan bruke typeparametre fra ytre klasse, men det er vanskelig å se. Antar at den gjør det.
+     * Inner static kan bruke typeparametre fra ytre klasse, men det er vanskelig Ã¥ se. Antar at den gjÃ¸r det.
      */
     @Test
     public void innerClassOfClassWithTypeParameter_isNotFullyTyped() {
@@ -180,7 +180,7 @@ public class TypeUtilsTest {
     }
 
     /**
-     * Substitutt for PersistentSet/PersistentList, som ikke ligger på classpath.
+     * Substitutt for PersistentSet/PersistentList, som ikke ligger pÃ¥ classpath.
      */
     private static abstract class OldCollectionImpl implements List {
 

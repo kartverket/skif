@@ -6,16 +6,16 @@ import no.statkart.skif.store.persistence.PersistenceSessionSubtypeHandler;
 import java.util.List;
 
 /**
- * Interface for PersistenceSessionSubtypeHandler som håndterer kodelister og koder. Det er nødvendig
- * med et interface fordi rammerverket krever det få å kunne lage dynamisk proxy.
+ * Interface for PersistenceSessionSubtypeHandler som hÃ¥ndterer kodelister og koder. Det er nÃ¸dvendig
+ * med et interface fordi rammerverket krever det fÃ¥ Ã¥ kunne lage dynamisk proxy.
  *
  * @author Henrik Fredholm
  * @since 2.1
  */
 public interface KodelistePersistenceSessionSubtypeHandler extends PersistenceSessionSubtypeHandler {
     /**
-     * Returnerer alle enum og database basert kodelister for gitt snapshot versjon. Sørger for
-     * at alle tilhørende kodelister og koder  er lastet.
+     * Returnerer alle enum og database basert kodelister for gitt snapshot versjon. SÃ¸rger for
+     * at alle tilhÃ¸rende kodelister og koder  er lastet.
      * @return Collection med all kodelisteids
      */
     List<KodelisteId<?>> getKodelisteIds();

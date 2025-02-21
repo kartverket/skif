@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
@@ -9,7 +9,7 @@
         </id>
         <discriminator column="class" type="string"/>
 
-        <!-- Flagg som brukes til å holde styr på hvilke collections i boble som er tomme og som derfor kan initialiseres uten å gå til databasen -->
+        <!-- Flagg som brukes til Ã¥ holde styr pÃ¥ hvilke collections i boble som er tomme og som derfor kan initialiseres uten Ã¥ gÃ¥ til databasen -->
         <property name="emptyCollectionsFlag" access="field">
             <type name="no.statkart.skif.persistence.hibernate.type.EmptyCollectionsOptimizerFlagType">
                 <param name="bit.0">

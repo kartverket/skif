@@ -7,11 +7,11 @@ import no.statkart.skif.service.ejb.EJBResourceProxyHandler;
 /**
  * FactorySpecifikasjon for {@link EJBServiceChainFactoryWithTx}
  * </p>
- * Denne factory anvender følgende proxyies per service:
+ * Denne factory anvender fÃ¸lgende proxyies per service:
  * <ul>
  *     <li>{@code EJBResourceProxyHandler<S>}</li>
  * </ul>
- * Denne factory forventer at følge typer allerede er definert:
+ * Denne factory forventer at fÃ¸lge typer allerede er definert:
  * <ul>
  *     <li>{@code EJBResourceManager}</li>
  * </ul>

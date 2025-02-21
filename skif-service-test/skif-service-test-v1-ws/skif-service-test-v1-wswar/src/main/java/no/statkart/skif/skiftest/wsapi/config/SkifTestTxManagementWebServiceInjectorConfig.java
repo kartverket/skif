@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Konfigurasjon av injector for Web service API. Må kalles fra en ServletContextListener i web.xml.
+ * Konfigurasjon av injector for Web service API. MÃ¥ kalles fra en ServletContextListener i web.xml.
  *
  * @author Henrik Fredholm
  */

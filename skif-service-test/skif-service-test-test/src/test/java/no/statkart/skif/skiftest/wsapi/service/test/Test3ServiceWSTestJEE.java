@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Veldig enkel klienttest som tester håndtering av exceptions fra Test3Service uten bruk av mapping rammeverket.
+ * Veldig enkel klienttest som tester hÃ¥ndtering av exceptions fra Test3Service uten bruk av mapping rammeverket.
  *
  * @author Henrik Fredholm
  * @since 3.1
@@ -108,7 +108,7 @@ public class Test3ServiceWSTestJEE {
                             String contextPath = m.group(1);
                             return "/" + contextPath + "/" + wsClass.getSimpleName();
                         } else {
-                            throw new ConfigurationException("WebService targetnamesspace følger ikke forventet mønster (http://dns-adresse/fast/wsapi/service/...): " + annotation.targetNamespace());
+                            throw new ConfigurationException("WebService targetnamesspace fÃ¸lger ikke forventet mÃ¸nster (http://dns-adresse/fast/wsapi/service/...): " + annotation.targetNamespace());
                         }
                     }
 

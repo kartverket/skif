@@ -33,7 +33,7 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Test kall til Web service virker når det ikke genereres exception.
+     * Test kall til Web service virker nÃ¥r det ikke genereres exception.
      * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og bruker ikke rammeverket
      */
@@ -44,8 +44,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Web service kaster en runtime exception som JAX-WS Web service rammeverket på serveren automatisk gjør om
-     * til en SOAPFaultException. På klienten mappes denne med en IdentityMapper.
+     * Web service kaster en runtime exception som JAX-WS Web service rammeverket pÃ¥ serveren automatisk gjÃ¸r om
+     * til en SOAPFaultException. PÃ¥ klienten mappes denne med en IdentityMapper.
      * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og bruker ikke rammeverket
      */
@@ -61,8 +61,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Web service kaster en checked exception som JAX-WS Web service rammeverket på serveren sender videre uforandret
-     * siden den er annotert med @WebFault. På klienten mappes denne ikke og det produseres en MappingException.
+     * Web service kaster en checked exception som JAX-WS Web service rammeverket pÃ¥ serveren sender videre uforandret
+     * siden den er annotert med @WebFault. PÃ¥ klienten mappes denne ikke og det produseres en MappingException.
      * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og bruker ikke rammeverket
      */
@@ -79,8 +79,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Web service kaster en checked exception som JAX-WS Web service rammeverket på serveren sender videre uforandret
-     * siden den er annotert med @WebFault. På klienten mappes denne til en domene runtime exception med tilsvarende navn.
+     * Web service kaster en checked exception som JAX-WS Web service rammeverket pÃ¥ serveren sender videre uforandret
+     * siden den er annotert med @WebFault. PÃ¥ klienten mappes denne til en domene runtime exception med tilsvarende navn.
      * <p>
      * NB: Kallt Web Service metode er implementert direkte i WSBean klassen og bruker ikke rammeverket
      */
@@ -95,7 +95,7 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * Test kall til skif service virker når det ikke genereres exception
+     * Test kall til skif service virker nÃ¥r det ikke genereres exception
      */
     @Test(groups = "server-required")
     public void testNoExceptionNoTx() throws SimpleException, SimpleNonMappedException {
@@ -104,9 +104,9 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * NoTx service kaster checked exception som ikke kan mappes av server. Mapping rammeverket vil automatisk gjøre
-     * exceptionen om til en SOAPFaultExceptionExceptionen gjøres derfor om på server
-     * til en MappedException som JAX-WS gjør om til en SOAPFaultException.
+     * NoTx service kaster checked exception som ikke kan mappes av server. Mapping rammeverket vil automatisk gjÃ¸re
+     * exceptionen om til en SOAPFaultExceptionExceptionen gjÃ¸res derfor om pÃ¥ server
+     * til en MappedException som JAX-WS gjÃ¸r om til en SOAPFaultException.
      */
     @Test(groups = "server-required")
     public void testThrowNonMappedExceptionNoTxJEE() throws SimpleException, SimpleNonMappedException {
@@ -121,8 +121,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
     }
 
     /**
-     * RequiredTx service kaster checked exception som ikke kan mappes av server. Exceptionen gjøres derfor om på server
-     * til en MappedException som JAX-WS gjør om til en SOAPFaultException.
+     * RequiredTx service kaster checked exception som ikke kan mappes av server. Exceptionen gjÃ¸res derfor om pÃ¥ server
+     * til en MappedException som JAX-WS gjÃ¸r om til en SOAPFaultException.
      */
     @Test(groups = "server-required")
     public void testThrowNonMappedExceptionRequiresTx() throws SimpleException, SimpleNonMappedException {
@@ -139,8 +139,8 @@ public class BasicExceptionMappingTestJEE extends SkifTestCase {
 
 
     /**
-     * NewTx service kaster checked exception som ikke kan mappes av server. Exceptionen gjøres derfor om på server
-     * til en MappedException som JAX-WS gjør om til en SOAPFaultException.
+     * NewTx service kaster checked exception som ikke kan mappes av server. Exceptionen gjÃ¸res derfor om pÃ¥ server
+     * til en MappedException som JAX-WS gjÃ¸r om til en SOAPFaultException.
      */
     @Test(groups = "server-required")
     public void testThrowNonMappedExceptionNewTx() throws SimpleException, SimpleNonMappedException {

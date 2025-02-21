@@ -24,7 +24,7 @@ import static org.testng.Assert.assertTrue;
 
 /**
  * Tester InverseRelation materialisering fra server til klient. Bobler som inneholder materialiserte relasjoner
- * får deres relasjoner lagt inn i cachen når de registreres i klienten.
+ * fÃ¥r deres relasjoner lagt inn i cachen nÃ¥r de registreres i klienten.
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -39,7 +39,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
     /**
-     * Alle testcaser bruke samme StoreClient instans. Dette sikre at cachet state i klient blir evicted på tvers av
+     * Alle testcaser bruke samme StoreClient instans. Dette sikre at cachet state i klient blir evicted pÃ¥ tvers av
      * tester
      */
     @BeforeMethod
@@ -54,7 +54,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     }
 
     /**
-     * Hjelpestruktur som angir operasjoner som server skal gjøre på invers relasjon før boble sende til klient
+     * Hjelpestruktur som angir operasjoner som server skal gjÃ¸re pÃ¥ invers relasjon fÃ¸r boble sende til klient
      */
     private enum Action {
         LOAD, REQUEST
@@ -100,7 +100,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
             b1.getInvSomeBBIds().get();
             failBecauseExceptionWasNotThrown(IllegalStateException.class);
         } catch (IllegalStateException e) {
-            // Relasjonen var ikke cachet og kopiobjekt har ikke store så det går ikke an å hente relasjon
+            // Relasjonen var ikke cachet og kopiobjekt har ikke store sÃ¥ det gÃ¥r ikke an Ã¥ hente relasjon
         }
 
         // Registrer objekt i store slik at relasjon kan hentes
@@ -112,7 +112,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     }
 
     /**
-     * Tester at materialiserte relasjoner ikke sendes til klient når requested ikke er satt
+     * Tester at materialiserte relasjoner ikke sendes til klient nÃ¥r requested ikke er satt
      */
     public void testSerializationMaterialisedUnrequestedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -127,7 +127,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
             b1.getInvSomeBBIds().get();
             failBecauseExceptionWasNotThrown(IllegalStateException.class);
         } catch (IllegalStateException e) {
-            // Relasjonen var ikke cachet og kopiobjekt har ikke store så det går ikke an å hente relasjon
+            // Relasjonen var ikke cachet og kopiobjekt har ikke store sÃ¥ det gÃ¥r ikke an Ã¥ hente relasjon
         }
 
         // Registrer objekt i store slik at relasjon kan materialiseres
@@ -140,7 +140,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
 
 
     /**
-     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt
+     * Tester at umaterialiserte relasjoner sendes til klient nÃ¥r requested er satt
      */
     public void testSerializationUnmaterialisedRequestedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -154,8 +154,8 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
 
         // Registrer b1 i Store. Siden det ikke er gjort endringer blir resultatet det samme
         register(b1);
-        assertFalse(b1.getInvSomeBBIds().isMaterialised(), "Forventet isMaterialised returnerer false etter registerering i Store på klient");
-        assertFalse(b1.getInvSomeBBIds().isRequested(), "Forventet isRequested returnerer false etter registerering i Store på klient");
+        assertFalse(b1.getInvSomeBBIds().isMaterialised(), "Forventet isMaterialised returnerer false etter registerering i Store pÃ¥ klient");
+        assertFalse(b1.getInvSomeBBIds().isRequested(), "Forventet isRequested returnerer false etter registerering i Store pÃ¥ klient");
         assertThat(b1.getInvSomeBBIds().get()).isEmpty();
 
         X2BBOne b3 = getBBOneWithRelationMaterialized(X2BBOneMockupFactory.getB3Id(), Action.REQUEST);
@@ -163,9 +163,9 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     }
 
     /**
-     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt. Operasjonsrekkefølge som
-     * testes på server er LOAD først, så REQUEST . Tester også at materialiserte relasjoner blir
-     * automatisk blir registrert i RelationCache på klienten ved store.register().
+     * Tester at umaterialiserte relasjoner sendes til klient nÃ¥r requested er satt. OperasjonsrekkefÃ¸lge som
+     * testes pÃ¥ server er LOAD fÃ¸rst, sÃ¥ REQUEST . Tester ogsÃ¥ at materialiserte relasjoner blir
+     * automatisk blir registrert i RelationCache pÃ¥ klienten ved store.register().
      */
     public void testSerializationMaterialisedRequestedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -189,9 +189,9 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     }
 
     /**
-     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt. Operasjonsrekkefølge som
-     * testes på server er REQUEST først, så LOAD . Tester også at materialiserte relasjoner
-     * automatisk blir registrert i RelationCache på klienten ved store.register().
+     * Tester at umaterialiserte relasjoner sendes til klient nÃ¥r requested er satt. OperasjonsrekkefÃ¸lge som
+     * testes pÃ¥ server er REQUEST fÃ¸rst, sÃ¥ LOAD . Tester ogsÃ¥ at materialiserte relasjoner
+     * automatisk blir registrert i RelationCache pÃ¥ klienten ved store.register().
      */
     public void testSerializationRequestedMaterialisedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -210,8 +210,8 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     }
 
     /**
-     * Tester at materialiserte relasjoner som hentes via objekt legges inn i relasjonscachen når objektet
-     * ikke er lastet fra før i klienten.
+     * Tester at materialiserte relasjoner som hentes via objekt legges inn i relasjonscachen nÃ¥r objektet
+     * ikke er lastet fra fÃ¸r i klienten.
      */
     public void testRegistrerObjectMedMateralisertRelasjonNaarObjektIkkeErLastetIStore() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -228,8 +228,8 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
     }
 
     /**
-     * Tester at materialiserte relasjoner som hentes via objekt legges inn i relasjonscachen når objektet
-     * er lastet fra før av klienten, men ikke låst.
+     * Tester at materialiserte relasjoner som hentes via objekt legges inn i relasjonscachen nÃ¥r objektet
+     * er lastet fra fÃ¸r av klienten, men ikke lÃ¥st.
      */
     public void testRegistrerObjectMedMateralisertRelasjonObjektAlleredeErLastetIStore() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -252,7 +252,7 @@ public class InverseRelationWithEntityComponentsMixedServerTest extends StoreTes
 
     /**
      * Tester at objekt med materialiserte relasjoner som hentes via utenom om Store og deretter registreres ikke
-     * legges inn i Store når det allrede finnes en annen instans som er låst. Relasjonscachen oppdateres heller ikke.
+     * legges inn i Store nÃ¥r det allrede finnes en annen instans som er lÃ¥st. Relasjonscachen oppdateres heller ikke.
      */
     public void testRegistrerObjectMedMateralisertRelasjonNaarLockedVersonPaaKlient() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();

@@ -20,8 +20,8 @@ public class OracleUtils {
     private static final Logger logger = LoggerFactory.getLogger(OracleUtils.class);
 
     /**
-     * Henter ut OracleConnection fra en JDBC Connection. Sjekker på om JDBC connection er fra
-     * Weblogic connection pool (weblogic.jdbc.wrapper.JTSConnection) og henter i så fall ut
+     * Henter ut OracleConnection fra en JDBC Connection. Sjekker pÃ¥ om JDBC connection er fra
+     * Weblogic connection pool (weblogic.jdbc.wrapper.JTSConnection) og henter i sÃ¥ fall ut
      * underliggende connection, ellers castes JDBC connection til OracleConnection.
      *
      * @param con en JDBC connection som er eller inneholder en OracleConnection
@@ -32,8 +32,8 @@ public class OracleUtils {
         if (con instanceof ConnectionForSnapshotVersion) {
             ConnectionForSnapshotVersion connectionForSnapshotVersion = ConnectionForSnapshotVersion.class.cast(con);
             con = connectionForSnapshotVersion.reserve();
-            // TODO: Dette er ikke så pent å låse opp før vi bruker connection.
-            //  I teorien kan vi komme til endre den før vi bruker den. Men det går sikkert bra.
+            // TODO: Dette er ikke sÃ¥ pent Ã¥ lÃ¥se opp fÃ¸r vi bruker connection.
+            //  I teorien kan vi komme til endre den fÃ¸r vi bruker den. Men det gÃ¥r sikkert bra.
             //  Burde vurdere annet design som koden som bruker dette.
             connectionForSnapshotVersion.release();
         }

@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Guice Provider implementasjon for å opprette en JAX-WS klient for en gitt porttype {@code <T>}. Provideren anvender en
+ * Guice Provider implementasjon for Ã¥ opprette en JAX-WS klient for en gitt porttype {@code <T>}. Provideren anvender en
  * JaxWS builder klasse som automatisk avleder Web service endpoint klasse og Web service context path fra porttype klassen.
  *
  */

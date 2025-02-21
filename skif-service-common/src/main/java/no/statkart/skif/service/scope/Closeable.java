@@ -1,9 +1,9 @@
 package no.statkart.skif.service.scope;
 
 /**
- * Lifecycle interface som kalles på objekter som implementerer det når ServiceRequestScope afsluttes. Kan brukes ifm
- * automatisk lukking av ressurser når scope forlates.
- * TODO: Finne en bedre løsning
+ * Lifecycle interface som kalles pÃ¥ objekter som implementerer det nÃ¥r ServiceRequestScope afsluttes. Kan brukes ifm
+ * automatisk lukking av ressurser nÃ¥r scope forlates.
+ * TODO: Finne en bedre lÃ¸sning
  * @author Henrik Fredholm
  * since 2.0
  */

@@ -33,8 +33,8 @@ public class ModuleBuilderTest {
     private SystemConfiguration systemConfiguration;
 
     /**
-     * Setter opp en klon av SystemConfiguration. Må bruke en klon slik at endringer gjort på system configuration
-     * i en test ikke påvirket andre tester.
+     * Setter opp en klon av SystemConfiguration. MÃ¥ bruke en klon slik at endringer gjort pÃ¥ system configuration
+     * i en test ikke pÃ¥virket andre tester.
      */
     @BeforeMethod
     public void setupSystemConfigurationClone() {
@@ -119,7 +119,7 @@ public class ModuleBuilderTest {
         assertEquals(config.getString("key2"), "value2");
         assertEquals(config2.getString("key2"), "value2");
 
-        // Nye Properties blir tilgjengelig på tvers av moduler
+        // Nye Properties blir tilgjengelig pÃ¥ tvers av moduler
         config.setProperty("key2", "value2-changed");
         assertEquals(config2.getString("key2"), "value2-changed");
     }
@@ -145,16 +145,16 @@ public class ModuleBuilderTest {
         assertEquals(config.getString("key1"), "system-value1");
         assertEquals(config2.getString("key1"), "system-value1");
 
-        // Nye Properties blir tilgjengelig på tvers av moduler og endre ikke på opprinnelig system properties
+        // Nye Properties blir tilgjengelig pÃ¥ tvers av moduler og endre ikke pÃ¥ opprinnelig system properties
         config.setProperty("key2", "value2-changed");
         assertEquals(config2.getString("key2"), "value2-changed");
         assertEquals(systemConfiguration.getString("key2"), "system-value2");
 
-        // Nye moduler dele forsatt configurasjon med tidligere moduler så lenge ny configuration ikke er satt
+        // Nye moduler dele forsatt configurasjon med tidligere moduler sÃ¥ lenge ny configuration ikke er satt
         final Configuration config3 = builder.buildInjector().getInstance(Configuration.class);
         assertEquals(config3.getString("key2"), "value2-changed");
 
-        // Sett ny configurasjon på builder. Module vil da ikke dele properties med forrige moduler
+        // Sett ny configurasjon pÃ¥ builder. Module vil da ikke dele properties med forrige moduler
         builder.setConfiguration(null);
         final Configuration config4 = builder.buildInjector().getInstance(Configuration.class);
         assertEquals(config4.getString("key2"), "system-value2");
@@ -227,7 +227,7 @@ public class ModuleBuilderTest {
         builder.setSingleVmServerModuleClass(TestServerModule.class);
         builder.setServiceMode(ServiceMode.SINGLE_VM);
         Injector injector1 = builder.buildInjector();
-        // Setter ny konfigurasjon. Skal føre til at builderen lager egen server modul
+        // Setter ny konfigurasjon. Skal fÃ¸re til at builderen lager egen server modul
         builder.setSingleVmServerConfiguration(null);
         Injector injector2 = builder.buildInjector();
 

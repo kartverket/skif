@@ -57,12 +57,12 @@ public class InstantTypeMapper<WsapiT> extends AbstractWrappedDateTypeMapper<Wsa
             xmlGregorianCalendar.getSecond(),
             nanos);
 
-        //justert på evt sommertid/vintertid
+        //justert pÃ¥ evt sommertid/vintertid
         return localDateTime.atZone(zoneId).toInstant();
     }
 
     /**
-     * Validerer at alle nødvendig felter er angitt. Kun tidssone og delsekund er valgfrie.
+     * Validerer at alle nÃ¸dvendig felter er angitt. Kun tidssone og delsekund er valgfrie.
      */
     private static void validate(XMLGregorianCalendar timestamp) {
         List<String> errorMsgs = new ArrayList<>(0);

@@ -4,7 +4,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.SnapshotVersion;
 
 /**
- * Interface for Id klassen hørende til {@link Kodeliste}.
+ * Interface for Id klassen hÃ¸rende til {@link Kodeliste}.
  *
  * @author Henrik Fredholm
  * @since 2.1

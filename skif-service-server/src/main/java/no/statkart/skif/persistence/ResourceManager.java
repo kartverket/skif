@@ -5,20 +5,20 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 /**
- * Et interface for håndtering av ressourser som implementerer interfacet {@link Resource} og som gjør det mulig
- * å hent ut en ressurs basert på interface som ressoursen implementerer. Ved registrering angis alle
+ * Et interface for hÃ¥ndtering av ressourser som implementerer interfacet {@link Resource} og som gjÃ¸r det mulig
+ * Ã¥ hent ut en ressurs basert pÃ¥ interface som ressoursen implementerer. Ved registrering angis alle
  * klassenavne for interfacer som skal mappe til ressoursen. Dersom flere ressourser skal mappes til
- * samme interface må mappingen av interfacet beskrives via en nøkkel {@link Key} som inneholder en string i tillegg
- * til interfacet slik at det blir unikt. Det er også mulig å mapper superklasser for en ressurs.
+ * samme interface mÃ¥ mappingen av interfacet beskrives via en nÃ¸kkel {@link Key} som inneholder en string i tillegg
+ * til interfacet slik at det blir unikt. Det er ogsÃ¥ mulig Ã¥ mapper superklasser for en ressurs.
  * <p/>
- * En viktig egenskap ved en {@code ResourceManager} kan være å være lazy slik at ressurser ikke opprettes før
- * de etterspørs og at den kan lukke alle ressurser som har vært i bruk. Den må kunne vite om en ressurs skal inngå
- * i en transaksjon og må kunne skjelne mellom transaksjonelle og ikke transaksjonelle ressurser slik at
- * kun startes transaksjoner på ressurser som støtter det. Videre skal den ikke starte en transaksjon på en ressurs
- * før den blir etterspurt.
+ * En viktig egenskap ved en {@code ResourceManager} kan vÃ¦re Ã¥ vÃ¦re lazy slik at ressurser ikke opprettes fÃ¸r
+ * de etterspÃ¸rs og at den kan lukke alle ressurser som har vÃ¦rt i bruk. Den mÃ¥ kunne vite om en ressurs skal inngÃ¥
+ * i en transaksjon og mÃ¥ kunne skjelne mellom transaksjonelle og ikke transaksjonelle ressurser slik at
+ * kun startes transaksjoner pÃ¥ ressurser som stÃ¸tter det. Videre skal den ikke starte en transaksjon pÃ¥ en ressurs
+ * fÃ¸r den blir etterspurt.
  * <p/>
- * Før {@code ResourceManager} kan gi ut ressurser må {@link #start} være kallt. Det er for å sikre at ressurser som blir hentet
- * ut (f.eks via dependency injection) vil skje i scope av en kodeblock som også vil sikre at {@link #close} vil bli
+ * FÃ¸r {@code ResourceManager} kan gi ut ressurser mÃ¥ {@link #start} vÃ¦re kallt. Det er for Ã¥ sikre at ressurser som blir hentet
+ * ut (f.eks via dependency injection) vil skje i scope av en kodeblock som ogsÃ¥ vil sikre at {@link #close} vil bli
  * kaldt for ressoursen.
  *
  * @author Henrik Fredholm
@@ -60,7 +60,7 @@ public interface ResourceManager {
         final Resource implementation;
 
         /**
-         * Angir om denne resources har fått startet sin transaksjon
+         * Angir om denne resources har fÃ¥tt startet sin transaksjon
          */
         boolean transactionStarted;
 
@@ -114,24 +114,24 @@ public interface ResourceManager {
     void beginTransaction();
 
     /**
-     * Utfører flush på alle transaksjonelle ressourser som har blitt hentet ut
+     * UtfÃ¸rer flush pÃ¥ alle transaksjonelle ressourser som har blitt hentet ut
      */
     void flush();
 
     /**
-     * Utfører commit på alle transaksjonelle ressourser som har blitt hentet ut
+     * UtfÃ¸rer commit pÃ¥ alle transaksjonelle ressourser som har blitt hentet ut
      */
     void commit();
 
     /**
-     * Utfører rollback på alle transaksjonelle ressourser som har blitt hentet ut
+     * UtfÃ¸rer rollback pÃ¥ alle transaksjonelle ressourser som har blitt hentet ut
      */
     void rollback();
 
     /**
      * Lukker alle resourser som har blitt hentet ut.
      * <p/>
-     * TODO: Vurdere om denne metode også skal kalles i JEE mode,
+     * TODO: Vurdere om denne metode ogsÃ¥ skal kalles i JEE mode,
      */
     void close();
 

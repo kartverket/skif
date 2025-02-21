@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Finder for HistWithRelation.
  *
- * I utgangspunktet skrevet for å teste ut QueryGenerator (slettet) og PreparedStatementExecutor.
+ * I utgangspunktet skrevet for Ã¥ teste ut QueryGenerator (slettet) og PreparedStatementExecutor.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

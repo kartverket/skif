@@ -7,19 +7,19 @@ import java.sql.Date;
 import java.util.Collection;
 
 /**
- * En hjelpeklasse for å opprette Oracle ARRAYs fra Collections.
+ * En hjelpeklasse for Ã¥ opprette Oracle ARRAYs fra Collections.
  *
- * <p>For å kunne bruke henholdsvis Number, Date og String arrays i spørringer må Oracle skjemaet inneholde følgende definisjoner:
+ * <p>For Ã¥ kunne bruke henholdsvis Number, Date og String arrays i spÃ¸rringer mÃ¥ Oracle skjemaet inneholde fÃ¸lgende definisjoner:
  * <pre>
  *    CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER;
  *    CREATE TYPE DATE_LIST_TYPE AS TABLE OF DATE;
  *    CREATE TYPE STRING_LIST_TYPE AS TABLE OF VARCHAR(255);
  * </pre>
  *
- * Om du får ORA-01031 "insufficient privileges" så må du gi brukaren din "CREATE TYPE" system privilegiet på Oracle-skjemaet du brukar
+ * Om du fÃ¥r ORA-01031 "insufficient privileges" sÃ¥ mÃ¥ du gi brukaren din "CREATE TYPE" system privilegiet pÃ¥ Oracle-skjemaet du brukar
  * Ref. http://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_8001.htm.
  *
- * <p>Eksempel på bruk:
+ * <p>Eksempel pÃ¥ bruk:
  * <pre>
  *    Collection<Long> eierIds = List.of(1234L);
  *    Connection connection = OracleUtils.getOracleConnection(session.connection());

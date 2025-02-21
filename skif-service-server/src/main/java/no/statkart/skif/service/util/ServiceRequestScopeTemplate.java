@@ -9,8 +9,8 @@ import java.security.Principal;
 import java.util.concurrent.Callable;
 
 /**
- * Utfører gitt kode i et service request scope. På den måten kan man kalle inn til en SKIF-EJB fra vanlig JEE-kode.
- * Denne klassen bør ikke brukes dersom man ikke vet at man befinner seg utenfor SKIF. Den er heller ikke laget for
+ * UtfÃ¸rer gitt kode i et service request scope. PÃ¥ den mÃ¥ten kan man kalle inn til en SKIF-EJB fra vanlig JEE-kode.
+ * Denne klassen bÃ¸r ikke brukes dersom man ikke vet at man befinner seg utenfor SKIF. Den er heller ikke laget for
  * single-vm.
  */
 @SuppressWarnings("UnusedDeclaration")
@@ -48,7 +48,7 @@ public class ServiceRequestScopeTemplate {
 
     private ServiceRequestContext createServiceRequestContext(Principal principal) {
         // CallId settes til 0 fordi dette i seg selv ikke er et call context egentlig.
-        // Dette kan brukes til å skille denne klassene fra SkifWSInterceptor, siden den fyller inn en callId.
+        // Dette kan brukes til Ã¥ skille denne klassene fra SkifWSInterceptor, siden den fyller inn en callId.
         //noinspection UnnecessaryLocalVariable
         ServiceRequestContext serviceRequestContext = new ServiceRequestContext(
                 principal,

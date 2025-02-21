@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * En streng som kan være lokalisert på et vilkårlig antall språk.
+ * En streng som kan vÃ¦re lokalisert pÃ¥ et vilkÃ¥rlig antall sprÃ¥k.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
@@ -26,13 +26,13 @@ public class LocalizedString implements Serializable {
     }
 
     /**
-     * Finner faktisk locale for teksten for denne locale. Dette vil si en locale som har verdi, og som er nærmeste
+     * Finner faktisk locale for teksten for denne locale. Dette vil si en locale som har verdi, og som er nÃ¦rmeste
      * fallback locale for gitt locale.
      *
-     * @param locale locale søket skal starte med
-     * @return locale som faktisk har definert verdi for dette feltet (kan være <code>null</code> dersom ingen verdier er definert)
+     * @param locale locale sÃ¸ket skal starte med
+     * @return locale som faktisk har definert verdi for dette feltet (kan vÃ¦re <code>null</code> dersom ingen verdier er definert)
      */
-    // LocaleFallbackTest tester denne funksjonaliteten direkte, altså ikke via denne metoden
+    // LocaleFallbackTest tester denne funksjonaliteten direkte, altsÃ¥ ikke via denne metoden
     public Locale getLocale(Locale locale) {
         while (locale != null && !locale.equals(Locale.ROOT)) {
             boolean funnet = localizations.containsKey(locale);
@@ -48,7 +48,7 @@ public class LocalizedString implements Serializable {
     }
 
     /**
-     * Henter ut lokalisert tekst for gitt locale. Dersom det ikke finnes noen tekst for gitt locale, vil metoden søke
+     * Henter ut lokalisert tekst for gitt locale. Dersom det ikke finnes noen tekst for gitt locale, vil metoden sÃ¸ke
      * opp fallback locale rekursivt.
      *
      * @param locale locale det skal hentes tekst for

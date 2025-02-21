@@ -11,7 +11,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Bindingannotasjon for å markere at bindingen peker fra service-interface til EJB.
+ * Bindingannotasjon for Ã¥ markere at bindingen peker fra service-interface til EJB.
  */
 @BindingAnnotation
 @Target({FIELD, PARAMETER, METHOD})

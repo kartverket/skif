@@ -7,7 +7,7 @@ import java.util.Objects;
 
 
 /**
- * Eksempel på et ValueObject. Bemerk at dette objekt er immutable.
+ * Eksempel pÃ¥ et ValueObject. Bemerk at dette objekt er immutable.
  *
  * @author Henrik Fredholm
  * @since 2.3

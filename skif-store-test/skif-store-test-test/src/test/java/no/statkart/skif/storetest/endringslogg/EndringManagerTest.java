@@ -94,7 +94,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         Simple simple2 = mockupFacade.getStore().get(simpleMockupFactory.getSimpleId2());
         BubbleWithRelation bubbleWithRelation1 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId1());
 
-        // Komponerer transfer manuelt slik at rekkefølgen er kjent
+        // Komponerer transfer manuelt slik at rekkefÃ¸lgen er kjent
         MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(bubbleWithRelation1, simple1, simple2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
 
@@ -132,7 +132,7 @@ public class EndringManagerTest extends StoreTestTestCase {
 
             bubbleWithRelation1.setSimpleId(simpleX.getId());
 
-            // TODO: Det burde kanskje være mulig å bare sende en vanlig UnitOfWorkTransfer til TestdataService. Det er slik i matrikkelen.
+            // TODO: Det burde kanskje vÃ¦re mulig Ã¥ bare sende en vanlig UnitOfWorkTransfer til TestdataService. Det er slik i matrikkelen.
             MockupTransfer transfer = new MockupTransfer(Arrays.asList(simpleX), Arrays.asList(bubbleWithRelation1), Arrays.asList(simple2), mockupFacade.getTestNumber());
             testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transfer);
             store.endUnitsOfWork(unitOfWork);
@@ -159,7 +159,7 @@ public class EndringManagerTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester at endringer lages for supertype dersom subtypen ikke har egen endringstype. Tester også at
+     * Tester at endringer lages for supertype dersom subtypen ikke har egen endringstype. Tester ogsÃ¥ at
      * endringer kan hentes ut via subtype
      *
      * @since 2.3.0
@@ -192,7 +192,7 @@ public class EndringManagerTest extends StoreTestTestCase {
 
 
     /**
-     * Tester uthenting av id-er gitt bobletype. Tester også at det ikke er mulig å hente ut id-er for supertype av
+     * Tester uthenting av id-er gitt bobletype. Tester ogsÃ¥ at det ikke er mulig Ã¥ hente ut id-er for supertype av
      * basisklassene (f.eks StoreTestBubble).
      *
      * @since 2.4
@@ -210,7 +210,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         BubbleWithRelation bubbleWithRelation1 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId1());
         BubbleWithRelation bubbleWithRelation2 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId2());
 
-        // Komponerer transfer manuelt slik at rekkefølgen er kjent
+        // Komponerer transfer manuelt slik at rekkefÃ¸lgen er kjent
         MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(simple1, simple2, simple3, bubbleWithRelation1, bubbleWithRelation2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
         Endringer<?,?> endringer = endringsloggService.findEndringer(endringIdFoer,StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
@@ -246,7 +246,7 @@ public class EndringManagerTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester beregning av kontroll for gitt boble klasse. Tester også at det ikke er mulig å bruke supertype
+     * Tester beregning av kontroll for gitt boble klasse. Tester ogsÃ¥ at det ikke er mulig Ã¥ bruke supertype
      * av boble basisklassene (f.eks StoreTestBubble).
      */
     public void testKontrollForRange() {
@@ -262,7 +262,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         BubbleWithRelation bubbleWithRelation1 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId1());
         BubbleWithRelation bubbleWithRelation2 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId2());
 
-        // Komponerer transfer manuelt slik at rekkefølgen er kjent
+        // Komponerer transfer manuelt slik at rekkefÃ¸lgen er kjent
         MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(simple1, simple2, simple3, bubbleWithRelation1, bubbleWithRelation2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
         Endringer<?,?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);
@@ -285,7 +285,7 @@ public class EndringManagerTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester beregning av kontroll for gitt boble klasse. Tester også at det ikke er mulig å bruke supertype
+     * Tester beregning av kontroll for gitt boble klasse. Tester ogsÃ¥ at det ikke er mulig Ã¥ bruke supertype
      * av boble basisklassene (f.eks StoreTestBubble).
      */
     public void testKontrollForList() {
@@ -301,7 +301,7 @@ public class EndringManagerTest extends StoreTestTestCase {
         BubbleWithRelation bubbleWithRelation1 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId1());
         BubbleWithRelation bubbleWithRelation2 = mockupFacade.getStore().get(bubbleWithRelationMockupFactory.getBubbleWithRelationId2());
 
-        // Komponerer transfer manuelt slik at rekkefølgen er kjent
+        // Komponerer transfer manuelt slik at rekkefÃ¸lgen er kjent
         MockupTransfer transferForIds = new MockupTransfer(Arrays.asList(simple1, simple2, simple3, bubbleWithRelation1, bubbleWithRelation2), Collections.<BubbleObject>emptyList(), Collections.<BubbleObject>emptyList(), mockupFacade.getTestNumber());
         testdataService.saveSnapshotTransfer(SnapshotVersion.CURRENT, transferForIds);
         Endringer<?,?> endringer = endringsloggService.findEndringer(endringIdFoer, StoreTestBubble.class, null, ReturnerBobler.Aldri, 10);

@@ -43,13 +43,13 @@ import java.util.zip.ZipInputStream;
 
 /**
  * Builder som opprette en Hibernate SessionFactory som er forberedt for bruk av SnapshotVersion seeds slik at
- * det er mulig å støtte database skjemaer med historikk. Denne factory brukes også for skjemaer som ikke støtter
+ * det er mulig Ã¥ stÃ¸tte database skjemaer med historikk. Denne factory brukes ogsÃ¥ for skjemaer som ikke stÃ¸tter
  * historikk.
  * <p/>
- * Builderen initialiseres opp med de tabeller/klasse som hiberate skal jobbe med og har støtte for å definere sletterekkefølge
- * for bobler. For å opprette en factory kalles {@link #build}.
- * Ved å endre på properties mellom hver kall til build er det mulig å opprette factories (og hibernate sessions) som går mot
- * forskjellige data sources slik at konseptet om OLD og CURRENT session støttes.
+ * Builderen initialiseres opp med de tabeller/klasse som hiberate skal jobbe med og har stÃ¸tte for Ã¥ definere sletterekkefÃ¸lge
+ * for bobler. For Ã¥ opprette en factory kalles {@link #build}.
+ * Ved Ã¥ endre pÃ¥ properties mellom hver kall til build er det mulig Ã¥ opprette factories (og hibernate sessions) som gÃ¥r mot
+ * forskjellige data sources slik at konseptet om OLD og CURRENT session stÃ¸ttes.
  *
  * @author Henrik Fredholm
  */
@@ -91,8 +91,8 @@ public class HibernateSessionFactoryBuilder {
     }
 
     /**
-     * Registrerer all bobler inn i Hibernate. Dersom hbm-filene for noen av boblene ikke kan finnes automatisk, så må
-     * man registrere disse boblene med {@link #addResourceUsingAbsolutePath(Class, String)} først.
+     * Registrerer all bobler inn i Hibernate. Dersom hbm-filene for noen av boblene ikke kan finnes automatisk, sÃ¥ mÃ¥
+     * man registrere disse boblene med {@link #addResourceUsingAbsolutePath(Class, String)} fÃ¸rst.
      */
     public HibernateSessionFactoryBuilder addBubbleModel(BubbleModelConfiguration bubbleModelConfiguration) {
         for (Class<?> clazz : bubbleModelConfiguration.getBaseClasses()) {
@@ -104,7 +104,7 @@ public class HibernateSessionFactoryBuilder {
     /**
      * Registerer en entitetsklasse i Hibernate. Hbm-fil forutsettes at kan finnes automatisk.
      * <p/>
-     * <strong>Denne bør ikke benyttes for bobler!</strong>
+     * <strong>Denne bÃ¸r ikke benyttes for bobler!</strong>
      *
      * @param clazz entitetsklassen
      */
@@ -121,7 +121,7 @@ public class HibernateSessionFactoryBuilder {
     /**
      * Registrerer en entitsklasse i Hibernate. Hbm-fil angis eksplisitt.
      * <p/>
-     * <strong>Denne bør ikke benyttes for bobler!</strong>
+     * <strong>Denne bÃ¸r ikke benyttes for bobler!</strong>
      *
      * @param clazz       entitetsklassen
      * @param hbmFilename sti til hbm-fil
@@ -149,10 +149,10 @@ public class HibernateSessionFactoryBuilder {
     }
 
     /**
-     * Oppretter en Hibernate SessionFactory som anvender det spesifiserte snapshotVersionSeed til å sette
-     * SnapshotVersion felte på BubbleIds som blir lest inn fra database av hibernate. Hvilken datasource eller
+     * Oppretter en Hibernate SessionFactory som anvender det spesifiserte snapshotVersionSeed til Ã¥ sette
+     * SnapshotVersion felte pÃ¥ BubbleIds som blir lest inn fra database av hibernate. Hvilken datasource eller
      * JDBC connection som hibernate SessionFactory som blir opprettet vil bruke som styres av verdiene i
-     * {@code hibernateProperties} på standard vis for hva som gjelder for hibernate.
+     * {@code hibernateProperties} pÃ¥ standard vis for hva som gjelder for hibernate.
      *
      * Viktige properties ved jdbc connection er:
      * <ul>
@@ -169,27 +169,27 @@ public class HibernateSessionFactoryBuilder {
      * </ul>
      */
     public SessionFactory build(SnapshotVersionSeed snapshotVersionSeed, Properties properties, @Nullable Interceptor interceptor) {
-        // Disse properties må alltid settes så det gjøres her så vi er sikre på at de blir med.
+        // Disse properties mÃ¥ alltid settes sÃ¥ det gjÃ¸res her sÃ¥ vi er sikre pÃ¥ at de blir med.
         properties.setProperty("hibernate.native_exception_handling_51_compliance", "true");
-        // For at historikk skal virke må vi sørge for at sessionen holder på connection inntil sessionen lukkes. Dette
-        // fordi vi setter tidspunktet for historisk spørringen på connection og forventer at connection holdes i live
-        // og at tidspunktet forblir satt på database sessionen til vi endre tidspunktet igjen. Hvis connection lukkes
-        // av hibernate og det opprettes en ny connection bak om rykken på SKIF vil SKIF ikke finne riktig objekt for
-        // historiske spørringer. Setter derfor settes connection handling mode til "DELAYED_ACQUISITION_AND_HOLD"
-        // som sikre at connection ikke lukkes før sessionn. Se kommentar i https://jira.statkart.no/browse/SKIF-699
+        // For at historikk skal virke mÃ¥ vi sÃ¸rge for at sessionen holder pÃ¥ connection inntil sessionen lukkes. Dette
+        // fordi vi setter tidspunktet for historisk spÃ¸rringen pÃ¥ connection og forventer at connection holdes i live
+        // og at tidspunktet forblir satt pÃ¥ database sessionen til vi endre tidspunktet igjen. Hvis connection lukkes
+        // av hibernate og det opprettes en ny connection bak om rykken pÃ¥ SKIF vil SKIF ikke finne riktig objekt for
+        // historiske spÃ¸rringer. Setter derfor settes connection handling mode til "DELAYED_ACQUISITION_AND_HOLD"
+        // som sikre at connection ikke lukkes fÃ¸r sessionn. Se kommentar i https://jira.statkart.no/browse/SKIF-699
         properties.setProperty(AvailableSettings.CONNECTION_HANDLING, "DELAYED_ACQUISITION_AND_HOLD");
         properties.put("no.statkart.skif.SnapshotVersionSeed", snapshotVersionSeed);
         logger.info("SKIF hibernatekonfigurasjon({}): {}", org.hibernate.Version.getVersionString(), getAndConnectionInfo(snapshotVersionSeed, properties));
         logger.debug("creating session factory");
 
         // Konfigurerer Hibernate listeners for raskere initialisering av tomme collections. Listeners er aktive
-        // for load og utvalgte update events. Klassen EmptyCollectionsOptimizer anvendes kun på bobler som har
-        // angitt empty collections flagget i mapping filen. Den eneste måte å slå av denne feature er at
-        // fjerne flagget fra mapping filen. Hvis flagget reintroduseres bør flagges settes til 0. Dette garanterer
-        // at alle endringer på collections som gjøres via Hibernate holder flagget oppdatert (da featuren ikke kan
-        // slås av). Hvis collections endres utenom Hibernate må flagget nullstilles samtidig. Neste oppdatering
+        // for load og utvalgte update events. Klassen EmptyCollectionsOptimizer anvendes kun pÃ¥ bobler som har
+        // angitt empty collections flagget i mapping filen. Den eneste mÃ¥te Ã¥ slÃ¥ av denne feature er at
+        // fjerne flagget fra mapping filen. Hvis flagget reintroduseres bÃ¸r flagges settes til 0. Dette garanterer
+        // at alle endringer pÃ¥ collections som gjÃ¸res via Hibernate holder flagget oppdatert (da featuren ikke kan
+        // slÃ¥s av). Hvis collections endres utenom Hibernate mÃ¥ flagget nullstilles samtidig. Neste oppdatering
         // av boblen via Hibernate vil automatisk gjenberegne flagget uavhengig av om collections har endret seg.
-        // Bemerk at Hibernate eventtypene som anvendes her alene ikke er nok til å holde flagget oppdatert for
+        // Bemerk at Hibernate eventtypene som anvendes her alene ikke er nok til Ã¥ holde flagget oppdatert for
         // alle tilfeller. Se bruken av EmptyCollectionsFlagUpdater i HibernatePersistenceSessionMasterImpl.
         BootstrapServiceRegistry bootstrapRegistry = new BootstrapServiceRegistryBuilder()
                 .applyIntegrator(new EmptyCollectionOptimizerIntegrator())
@@ -211,14 +211,14 @@ public class HibernateSessionFactoryBuilder {
     }
 
     private SessionFactory buildSessionFactoryForSnapshotVersion(@Nullable Interceptor interceptor, MetadataSources metadataSources) {
-        // Denne metoden bruker synkronisering på {@code LOCK} fordi BubbleIdType.SnapshotVersionSeedSeed ikke må endres mens
+        // Denne metoden bruker synkronisering pÃ¥ {@code LOCK} fordi BubbleIdType.SnapshotVersionSeedSeed ikke mÃ¥ endres mens
         // SessionFactory blir opprettet. Det er kun denne metoden som bruker {@code BubbleIdType.SnapshotVersionSeedSeed}.
-        // Alle BubbleIdTypes som opprettes i SessionFactory får satt deres snapshotVersionSeed til
-        // {@code BubbleIdType.SnapshotVersionSeedSeed}. Å bruke synkronisering her er enklere enn å løpe igjennom
+        // Alle BubbleIdTypes som opprettes i SessionFactory fÃ¥r satt deres snapshotVersionSeed til
+        // {@code BubbleIdType.SnapshotVersionSeedSeed}. Ã… bruke synkronisering her er enklere enn Ã¥ lÃ¸pe igjennom
         // datastrukturerene i SessionFactory og sette snapshotVersionSeed for alle BubbleIdTypes manuellt.
         //
-        // NB: HibernateSessions som skal jobbe med forskjellige snapshotVersions uavhengig avhverander innenfor samme tråd (f.eks Current og Old sessions)
-        // må bruke hver sin factory. De kan ikke bruke samme factory siden det er factoryen som styrer
+        // NB: HibernateSessions som skal jobbe med forskjellige snapshotVersions uavhengig avhverander innenfor samme trÃ¥d (f.eks Current og Old sessions)
+        // mÃ¥ bruke hver sin factory. De kan ikke bruke samme factory siden det er factoryen som styrer
         // hvilken snapshotVersionSeed instans som vil bli brukt ved materalisering av BubbleId'en.
         SessionFactory sessionFactory;
         synchronized (LOCK) {
@@ -246,7 +246,7 @@ public class HibernateSessionFactoryBuilder {
             connectionInfo = properties.getProperty("hibernate.connection.url") + " - " + properties.getProperty("hibernate.connection.username");
         } else if ("jta".equals(transcationCoordinator)) {
             if (snapshotVersionSeed.get() == SnapshotVersion.OLD) {
-                // TODO: Må bruke riktig property for old data source
+                // TODO: MÃ¥ bruke riktig property for old data source
                 connectionInfo = properties.getProperty("hibernate.connection.datasource_old");
             } else {
                 connectionInfo = properties.getProperty("hibernate.connection.datasource");
@@ -270,13 +270,13 @@ public class HibernateSessionFactoryBuilder {
     }
 
     /**
-     * Forsøker å finne alle className->hbm-fil mappinger.
+     * ForsÃ¸ker Ã¥ finne alle className->hbm-fil mappinger.
      * <p/>
-     * Dette gjøres gjennom å først finne alle hbm-filer, deretter gå gjennom dem og forsøke å finne klassenavnet som
-     * filen er en mapping for. Deretter legges disse inn i en map som har className->hbm-fil. Denne mappen benyttes så
-     * når man forsøker å gjøre en addBubble på en klasse.
+     * Dette gjÃ¸res gjennom Ã¥ fÃ¸rst finne alle hbm-filer, deretter gÃ¥ gjennom dem og forsÃ¸ke Ã¥ finne klassenavnet som
+     * filen er en mapping for. Deretter legges disse inn i en map som har className->hbm-fil. Denne mappen benyttes sÃ¥
+     * nÃ¥r man forsÃ¸ker Ã¥ gjÃ¸re en addBubble pÃ¥ en klasse.
      * <p/>
-     * Dette må håndteres litt forskjellig i situasjonene å lese ut hbm-filene fra en fil og fra en jar-fil.
+     * Dette mÃ¥ hÃ¥ndteres litt forskjellig i situasjonene Ã¥ lese ut hbm-filene fra en fil og fra en jar-fil.
      */
     private void findAllMappings() throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

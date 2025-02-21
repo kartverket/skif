@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Logikk for at mange felter kan ha mange oversettelser, samlet i én tabell.
+ * Logikk for at mange felter kan ha mange oversettelser, samlet i Ã©n tabell.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0

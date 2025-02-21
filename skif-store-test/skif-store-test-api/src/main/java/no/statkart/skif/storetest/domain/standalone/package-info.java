@@ -3,7 +3,7 @@
  * for opprettelse av testobjekter.
  *
  * <P>Hibernate konfigureres via {@code StandAloneTestHelper}. Predefinerte testobjekter opprettes via
- * sql, hvor id på objekter er mindre eller lik 100. Dynamisk opprettet objekter slettes automatisk før
+ * sql, hvor id pÃ¥ objekter er mindre eller lik 100. Dynamisk opprettet objekter slettes automatisk fÃ¸r
  * testmetode kalles ved at alle objekter i domenet med id > 100 slettes.
  */
 package no.statkart.skif.storetest.domain.standalone;

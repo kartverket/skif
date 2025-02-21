@@ -6,7 +6,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Testklasse for EnumKodeIdType. Sjekker at equals oppfører seg som forventet
+ * Testklasse for EnumKodeIdType. Sjekker at equals oppfÃ¸rer seg som forventet
  *
  * @author Roar Ingebrigtsen
  * @since 2.1

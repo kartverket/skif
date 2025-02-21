@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Tester bruk av Oracle ARRAY i queries via Hibernate user type og jdbc basert på OracleArrayConverter og subtyper av denne
+ * Tester bruk av Oracle ARRAY i queries via Hibernate user type og jdbc basert pÃ¥ OracleArrayConverter og subtyper av denne
  *
  * @author Henrik Fredholm
  * @since 2.3.0

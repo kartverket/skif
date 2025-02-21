@@ -6,7 +6,7 @@ import no.statkart.skif.service.logging.ServerCallLogger;
 import java.lang.reflect.Method;
 
 /**
- * Proxyledd for å logge kall til EJB. Hvordan det skal logges bestemmes av implementasjonen av {@link ServerCallLogger}
+ * Proxyledd for Ã¥ logge kall til EJB. Hvordan det skal logges bestemmes av implementasjonen av {@link ServerCallLogger}
  * som benyttes.
  *
  * @author Tor Egil R. Strand

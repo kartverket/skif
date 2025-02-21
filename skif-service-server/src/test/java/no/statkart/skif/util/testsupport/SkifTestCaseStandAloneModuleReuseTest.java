@@ -12,7 +12,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 
 /**
- * Tester at injector gjenbrukes på tvers av testmetoder når {@link #isReuseInjector()} returnerer true og at {@link
+ * Tester at injector gjenbrukes pÃ¥ tvers av testmetoder nÃ¥r {@link #isReuseInjector()} returnerer true og at {@link
  * #resetLogin()} blir kallt for hver testmetode.
  *
  * @author Henrik Fredholm
@@ -33,7 +33,7 @@ public class SkifTestCaseStandAloneModuleReuseTest extends SkifTestCase {
         loginCount++;
     }
 
-    @Test(dependsOnMethods = "testInjectorReused") // Må kjøres etter testene nedenfor, ellers kan de komme ut av tellingen
+    @Test(dependsOnMethods = "testInjectorReused") // MÃ¥ kjÃ¸res etter testene nedenfor, ellers kan de komme ut av tellingen
     public void testDefaultServiceMode() {
         assertNull(isSingleVm());
     }

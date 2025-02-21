@@ -5,11 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@link List#equals(Object)} kaller {@link Object#equals(Object)} på elementene. Vi ønsker vanligvis ikke dette, men
- * heller bruker {@link EqualsByFields} for å sammenligne.
+ * {@link List#equals(Object)} kaller {@link Object#equals(Object)} pÃ¥ elementene. Vi Ã¸nsker vanligvis ikke dette, men
+ * heller bruker {@link EqualsByFields} for Ã¥ sammenligne.
  * <p/>
- * Denne oppfyller kontrakten for {@link List#equals(Object)}, som sier at listene må ha samme lengde og elementene må
- * parvis være like i listensrekkefølge.
+ * Denne oppfyller kontrakten for {@link List#equals(Object)}, som sier at listene mÃ¥ ha samme lengde og elementene mÃ¥
+ * parvis vÃ¦re like i listensrekkefÃ¸lge.
  */
 public class ListHandler implements EqualityHandler<List<?>> {
     @Override
@@ -20,7 +20,7 @@ public class ListHandler implements EqualityHandler<List<?>> {
         List<?> l2 = (List<?>) o2;
 
         if (o1.size() != l2.size())
-            return false; // Dette kan være dyrt for enkelte lister, men vi pleier å bruke lister som vet svaret på forhånd.
+            return false; // Dette kan vÃ¦re dyrt for enkelte lister, men vi pleier Ã¥ bruke lister som vet svaret pÃ¥ forhÃ¥nd.
 
         Iterator<?> i1 = o1.iterator();
         Iterator<?> i2 = l2.iterator();
@@ -32,6 +32,6 @@ public class ListHandler implements EqualityHandler<List<?>> {
             if (!comparator.isEqualByFields(e1, e2)) return false;
         }
 
-        return !(i1.hasNext() || i2.hasNext()); // Skal alltid være true så lenge størrelsene sammenlignes over.
+        return !(i1.hasNext() || i2.hasNext()); // Skal alltid vÃ¦re true sÃ¥ lenge stÃ¸rrelsene sammenlignes over.
     }
 }

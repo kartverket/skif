@@ -12,7 +12,7 @@ import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 
 /**
- * Service for å støtte UnitOfWork testing
+ * Service for Ã¥ stÃ¸tte UnitOfWork testing
  *
  * @author Henrik Fredholm
  * @since 2.9
@@ -39,7 +39,7 @@ public class UowTestServiceImpl implements UowTestService {
 
     @Override
     public void updateTextInNewTransaction(SimpleId<?> simpleId, String text) {
-        Preconditions.checkState(antallLaaserForBruker()==0, "Denne tjeneste kan kun kalles når bruker ikke ha tatt låser");
+        Preconditions.checkState(antallLaaserForBruker()==0, "Denne tjeneste kan kun kalles nÃ¥r bruker ikke ha tatt lÃ¥ser");
         Simple simple = store.lock(simpleId);
         simple.setText(text);
         store.update(simple);

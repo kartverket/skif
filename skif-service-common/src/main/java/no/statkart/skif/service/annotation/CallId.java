@@ -11,7 +11,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotasjon som brukes for å annotere at det man vil ha injisert er en call id, ikke en hvilken som helst long.
+ * Annotasjon som brukes for Ã¥ annotere at det man vil ha injisert er en call id, ikke en hvilken som helst long.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0

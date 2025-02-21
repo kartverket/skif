@@ -52,7 +52,7 @@ public class CompositeComponentTest extends StoreTestTestCase {
         final BubbleWithCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithCompositeComponentMockupFactory();
         final BubbleWithCompositeComponent bubbleWithNullComponents = store.get(mockupFactory.getWithNullComponentsId());
         assertEquals(bubbleWithNullComponents.getText(), "Obj " + 1 + " med null components");
-        // Composite components som inneholder Set vil aldrig være null da de alltid vil ha en tomt Set.
+        // Composite components som inneholder Set vil aldrig vÃ¦re null da de alltid vil ha en tomt Set.
         assertNotNull(bubbleWithNullComponents.getLevel1Component());
         assertNull(bubbleWithNullComponents.getLevel1Component().getText());
         assertNull(bubbleWithNullComponents.getLevel1Component().getBeloep());
@@ -71,7 +71,7 @@ public class CompositeComponentTest extends StoreTestTestCase {
         final BubbleWithCompositeComponent bubbleWithNullLevel2Components = store.get(mockupFactory.getWithNullLevel2Id());
 
         assertEquals(bubbleWithNullLevel2Components.getText(), "Obj 2 med null level2 component");
-        // Composite components som inneholder Set vil aldrig være null da de alltid vil ha en tomt Set.
+        // Composite components som inneholder Set vil aldrig vÃ¦re null da de alltid vil ha en tomt Set.
         assertNotNull(bubbleWithNullLevel2Components.getLevel1Component());
         assertFalse(bubbleWithNullLevel2Components.getLevel1Component().isNullComponent());
         assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getText());
@@ -91,7 +91,7 @@ public class CompositeComponentTest extends StoreTestTestCase {
         final BubbleWithCompositeComponent bubbleWithNonNullComponents = store.get(mockupFactory.getWithNonNullComponentsId());
 
         assertEquals(bubbleWithNonNullComponents.getText(), "Obj 3 med level1 og level2 component");
-        // Composite components som inneholder Set vil aldrig være null da de alltid vil ha en tomt Set.
+        // Composite components som inneholder Set vil aldrig vÃ¦re null da de alltid vil ha en tomt Set.
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component());
         assertFalse(bubbleWithNonNullComponents.getLevel1Component().isNullComponent());
         assertNotNull(bubbleWithNonNullComponents.getLevel1Component().getText());
@@ -145,8 +145,8 @@ public class CompositeComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester at det ikke er mulig å flytte en komponent fra et objekt til et annet. Skulle gjerne ønske at feilen
-     * kom med en gang når man forsøker å sette komponenten slik at feilfindingen blir enklere. I nårværende
+     * Tester at det ikke er mulig Ã¥ flytte en komponent fra et objekt til et annet. Skulle gjerne Ã¸nske at feilen
+     * kom med en gang nÃ¥r man forsÃ¸ker Ã¥ sette komponenten slik at feilfindingen blir enklere. I nÃ¥rvÃ¦rende
      * implementasjon oppdages feilen kun ved persistering til serveren.
      */
     public void testMoveComponent() {
@@ -166,8 +166,8 @@ public class CompositeComponentTest extends StoreTestTestCase {
                 storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
                 failBecauseExceptionWasNotThrown(ImplementationException.class);
             } catch (ImplementationException e) {
-                // Burde ikke være HibernateException en en SKIF exception. Det vil det være i JEE mode
-                // PS: vi får kun feil her fordi komponenten inneholder et sett.
+                // Burde ikke vÃ¦re HibernateException en en SKIF exception. Det vil det vÃ¦re i JEE mode
+                // PS: vi fÃ¥r kun feil her fordi komponenten inneholder et sett.
                 assertThat(e).hasMessageContaining("Component contains a Collection that is null");
             }
         } finally {
@@ -176,8 +176,8 @@ public class CompositeComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester at det ikke er mulig å flytte en nested komponent fra et objekt til et annet. Skulle gjerne ønske at feilen
-     * kom med en gang når man forsøker å sette komponenten slik at feilfindingen blir enklere. I nårværende
+     * Tester at det ikke er mulig Ã¥ flytte en nested komponent fra et objekt til et annet. Skulle gjerne Ã¸nske at feilen
+     * kom med en gang nÃ¥r man forsÃ¸ker Ã¥ sette komponenten slik at feilfindingen blir enklere. I nÃ¥rvÃ¦rende
      * implementasjon oppdages feilen kun ved persistering til serveren.
      */
     public void testMoveComponentLevel2() {
@@ -198,8 +198,8 @@ public class CompositeComponentTest extends StoreTestTestCase {
                 storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
                 failBecauseExceptionWasNotThrown(ImplementationException.class);
             } catch (ImplementationException e) {
-                // Burde ikke være HibernateException en en SKIF exception. Det vil det være i JEE mode
-                // PS: vi får kun feil her fordi komponenten inneholder et sett.
+                // Burde ikke vÃ¦re HibernateException en en SKIF exception. Det vil det vÃ¦re i JEE mode
+                // PS: vi fÃ¥r kun feil her fordi komponenten inneholder et sett.
                 assertThat(e).hasMessageContaining("Component contains a Collection that is null");
             }
         } finally {
@@ -208,7 +208,7 @@ public class CompositeComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester at det ikke er mulig å dele en komponent
+     * Tester at det ikke er mulig Ã¥ dele en komponent
      */
     public void testShareComponent() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();

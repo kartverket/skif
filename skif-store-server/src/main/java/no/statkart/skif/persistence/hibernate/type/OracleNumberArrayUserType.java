@@ -1,7 +1,7 @@
 package no.statkart.skif.persistence.hibernate.type;
 
 /**
- * Hjelpeklasse for å bruke Oracle ARRAY av type {@code Number} i Hibernate
+ * Hjelpeklasse for Ã¥ bruke Oracle ARRAY av type {@code Number} i Hibernate
  *
  * @since 2.3
  * @author Henrik Fredholm

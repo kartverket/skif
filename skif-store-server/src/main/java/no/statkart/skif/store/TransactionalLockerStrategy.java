@@ -17,49 +17,49 @@ import no.statkart.skif.service.locker.DBLockerService;
 import java.util.*;
 
 /**
- * Implementasjon av LockerStrategy som fungerer for BubbleIds som har en Long som value. Holder på alle
- * låser
+ * Implementasjon av LockerStrategy som fungerer for BubbleIds som har en Long som value. Holder pÃ¥ alle
+ * lÃ¥ser
  *
  * @author Roar Ingebrigtsen
  * @since 2.0
  */
 public class TransactionalLockerStrategy implements LockerStrategy {
 
-    //Brukes for å holde rede på låser tatt i transaksjonen, samt de som allerede finnes for brukere i transaksjon. Initialiseres som null for å kunne kjøre populate senere.
+    //Brukes for Ã¥ holde rede pÃ¥ lÃ¥ser tatt i transaksjonen, samt de som allerede finnes for brukere i transaksjon. Initialiseres som null for Ã¥ kunne kjÃ¸re populate senere.
     private Map<BubbleId, LockInfo<?>> lockMap = null;
 
-    //Brukes for å holde rede på hvilke ids som er nye og som derfor ikke kan låses opp.
+    //Brukes for Ã¥ holde rede pÃ¥ hvilke ids som er nye og som derfor ikke kan lÃ¥ses opp.
     private final Set<BubbleId> insertedIds = new HashSet<>();
 
-    //Brukes for å holde rede på hvilke ids som er endret og som derfor ikke kan låses opp.
+    //Brukes for Ã¥ holde rede pÃ¥ hvilke ids som er endret og som derfor ikke kan lÃ¥ses opp.
     private final Set<BubbleId> modifiedIds = new HashSet<>();
 
-    //Brukes for å finne ut av hvilke låser som skal frigis etter fullføring av transaksjon.
+    //Brukes for Ã¥ finne ut av hvilke lÃ¥ser som skal frigis etter fullfÃ¸ring av transaksjon.
     private final Set<BubbleId> newLockIds = new HashSet<>();
 
-    //Brukes for å holde rede på hvilke elementer man ønsker å låse opp, men som ikke er låst i denne transaksjonen.
+    //Brukes for Ã¥ holde rede pÃ¥ hvilke elementer man Ã¸nsker Ã¥ lÃ¥se opp, men som ikke er lÃ¥st i denne transaksjonen.
     private final Set<BubbleId> unlockIds = new HashSet<>();
 
     /**
-     * Injector som kun skal brukes til å slå opp {@link DBLockerService} og {@link DBLockerInTransactionService}, siden
+     * Injector som kun skal brukes til Ã¥ slÃ¥ opp {@link DBLockerService} og {@link DBLockerInTransactionService}, siden
      * disse kan bindes opp mange ganger med forskjellig typeparameter.
      */
     private Injector injector;
 
     private final ServiceRequestContext serviceRequestContext;
 
-    //TODO: Skal disse være her?
+    //TODO: Skal disse vÃ¦re her?
     private final long LOCK_TIMEOUT;
     private final long MAX_TRANSACTION_DURATION;
 
-    //Informasjon om man har verifisert at låser for bruker vil vare til MAX_TRANSACTION_DURATION
+    //Informasjon om man har verifisert at lÃ¥ser for bruker vil vare til MAX_TRANSACTION_DURATION
     private boolean locksVerified = false;
 
 
     /**
-     * @param injector                 injector for å slå opp alle mulige lockerservicer
+     * @param injector                 injector for Ã¥ slÃ¥ opp alle mulige lockerservicer
      * @param configuration            SKIF-konfigurasjon
-     * @param serviceRequestContext    context for gjeldende request (TransactionalLockerStrategy skal være request scopet)
+     * @param serviceRequestContext    context for gjeldende request (TransactionalLockerStrategy skal vÃ¦re request scopet)
      */
     @Inject
     public TransactionalLockerStrategy(Injector injector, Configuration configuration, ServiceRequestContext serviceRequestContext) {
@@ -222,7 +222,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
                     }
                     lockKeys.add(lockKey);
                 } else {
-                    unlockIds.add(entry.getKey()); //Element er ikke låst i denne transaksjonen og vil bli låst opp når denne er ferdig
+                    unlockIds.add(entry.getKey()); //Element er ikke lÃ¥st i denne transaksjonen og vil bli lÃ¥st opp nÃ¥r denne er ferdig
                 }
             }
         }
@@ -309,10 +309,10 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     }
 
     /**
-     * Finner ut om en eksisterende lås trenger å bli fornyet
+     * Finner ut om en eksisterende lÃ¥s trenger Ã¥ bli fornyet
      *
      * @param lock LockInfo<Long> som skal sjekkes
-     * @return true dersom låsen ikke trenger å fornyes
+     * @return true dersom lÃ¥sen ikke trenger Ã¥ fornyes
      */
     private boolean renewNotRequired(LockInfo<?> lock) {
         return !lock.expiresBefore(MAX_TRANSACTION_DURATION);
@@ -336,7 +336,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     }
 
     private LockKey<?> createLockKey(BubbleId id) {
-        // Gjøre om til baseklassen, slik at ikke to kan låse samme objekt ved å bruke id-er fra forskjellige nivåer
+        // GjÃ¸re om til baseklassen, slik at ikke to kan lÃ¥se samme objekt ved Ã¥ bruke id-er fra forskjellige nivÃ¥er
         id = id.asBase();
 
         if (id.getValue() instanceof Long) {
@@ -367,7 +367,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     }
 
     /**
-     * Henter låser for owner fra DBLockerService og legger disse i lockMap
+     * Henter lÃ¥ser for owner fra DBLockerService og legger disse i lockMap
      */
     private void initializeLockMap() {
         String owner = serviceRequestContext.getUserName();
@@ -390,7 +390,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
      *
      * @param id    Id som skal sjekkes
      * @throws no.statkart.skif.exception.NotLockedException
-     *          dersom brukeren ikke har noen lås på id-en
+     *          dersom brukeren ikke har noen lÃ¥s pÃ¥ id-en
      */
     protected synchronized void ensureLockedByCaller(BubbleId id) throws NotLockedException {
         ensureLockMapInitialized();
@@ -411,7 +411,7 @@ public class TransactionalLockerStrategy implements LockerStrategy {
     }
 
     /**
-     * @param owner Bruker som skal få alle sine låser fornyet
+     * @param owner Bruker som skal fÃ¥ alle sine lÃ¥ser fornyet
      */
     private void renewAllLocks(String owner) {
         Map<Key<?>,Binding<?>> bindings = injector.getBindings();

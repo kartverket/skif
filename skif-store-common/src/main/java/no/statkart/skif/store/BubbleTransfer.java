@@ -5,33 +5,33 @@ import com.google.common.collect.Iterables;
 import java.util.*;
 
 /**
- * Et data transfer objekt for å overføre et sett med {@code BubbleObject} objekter fra
+ * Et data transfer objekt for Ã¥ overfÃ¸re et sett med {@code BubbleObject} objekter fra
  * server til klient som en samlet enhet.
  * <p>
- * {@code BubbleTransfer} klassen er abstrakt og må subklasses for hver brukstilfelle.
- * Subklasser må definere en konstruktør som er ansvarlig for å legge inn alle objekter
- * som behøves i overførslen. Dette gjøres ved i konstruktøren å kalle
+ * {@code BubbleTransfer} klassen er abstrakt og mÃ¥ subklasses for hver brukstilfelle.
+ * Subklasser mÃ¥ definere en konstruktÃ¸r som er ansvarlig for Ã¥ legge inn alle objekter
+ * som behÃ¸ves i overfÃ¸rslen. Dette gjÃ¸res ved i konstruktÃ¸ren Ã¥ kalle
  * {@link #add(BubbleObject)} and {@link #addAll(Iterable) add(BubbleObjects)} metodene.<p>
  * <p>
- * Subklasser av <code>BubbleTransfer</code> bør definere tilgangsmetoder for å hent ut transfer objektets
- * hoved BubbleId'er. BubbleTransfer subklasser bør aldrig tilbyde tilgangsmetoder for å hente ut
- * {@code BubbleObject} objekter direkte. I stedet bør BubbleTransfer objektet registreres i {@code Store} via
- * {@link Store#register} metoden. Dette er for ikke å omgå {@code Store} sin håndtering av låste objekter,
- * slik at man ender opp med å jobbe med riktig {@code BubbleObject} dersom det finnes en nyere kopi i {@code Store}.
+ * Subklasser av <code>BubbleTransfer</code> bÃ¸r definere tilgangsmetoder for Ã¥ hent ut transfer objektets
+ * hoved BubbleId'er. BubbleTransfer subklasser bÃ¸r aldrig tilbyde tilgangsmetoder for Ã¥ hente ut
+ * {@code BubbleObject} objekter direkte. I stedet bÃ¸r BubbleTransfer objektet registreres i {@code Store} via
+ * {@link Store#register} metoden. Dette er for ikke Ã¥ omgÃ¥ {@code Store} sin hÃ¥ndtering av lÃ¥ste objekter,
+ * slik at man ender opp med Ã¥ jobbe med riktig {@code BubbleObject} dersom det finnes en nyere kopi i {@code Store}.
  * <p>
  * <strong>Eksempel 1</strong>
  * <pre>
  * // Medtode som returnerer mange objekter av forskjellig type fra server
  * MyBubbleTransfer transfer = someServerMethod(...);
- * // Registrer alle objekter in i Store. Objekter som allerede finnes i Store og som er i ferd med å bli endret vil bli kastet
+ * // Registrer alle objekter in i Store. Objekter som allerede finnes i Store og som er i ferd med Ã¥ bli endret vil bli kastet
  * Store.register(transfer);
  * // Access the objects via Store:
  * MyObject myObject = store.get(transfer.getMyId());
  * </pre><p>
  *
  * <strong>Eksempel 2</strong>
- *{@code BubbleTransfer} objektet har blitt designet for å kunne håndtere tilfelle hvor {@code Store} allerede inneholder
- * noen av objektene som mottas i transfer objekter. Objekter i {@code Store} som er låst erstattes ikke.
+ *{@code BubbleTransfer} objektet har blitt designet for Ã¥ kunne hÃ¥ndtere tilfelle hvor {@code Store} allerede inneholder
+ * noen av objektene som mottas i transfer objekter. Objekter i {@code Store} som er lÃ¥st erstattes ikke.
  * <pre>
  * MyObject obj1 = store.lock(id1);
  * obj1.setName(...); *
@@ -62,7 +62,7 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
     }
 
     /**
-     * Denne må eksponeres videre av alle subklasser.
+     * Denne mÃ¥ eksponeres videre av alle subklasser.
      *
      * @deprecated Kun for WS-mapping. Ved direkte bruk kan man lett skape feilsituasjoner.
      */
@@ -81,7 +81,7 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
     }
 
     /**
-     * Legg til objekt som med sikkerhet ikke er blitt låst.
+     * Legg til objekt som med sikkerhet ikke er blitt lÃ¥st.
      */
     protected final void addUnlocked(BubbleObject bubbleObject) {
         // Kaller super eksplisitt, slik at denne klassens modifisering av add() ikke brukes
@@ -89,7 +89,7 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
     }
 
     /**
-     * Legg til et objekt som kanskje er blitt låst. Om objektet er låst eller ikke sjekkes mot {@link no.statkart.skif.store.BubbleObject#store()}.
+     * Legg til et objekt som kanskje er blitt lÃ¥st. Om objektet er lÃ¥st eller ikke sjekkes mot {@link no.statkart.skif.store.BubbleObject#store()}.
      */
     public final void add(BubbleObject bubbleObject) {
         super.add(bubbleObject);
@@ -99,7 +99,7 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
     }
 
     /**
-     * Legg til en samling objekter som med sikkerhet ikke er blitt låst.
+     * Legg til en samling objekter som med sikkerhet ikke er blitt lÃ¥st.
      */
     public final void addUnlocked(Iterable<? extends BubbleObject> bubbleObjects) {
         for (BubbleObject bubbleObject : bubbleObjects) {
@@ -109,7 +109,7 @@ public abstract class BubbleTransfer<T> extends Transfer<T> {
     }
 
     /**
-     * Legg til et objekt som kanskje er blitt låst. Om objektet er låst eller ikke sjekkes mot {@link no.statkart.skif.store.BubbleObject#store()}.
+     * Legg til et objekt som kanskje er blitt lÃ¥st. Om objektet er lÃ¥st eller ikke sjekkes mot {@link no.statkart.skif.store.BubbleObject#store()}.
      */
     public final void addAll(Iterable<? extends BubbleObject> bubbleObjects) {
         super.addAll(bubbleObjects);

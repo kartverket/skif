@@ -20,7 +20,7 @@ public abstract class AbstractServiceContextMapper<C> implements ServiceContextM
     protected Locale localeFromString(String locale) {
 
         if(locale == null) {
-            throw new ImplementationException("Locale parameter må være satt på context!");
+            throw new ImplementationException("Locale parameter mÃ¥ vÃ¦re satt pÃ¥ context!");
         }
 
         String[] strings = locale.split("_");
@@ -37,7 +37,7 @@ public abstract class AbstractServiceContextMapper<C> implements ServiceContextM
             throw new ImplementationException("Second part of Locale in context must follow ISO-3166 and consist of two upper case letters");
         }
 
-        //Språkvariant strings[2] kan inneholde både store og små bokstaver og må mappes hvis den er oppgitt.
+        //SprÃ¥kvariant strings[2] kan inneholde bÃ¥de store og smÃ¥ bokstaver og mÃ¥ mappes hvis den er oppgitt.
 
         if(strings.length==2){
             return new Locale(strings[0], strings[1]);

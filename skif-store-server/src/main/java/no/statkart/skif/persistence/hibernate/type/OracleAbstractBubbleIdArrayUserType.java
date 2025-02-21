@@ -23,11 +23,11 @@ import java.util.List;
 
 /**
  * En Hibernate {@code UserType} for persistering av {@code BubbleId} collections via Oracle {@code oracle.sql.ARRAY}. Klassen brukes
- * hovedsakelig i forbindelse med spørringer hvor collections kan være  vilkårlig store. Alle BubbleId'er i en collectionen
- * må ha samme idValue type (Long eller String). {@code SnapshotVersion} i id'er anvendes ikke, men må være satt på
- * sessionen allerede. For å hindre feil sjekkes det at alle id'er inneholder samme snapshotversion.
+ * hovedsakelig i forbindelse med spÃ¸rringer hvor collections kan vÃ¦re  vilkÃ¥rlig store. Alle BubbleId'er i en collectionen
+ * mÃ¥ ha samme idValue type (Long eller String). {@code SnapshotVersion} i id'er anvendes ikke, men mÃ¥ vÃ¦re satt pÃ¥
+ * sessionen allerede. For Ã¥ hindre feil sjekkes det at alle id'er inneholder samme snapshotversion.
  * <p>
- * <p>For å kunne bruke henholdsvis Number og String arrays i spørringer må Oracle skjemaet inneholde følgende definisjoner:
+ * <p>For Ã¥ kunne bruke henholdsvis Number og String arrays i spÃ¸rringer mÃ¥ Oracle skjemaet inneholde fÃ¸lgende definisjoner:
  * <pre>
  *    CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER;
  *    CREATE TYPE STRING_LIST_TYPE AS TABLE OF VARCHAR(255);

@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * Generell funksjonalitet for å mappe mellom WS-API-ets FaultInfo-klasser og SkifException-hierarkiet.
+ * Generell funksjonalitet for Ã¥ mappe mellom WS-API-ets FaultInfo-klasser og SkifException-hierarkiet.
  *
  * @since 2.6.0
  */
@@ -56,7 +56,7 @@ public abstract class AbstractServiceFaultInfoTypeMapper<WsapiT, DomainT extends
 
             return getters;
         } else {
-            // Kan ikke bruke like aggressiv reflection på Exception pga. jigsaw
+            // Kan ikke bruke like aggressiv reflection pÃ¥ Exception pga. jigsaw
 
             Map<String, Method> getters = Maps.newLinkedHashMap();
 

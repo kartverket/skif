@@ -11,10 +11,10 @@ import java.sql.*;
 import java.util.Objects;
 
 /**
- * Hvis man bruker {@link java.sql.PreparedStatement#setTimestamp(int, java.sql.Timestamp)}, så klarer ikke
- * JDBC/databasen å skille mellom den doble timen når vi går over fra sommertid til vintertid, selv om datatypen i
- * databasen er {@code TIMESTAMP WITH LOCAL TIME ZONE}. Må gjøre oversettelsen før vi oversender dataene til JDBC.
- * Dersom datatypen i databasen ikke er {@code TIMESTAMP WITH LOCAL TIME ZONE}, så er det meningsløst å bruke denne klasen.
+ * Hvis man bruker {@link java.sql.PreparedStatement#setTimestamp(int, java.sql.Timestamp)}, sÃ¥ klarer ikke
+ * JDBC/databasen Ã¥ skille mellom den doble timen nÃ¥r vi gÃ¥r over fra sommertid til vintertid, selv om datatypen i
+ * databasen er {@code TIMESTAMP WITH LOCAL TIME ZONE}. MÃ¥ gjÃ¸re oversettelsen fÃ¸r vi oversender dataene til JDBC.
+ * Dersom datatypen i databasen ikke er {@code TIMESTAMP WITH LOCAL TIME ZONE}, sÃ¥ er det meningslÃ¸st Ã¥ bruke denne klasen.
  */
 public class OracleLocalTimestamp implements UserType {
 

@@ -205,7 +205,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
                 StoreEntryState state = storeCacheEntry.getState(level);
                 switch (state) {
                     case INSERTED:
-                        // Dette skal egentlig ikke være mulig. Anser insert etter insert som update etter insert.
+                        // Dette skal egentlig ikke vÃ¦re mulig. Anser insert etter insert som update etter insert.
                     case DELETED_INSERTED:
                     case UPDATED:
                         iterator.set(storeCacheEntry.getBubbleObject(level));
@@ -224,7 +224,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
                 StoreEntryState state = storeCacheEntry.getState(level);
                 switch (state) {
                     case INSERTED:
-                        // Dette skal egentlig ikke være mulig. Anser insert etter update som update etter update.
+                        // Dette skal egentlig ikke vÃ¦re mulig. Anser insert etter update som update etter update.
                     case DELETED_INSERTED:
                     case UPDATED:
                         iterator.set(storeCacheEntry.getBubbleObject(level));
@@ -245,7 +245,7 @@ public class StoreUnitOfWork extends AbstractStoreSession {
                 switch (state) {
                     case INSERTED:
                         iterator.remove();
-                        updatedObjects.add(storeCacheEntry.getBubbleObject(level)); // Det som blir inserted kan være endret fra det som ble deleted
+                        updatedObjects.add(storeCacheEntry.getBubbleObject(level)); // Det som blir inserted kan vÃ¦re endret fra det som ble deleted
                     case DELETED_INSERTED:
                     case UPDATED:
                         throw new ImplementationException("Can not update deleted object");

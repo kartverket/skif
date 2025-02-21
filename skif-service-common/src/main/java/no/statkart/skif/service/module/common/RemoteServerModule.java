@@ -68,7 +68,7 @@ public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStr
     protected void configure() {
         setStrategyInstance();
 
-        // Standard bindinger som må være med
+        // Standard bindinger som mÃ¥ vÃ¦re med
         bind(ServiceMode.class).toInstance(moduleConfiguration.getServiceMode());
         bind(ServiceContext.class).to(serviceContextClass);
         bind(serviceContextClass).in(Singleton.class);
@@ -81,7 +81,7 @@ public class RemoteServerModule extends ModuleWithStrategy<RemoteServerModuleStr
         bind(ServerUrlHolder.class).to(serverUrlHolderClass);
         bind(serverUrlHolderClass).in(Singleton.class);
 
-        // SnapshotVersionContext har trådlokal verdi og bindes opp som ekte singleton istedet for med ServiceRequest scope
+        // SnapshotVersionContext har trÃ¥dlokal verdi og bindes opp som ekte singleton istedet for med ServiceRequest scope
         bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
 
         if (hostnameVerifierClass != null) {

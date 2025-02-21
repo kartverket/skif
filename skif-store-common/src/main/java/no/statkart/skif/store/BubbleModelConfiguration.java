@@ -78,7 +78,7 @@ public class BubbleModelConfiguration implements BubbleDependencyComparator, Ser
 
     @Override
     public int compare(BubbleObject o1, BubbleObject o2) {
-        // Håndtere også Lazy klasser
+        // HÃ¥ndtere ogsÃ¥ Lazy klasser
         int i1 = getIndex(o1);
         int i2 = getIndex(o2);
         if (i1<i2) return -1;

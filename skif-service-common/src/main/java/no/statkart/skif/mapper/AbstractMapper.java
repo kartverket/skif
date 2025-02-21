@@ -140,8 +140,8 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
         Object target;
 
         if (method.getName().equals("w2d")) {
-            //try/finally for å vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
-            //Dersom vi er på toppen så kan vi clearMappedFields fra DefaultTypeMapper.
+            //try/finally for Ã¥ vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
+            //Dersom vi er pÃ¥ toppen sÃ¥ kan vi clearMappedFields fra DefaultTypeMapper.
             try {
                 int i = recurseLevel.get();
                 recurseLevel.set(++i);
@@ -149,17 +149,17 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
             } finally {
                 int i = recurseLevel.get() - 1;
                 if (i == 0) {
-                    // Å holde på ikke-primitiver i ThreadLocal kan lett medføre minnelekasje
+                    // Ã… holde pÃ¥ ikke-primitiver i ThreadLocal kan lett medfÃ¸re minnelekasje
                     mappedFieldsTracker.remove();
-                    // Tar denne også, for å gjøre det likt
+                    // Tar denne ogsÃ¥, for Ã¥ gjÃ¸re det likt
                     recurseLevel.remove();
                 } else {
                     recurseLevel.set(i);
                 }
             }
         } else if (method.getName().equals("d2w")) {
-            //try/finally for å vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
-            //Dersom vi er på toppen så kan vi clearMappedFields fra DefaultTypeMapper.
+            //try/finally for Ã¥ vedlikeholde en teller for hvor dypt i rekursjonsgrafen vi er.
+            //Dersom vi er pÃ¥ toppen sÃ¥ kan vi clearMappedFields fra DefaultTypeMapper.
             try {
                 int i = recurseLevel.get();
                 recurseLevel.set(++i);
@@ -167,9 +167,9 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
             } finally {
                 int i = recurseLevel.get() - 1;
                 if (i == 0) {
-                    // Å holde på ikke-primitiver i ThreadLocal kan lett medføre minnelekasje
+                    // Ã… holde pÃ¥ ikke-primitiver i ThreadLocal kan lett medfÃ¸re minnelekasje
                     mappedFieldsTracker.remove();
-                    // Tar denne også, for å gjøre det likt
+                    // Tar denne ogsÃ¥, for Ã¥ gjÃ¸re det likt
                     recurseLevel.remove();
                 } else {
                     recurseLevel.set(i);
@@ -234,7 +234,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                     final MapperKey mapperKey;
 
                     if (mappingResolver != null) {
-                        // Prøv å finne ut mer nøyaktig hva måltypen er
+                        // PrÃ¸v Ã¥ finne ut mer nÃ¸yaktig hva mÃ¥ltypen er
                         resolvedTargetTypeToken = mappingResolver.resolveTargetType(sourceTypeToken.getRawType(), targetTypeToken);
                         logger.debug("Resolving {} for {} to {}", new Object[]{targetTypeToken, sourceTypeToken, resolvedTargetTypeToken});
                         mapperKey = new MapperKey(resolvedTargetTypeToken, sourceTypeToken);
@@ -349,7 +349,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                     final MapperKey mapperKey;
 
                     if (mappingResolver != null) {
-                        // Prøv å finne ut mer nøyaktig hva måltypen er
+                        // PrÃ¸v Ã¥ finne ut mer nÃ¸yaktig hva mÃ¥ltypen er
                         resolvedTargetTypeToken = mappingResolver.resolveTargetType(sourceTypeToken.getRawType(), targetTypeToken);
                         logger.debug("Resolving {} for {} to {}", new Object[]{targetTypeToken, sourceTypeToken, resolvedTargetTypeToken});
                         mapperKey = new MapperKey(sourceTypeToken, resolvedTargetTypeToken);
@@ -414,7 +414,7 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 throw new MappingException("Invalid direction: " + direction);
         }
 
-        // Finn mappere som kan gå fra sourceClass eller en superklasse av dette
+        // Finn mappere som kan gÃ¥ fra sourceClass eller en superklasse av dette
         List<TypeMapper<?, ?>> candidates = new ArrayList<>();
 
         for (Map.Entry<Class<?>, TypeMapper<?, ?>> entry : mapOfMappers.entries()) {
@@ -503,14 +503,14 @@ public abstract class AbstractMapper<M extends Mapping> implements InvocationHan
                 prev = typeMapper;
             }
         }
-        // Returner den første, da der er den per definisjon vi ønsker når de er like.
+        // Returner den fÃ¸rste, da der er den per definisjon vi Ã¸nsker nÃ¥r de er like.
         return best.iterator().next();
     }
 
     /**
-     * Typemappere rangeres etter hvor fra match de er. Først og fremst foretrekkes den typemapper som er nærmest
-     * klassen det mappes fra. Dersom det her blir uavgjort mellom to typemappere på dette punktet, så velges den
-     * typemapper som mapper til det som er nærmest ønsket klasse (SKIF-383). Det er allerede på forhånd sikret at
+     * Typemappere rangeres etter hvor fra match de er. FÃ¸rst og fremst foretrekkes den typemapper som er nÃ¦rmest
+     * klassen det mappes fra. Dersom det her blir uavgjort mellom to typemappere pÃ¥ dette punktet, sÃ¥ velges den
+     * typemapper som mapper til det som er nÃ¦rmest Ã¸nsket klasse (SKIF-383). Det er allerede pÃ¥ forhÃ¥nd sikret at
      * typemapper mapper fra (en superklasse av) klassen som skal mappes, til (en subtype av) klassen det skal mappes
      * til.
      */

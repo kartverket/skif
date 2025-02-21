@@ -1,7 +1,7 @@
 package no.statkart.skif.config;
 
 /**
- * SkifConfiguration med standardoppsett for bruk på tjener.
+ * SkifConfiguration med standardoppsett for bruk pÃ¥ tjener.
  *
  * @author Tor Egil R. Strand
  * @since 2.3.0

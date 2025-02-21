@@ -8,8 +8,8 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import java.util.Set;
 
 /**
- * Boble med multikobling hvis elementer er av type {@link no.statkart.skif.store.EntityComponent}. For å
- * understøtte dette må koblingsklassen skrives litt anderledes enn for koblinger med bobleid-er og valueobjekter.
+ * Boble med multikobling hvis elementer er av type {@link no.statkart.skif.store.EntityComponent}. For Ã¥
+ * understÃ¸tte dette mÃ¥ koblingsklassen skrives litt anderledes enn for koblinger med bobleid-er og valueobjekter.
  * Se {@link EntityInMultikoblingKobling}. Bemerk at koblingsklassen har property-metoder som forwarder til
  * valueklassen for koblingen.
  *

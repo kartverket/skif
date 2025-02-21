@@ -3,9 +3,9 @@ package no.statkart.skif;
 /**
  * SKIF-266: Versjonsinformasjon for SKIF
  *
- * Det er viktig at byggesystemet legger inn manifest informasjon som behøves her.
+ * Det er viktig at byggesystemet legger inn manifest informasjon som behÃ¸ves her.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.2
  */
 public class SkifVersion {

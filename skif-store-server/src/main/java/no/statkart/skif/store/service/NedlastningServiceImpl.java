@@ -90,7 +90,7 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
                 criteria.add(Restrictions.le("id", tilId));
             }
             Kontroll result =  new Kontroll();
-            result.setAntall(((Number)criteria.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(((Number)criteria.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell pÃ¥ datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
@@ -107,7 +107,7 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
             criteria.setProjection(Projections.rowCount());
             criteria.add(Restrictions.sqlRestriction("id in (select * from table(?))", ids, new OracleLongBubbleIdArrayCustomType()));
             Kontroll result = new Kontroll();
-            result.setAntall(((Number) criteria.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(((Number) criteria.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell pÃ¥ datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();

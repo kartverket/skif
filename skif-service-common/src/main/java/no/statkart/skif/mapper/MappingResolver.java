@@ -16,11 +16,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Denne klassen forsøker å finne ut hvilke klasser som tilsvarer hverandre basert på antagelsen at klassenavnene er
+ * Denne klassen forsÃ¸ker Ã¥ finne ut hvilke klasser som tilsvarer hverandre basert pÃ¥ antagelsen at klassenavnene er
  * like, klassene ligger bare i forskjellige pakker.
  * <p>
- * For å benytte klassen så setter man inn denne med {@link AbstractMapper#setMappingResolver(MappingResolver)}.
- * For å benytte MappingResolver må også en packageMapping legges inn. Ved bruk av addPackageMapping er det mulig å
+ * For Ã¥ benytte klassen sÃ¥ setter man inn denne med {@link AbstractMapper#setMappingResolver(MappingResolver)}.
+ * For Ã¥ benytte MappingResolver mÃ¥ ogsÃ¥ en packageMapping legges inn. Ved bruk av addPackageMapping er det mulig Ã¥
  * mappe alle klasser i en pakke og subpakker til klasser i en annen pakke og subpakkker med samme navn.</p>
  * <p>
  * F.eks.
@@ -31,7 +31,7 @@ import java.util.zip.ZipInputStream;
  * </code></pre>
  * <p>
  * Hensikten med defaultmapperen er at den skal benyttes ved "defaulting" som i en switch-statement. Dersom ingen annen typemapping
- * finnes så faller typemappingen tilbake til denne.</p>
+ * finnes sÃ¥ faller typemappingen tilbake til denne.</p>
  *
  * @author Steinar Hansen
  * @author Tor Egil R. Strand
@@ -46,7 +46,7 @@ public class MappingResolver {
     }
 
     /**
-     * Denne metoden finner klasser i alle subpakker av de angitte pakkene, og mapper de opp mot hverandre gitt at navnene (SimpleName) på
+     * Denne metoden finner klasser i alle subpakker av de angitte pakkene, og mapper de opp mot hverandre gitt at navnene (SimpleName) pÃ¥
      * klassene er de samme.
      *
      * @param wsapiPackage  pakken til JAXB-klassene
@@ -57,7 +57,7 @@ public class MappingResolver {
     }
 
     /**
-     * Denne metoden finner klasser i alle subpakker av de angitte pakkene, med mindre recurse er satt til 'false', da leter den bare i den angitte pakken. og mapper de opp mot hverandre gitt at navnene (SimpleName) på
+     * Denne metoden finner klasser i alle subpakker av de angitte pakkene, med mindre recurse er satt til 'false', da leter den bare i den angitte pakken. og mapper de opp mot hverandre gitt at navnene (SimpleName) pÃ¥
      * klassene er de samme.
      *
      * @param wsapiPackage  pakken til JAXB-klassene

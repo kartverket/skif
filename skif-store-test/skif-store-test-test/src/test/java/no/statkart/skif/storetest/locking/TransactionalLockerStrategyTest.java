@@ -69,7 +69,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
         try {
             strategy1.registerUpdated(testId);
-            Assert.fail("Har ikke låst testId så update skal feile!");
+            Assert.fail("Har ikke lÃ¥st testId sÃ¥ update skal feile!");
         } catch (Throwable t) {
             assertThat(t).describedAs("forventet exception").isInstanceOf(NotLockedException.class);
         }
@@ -101,7 +101,7 @@ public class TransactionalLockerStrategyTest extends StoreTestTestCase {
 
         try {
             strategy1.registerRemoved(testId);
-            Assert.fail("Har ikke låst testId så update skal feile!");
+            Assert.fail("Har ikke lÃ¥st testId sÃ¥ update skal feile!");
         } catch (Throwable t) {
             assertThat(t).describedAs("forventet exception").isInstanceOf(NotLockedException.class);
         }

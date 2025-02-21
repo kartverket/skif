@@ -29,11 +29,11 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
     Store store;
 
     /**
-     * Test som tester at vi får lagt til en entitycomponent i en liste på et bobleobjekt uten at eksisterende elementer
-     * i listen får nye versjoner.
+     * Test som tester at vi fÃ¥r lagt til en entitycomponent i en liste pÃ¥ et bobleobjekt uten at eksisterende elementer
+     * i listen fÃ¥r nye versjoner.
      */
     public void leggTilEntryIComponentListe() {
-        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
+        // TODO Store pÃ¥ klient kan inneholde objekter fra andre tester. MÃ¥ bestemme oss for hvordan dette skal virke (SKIF-237)
         store.evictAll();
 
         final long idToUse = Calendar.getInstance().getTimeInMillis();
@@ -96,10 +96,10 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Test som tester at bobleobjekt kan oppdateres uten at eksisterende entitycomponents får nye versjoner.
+     * Test som tester at bobleobjekt kan oppdateres uten at eksisterende entitycomponents fÃ¥r nye versjoner.
      */
     public void testMapUtOgTilbake() {
-        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
+        // TODO Store pÃ¥ klient kan inneholde objekter fra andre tester. MÃ¥ bestemme oss for hvordan dette skal virke (SKIF-237)
         store.evictAll();
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
@@ -127,7 +127,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
     }
 
     public void testUpdateUtenAtObjektErLastetIHibernate() {
-        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
+        // TODO Store pÃ¥ klient kan inneholde objekter fra andre tester. MÃ¥ bestemme oss for hvordan dette skal virke (SKIF-237)
         store.evictAll();
 
         final long idToUse = Calendar.getInstance().getTimeInMillis();
@@ -161,7 +161,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
             Assert.assertEquals(bubbleWithListComponent.getVersjonId(), 1);
         }
 
-        //Fjern nr 2 slik at vi kan kjøre tester på nytt
+        //Fjern nr 2 slik at vi kan kjÃ¸re tester pÃ¥ nytt
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
             Store store;
@@ -195,7 +195,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
      * Tester at entitycomponents kan fjernes fra ikke-persistent collection.
      */
     public void testUpdateMedRemoveAvComponentUtenAtObjektErLastetIStore() {
-        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
+        // TODO Store pÃ¥ klient kan inneholde objekter fra andre tester. MÃ¥ bestemme oss for hvordan dette skal virke (SKIF-237)
         store.evictAll();
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
@@ -220,7 +220,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
         BubbleWithList bubbleWithList = store.get(new BubbleWithListId<BubbleWithList>(2201L));
         Assert.assertEquals(bubbleWithList.getComponents().size(), 0);
 
-        //Legg inn igjen slik at tester kan kjøres flere ganger
+        //Legg inn igjen slik at tester kan kjÃ¸res flere ganger
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
             Store store;
@@ -248,7 +248,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
      * Tester at entitycomponents kan fjernes fra persistent collection.
      */
     public void testUpdateMedRemoveAvComponentEtterAtObjektErLastetIStore() {
-        // TODO Store på klient kan inneholde objekter fra andre tester. Må bestemme oss for hvordan dette skal virke (SKIF-237)
+        // TODO Store pÃ¥ klient kan inneholde objekter fra andre tester. MÃ¥ bestemme oss for hvordan dette skal virke (SKIF-237)
         store.evictAll();
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
@@ -299,9 +299,9 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 //     * Belyser problemet beskrevet i SKIF-214.
 //     * Skal slette alle komponenter i ParentBubble 1, men ingenting skjer pga SKIF-214
 //     *
-//     * Med SKIF-214 løst blir komponenter slettet.
+//     * Med SKIF-214 lÃ¸st blir komponenter slettet.
 //     *
-//     * TODO: Skrive om testen slik at det ikke endre på data som legges inn via loadData og er en del av "readsettet"
+//     * TODO: Skrive om testen slik at det ikke endre pÃ¥ data som legges inn via loadData og er en del av "readsettet"
 //     */
 //    @Test
 //    public void testUpdateParrentBubbleMedHashSet() {

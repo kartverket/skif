@@ -38,7 +38,7 @@ public abstract class EJBInterceptorJEE {
     private TransactionManager transactionManager;
 
     /**
-     * Prosjektene må implementere denne til å returnere sin server-injector.
+     * Prosjektene mÃ¥ implementere denne til Ã¥ returnere sin server-injector.
      */
     protected abstract Injector getInjector();
 

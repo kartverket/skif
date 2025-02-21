@@ -64,7 +64,7 @@ public class UnidirectionalWithEntityComponentsTest extends StoreTestTestCase {
         assertNotNull(a1);
         assertEquals(a1.getEntityComponentOne().getSomeBBId(), X2BBOneMockupFactory.getB2Id());
 
-        // Sjekk at a2 og a3 peker på samme B
+        // Sjekk at a2 og a3 peker pÃ¥ samme B
         X2AAWithEntityComponent a2 = store.get(X2AAWithEntityComponentMockupFactory.getA2Id());
         assertNotNull(a2);
         assertEquals(a2.getEntityComponentOne().getSomeBBId(), X2BBOneMockupFactory.getB3Id());

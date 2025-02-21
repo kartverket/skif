@@ -110,7 +110,7 @@ public class Test1ServiceWSTestJEE {
                             String contextPath = m.group(1);
                             return "/" + contextPath + "/" + wsClass.getSimpleName();
                         } else {
-                            throw new no.statkart.skif.exception.ConfigurationException("WebService targetnamesspace følger ikke forventet mønster (http://dns-adresse/fast/wsapi/service/...): " + annotation.targetNamespace());
+                            throw new no.statkart.skif.exception.ConfigurationException("WebService targetnamesspace fÃ¸lger ikke forventet mÃ¸nster (http://dns-adresse/fast/wsapi/service/...): " + annotation.targetNamespace());
                         }
                     }
 
@@ -156,9 +156,9 @@ public class Test1ServiceWSTestJEE {
 
     /**
      * JAX-WS klient mot remote server hvor Guice binding av Web Servicen konfigureres manuelt vha en JAX-WS provider som
-     * støtter dynamisk endringer username, password og url.
+     * stÃ¸tter dynamisk endringer username, password og url.
      * <p>
-     * Da testen ble skrevet fantes det alternativer. Nå er dette eneste måten å gjøre dette på, og de andre testene er
+     * Da testen ble skrevet fantes det alternativer. NÃ¥ er dette eneste mÃ¥ten Ã¥ gjÃ¸re dette pÃ¥, og de andre testene er
      * endret, men denne tester noe de ikke tester og dermed beholdt.
      */
     @Test(groups = "server-required")

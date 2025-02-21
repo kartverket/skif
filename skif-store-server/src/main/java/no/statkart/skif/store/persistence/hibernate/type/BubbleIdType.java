@@ -155,7 +155,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     }
 
     /**
-     * Oppretter id med den spesifisert verdi. Id classen må være av den type metoden {@link
+     * Oppretter id med den spesifisert verdi. Id classen mÃ¥ vÃ¦re av den type metoden {@link
      * #returnedClass()} spesifisere. SnapshotVersion kan ha defalut verdi siden den overskrive
      * automatisk av {@link #createId } metoden.
      *

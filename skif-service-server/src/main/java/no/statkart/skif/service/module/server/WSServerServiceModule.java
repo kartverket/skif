@@ -113,7 +113,7 @@ public class WSServerServiceModule extends ModuleWithStrategy<WSServerServiceMod
         if (classWSIPackageMappings != null) {
             getStrategy().setClassWSIPackageMappings(classWSIPackageMappings);
         }
-//        Preconditions.checkArgument(moduleConfiguration.getServiceMode() == ServiceMode.JEE, "Kun ServiceMode.JEE er støttet");
+//        Preconditions.checkArgument(moduleConfiguration.getServiceMode() == ServiceMode.JEE, "Kun ServiceMode.JEE er stÃ¸ttet");
         requireBindings();
         install(new PrivateModule() {
             @Override

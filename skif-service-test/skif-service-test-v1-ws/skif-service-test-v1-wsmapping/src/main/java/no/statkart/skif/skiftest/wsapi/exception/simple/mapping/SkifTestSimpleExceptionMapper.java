@@ -6,7 +6,7 @@ import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
 import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleFaultInfo;
 
 /**
- * Enkel exception mapper for SkifTest som bare kan mapper SimpleExcpetion over JAX-WS. I tillegg mappes alle runtime exceptions på
+ * Enkel exception mapper for SkifTest som bare kan mapper SimpleExcpetion over JAX-WS. I tillegg mappes alle runtime exceptions pÃ¥
  * klienten via {@link no.statkart.skif.mapper.IdentityExceptionTypeMapper} slik at runtime exception fra JAX-WS kommer igjennom til klient.
  *
  * <P></P>Her benyttes et eget hirarki av exceptions og ikke skif's stuktur.
@@ -27,7 +27,7 @@ public class SkifTestSimpleExceptionMapper extends AbstractSkifTestSimpleExcepti
             return buildExternalSimpleException((no.statkart.skif.skiftest.exception.SimpleException) source);
         }
 
-        //feilmelding på kjent format (benyttes i tester)
+        //feilmelding pÃ¥ kjent format (benyttes i tester)
         throw new MappingException(String.format("TypeMapper[%s] could not map from %s to %s", this.getClass().getName(), source.getClass().getName(), Throwable.class.getName()));
     }
 
@@ -51,7 +51,7 @@ public class SkifTestSimpleExceptionMapper extends AbstractSkifTestSimpleExcepti
             return source;
         }
 
-        //feilmelding på kjent format (benyttes i tester)
+        //feilmelding pÃ¥ kjent format (benyttes i tester)
         throw new MappingException(String.format("TypeMapper[%s] could not map from %s to %s", this.getClass().getName(), source.getClass().getName(), Throwable.class.getName()));
     }
 

@@ -6,8 +6,8 @@ import no.statkart.skif.store.AbstractBubbleObject;
 import java.util.*;
 
 /**
- * Abstrakt implementasjon av kodeliste. Klasse holder på en liste av {@code KodeId}s og implementere
- * lokaliseringsstøtte.
+ * Abstrakt implementasjon av kodeliste. Klasse holder pÃ¥ en liste av {@code KodeId}s og implementere
+ * lokaliseringsstÃ¸tte.
  * <p>
  * Klassen er knyttet mot {@link AbstractKodelisteId} som bruker {@code Object} som idValue type. Det finnes
  * konkrete subtyper som bruker {@code Long} og {@code String} som idValue type.

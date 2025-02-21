@@ -42,7 +42,7 @@ public class StoreJDBCHelper extends JDBCHelper {
                 preparedStatement.setLong(i, (Long) value);
             }
         } else if (idValueType == String.class) {
-            // Tror ikke det er nødvendig å håndtere null spesielt her
+            // Tror ikke det er nÃ¸dvendig Ã¥ hÃ¥ndtere null spesielt her
             preparedStatement.setString(i, (String) value);
         } else {
             throw new ImplementationException("Value type " + idValueType.getName() + " is not supported");

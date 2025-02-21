@@ -105,13 +105,13 @@ public class StoreClientWithReadCacheTest extends StoreTestMixedTestCase {
         assertThat(readCache.get(simpleId1)).isNull();
         try (UnitOfWork unitOfWork = storeClient.beginUnitOfWork()) {
             storeClient.get(simpleId1);
-            storeClient.abortUnitOfWork(unitOfWork); // For å gjøre det eksplisitt at abort kalles
+            storeClient.abortUnitOfWork(unitOfWork); // For Ã¥ gjÃ¸re det eksplisitt at abort kalles
         }
         assertThat(readCache.get(simpleId1)).isNotNull();
     }
 
     /**
-     * Tester at låste objekter evictes fra readcache når endUnitOfWork kalles
+     * Tester at lÃ¥ste objekter evictes fra readcache nÃ¥r endUnitOfWork kalles
      */
     public void testEndUnitOfWorkEvicterLaasteObjekterFraReadCache() {
         StoreTestMockupFacade writeFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -128,7 +128,7 @@ public class StoreClientWithReadCacheTest extends StoreTestMixedTestCase {
             simple1.setText("Simple 1 v2");
             storeClient.update(simple1);
 
-            storeClient.getUnitOfWorkTransfer(); // Simuler update på server
+            storeClient.getUnitOfWorkTransfer(); // Simuler update pÃ¥ server
 
             assertThat(readCache.get(simpleId1)).isNotNull();
             assertThat(readCache.get(simpleId2)).isNotNull();
@@ -141,7 +141,7 @@ public class StoreClientWithReadCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at låste objekter evictes fra readcache når endUnitOfWork kalles
+     * Tester at lÃ¥ste objekter evictes fra readcache nÃ¥r endUnitOfWork kalles
      */
     public void testEndUnitOfWorkVedNestedCommitEvicterLaasteObjekterFraReadCache() {
         StoreTestMockupFacade writeFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -159,7 +159,7 @@ public class StoreClientWithReadCacheTest extends StoreTestMixedTestCase {
                 simple1.setText("Simple 1 v2");
                 storeClient.update(simple1);
 
-                storeClient.getUnitOfWorkTransfer(); // Simuler update på server
+                storeClient.getUnitOfWorkTransfer(); // Simuler update pÃ¥ server
 
                 assertThat(readCache.get(simpleId1)).isNotNull();
                 assertThat(readCache.get(simpleId2)).isNotNull();
@@ -174,7 +174,7 @@ public class StoreClientWithReadCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at låste objekter evictes fra readcache når endUnitOfWork kalles
+     * Tester at lÃ¥ste objekter evictes fra readcache nÃ¥r endUnitOfWork kalles
      */
     public void testEndUnitOfWorkVedNestedAbortEvicterLaasteObjekterFraReadCache() {
         StoreTestMockupFacade writeFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -192,7 +192,7 @@ public class StoreClientWithReadCacheTest extends StoreTestMixedTestCase {
                 simple1.setText("Simple 1 v2");
                 storeClient.update(simple1);
 
-                storeClient.getUnitOfWorkTransfer(); // Simuler update på server
+                storeClient.getUnitOfWorkTransfer(); // Simuler update pÃ¥ server
 
                 assertThat(readCache.get(simpleId1)).isNotNull();
                 assertThat(readCache.get(simpleId2)).isNotNull();
@@ -208,7 +208,7 @@ public class StoreClientWithReadCacheTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Denne funksjonalitet er ikke implementert for inneværende løsning. Dvs kun kall
+     * Denne funksjonalitet er ikke implementert for innevÃ¦rende lÃ¸sning. Dvs kun kall
      * via Store legger objekter i read cachen.
      */
     public void testDirekteKallTilStoreServiceLeggerIkkeObjekterIReadCache() {

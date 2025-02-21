@@ -44,7 +44,7 @@ public class WSVersioningWSv2Test extends SkifTestCase {
         WSVersioningContext context = createContext_2_1();
 
         VegIdList alleVeger = vegService.findAlleVeger(context);
-        Assert.assertEquals(alleVeger.getItem().get(0).getValue(), 1, "Første vegId");
+        Assert.assertEquals(alleVeger.getItem().get(0).getValue(), 1, "FÃ¸rste vegId");
         Assert.assertEquals(alleVeger.getItem().get(1).getValue(), 2, "Andre vegId");
     }
 

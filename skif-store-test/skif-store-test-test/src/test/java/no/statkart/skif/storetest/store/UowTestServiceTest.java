@@ -67,7 +67,7 @@ public class UowTestServiceTest extends StoreTestTestCase {
                 uowTestService.updateTextInNewTransaction(simple1Id, "updated");
                 failBecauseExceptionWasNotThrown(ImplementationException.class);
             } catch (ImplementationException e) {
-                assertThat(e.getMessage()).isEqualTo("Denne tjeneste kan kun kalles når bruker ikke ha tatt låser");
+                assertThat(e.getMessage()).isEqualTo("Denne tjeneste kan kun kalles nÃ¥r bruker ikke ha tatt lÃ¥ser");
             }
         }
     }

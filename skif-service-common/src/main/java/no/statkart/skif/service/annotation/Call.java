@@ -9,7 +9,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotation som brukes til å angi objekt med proxies for kall.
+ * Annotation som brukes til Ã¥ angi objekt med proxies for kall.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand

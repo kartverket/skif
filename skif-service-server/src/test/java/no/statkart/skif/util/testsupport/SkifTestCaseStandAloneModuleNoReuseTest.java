@@ -11,7 +11,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotSame;
 
 /**
- * Tester at injector ikke gjenbrukes på tvers av testmetoder når {@link #isReuseInjector()} returnerer false
+ * Tester at injector ikke gjenbrukes pÃ¥ tvers av testmetoder nÃ¥r {@link #isReuseInjector()} returnerer false
  * @author Henrik Fredholm
  * @since 2.0
  */

@@ -14,18 +14,18 @@ import java.util.Collection;
 public interface StoreUpdateService {
 
     /**
-     * Låser {@code bubbleId} for kallende bruker og returnerer tilhørende BubbleObject instans
+     * LÃ¥ser {@code bubbleId} for kallende bruker og returnerer tilhÃ¸rende BubbleObject instans
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> T lockObject(@Nullable I bubbleId) throws ObjectNotFoundException;
 
     /**
-     * Låser en collection av {@code bubbleId}s for kallende bruker og returnerer tilhørende BubbleObject instanser
+     * LÃ¥ser en collection av {@code bubbleId}s for kallende bruker og returnerer tilhÃ¸rende BubbleObject instanser
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockObjects(Collection<I> bubbleIds);
 
     /**
      * Committer en transfer. Dette er en metode som en vanlig applikasjon normalt ikke vil implementere fordi det
-     * er ønskelig med brukstilfellespesifikk validering i forbindelse med oppdatering.
+     * er Ã¸nskelig med brukstilfellespesifikk validering i forbindelse med oppdatering.
      */
     void saveTransfer(UnitOfWorkTransfer transfer);
 

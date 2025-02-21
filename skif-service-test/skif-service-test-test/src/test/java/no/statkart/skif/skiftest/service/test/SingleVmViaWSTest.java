@@ -48,7 +48,7 @@ public class SingleVmViaWSTest extends SkifTestCase {
     public void testExceptionMapping() {
         try {
             test3Service.testExceptionThrowing("SimpleException", "Test");
-            Assert.fail("Skulle fått exception");
+            Assert.fail("Skulle fÃ¥tt exception");
         } catch (SimpleException e) {
             Assert.assertEquals(e.getMessage(), "Test");
         }

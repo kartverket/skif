@@ -6,7 +6,7 @@ import java.util.Set;
 
 /**
  * En composite component som har {@code Level1CompositeComponentWithEntity} som owner. Inneholder
- * referanse til en entity og et sett av entities. Disse har også {@code BubbleWithEntityInCompositeComponent} som owner.
+ * referanse til en entity og et sett av entities. Disse har ogsÃ¥ {@code BubbleWithEntityInCompositeComponent} som owner.
  *
  * @author Henrik Fredholm
  * @since 2.4

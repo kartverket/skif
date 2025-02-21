@@ -15,7 +15,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Deklarativ konfigurasjon for {@link AbstractEndringManager}
  *
- * @author Leif LislegÂrd
+ * @author Leif Lisleg√•rd
  * @author Henrik Fredholm
  * @since 2.4
  */
@@ -36,7 +36,7 @@ public abstract class AbstractEndringManagerConfiguration<E extends AbstractEndr
 
     @Override
     public final Class<? extends BubbleObject> getDomainklasseNullSafe(Class<? extends E> endringklasse) {
-        return requireNonNull(getDomainklasse(endringklasse), () -> String.format("Fant ingen domeneklasse h¯rende til endringsklasse %s", endringklasse.getName()));
+        return requireNonNull(getDomainklasse(endringklasse), () -> String.format("Fant ingen domeneklasse h√∏rende til endringsklasse %s", endringklasse.getName()));
     }
 
     @Override

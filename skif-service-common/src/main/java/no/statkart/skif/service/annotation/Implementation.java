@@ -9,7 +9,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotation som brukes til å angi objekt med proxies for server implementasjon
+ * Annotation som brukes til Ã¥ angi objekt med proxies for server implementasjon
  *
  * @author Henrik Fredholm
  * @since 2.0

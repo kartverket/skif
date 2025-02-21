@@ -14,9 +14,9 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 /**
- * Tester mixed kjørsel på klient og tjener.
+ * Tester mixed kjÃ¸rsel pÃ¥ klient og tjener.
  * <p>
- * Klient og tjener kjøre i forskjellige omgivelser og skal ikke dele sekvenser.
+ * Klient og tjener kjÃ¸re i forskjellige omgivelser og skal ikke dele sekvenser.
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -24,8 +24,8 @@ import static org.testng.Assert.*;
 @Test(groups = "singlevm-required")
 public class StoreIdAllocationTest extends StoreTestMixedTestCase {
     /**
-     * Sørger for at denne testen ikke gjenbruker serveren fra en annen test. Dette slik at serveren starter uten noen
-     * id-sekvens, noe som ville ødelagt forutsetningene for testen.
+     * SÃ¸rger for at denne testen ikke gjenbruker serveren fra en annen test. Dette slik at serveren starter uten noen
+     * id-sekvens, noe som ville Ã¸delagt forutsetningene for testen.
      *
      * @return en ModuleBuilder fra createReusableModuleBuilder(), men ny hver gang
      * @since 2.3.0
@@ -52,7 +52,7 @@ public class StoreIdAllocationTest extends StoreTestMixedTestCase {
                 @Override
                 public Object run() {
                     TestBubble testBubbleOnServer = new TestBubble();
-                    // TODO: Burde egentlig feile siden det gjøre en oppdatering og metoden ikke har transaksjonskontekst
+                    // TODO: Burde egentlig feile siden det gjÃ¸re en oppdatering og metoden ikke har transaksjonskontekst
                     storeOnServer.insert(testBubbleOnServer);
 
                     return testBubbleOnServer;
@@ -67,17 +67,17 @@ public class StoreIdAllocationTest extends StoreTestMixedTestCase {
                 @Override
                 public Object run() {
                     TestBubble testBubbleOnServer = new TestBubble();
-                    // TODO: Burde egentlig feile siden det gjøre en oppdatering og metoden ikke har transaksjonskontekst
+                    // TODO: Burde egentlig feile siden det gjÃ¸re en oppdatering og metoden ikke har transaksjonskontekst
                     storeOnServer.insert(testBubbleOnServer);
 
                     return testBubbleOnServer;
                 }
             });
-            // Test at sekvens på objekt opprettet på serveren er en større enn forrige server objekt
+            // Test at sekvens pÃ¥ objekt opprettet pÃ¥ serveren er en stÃ¸rre enn forrige server objekt
             assertEquals(testBubbleFromServer.getId().getValue().longValue() + 1, testBubbleFromServer2.getId().getValue().longValue());
             TestBubble testBubbleOnClient2 = new TestBubble();
             clientStore.insert(testBubbleOnClient2);
-            // Test at sekvens på objekt opprettet på klientn er en større enn forrige server objekt
+            // Test at sekvens pÃ¥ objekt opprettet pÃ¥ klientn er en stÃ¸rre enn forrige server objekt
             assertEquals(testBubbleOnClient.getId().getValue().longValue() + 1, testBubbleOnClient2.getId().getValue().longValue());
         } finally {
             clientStore.abortUnitOfWork(unitOfWork);

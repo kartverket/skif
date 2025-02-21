@@ -16,10 +16,10 @@ import static org.testng.Assert.*;
 
 /**
  * Tester mapping av skifs standard exception hierarki. Et viktig aspekt av exception mappingen er at det i stor
- * grad skal være transparent om JEE eller SINGLE_VM mode brukes.
+ * grad skal vÃ¦re transparent om JEE eller SINGLE_VM mode brukes.
  *
- * Denne testen viser også hvordan skif kan konfigureres slik at  serveren  automatisk wrapper alle ukjente runtime
- * exceptions i en ImplementationException. Dette skjer både i JEE og SINGLE_VM mode.
+ * Denne testen viser ogsÃ¥ hvordan skif kan konfigureres slik at  serveren  automatisk wrapper alle ukjente runtime
+ * exceptions i en ImplementationException. Dette skjer bÃ¥de i JEE og SINGLE_VM mode.
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -35,7 +35,7 @@ public class StdSkifExceptionMappingTest extends SkifTestCase {
     }
 
     /**
-     * Test kall til skif service virker når det ikke genereres exception
+     * Test kall til skif service virker nÃ¥r det ikke genereres exception
      */
     @Test
     public void testNoExceptionNoTx() throws SimpleException, SimpleNonMappedException {
@@ -45,9 +45,9 @@ public class StdSkifExceptionMappingTest extends SkifTestCase {
 
 
     /**
-     * NoTx service kaster ImplementationException som mappes av server og klient. På server mappes exceptionen til en
-     * wsapi exception annotert med @WebFault. På klient mappes wsapi excpetionen tilbake igjen til opprindelig exception
-     * klasse (siden det brukes samme mapper på klient og server).
+     * NoTx service kaster ImplementationException som mappes av server og klient. PÃ¥ server mappes exceptionen til en
+     * wsapi exception annotert med @WebFault. PÃ¥ klient mappes wsapi excpetionen tilbake igjen til opprindelig exception
+     * klasse (siden det brukes samme mapper pÃ¥ klient og server).
      */
     @Test
     public void testThrowMappedImplementationExceptionNoTx() throws SimpleException, SimpleNonMappedException {
@@ -68,9 +68,9 @@ public class StdSkifExceptionMappingTest extends SkifTestCase {
     }
 
     /**
-     * NoTx service kaster FinderException som mappes av server og klient. På server mappes exceptionen til en
-     * wsapi exception annotert med @WebFault. På klient mappes wsapi excpetionen tilbake igjen til opprindelig exception
-     * klasse (siden det brukes samme mapper på klient og server).
+     * NoTx service kaster FinderException som mappes av server og klient. PÃ¥ server mappes exceptionen til en
+     * wsapi exception annotert med @WebFault. PÃ¥ klient mappes wsapi excpetionen tilbake igjen til opprindelig exception
+     * klasse (siden det brukes samme mapper pÃ¥ klient og server).
      */
     @Test
     public void testThrowMappedFinderExceptionNoTx() throws SimpleException, SimpleNonMappedException {
@@ -92,9 +92,9 @@ public class StdSkifExceptionMappingTest extends SkifTestCase {
     }
 
     /**
-     * NoTx service som kaster en RuntimeException som ikke er subtype av SkifException. Denne fanges opp på server i en
+     * NoTx service som kaster en RuntimeException som ikke er subtype av SkifException. Denne fanges opp pÃ¥ server i en
      * ProxyHandler som wrapper den i en ImplementationException som mappes av server og klient. I JEE mode
-     * gjøres RuntimeExcpetion om til en ServerException. Dette skjer på klient.
+     * gjÃ¸res RuntimeExcpetion om til en ServerException. Dette skjer pÃ¥ klient.
      *
      */
     @Test

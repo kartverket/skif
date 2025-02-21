@@ -11,16 +11,16 @@ import org.testng.annotations.Test;
 import java.util.HashSet;
 
 /**
- * Tester feilen som oppstår i SKIF-231.
+ * Tester feilen som oppstÃ¥r i SKIF-231.
  *
- * Problemet her ser ut til å gå på at når man refererer til andre bobler fra en boble i en collection så vil hibernate
+ * Problemet her ser ut til Ã¥ gÃ¥ pÃ¥ at nÃ¥r man refererer til andre bobler fra en boble i en collection sÃ¥ vil hibernate
  * laste inn den refererte boblen fully initialized.
  *
- * Når man etterpå kjører refresh på den refererte boblen fordi man ønsker å låse den vil hibernate si at den referte boblens
- * collections ikke lengre er initialized. Dette problemet oppstår kun dersom den refererte boblen har mer enn én collection
+ * NÃ¥r man etterpÃ¥ kjÃ¸rer refresh pÃ¥ den refererte boblen fordi man Ã¸nsker Ã¥ lÃ¥se den vil hibernate si at den referte boblens
+ * collections ikke lengre er initialized. Dette problemet oppstÃ¥r kun dersom den refererte boblen har mer enn Ã©n collection
  * av referte objekter, i dette tilfellet har den to set med components.
  *
- * Når man etter å ha låst den refererte boblen sier delete på denne vil man få en NonUniqueObjectException da components
+ * NÃ¥r man etter Ã¥ ha lÃ¥st den refererte boblen sier delete pÃ¥ denne vil man fÃ¥ en NonUniqueObjectException da components
  * finnes flere ganger i persistencecontext.
  *
  * @author Roar Ingebrigtsen

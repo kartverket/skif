@@ -11,8 +11,8 @@ import jakarta.xml.ws.WebServiceContext;
 import java.lang.reflect.Method;
 
 /**
- * Starter et ServiceRequestScope for inneværende kall, sender kall videre til neste ProxyHandler i
- * {@code ServiceChain}'en (som krever at ServiceRequestScope) og avslutter ServiceRequestScope etterpå.
+ * Starter et ServiceRequestScope for innevÃ¦rende kall, sender kall videre til neste ProxyHandler i
+ * {@code ServiceChain}'en (som krever at ServiceRequestScope) og avslutter ServiceRequestScope etterpÃ¥.
  *
  * @author Henrik Fredholm
  * @since 2.0

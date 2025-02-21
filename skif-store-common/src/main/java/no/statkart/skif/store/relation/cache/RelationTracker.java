@@ -8,18 +8,18 @@ import java.util.*;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Object som holder styr på innholdet av relasjon. Når relasjonen ikke er materialisert holder {@code RelationTracker} styr
- * på endringene som har blitt gjort på relasjonen. Når relasjonen er materialisert utføres endringen på selve
+ * Object som holder styr pÃ¥ innholdet av relasjon. NÃ¥r relasjonen ikke er materialisert holder {@code RelationTracker} styr
+ * pÃ¥ endringene som har blitt gjort pÃ¥ relasjonen. NÃ¥r relasjonen er materialisert utfÃ¸res endringen pÃ¥ selve
  * relasjonen.
  *
- * <P>En relasjon kan kun hentes ut når den er materialisert og den kan kun materialiseres en gang. Bruksmønster for
- * uthenting av relasjon er å først sjekke om trackeren er materialisert og hvis den er det så hente ut relasjonen direkte
- * fra denne. Hvis trackeren ikke er materialisert så må relasjonen hentes på annen vis først. Deretter må trackeren
+ * <P>En relasjon kan kun hentes ut nÃ¥r den er materialisert og den kan kun materialiseres en gang. BruksmÃ¸nster for
+ * uthenting av relasjon er Ã¥ fÃ¸rst sjekke om trackeren er materialisert og hvis den er det sÃ¥ hente ut relasjonen direkte
+ * fra denne. Hvis trackeren ikke er materialisert sÃ¥ mÃ¥ relasjonen hentes pÃ¥ annen vis fÃ¸rst. Deretter mÃ¥ trackeren
  * materialiseres med relasjonen slik at den kan applisere eventuelle endringer gjort i unit of work. Deretter kan
  * relasjonen hentes ut fra trackeren.
  *
- * <P>Trackeren kan håndtere både One og Many relasjoner. Når trackeren er materialiset så vil {@code holder} for One relasjoner
- * være en peker til en BubbleId eller null. For Many relasjoner vil {@code holder} peke på et Set.
+ * <P>Trackeren kan hÃ¥ndtere bÃ¥de One og Many relasjoner. NÃ¥r trackeren er materialiset sÃ¥ vil {@code holder} for One relasjoner
+ * vÃ¦re en peker til en BubbleId eller null. For Many relasjoner vil {@code holder} peke pÃ¥ et Set.
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -29,8 +29,8 @@ public class RelationTracker implements Serializable {
     private boolean materialised;
 
     /**
-     * Peker enten på List<Operation> hvis materialised er false og på relasjonsvalue hvis materialised er true. Relasjons
-     * value kan enten være en enkelt verdi eller en Collection avhengig av relasjonens kardinalitet.
+     * Peker enten pÃ¥ List<Operation> hvis materialised er false og pÃ¥ relasjonsvalue hvis materialised er true. Relasjons
+     * value kan enten vÃ¦re en enkelt verdi eller en Collection avhengig av relasjonens kardinalitet.
      */
     private Object holder;
 
@@ -175,7 +175,7 @@ public class RelationTracker implements Serializable {
     }
 
     /**
-     * Hjelpemetode for testing som ikke ellers bør brukes. Henter ut verdien for en relasjon med kardinalitet 1.
+     * Hjelpemetode for testing som ikke ellers bÃ¸r brukes. Henter ut verdien for en relasjon med kardinalitet 1.
      */
     public Object peekOne() {
         if (materialised) {
@@ -186,7 +186,7 @@ public class RelationTracker implements Serializable {
     }
 
     /**
-     * Hjelpemetode for testing som ikke ellers bør brukes. Henter ut verdien for en relasjon med kardinalitet Many.
+     * Hjelpemetode for testing som ikke ellers bÃ¸r brukes. Henter ut verdien for en relasjon med kardinalitet Many.
      */
     public Set peekMany() {
         if (materialised) {

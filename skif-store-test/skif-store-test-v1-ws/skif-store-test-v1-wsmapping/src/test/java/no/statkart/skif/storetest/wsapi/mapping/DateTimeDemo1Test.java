@@ -15,7 +15,7 @@ import java.util.TimeZone;
 /**
  * Testing av mapping for {@link DateTimeDemoImpl1}
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.4 - ny grunnbok sprint 29
  */
 @Test(groups="broken")

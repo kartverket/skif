@@ -3,16 +3,16 @@ package no.statkart.skif.service.logging;
 import java.lang.reflect.Method;
 
 /**
- * Interface for loggrapportering fra en LoggingProxyHandler på klienten. Implementasjoner av
- * dette interfacet bestemmer (sammen med logback.xml e.l.) til hvilke logger og på hvilket format det skal logges.
- * Implmentasjonen bindes opp i SKIF. Den kan være singleton.
+ * Interface for loggrapportering fra en LoggingProxyHandler pÃ¥ klienten. Implementasjoner av
+ * dette interfacet bestemmer (sammen med logback.xml e.l.) til hvilke logger og pÃ¥ hvilket format det skal logges.
+ * Implmentasjonen bindes opp i SKIF. Den kan vÃ¦re singleton.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
 public interface ClientCallLogger {
     /**
-     * Kalles før en service-metode blir kalt.
+     * Kalles fÃ¸r en service-metode blir kalt.
      *
      * @param callId
      * @param method metoden som skal kalles
@@ -37,7 +37,7 @@ public interface ClientCallLogger {
      * @param callId
      * @param method metoden som kastet exception
      * @param args   argumentene metoden ble kalt med
-     * @param t      exception som ble kastet (kan også være Error)
+     * @param t      exception som ble kastet (kan ogsÃ¥ vÃ¦re Error)
      * @param time   tiden kallet tok, i millisekunder
      */
     void logClientError(Long callId, Method method, Object[] args, Throwable t, long time);

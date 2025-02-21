@@ -3,7 +3,7 @@ package no.statkart.skif.wsversioning.domain;
 import no.statkart.skif.util.Since;
 
 /**
- * Eksempelklasse som tidligere het Gate, basert på et faktisk tilfelle.
+ * Eksempelklasse som tidligere het Gate, basert pÃ¥ et faktisk tilfelle.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * Sjekker at historikk blir riktig for komponenter når man kaller update med detached boble.
+ * Sjekker at historikk blir riktig for komponenter nÃ¥r man kaller update med detached boble.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.1
@@ -49,12 +49,12 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
 
 
     /**
-     * Kjører update med umodifisert detached objekt. Det skal ikke blir generert historikk for dette.
+     * KjÃ¸rer update med umodifisert detached objekt. Det skal ikke blir generert historikk for dette.
      */
     public void testDettachedSetUpdate() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
 
-        // Først må vi objektet skrives ned i databasen
+        // FÃ¸rst mÃ¥ vi objektet skrives ned i databasen
         final HistorikkBubbleWithEntityComponentsId<?> id = mockupFacade.getIdService().getNextId(HistorikkBubbleWithEntityComponentsId.class);
         HistorikkBubbleWithEntityComponents bubble1 = new HistorikkBubbleWithEntityComponents();
         bubble1.setId(id);
@@ -68,9 +68,9 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
         HistorikkBubbleWithEntityComponents bubble2 = lockService.lock(id);
         Assert.assertEquals(bubble2.getVersjonId(), 1, "Feil versjonid");
         Assert.assertEquals(bubble2.getSecondaryEntityComponents().size(), 1, "Feil antall komponenter");
-        Assert.assertEquals(bubble2.getSecondaryEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid på komponent");
+        Assert.assertEquals(bubble2.getSecondaryEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid pÃ¥ komponent");
 
-        // Sørg for at objektet blir helt detached
+        // SÃ¸rg for at objektet blir helt detached
         bubble2.setSecondaryEntityComponents(new HashSet<>(bubble2.getSecondaryEntityComponents()));
 
         HistorikkEntityComponent component2 = new HistorikkEntityComponent();
@@ -84,20 +84,20 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
             HistorikkBubbleWithEntityComponents bubble3 = storeService.getObject(id);
             Assert.assertEquals(bubble3.getVersjonId(), 2, "Feil versjonid");
             Assert.assertEquals(bubble3.getSecondaryEntityComponents().size(), 1, "Feil antall komponenter");
-            Assert.assertEquals(bubble3.getSecondaryEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid på komponent");
-            Assert.assertEquals(bubble3.getMainEntityComponent().getVersjonId(), 1, "Feil versjonid på komponent");
+            Assert.assertEquals(bubble3.getSecondaryEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid pÃ¥ komponent");
+            Assert.assertEquals(bubble3.getMainEntityComponent().getVersjonId(), 1, "Feil versjonid pÃ¥ komponent");
         } finally {
             snapshotVersionContext.setSnapshotVersion(oldSnapshotVersion);
         }
     }
 
     /**
-     * Kjører update med umodifisert detached objekt. Det skal ikke blir generert historikk for dette.
+     * KjÃ¸rer update med umodifisert detached objekt. Det skal ikke blir generert historikk for dette.
      */
     public void testDettachedListUpdate() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getEmptyMockupFacade();
 
-        // Først må vi objektet skrives ned i databasen
+        // FÃ¸rst mÃ¥ vi objektet skrives ned i databasen
         final HistorikkBubbleWithListEntityComponentsId<?> id = mockupFacade.getIdService().getNextId(HistorikkBubbleWithListEntityComponentsId.class);
         HistorikkBubbleWithListEntityComponents bubble1 = new HistorikkBubbleWithListEntityComponents();
         bubble1.setId(id);
@@ -111,9 +111,9 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
         HistorikkBubbleWithListEntityComponents bubble2 = lockService.lock(id);
         Assert.assertEquals(bubble2.getVersjonId(), 1, "Feil versjonid");
         Assert.assertEquals(bubble2.getEntityComponents().size(), 1, "Feil antall komponenter");
-        Assert.assertEquals(bubble2.getEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid på komponent");
+        Assert.assertEquals(bubble2.getEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid pÃ¥ komponent");
 
-        // Sørg for at objektet blir helt detached
+        // SÃ¸rg for at objektet blir helt detached
         bubble2.setEntityComponents(new ArrayList<>(bubble2.getEntityComponents()));
 
         update(bubble2);
@@ -123,7 +123,7 @@ public class DetachedComponentHistoryTest extends StoreTestTestCase {
             HistorikkBubbleWithListEntityComponents bubble3 = storeService.getObject(id);
             Assert.assertEquals(bubble3.getVersjonId(), 1, "Feil versjonid");
             Assert.assertEquals(bubble3.getEntityComponents().size(), 1, "Feil antall komponenter");
-            Assert.assertEquals(bubble3.getEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid på komponent");
+            Assert.assertEquals(bubble3.getEntityComponents().iterator().next().getVersjonId(), 1, "Feil versjonid pÃ¥ komponent");
         } finally {
             snapshotVersionContext.setSnapshotVersion(oldSnapshotVersion);
         }

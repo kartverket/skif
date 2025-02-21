@@ -54,7 +54,7 @@ public class HibernateSessionFactoryDescriptor {
 
 
     public void setSnapshotVersion(Session session, SnapshotVersion snapshotVersion) {
-        Preconditions.checkArgument(accepts(snapshotVersion), "Session " + name + " støtter ikke snapshot version: " + snapshotVersion);
+        Preconditions.checkArgument(accepts(snapshotVersion), "Session " + name + " stÃ¸tter ikke snapshot version: " + snapshotVersion);
         if (logger.isTraceEnabled()) {
             logger.trace( name + ": setting Hibernate session " + System.identityHashCode(session) + " to use SnapshotVersion " + snapshotVersion.getTimestampString() +
                                   ( ( setSnapshotOnSession ) ?

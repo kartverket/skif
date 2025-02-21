@@ -54,10 +54,10 @@ public class BubbleTransferTypeMapperFactory implements TypeMapperFactory {
                 transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(argTypeToken.getRawType(), Iterable.class, Iterable.class);
             } catch (NoSuchMethodException ignore) {
                 try {
-                    // Første parameter er sannsynligvis Object pga. type erasure
+                    // FÃ¸rste parameter er sannsynligvis Object pga. type erasure
                     transferConstructor = (Constructor<DomainT>) domainTypeToken.getRawType().getConstructor(Object.class, Iterable.class, Iterable.class);
                 } catch (NoSuchMethodException e) {
-                    return null; // Ikke en ordentlig BubbleTransfer. Kan være en vanlig Transfer med bobler, f.eks. KodelisteTransfer
+                    return null; // Ikke en ordentlig BubbleTransfer. Kan vÃ¦re en vanlig Transfer med bobler, f.eks. KodelisteTransfer
                 }
             }
 

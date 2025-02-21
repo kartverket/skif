@@ -55,7 +55,7 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
                 resourceManager.commit();
             }
 
-            // Ved ytterste metode i et scope er det noen ekstra ting som skal gjøres
+            // Ved ytterste metode i et scope er det noen ekstra ting som skal gjÃ¸res
             if (!serviceRequestContext.isContinuation()) {
                 resourceManager.close();
                 resourceManager.shutdown();
@@ -80,8 +80,8 @@ public class EJBResourceProxyHandlerForConnection<S> extends EJBResourceProxyHan
                     resourceManager.rollback();
                 }
             }
-        } catch (Exception e) { // Bevisst valg å la Error forbli ufanget
-            // SKIF-158: Spis exceptions som kommer inni her, siden abortService() blir kalt pga. en annen exception som det anses for viktigere å kaste videre
+        } catch (Exception e) { // Bevisst valg Ã¥ la Error forbli ufanget
+            // SKIF-158: Spis exceptions som kommer inni her, siden abortService() blir kalt pga. en annen exception som det anses for viktigere Ã¥ kaste videre
             log.error("Ny exception ved abortService()", e);
         } finally {
             if (!serviceRequestContext.isContinuation()) {

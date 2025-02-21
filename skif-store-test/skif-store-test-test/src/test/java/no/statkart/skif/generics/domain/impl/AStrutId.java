@@ -3,7 +3,7 @@ package no.statkart.skif.generics.domain.impl;
 import no.statkart.skif.generics.service.StrutService;
 
 /**
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 1.0 - sprint 28
  */
 public class AStrutId<O extends AStrut> extends BaseStrutId<O> {

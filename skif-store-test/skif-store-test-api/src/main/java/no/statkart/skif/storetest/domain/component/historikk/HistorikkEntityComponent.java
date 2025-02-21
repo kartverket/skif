@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.domain.component.historikk;
 import no.statkart.skif.storetest.domain.AbstractEntityComponentWithHistory;
 
 /**
- * Generisk entity component for bruk både i én-til-én og én-til-mange, fortrinnsvis Set.
+ * Generisk entity component for bruk bÃ¥de i Ã©n-til-Ã©n og Ã©n-til-mange, fortrinnsvis Set.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0

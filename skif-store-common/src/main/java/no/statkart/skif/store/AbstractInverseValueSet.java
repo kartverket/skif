@@ -12,10 +12,10 @@ import java.util.Set;
  * Abstract implementasjon av {@link no.statkart.skif.store.InverseValueCollection} for wrapping av {@link java.util.Set}
  * av inverse values.
  * <p/>
- * Bemerk: I definisjonen av denne klassen burde {@code <O>} egentlig extende både {@code BubbleObject} og
- * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da må subklassen {@link no.statkart.skif.store.ComponentInverseValueSet}
+ * Bemerk: I definisjonen av denne klassen burde {@code <O>} egentlig extende bÃ¥de {@code BubbleObject} og
+ * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da mÃ¥ subklassen {@link no.statkart.skif.store.ComponentInverseValueSet}
  * eksplisitt angi den eidende bobleklassen i tillegg til den direkte eiende klassen og det blir og det blir veldig
- * tungvint. Har derfor istedet valgt å lage en package private hjelpemetode {@link no.statkart.skif.store.Bubbles#onChangeRelationImpl}
+ * tungvint. Har derfor istedet valgt Ã¥ lage en package private hjelpemetode {@link no.statkart.skif.store.Bubbles#onChangeRelationImpl}
  * som kun krever at {@code owner} er av type BubbleObject.
  *
  * @author Henrik Fredholm

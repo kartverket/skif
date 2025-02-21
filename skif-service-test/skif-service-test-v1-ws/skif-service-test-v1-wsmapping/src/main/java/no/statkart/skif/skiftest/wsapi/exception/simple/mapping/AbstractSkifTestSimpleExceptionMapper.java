@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  *
  * Alle metoder kaster {@link NotImplementedException}
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 public abstract class AbstractSkifTestSimpleExceptionMapper implements ExceptionMapping {

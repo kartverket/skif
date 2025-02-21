@@ -10,7 +10,7 @@ import no.statkart.skif.store.Store;
 import java.util.*;
 
 /**
- * Inneholder snapshots. Alle id-er skal være current.
+ * Inneholder snapshots. Alle id-er skal vÃ¦re current.
  *
  * @author Tor Egil R. Strand
  * @author Henrik Fredholm
@@ -32,7 +32,7 @@ public class MockupPersister {
 
     /**
      * Henter ut et snapshot. Det opprettes hvis det ikke allerede finnes. Det brukes en
-     * LinkedHashMap for å bevare operasjons rekkefølgen.
+     * LinkedHashMap for Ã¥ bevare operasjons rekkefÃ¸lgen.
      *
      * @param snapshotVersion tidspunkt for snapshot
      * @return snapshot
@@ -47,7 +47,7 @@ public class MockupPersister {
     }
 
     /**
-     * Sjekker at id-en er current slik den må være.
+     * Sjekker at id-en er current slik den mÃ¥ vÃ¦re.
      *
      * @param bubbleId id som skal sjekkes
      */
@@ -58,15 +58,15 @@ public class MockupPersister {
     }
 
     /**
-     * Putter inn et objekt på tidspunkt gitt av <code>snapshotVersion</code>.
+     * Putter inn et objekt pÃ¥ tidspunkt gitt av <code>snapshotVersion</code>.
      * <p>
-     * Følgende krav gjelder:
+     * FÃ¸lgende krav gjelder:
      * <ul>
-     * <li>Objektet kan ikke allerede ha blitt inserted på noe tidspunkt</li>
+     * <li>Objektet kan ikke allerede ha blitt inserted pÃ¥ noe tidspunkt</li>
      * </ul>
      *
      * @param bubbleObject    objektet som skal settes inn
-     * @param snapshotVersion tidspunktet objektet skal anses som opprettet på
+     * @param snapshotVersion tidspunktet objektet skal anses som opprettet pÃ¥
      */
     public void insert(BubbleObject bubbleObject, SnapshotVersion snapshotVersion) {
         checkIdIsCurrent(bubbleObject.getId());
@@ -82,17 +82,17 @@ public class MockupPersister {
     }
 
     /**
-     * Oppdaterer et objekt på tidspunkt gitt av <code>snapshotVersion</code>.
+     * Oppdaterer et objekt pÃ¥ tidspunkt gitt av <code>snapshotVersion</code>.
      * <p>
-     * Følgende krav gjelder:
+     * FÃ¸lgende krav gjelder:
      * <ul>
-     * <li>Objektet må ha blitt inserted på et tidligere eller likt tidspunkt</li>
-     * <li>Objektet kan ikke ha blitt updated på et senere tidspunkt</li>
-     * <li>Objektet kan ikke ha blitt deleted på et tidligere eller likt tidspunkt</li>
+     * <li>Objektet mÃ¥ ha blitt inserted pÃ¥ et tidligere eller likt tidspunkt</li>
+     * <li>Objektet kan ikke ha blitt updated pÃ¥ et senere tidspunkt</li>
+     * <li>Objektet kan ikke ha blitt deleted pÃ¥ et tidligere eller likt tidspunkt</li>
      * </ul>
      *
      * @param bubbleObject    objektet som skal oppdateres
-     * @param snapshotVersion tidspunktet objektet skal anses som oppdatert på
+     * @param snapshotVersion tidspunktet objektet skal anses som oppdatert pÃ¥
      */
     public void update(BubbleObject bubbleObject, SnapshotVersion snapshotVersion) {
         checkIdIsCurrent(bubbleObject.getId());
@@ -117,17 +117,17 @@ public class MockupPersister {
     }
 
     /**
-     * Sletter et objekt på tidspunkt gitt av <code>snapshotVersion</code>.
+     * Sletter et objekt pÃ¥ tidspunkt gitt av <code>snapshotVersion</code>.
      * <p>
-     * Følgende krav gjelder:
+     * FÃ¸lgende krav gjelder:
      * <ul>
-     * <li>Objektet må ha blitt inserted på et tidligere eller likt tidspunkt</li>
-     * <li>Objektet kan ikke ha blitt updated på et senere tidspunkt</li>
-     * <li>Objektet kan ikke ha blitt deleted på et tidligere eller likt tidspunkt</li>
+     * <li>Objektet mÃ¥ ha blitt inserted pÃ¥ et tidligere eller likt tidspunkt</li>
+     * <li>Objektet kan ikke ha blitt updated pÃ¥ et senere tidspunkt</li>
+     * <li>Objektet kan ikke ha blitt deleted pÃ¥ et tidligere eller likt tidspunkt</li>
      * </ul>
      *
      * @param bubbleObject    objektet som skal slettes
-     * @param snapshotVersion tidspunktet objektet skal anses som slettet på
+     * @param snapshotVersion tidspunktet objektet skal anses som slettet pÃ¥
      */
     public void delete(BubbleObject bubbleObject, SnapshotVersion snapshotVersion) {
         checkIdIsCurrent(bubbleObject.getId());
@@ -153,10 +153,10 @@ public class MockupPersister {
     }
 
     /**
-     * Henter ut objektet slik det ville ha sett ut på gitt tidspunkt. OBS! Objektet returneres med current id-er.
+     * Henter ut objektet slik det ville ha sett ut pÃ¥ gitt tidspunkt. OBS! Objektet returneres med current id-er.
      *
-     * @param bubbleId        id til objektet som skal slås opp
-     * @param snapshotVersion tidspunktet søket skal starte på og gå bakover i tid
+     * @param bubbleId        id til objektet som skal slÃ¥s opp
+     * @param snapshotVersion tidspunktet sÃ¸ket skal starte pÃ¥ og gÃ¥ bakover i tid
      * @return objektet
      */
     public BubbleObject get(BubbleId bubbleId, SnapshotVersion snapshotVersion) {
@@ -171,7 +171,7 @@ public class MockupPersister {
         }
 
         if (snapshots.containsKey(snapshotVersion)) {
-            // Prøv først gjeldende snapshotversion
+            // PrÃ¸v fÃ¸rst gjeldende snapshotversion
             Map<BubbleId<?>, BubbleObject> snapshot = snapshots.get(snapshotVersion);
             BubbleObject bubbleObject = snapshot.get(bubbleId);
             if (bubbleObject != null) {
@@ -190,13 +190,13 @@ public class MockupPersister {
     }
 
     /**
-     * Henter ut inserts, updates og deletes for gitt SnapshotVersion. Gitt snapshot må ha blitt laget.
+     * Henter ut inserts, updates og deletes for gitt SnapshotVersion. Gitt snapshot mÃ¥ ha blitt laget.
      * <p>
      * Objektene i transfer er kopier, slik at de ikke lenger er knyttet opp til denne Store og dermed kan puttes inn
      * i en ordentlig Store.
      * <p>
-     * Pga effektivitet bør objektene ikke kopieres. Dersom de skal legges direkte inn i store kan transfer lage en kopi
-     * om nødvendig
+     * Pga effektivitet bÃ¸r objektene ikke kopieres. Dersom de skal legges direkte inn i store kan transfer lage en kopi
+     * om nÃ¸dvendig
      *
      * @param snapshotVersion tidspunkt som skal hentes ut
      * @return transfer med inserts, updates og deletes
@@ -223,10 +223,10 @@ public class MockupPersister {
     }
 
     /**
-     * Henter ut inserts, updates og deletes for gitte objekter i gitt SnapshotVersion. Gitt snapshot må ha blitt laget.
-     * Dersom noen av objektene ikke har blitt endret i gitt snapshot, så blir de ikke med i transfer.
+     * Henter ut inserts, updates og deletes for gitte objekter i gitt SnapshotVersion. Gitt snapshot mÃ¥ ha blitt laget.
+     * Dersom noen av objektene ikke har blitt endret i gitt snapshot, sÃ¥ blir de ikke med i transfer.
      * <p>
-     * Objektene i transferen vil forsatt være knyttet opp mot MockupStore og må derfor kopieres før de puttes inn i
+     * Objektene i transferen vil forsatt vÃ¦re knyttet opp mot MockupStore og mÃ¥ derfor kopieres fÃ¸r de puttes inn i
      * ordentlig Store. Dette skjer normalt automatisk.
      * <p>
      *
@@ -261,8 +261,8 @@ public class MockupPersister {
     /**
      * Henter ut transfers for alle definerte snapshots opp til og inkludert gitte SnapshotVersion.
      *
-     * @param beforeSnapshotVersion øvre grense for snapshots
-     * @return transfers i sortert rekkefølge, eldste først
+     * @param beforeSnapshotVersion Ã¸vre grense for snapshots
+     * @return transfers i sortert rekkefÃ¸lge, eldste fÃ¸rst
      */
     public SortedMap<SnapshotVersion, MockupTransfer> getTransfersBefore(SnapshotVersion beforeSnapshotVersion) {
         TreeMap<SnapshotVersion, MockupTransfer> transfers = new TreeMap<SnapshotVersion, MockupTransfer>();

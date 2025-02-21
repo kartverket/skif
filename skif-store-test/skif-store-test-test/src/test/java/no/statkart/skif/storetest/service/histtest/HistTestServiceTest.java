@@ -54,7 +54,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
         final HistSimpleId<?> histSimpleId = ids.iterator().next();
         assertEquals(histSimpleId.getSnapshotVersion(), MockupSnapshots.S3_30);
 
-        // Ta utgangspunkt i oppdateringsdato og sjekk at vi finner samme foo på nytt
+        // Ta utgangspunkt i oppdateringsdato og sjekk at vi finner samme foo pÃ¥ nytt
         HistSimple histSimple = store.get(histSimpleId);
         assertEquals(histSimple.getText(), "KART-VEIEN");
         SnapshotVersion snapshotVersion = SnapshotVersion.createInstance(histSimple.getOppdateringsdato());
@@ -73,7 +73,7 @@ public class HistTestServiceTest extends StoreTestTestCase {
         final HistSimpleId<?> histSimpleId = ids.iterator().next();
         assertEquals(histSimpleId.getSnapshotVersion(), MockupSnapshots.S3_30);
 
-        // Ta utgangspunkt i oppdateringsdato og sjekk at vi finner samme foo på nytt
+        // Ta utgangspunkt i oppdateringsdato og sjekk at vi finner samme foo pÃ¥ nytt
         HistSimple histSimple = store.get(histSimpleId);
         assertEquals(histSimple.getText(), "KART-VEIEN");
         final Timestamp oppdateringsdato = histSimple.getOppdateringsdato();

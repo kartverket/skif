@@ -65,7 +65,7 @@ public class StoreServiceTest extends StoreTestTestCase {
 
         try {
             storeService.getObject(simple1Id);
-            fail("Skulle fått exception");
+            fail("Skulle fÃ¥tt exception");
         } catch (ObjectNotFoundException e) {
             assertEquals(e.getNotFoundId(), simple1Id);
         }
@@ -131,7 +131,7 @@ public class StoreServiceTest extends StoreTestTestCase {
 //    }
 //
 //    /**
-//     * Tester uthenting av objekter basert på id'er i forskjellig rekkefølge.
+//     * Tester uthenting av objekter basert pÃ¥ id'er i forskjellig rekkefÃ¸lge.
 //     */
 //    @Test
 //    public void testStoreGetManyFoos() {
@@ -202,7 +202,7 @@ public class StoreServiceTest extends StoreTestTestCase {
 //    }
 //
 //    public void testStoreGetBarFoos() {
-//        Store store = injector.getInstance(Store.class); //Må bruke Store her istedenfor StoreService da man bruker intern store på objekter i testen
+//        Store store = injector.getInstance(Store.class); //MÃ¥ bruke Store her istedenfor StoreService da man bruker intern store pÃ¥ objekter i testen
 //        BarFoos barFoos = store.get(new BarFoosId<BarFoos>(2001L));
 //        Assert.assertEquals(barFoos.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
 //        Assert.assertEquals(barFoos.getBarId(), new BarId<Bar>(1001L));

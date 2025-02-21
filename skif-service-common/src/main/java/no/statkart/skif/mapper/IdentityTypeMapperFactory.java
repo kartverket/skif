@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Factory for typemappere som bare sender objektet tvert igjennom. Bør kun brukes for "primitiver" (Integer, String).
+ * Factory for typemappere som bare sender objektet tvert igjennom. BÃ¸r kun brukes for "primitiver" (Integer, String).
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
@@ -126,7 +126,7 @@ public class IdentityTypeMapperFactory implements TypeMapperFactory {
         } else if (wsapiTypeToken.isSupertypeOf(domainTypeToken) || domainTypeToken.isSupertypeOf(wsapiTypeToken)) { // Antar her at subklassen er en subklasse bare fordi instansen er det, ikke fordi feltet er slik
             return true;
         } else {
-            // Det er viktig her å ikke gå ned på equals av rawType med mindre den ene eller andre siden er en primitiv type.
+            // Det er viktig her Ã¥ ikke gÃ¥ ned pÃ¥ equals av rawType med mindre den ene eller andre siden er en primitiv type.
             if (wsapiTypeToken.getRawType().isPrimitive()) {
                 return wsapiTypeToken.getRawType().equals(Primitives.unwrap(domainTypeToken.getRawType()));
             }

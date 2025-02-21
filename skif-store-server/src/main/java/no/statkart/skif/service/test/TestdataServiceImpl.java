@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.SortedMap;
 
 /**
- * Tjeneste for å legge inn testdata generert via mockup rammeverket i en database. For hver testsett som legges inn
- * undersøkes det om datasettet finnes fra før i databasen. Kun datasett for {@code TestNumber.NR_0} kan finnes fra før.
+ * Tjeneste for Ã¥ legge inn testdata generert via mockup rammeverket i en database. For hver testsett som legges inn
+ * undersÃ¸kes det om datasettet finnes fra fÃ¸r i databasen. Kun datasett for {@code TestNumber.NR_0} kan finnes fra fÃ¸r.
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -37,7 +37,7 @@ public class TestdataServiceImpl implements TestdataService {
 
     protected final Store store;
 
-    // Denne trengs for å få service kall til å gå via service rammeverket i stedet for direkte
+    // Denne trengs for Ã¥ fÃ¥ service kall til Ã¥ gÃ¥ via service rammeverket i stedet for direkte
     protected final TestdataService testdataService;
 
     protected final TestNumberFactory testNumberFactory;
@@ -64,7 +64,7 @@ public class TestdataServiceImpl implements TestdataService {
     @Override
     public void saveAll(SortedMap<SnapshotVersion, MockupTransfer> snapshotTransfers) {
         if (snapshotTransfers.isEmpty()) return;
-        // Sjekk om testsettet allerede er skrevet til databasen ved å sjekke på om første id i transfer finnes
+        // Sjekk om testsettet allerede er skrevet til databasen ved Ã¥ sjekke pÃ¥ om fÃ¸rste id i transfer finnes
         SnapshotVersion firstSnapshot = snapshotTransfers.firstKey();
         MockupTransfer firstTransfer = snapshotTransfers.get(firstSnapshot);
         if (testsetExists(firstSnapshot, firstTransfer)) {
@@ -86,7 +86,7 @@ public class TestdataServiceImpl implements TestdataService {
     }
 
     /**
-     * Sjekker om testset allerede finnes i databasen ved å sjekk om første id i transfer
+     * Sjekker om testset allerede finnes i databasen ved Ã¥ sjekk om fÃ¸rste id i transfer
      * finnes i databasen.
      */
     private boolean testsetExists(SnapshotVersion snapshot, MockupTransfer transfer) {
@@ -120,7 +120,7 @@ public class TestdataServiceImpl implements TestdataService {
             Connection connection = connectionProvider.get();
             try (PreparedStatement statement = connection.prepareStatement("insert into SNAPSHOT_TRANS values (?)")) {
 
-                // Dette feiler i den doble timen når vi går over fra sommertid til vintertid. Må bruke Oracle API.
+                // Dette feiler i den doble timen nÃ¥r vi gÃ¥r over fra sommertid til vintertid. MÃ¥ bruke Oracle API.
 //                statement.setTimestamp(1, transactionSnapshot.getTimestamp());
                 OraclePreparedStatement oracleStatement = statement.unwrap(OraclePreparedStatement.class);
                 oracleStatement.setTIMESTAMPTZ(1, new TIMESTAMPTZ(oracleStatement.getConnection(), transactionSnapshot.getTimestamp()));

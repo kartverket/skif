@@ -16,23 +16,23 @@ import java.util.Map;
 
 /**
  * En {@code EJBProxyHandler} for services av type {@code S} som implementerer EJB-container funksjonalitet for
- * servicen  i {@code SINGLE_VM}-mode. Klassen har ansvar for å opprette og initialisere og evt opprette en ny
- * {@code ServiceRequestContext} slik at kallet utføres med ønsket isolasjonsnivå og evt kjøres som en gitt bruker.
+ * servicen  i {@code SINGLE_VM}-mode. Klassen har ansvar for Ã¥ opprette og initialisere og evt opprette en ny
+ * {@code ServiceRequestContext} slik at kallet utfÃ¸res med Ã¸nsket isolasjonsnivÃ¥ og evt kjÃ¸res som en gitt bruker.
  * <p>
- * Kall til {@link #invoke} kan kun utføres når {@link ServiceRequestScope} er aktivt. Ved kall fra klient til server
- * må klienten derfor selv sette opp et initiellt {@code ServiceRequestScope} før kallet utføres og må også seede
- * scopet med et {@link SingleVmRemoteCallContext} objekt som inneholder credentials og andre nødvendige meta data.
- * Ut fra dette vil klassen definere opp et nytt {@code ServiceRequestScope} som kallet vil utføres under.
- * Ved kall fra serveren er det ikke nødvendig å sette opp et nytt {@code ServiceRequestScope} siden et scope da
+ * Kall til {@link #invoke} kan kun utfÃ¸res nÃ¥r {@link ServiceRequestScope} er aktivt. Ved kall fra klient til server
+ * mÃ¥ klienten derfor selv sette opp et initiellt {@code ServiceRequestScope} fÃ¸r kallet utfÃ¸res og mÃ¥ ogsÃ¥ seede
+ * scopet med et {@link SingleVmRemoteCallContext} objekt som inneholder credentials og andre nÃ¸dvendige meta data.
+ * Ut fra dette vil klassen definere opp et nytt {@code ServiceRequestScope} som kallet vil utfÃ¸res under.
+ * Ved kall fra serveren er det ikke nÃ¸dvendig Ã¥ sette opp et nytt {@code ServiceRequestScope} siden et scope da
  * allerede er aktivt.
  * <p>
- * Klassen vil i de fleste tilfeller opprette et nytt {@link ServiceRequestScope} slik at kallet utføres isolert. En
- * unntagelse er nå kallet kommer i kontekst av en annen EJB og ny transaksjon ikke er på krevet. Normalt vil slike
- * kall dog gå uten om denne klassen og utføres direkte på servicens {@code ImplementationServiceChain}.
+ * Klassen vil i de fleste tilfeller opprette et nytt {@link ServiceRequestScope} slik at kallet utfÃ¸res isolert. En
+ * unntagelse er nÃ¥ kallet kommer i kontekst av en annen EJB og ny transaksjon ikke er pÃ¥ krevet. Normalt vil slike
+ * kall dog gÃ¥ uten om denne klassen og utfÃ¸res direkte pÃ¥ servicens {@code ImplementationServiceChain}.
  * <p>
- * Kaller må også selv sørge for å sette {@code SnapshotVersion} i {@code SnapshotVersionContext} til ønsket verdi
- * for kallet. Dette er løst slik for å gjøre det mulig at kall som ikke trenger ny transaksjon kontekst kan utføres
- * direkte på servicens {@code ImplementationServiceChain}
+ * Kaller mÃ¥ ogsÃ¥ selv sÃ¸rge for Ã¥ sette {@code SnapshotVersion} i {@code SnapshotVersionContext} til Ã¸nsket verdi
+ * for kallet. Dette er lÃ¸st slik for Ã¥ gjÃ¸re det mulig at kall som ikke trenger ny transaksjon kontekst kan utfÃ¸res
+ * direkte pÃ¥ servicens {@code ImplementationServiceChain}
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -83,8 +83,8 @@ public class EJBInterceptorSingleVm<S> extends EJBCallProxyHandler<S> {
             }
             LoginUser loginUser = (LoginUser) contextData.get("credentials");
             final PrincipalImpl callerPrincipal = (loginUser == null) ? new PrincipalImpl(null) : new PrincipalImpl(loginUser.getUsername());
-            // Lag en falsk ServiceRequestContext for å etterligne det SkifWSInterceptor gjør.
-            // Den ServiceRequestContext som ble hentet ut i invokeMethod er i dette tilfellet bare søppel, siden den aldri har blitt initialisert med principal.
+            // Lag en falsk ServiceRequestContext for Ã¥ etterligne det SkifWSInterceptor gjÃ¸r.
+            // Den ServiceRequestContext som ble hentet ut i invokeMethod er i dette tilfellet bare sÃ¸ppel, siden den aldri har blitt initialisert med principal.
             ServiceRequestContext outerServiceRequestContext = new ServiceRequestContext(callerPrincipal, callIdProvider.get(), TxMode.NOT_IN_EJB, false, null);
             serviceRequestContext = new ServiceRequestContext(outerServiceRequestContext, callIdProvider.get(), txMode, beanManagedTransaction, txType);
         } else {

@@ -28,7 +28,7 @@ public class SkifMixedTestCaseTest extends SkifMixedTestCase {
     }
 
     public void testRunOnServerUsingBeanManagedTransaction() {
-        // Her er vi på klienten og injector peker på klientmodulen
+        // Her er vi pÃ¥ klienten og injector peker pÃ¥ klientmodulen
         String s = injector.getInstance(Key.get(String.class, Names.named("client")));
         assertEquals(s, "ClientString");
 
@@ -39,7 +39,7 @@ public class SkifMixedTestCaseTest extends SkifMixedTestCase {
             ServiceRequestContext serviceRequestContext;
 
             public Object run() {
-                // Her er vi på server
+                // Her er vi pÃ¥ server
                 String result = serviceA.m1(Arrays.asList("BService.m2"));
                 assertTrue(serviceRequestContext.isBeanManagedTransaction());
                 assertTrue(serviceRequestContext.inTx());

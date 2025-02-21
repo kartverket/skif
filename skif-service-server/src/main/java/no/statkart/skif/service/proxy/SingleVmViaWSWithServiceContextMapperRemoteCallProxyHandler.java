@@ -17,8 +17,8 @@ import no.statkart.skif.store.SnapshotVersionContext;
 import java.lang.reflect.Method;
 
 /**
- * Kobler seg mot singlevm på tjenersiden på samme måte som {@link SingleVmNoWSWithServiceContextMapperRemoteCallProxyHandler},
- * men tar først veien via mapping.
+ * Kobler seg mot singlevm pÃ¥ tjenersiden pÃ¥ samme mÃ¥te som {@link SingleVmNoWSWithServiceContextMapperRemoteCallProxyHandler},
+ * men tar fÃ¸rst veien via mapping.
  *
  * @author Tor Egil R. Strand
  * @since 2.3.0
@@ -45,7 +45,7 @@ public class SingleVmViaWSWithServiceContextMapperRemoteCallProxyHandler<S, W ex
     @Override
     protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
         SnapshotVersion snapshotVersion = snapshotVersionContext.getSnapshotVersion();
-        // Sett snapshotVersion som skal brukes av mappingrammeverket for inneværende request
+        // Sett snapshotVersion som skal brukes av mappingrammeverket for innevÃ¦rende request
         SnapshotVersion orignalSnapshotVersion = snapshotVersionContext.setSnapshotVersion(snapshotVersion);
         serviceRequestScope.enter();
         try {
@@ -63,5 +63,5 @@ public class SingleVmViaWSWithServiceContextMapperRemoteCallProxyHandler<S, W ex
         }
     }
 
-    // TODO: context burde også vært gjennom mapperen, men mapperen er ikke fleksibel nok
+    // TODO: context burde ogsÃ¥ vÃ¦rt gjennom mapperen, men mapperen er ikke fleksibel nok
 }

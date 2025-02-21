@@ -228,7 +228,7 @@ public class MultikoblingTest extends StoreTestTestCase {
         SetMultimap<String, String> delegate = (SetMultimap<String, String>) delegateField.get(multikobling);
         assertThat((Boolean) refreshNeededField.get(multikobling)).isTrue();
         assertThat(delegate.isEmpty()).isTrue();
-        assertThat(multikobling.get("Over")).containsExactly("10");  // multikobling.get() gjør automatisk refresh
+        assertThat(multikobling.get("Over")).containsExactly("10");  // multikobling.get() gjÃ¸r automatisk refresh
         assertThat((Boolean) refreshNeededField.get(multikobling)).isFalse();
         assertThat(delegate.isEmpty()).isFalse();
     }

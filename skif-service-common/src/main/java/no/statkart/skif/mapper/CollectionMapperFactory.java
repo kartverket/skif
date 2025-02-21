@@ -544,7 +544,7 @@ public class CollectionMapperFactory implements TypeMapperFactory {
 
             try {
                 List entryList = (List) entryField.get(source);
-                if (entryList != null) { // Tomme maps ser ut til å føre til dette
+                if (entryList != null) { // Tomme maps ser ut til Ã¥ fÃ¸re til dette
                     for (Object entry : entryList) {
                         final Object key, value;
                         key = mapping.w2d(keyField.get(entry), keyField.getGenericType(), domainKeyType);

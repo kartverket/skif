@@ -10,12 +10,12 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Transferobjekt som brukes for overføre endringer gjort på klient til server. For inserts og
- * updates overføres selve objektet, mens for deletes overføres kun id.
+ * Transferobjekt som brukes for overfÃ¸re endringer gjort pÃ¥ klient til server. For inserts og
+ * updates overfÃ¸res selve objektet, mens for deletes overfÃ¸res kun id.
  * <p>
- * Objektet har en valideringsmetode, {@link #checkAllowedClasses()} for å sjekke at transferobjektet kun inneholder gyldige klasser. Som default
- * tillates alle bobleklasser. Metoden kan gjøres mer restriktiv i subklasser. Metoden kalles på serveren i forbindelse med
- * registrering av transferen på tjeneren.
+ * Objektet har en valideringsmetode, {@link #checkAllowedClasses()} for Ã¥ sjekke at transferobjektet kun inneholder gyldige klasser. Som default
+ * tillates alle bobleklasser. Metoden kan gjÃ¸res mer restriktiv i subklasser. Metoden kalles pÃ¥ serveren i forbindelse med
+ * registrering av transferen pÃ¥ tjeneren.
  *
  * @author Henrik Fredholm
  */

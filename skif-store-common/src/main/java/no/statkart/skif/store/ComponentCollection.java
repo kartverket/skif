@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * Interface for Collection av components, som automatisk setter owner på components.
+ * Interface for Collection av components, som automatisk setter owner pÃ¥ components.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0

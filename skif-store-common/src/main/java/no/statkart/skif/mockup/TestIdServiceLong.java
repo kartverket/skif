@@ -12,7 +12,7 @@ import no.statkart.skif.store.SnapshotVersion;
 /**
  * Enkel implementasjon av {@link IdService} for generering av test-id'er for id-typer
  * som alle benytter {@link Long} som verditype. Test-id'en som genereres bruker
- * {@link TestNumber} som prefix og har en øvre grense på {@link #PREFIX_FACTOR} id'er som
+ * {@link TestNumber} som prefix og har en Ã¸vre grense pÃ¥ {@link #PREFIX_FACTOR} id'er som
  * kan genereres med samme prefix.
  *
  * @author Henrik Fredholm
@@ -24,7 +24,7 @@ public class TestIdServiceLong implements IdService {
     private static final int PREFIX_FACTOR = 1_000_000;
 
     private final TestNumber testNumber;
-    private int localIdValue = 100_000; //lokal suffix av id verdi - setter av et område tiltenkt hardkodede verdier i mockupsettet
+    private int localIdValue = 100_000; //lokal suffix av id verdi - setter av et omrÃ¥de tiltenkt hardkodede verdier i mockupsettet
 
     @Inject
     public TestIdServiceLong(TestNumber testNumber) {
@@ -33,7 +33,7 @@ public class TestIdServiceLong implements IdService {
 
     /**
      * Beregner id-verdi for mockupsekvens.
-     * Et mockupsett får tildelt egen sekvens:
+     * Et mockupsett fÃ¥r tildelt egen sekvens:
      * <pre>{@code
      *
      *       1PPPP MMMMMM
@@ -41,8 +41,8 @@ public class TestIdServiceLong implements IdService {
      *
      * }</pre>
      *
-     * PS: anbefalt størrelse på returnert verdi bør overstige {@link Integer#MAX_VALUE} - dvs 11 siffer eller mer.
-     *  - Dette for å verifisere at modell kan håndtere long verdier og at man ikke feilaktig har brukt int for id-felter.
+     * PS: anbefalt stÃ¸rrelse pÃ¥ returnert verdi bÃ¸r overstige {@link Integer#MAX_VALUE} - dvs 11 siffer eller mer.
+     *  - Dette for Ã¥ verifisere at modell kan hÃ¥ndtere long verdier og at man ikke feilaktig har brukt int for id-felter.
      *
      * @see TestdataService#getNextTestNumber() implementasjon av getNextTestNumber() for konfigurasjon av prefix verdi
      * @see TestNumber#getPrefix() getPrefix() for beregning av prefix verdi

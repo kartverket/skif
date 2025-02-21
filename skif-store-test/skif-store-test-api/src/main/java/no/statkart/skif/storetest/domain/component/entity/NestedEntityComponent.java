@@ -7,12 +7,12 @@ import no.statkart.skif.store.EntityComponent;
 import java.util.Set;
 
 /**
- * EntityComponent som tester nesting. Har et felt {@code nestedComponent} som peken på en annen instans av samme type.
- * Har også et {@code Set} som peker på komponenter av samme type. Ingen instanser skal kunne deles.
+ * EntityComponent som tester nesting. Har et felt {@code nestedComponent} som peken pÃ¥ en annen instans av samme type.
+ * Har ogsÃ¥ et {@code Set} som peker pÃ¥ komponenter av samme type. Ingen instanser skal kunne deles.
  * <p>
- * <P>Denne klassen har ingen tilbakepeker til owner og kan derfor pekes til fra forskjellige klasser. Der gør at det
+ * <P>Denne klassen har ingen tilbakepeker til owner og kan derfor pekes til fra forskjellige klasser. Der gÃ¸r at det
  * ikke trengs som mange forskjellige testklasser. I attached state kan rammeverket ikke fange opp hvis komponenten
- * stjæles.
+ * stjÃ¦les.
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -46,7 +46,7 @@ public class NestedEntityComponent implements EntityComponent {
     }
 
     /**
-     * Brukes for testing av stjålne id
+     * Brukes for testing av stjÃ¥lne id
      */
     public void setIdForTesting(Long id) {
         this.id = id;

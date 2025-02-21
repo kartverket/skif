@@ -33,7 +33,7 @@ import static org.assertj.core.api.Fail.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.*;
 
 /**
- *  Tester EntityCompontent i UnitOfWork på Klient for SingleVm og JEE mode
+ *  Tester EntityCompontent i UnitOfWork pÃ¥ Klient for SingleVm og JEE mode
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -55,12 +55,12 @@ public class EntityComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester at Hibernate kan batch sql for opprettelse bobler som inneholder EntityComponents. Denne test må
-     * kjøres med hibernate sql og batch logging satt til debug og det er nødvendig manuelt å sjekke at all
-     * sql blir batchet. Det som må sjekkes er at sql statements ikke forekommer ut av sekvens, dvs. at alle like sql
+     * Tester at Hibernate kan batch sql for opprettelse bobler som inneholder EntityComponents. Denne test mÃ¥
+     * kjÃ¸res med hibernate sql og batch logging satt til debug og det er nÃ¸dvendig manuelt Ã¥ sjekke at all
+     * sql blir batchet. Det som mÃ¥ sjekkes er at sql statements ikke forekommer ut av sekvens, dvs. at alle like sql
      * statements kommer rett etter hverandre og ingen andre steder.
      *
-     * For å enable full batching må hibernate.order_updates=true og hibernate.order_inserts=true være satt
+     * For Ã¥ enable full batching mÃ¥ hibernate.order_updates=true og hibernate.order_inserts=true vÃ¦re satt
      */
     public void testBatchInsert() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacade();
@@ -76,12 +76,12 @@ public class EntityComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester at Hibernate kan batch laste bobler som inneholder EntityComponents effektiv. Denne test må kjøres med
-     * hibernate sql og batch logging satt til debug og det er nødvendig manuelt å sjekke at all sql som utføres
-     * ved lastingen anvender liste av id'er som parameter slik at sql'en utføres samlet for alle objekter og ikke
-     * per objekt. Dette skal også gjelder for collections.
+     * Tester at Hibernate kan batch laste bobler som inneholder EntityComponents effektiv. Denne test mÃ¥ kjÃ¸res med
+     * hibernate sql og batch logging satt til debug og det er nÃ¸dvendig manuelt Ã¥ sjekke at all sql som utfÃ¸res
+     * ved lastingen anvender liste av id'er som parameter slik at sql'en utfÃ¸res samlet for alle objekter og ikke
+     * per objekt. Dette skal ogsÃ¥ gjelder for collections.
      * <P>
-     * Et lille triks er å kjøre testen flere ganger slik at readsettet allerede er opprettet når sql'en inspiseres.
+     * Et lille triks er Ã¥ kjÃ¸re testen flere ganger slik at readsettet allerede er opprettet nÃ¥r sql'en inspiseres.
      */
     public void testBatchRead() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -173,8 +173,8 @@ public class EntityComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester at det ikke er mulig å flytte en komponent fra et objekt til et annet. Skulle gjerne ønske at feilen
-     * kom med en gang når man forsøker å sette komponenten slik at feilfindingen blir enklere. I nårværende
+     * Tester at det ikke er mulig Ã¥ flytte en komponent fra et objekt til et annet. Skulle gjerne Ã¸nske at feilen
+     * kom med en gang nÃ¥r man forsÃ¸ker Ã¥ sette komponenten slik at feilfindingen blir enklere. I nÃ¥rvÃ¦rende
      * implementasjon oppdages feilen kun ved persistering til serveren.
      */
     public void testMoveComponent() {
@@ -251,10 +251,10 @@ public class EntityComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester at der er mulig å endre identen på entity componenter som ligger i et Set fordi identen ikke brukes
+     * Tester at der er mulig Ã¥ endre identen pÃ¥ entity componenter som ligger i et Set fordi identen ikke brukes
      * i equals og hashCode som jo anvendes av Set.
      *
-     * TODO: Dette eksempel muligvis kan gjøre bedre. Mangler å test at man faktisk får problemet hvis man bruker ident i equals og hashCode.
+     * TODO: Dette eksempel muligvis kan gjÃ¸re bedre. Mangler Ã¥ test at man faktisk fÃ¥r problemet hvis man bruker ident i equals og hashCode.
      */
     public void testChangeIdentOfEntityInSet() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -286,7 +286,7 @@ public class EntityComponentTest extends StoreTestTestCase {
         orgBubble.setLevel1Component(orgLevel1Component);
         orgLevel1Component.setText("Foo");
 
-        // Må trigge generering av pseudoId
+        // MÃ¥ trigge generering av pseudoId
         //noinspection ResultOfMethodCallIgnored
         orgLevel1Component.hashCode();
 

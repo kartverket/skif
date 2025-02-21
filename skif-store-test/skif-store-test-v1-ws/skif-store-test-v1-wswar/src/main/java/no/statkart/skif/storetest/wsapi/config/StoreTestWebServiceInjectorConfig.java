@@ -17,7 +17,7 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
 /**
- * Konfigurasjon av injector for Web service API. Må kalles fra en ServletContextListener i web.xml.
+ * Konfigurasjon av injector for Web service API. MÃ¥ kalles fra en ServletContextListener i web.xml.
  *
  * @author Henrik Fredholm
  */

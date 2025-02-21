@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.extractProperty;
 import static org.testng.Assert.*;
 
 /**
- * Tester bruk av EntityComponent på Serveren for attached og detached state for one-to-many mappings
+ * Tester bruk av EntityComponent pÃ¥ Serveren for attached og detached state for one-to-many mappings
  * <p>
  *
  * @author Henrik Fredholm
@@ -34,8 +34,8 @@ import static org.testng.Assert.*;
  */
 @Test(groups = {"singlevm-required"})
 public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
-    // Switch som angir om testcasen skal teste med flush etter hver endring. Har valgt ikke å har egne
-    // testcases for hver mode for å redusere antall testcases som skal kjøres og vedlikeholdes
+    // Switch som angir om testcasen skal teste med flush etter hver endring. Har valgt ikke Ã¥ har egne
+    // testcases for hver mode for Ã¥ redusere antall testcases som skal kjÃ¸res og vedlikeholdes
     boolean flushing = false;
 
     @Inject
@@ -505,12 +505,12 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at CompositeComponent objekter kan opprettes fritstående
+     * Tester at CompositeComponent objekter kan opprettes fritstÃ¥ende
      */
     public void testCreateDetachedCompositeComponentWithEntityComponents() {
         BubbleWithEntityInCompositeComponent b = new BubbleWithEntityInCompositeComponent();
 
-        // Opprett fritstående Level 2 component
+        // Opprett fritstÃ¥ende Level 2 component
         Level2CompositeComponentWithEntity l2 = new Level2CompositeComponentWithEntity();
         Level2EntityInCompositeComponent entity2 = new Level2EntityInCompositeComponent();
         l2.setEntity(entity2);
@@ -518,7 +518,7 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
         l2.getEntitySet().add(new Level2SetEntityInCompositeComponent());
         assertNull(l2.getEntitySet().iterator().next().getOwner());
 
-        // Opprett fritstående Level 1 component og knytt level 1 og 2 sammen
+        // Opprett fritstÃ¥ende Level 1 component og knytt level 1 og 2 sammen
         Level1CompositeComponentWithEntity l1 = new Level1CompositeComponentWithEntity();
         Level1EntityInCompositeComponent entity = new Level1EntityInCompositeComponent();
         assertNull(entity.getOwner());
@@ -533,7 +533,7 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
         l1.setEntity(entity);
         assertNull(entity.getOwner());
 
-        // Knytter l1 sammen med rootobjekt. Etterpå skal alle owners være satt.
+        // Knytter l1 sammen med rootobjekt. EtterpÃ¥ skal alle owners vÃ¦re satt.
         b.setLevel1Component(l1);
         assertSame(entity.getOwner(), b);
         assertSame(b.getLevel1Component().getCompositeRootOwner(), b);

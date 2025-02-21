@@ -3,9 +3,9 @@ package no.statkart.skif.exception;
 import org.slf4j.Logger;
 
 /**
- * Klasse som representerer feil som stammer ifra servermiljøet.
+ * Klasse som representerer feil som stammer ifra servermiljÃ¸et.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 public class OperationalException extends SystemException {

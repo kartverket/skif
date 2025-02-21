@@ -30,22 +30,22 @@ import static org.assertj.core.api.Fail.failBecauseExceptionWasNotThrown;
 import static org.testng.Assert.*;
 
 /**
- * Tester bruk av EntityComponent på Serveren for attached og detached state for one-to-one mappings
+ * Tester bruk av EntityComponent pÃ¥ Serveren for attached og detached state for one-to-one mappings
  * <p>
- * TODO: Teste håndteringen av EntityComponents som er lazyloaded.
+ * TODO: Teste hÃ¥ndteringen av EntityComponents som er lazyloaded.
  * <p>
  * <p>
  * Tester som er markert med "HHH-5267 NPE when updating a detached entity with a one-to-one!" tester for fix av
- * problemet med at hibernate ikke laster loadedState for detached objekter og får nullpointer exception og
- * videre ikke klarer å slette objekter som har blitt orphan.
+ * problemet med at hibernate ikke laster loadedState for detached objekter og fÃ¥r nullpointer exception og
+ * videre ikke klarer Ã¥ slette objekter som har blitt orphan.
  *
  * @author Henrik Fredholm
  * @since 2.4
  */
 @Test(groups = {"singlevm-required"})
 public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCase {
-    // Switch som angir om testcasen skal teste med flush etter hver endring. Har valgt ikke å har egne
-    // testcases for hver mode for å redusere antall testcases som skal kjøres og vedlikeholdes
+    // Switch som angir om testcasen skal teste med flush etter hver endring. Har valgt ikke Ã¥ har egne
+    // testcases for hver mode for Ã¥ redusere antall testcases som skal kjÃ¸res og vedlikeholdes
     boolean flushing = false;
 
     @Inject
@@ -68,7 +68,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
 
     /**
      * Test relatert til "HHH-5267 NPE when updating a detached entity with a one-to-one!". I denne testen
-     * oppstår problemet ikke siden vi kjører i attached state.
+     * oppstÃ¥r problemet ikke siden vi kjÃ¸rer i attached state.
      */
     public void testUpdateBubbleWithNonNullComponentInAttachedState() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -121,8 +121,8 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
 
 
     /**
-     * Test at det ikke er mulig å stjæle en komponent. Boble2 inneholder en level 1 component. Denne blir gjort
-     * orphan ved at det settes en ny level 1 component som i sin level 2 component forsøker å bruke id-en til
+     * Test at det ikke er mulig Ã¥ stjÃ¦le en komponent. Boble2 inneholder en level 1 component. Denne blir gjort
+     * orphan ved at det settes en ny level 1 component som i sin level 2 component forsÃ¸ker Ã¥ bruke id-en til
      * level 2 component fra boble1.
      */
     public void testStealComponentOnUpdateBubbleWithNewComponentInDetachedState() {
@@ -262,7 +262,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Component2 = store.get(mockupFactory.getWithNonNullComponentsId());
-        store.evictAll(); // Fjerner alt siden vi nå gjør endringer via serveren og ønsker siste versjon
+        store.evictAll(); // Fjerner alt siden vi nÃ¥ gjÃ¸r endringer via serveren og Ã¸nsker siste versjon
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
@@ -289,7 +289,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Component2 = store.get(mockupFactory.getWithNonNullComponentsId());
-        store.evictAll(); // Fjerner alt siden vi nå gjør endringer via serveren og ønsker siste versjon
+        store.evictAll(); // Fjerner alt siden vi nÃ¥ gjÃ¸r endringer via serveren og Ã¸nsker siste versjon
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
@@ -321,7 +321,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         final BubbleWithEntityComponent originalBubble = store.get(mockupFactory.getWithNonNullComponentsId());
-        store.evictAll(); // Fjerner alt siden vi nå gjør endringer via serveren og ønsker siste versjon
+        store.evictAll(); // Fjerner alt siden vi nÃ¥ gjÃ¸r endringer via serveren og Ã¸nsker siste versjon
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
@@ -332,7 +332,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 Level1EntityComponent newComponent = new Level1EntityComponent();
                 newComponent.setText("I am new");
 
-                // Uten SKIF-340 fix må man gjøre følgede for å få hibernate til å slette orphan objekter
+                // Uten SKIF-340 fix mÃ¥ man gjÃ¸re fÃ¸lgede for Ã¥ fÃ¥ hibernate til Ã¥ slette orphan objekter
                 // bubbleWithEntityComponent.setLevel1Component(null);
                 // store.flush();
 
@@ -355,7 +355,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Component2 = store.get(mockupFactory.getWithNonNullComponentsId());
-        store.evictAll(); // Fjerner alt siden vi nå gjør endringer via serveren og ønsker siste versjon
+        store.evictAll(); // Fjerner alt siden vi nÃ¥ gjÃ¸r endringer via serveren og Ã¸nsker siste versjon
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
@@ -385,7 +385,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         final BubbleWithEntityComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityComponentMockupFactory();
         final BubbleWithEntityComponent bubbleWithLevel1AndLevel2Component2 = store.get(mockupFactory.getWithNonNullComponentsId());
-        store.evictAll(); // Fjerner alt siden vi nå gjør endringer via serveren og ønsker siste versjon
+        store.evictAll(); // Fjerner alt siden vi nÃ¥ gjÃ¸r endringer via serveren og Ã¸nsker siste versjon
 
         server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
@@ -541,7 +541,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                     Level2EntityComponent existingLevel2Component = bubbleWithEntityComponents.getLevel1Component().getLevel2Component();
                     bubbleWithEntityComponents.getLevel1Component().setLevel2Component(null);
                     if (flushing) store.flush();
-                    // Her forsøker vi å overta eksisterende komponent
+                    // Her forsÃ¸ker vi Ã¥ overta eksisterende komponent
                     bubbleWithNullLevel2Component.getLevel1Component().setLevel2Component(existingLevel2Component);
                     return null;
                 }

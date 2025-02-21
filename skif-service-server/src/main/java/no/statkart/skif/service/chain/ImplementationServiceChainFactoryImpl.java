@@ -13,8 +13,8 @@ import java.util.List;
 /**
  * Denne factory sette opp default {@code ImplementationServiceChain} for service av type {@code S}.
  * Kjeden bruker en {@link InvokeViaProviderProxyHandler} slik at opprettelsen av en instans av type {@code S}
- * ikke skjer i det kjeden settes opp, men først når et kall blir utført igjennom kjeden. Dette gjøres for å
- * gi kjedeledd mulighet for å sette opp ressurshåndtering og andre tjenester som servicen instansen trenger.
+ * ikke skjer i det kjeden settes opp, men fÃ¸rst nÃ¥r et kall blir utfÃ¸rt igjennom kjeden. Dette gjÃ¸res for Ã¥
+ * gi kjedeledd mulighet for Ã¥ sette opp ressurshÃ¥ndtering og andre tjenester som servicen instansen trenger.
  *
  * @author Henrik Fredholm
  * @since 2.0

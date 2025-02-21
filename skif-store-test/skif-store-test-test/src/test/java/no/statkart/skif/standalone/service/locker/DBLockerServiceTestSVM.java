@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Testklasse for DBLockerService. NB! Det finnes ikke noen webservice for denne tjenesten så testen kan kun kjøres i singleVM mode
+ * Testklasse for DBLockerService. NB! Det finnes ikke noen webservice for denne tjenesten sÃ¥ testen kan kun kjÃ¸res i singleVM mode
  *
  * @author Roar Ingebrigtsen
  * @since 2.0
@@ -122,8 +122,8 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
     }
 
     /**
-     * Flere brukere prøver å låse de samme elementene. Forventet resultat er at "ingroa" og "ingroa2" ikke får låst
-     * noe da noen av elementene de prøver å låse allerede har lås på seg.
+     * Flere brukere prÃ¸ver Ã¥ lÃ¥se de samme elementene. Forventet resultat er at "ingroa" og "ingroa2" ikke fÃ¥r lÃ¥st
+     * noe da noen av elementene de prÃ¸ver Ã¥ lÃ¥se allerede har lÃ¥s pÃ¥ seg.
      */
     @Test
     public void testConcurrentLocks() throws InterruptedException {
@@ -239,7 +239,7 @@ public class DBLockerServiceTestSVM extends StoreTestTestCase {
             if(lock.getLockKey().keyValue.equals(10L)) {
                 Assert.assertEquals(lock.getExpires(), lock10.getExpires()); //Skal ikke ha blitt endret
             } else if(lock.getLockKey().keyValue.equals(11L)) {
-                Assert.assertTrue(lock.getExpires().after(lock11.getExpires()), "Nytt utløpstidspunkt er ikke etter opprinnelig utløpstidspunkt");
+                Assert.assertTrue(lock.getExpires().after(lock11.getExpires()), "Nytt utlÃ¸pstidspunkt er ikke etter opprinnelig utlÃ¸pstidspunkt");
                 Assert.assertTrue(lock.getExpires().getTime() < lock11.getExpires().getTime() + 15000, "Fornyet for langt inn i fremtiden");
             }
         }

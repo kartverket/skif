@@ -6,15 +6,15 @@ package no.statkart.skif.store;
  * {@code CompositeComponent} felter (men ikke collections av disse), samt {@code EntityComponent} felter og
  * collections av disse.
  *
- * <P>{@code EntityComponent}-er som skal brukes i {@code Set} må definere {@link #equals(Object)} og
- * {@link #hashCode()}. Disse metoder må implementeres slik at {@code equals} returnere true for objekter som
- * skal regnes som equivalente. Det normale er å bruke feltene som utgør objektets logiske ident. Dersom
- * objektet skal understøtte endring av feltene som inngår i {@code equals} og {@code hashCode} må objektet
- * implementere spesialhåndtering av dette i henhold til SKIF-pattern for dette.
+ * <P>{@code EntityComponent}-er som skal brukes i {@code Set} mÃ¥ definere {@link #equals(Object)} og
+ * {@link #hashCode()}. Disse metoder mÃ¥ implementeres slik at {@code equals} returnere true for objekter som
+ * skal regnes som equivalente. Det normale er Ã¥ bruke feltene som utgÃ¸r objektets logiske ident. Dersom
+ * objektet skal understÃ¸tte endring av feltene som inngÃ¥r i {@code equals} og {@code hashCode} mÃ¥ objektet
+ * implementere spesialhÃ¥ndtering av dette i henhold til SKIF-pattern for dette.
  *
- * <P>SKIF-rammeverket støtter ikke deling av {@code EntityComponent}-er. En {@code EntityComponent}-instans kan derfor
- * kun være innehold i en boble en gang. Dvs en {@code EntityComponent}-instans kan kun være medlem av en collection
- * eller bli pekt på av et felt. SKIF-rammeverket forsøker etter beste evne å håndheve dette og har best støtte når
+ * <P>SKIF-rammeverket stÃ¸tter ikke deling av {@code EntityComponent}-er. En {@code EntityComponent}-instans kan derfor
+ * kun vÃ¦re innehold i en boble en gang. Dvs en {@code EntityComponent}-instans kan kun vÃ¦re medlem av en collection
+ * eller bli pekt pÃ¥ av et felt. SKIF-rammeverket forsÃ¸ker etter beste evne Ã¥ hÃ¥ndheve dette og har best stÃ¸tte nÃ¥r
  * {@code EntityComponentWithOwnerReference} implementeres.
  *
  * @author Tor Egil R. Strand
@@ -24,8 +24,8 @@ package no.statkart.skif.store;
 public interface EntityComponent extends Component {
 
     /**
-     * Hibernate 3.2 håndterer ikke covariant return type for id'er. Må derfor være definert som Long.
-     * Velger alltid første metode som hedder getId() og som da vil returnerer Object
+     * Hibernate 3.2 hÃ¥ndterer ikke covariant return type for id'er. MÃ¥ derfor vÃ¦re definert som Long.
+     * Velger alltid fÃ¸rste metode som hedder getId() og som da vil returnerer Object
      */
     Long getId();
 

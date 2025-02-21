@@ -25,10 +25,10 @@ import static org.testng.Assert.*;
  * Tester for {@link EndringsloggService}. Her testes bare at kall til EndringsloggService returnerer. Mer detaljert testing
  * av endringsloggen finnes i {@link no.statkart.skif.storetest.endringslogg.EndringManagerTest}.
  *
- * NB: Ved konstruksjon av endringslogg tester er det viktig å huske på at endrinsloggfunksjonaliteten går på tvers av test
- * datasett og at rekkefølge på testsett kan varierer. Det er ikke garantert ReadTestSet kommer før først WriteTestSet.
- * Testene bør derfor konstrueres på en slik måte at de fungere nå databasen inneholder mange test datasett med ukjendt
- * rekkefølge.
+ * NB: Ved konstruksjon av endringslogg tester er det viktig Ã¥ huske pÃ¥ at endrinsloggfunksjonaliteten gÃ¥r pÃ¥ tvers av test
+ * datasett og at rekkefÃ¸lge pÃ¥ testsett kan varierer. Det er ikke garantert ReadTestSet kommer fÃ¸r fÃ¸rst WriteTestSet.
+ * Testene bÃ¸r derfor konstrueres pÃ¥ en slik mÃ¥te at de fungere nÃ¥ databasen inneholder mange test datasett med ukjendt
+ * rekkefÃ¸lge.
  *
  * @author Thomas Berg
  * @author Henrik Fredholm
@@ -69,7 +69,7 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     public void testFindEndringerMedNegativMaksAntall() {
         try {
             endringsloggService.findEndringer(null, Simple.class, null, ReturnerBobler.Aldri, -1);
-            fail("Skulle fått exception");
+            fail("Skulle fÃ¥tt exception");
         } catch (RuntimeException e) {
             assertEquals(e.getMessage(), "maksAntall er negativ");
         }

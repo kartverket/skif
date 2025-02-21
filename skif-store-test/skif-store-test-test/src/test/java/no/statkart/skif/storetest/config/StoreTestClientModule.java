@@ -30,7 +30,7 @@ import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
 
 /**
- * Klientmodul for client-server tester som går mot StoreTestServer.
+ * Klientmodul for client-server tester som gÃ¥r mot StoreTestServer.
  *
  * @author Henrik Fredholm
  */
@@ -86,7 +86,7 @@ public class StoreTestClientModule extends SkifModule {
         );
         bind(no.statkart.skif.service.test.TestdataService.class).to(no.statkart.skif.storetest.service.test.TestdataService.class);
 
-        //Legger til DBLockerService dersom man kjører i singleVm. Denne tjenesten finnes ikke som en webservice, og kan derfor ikke legges til ved kjøring av tester i client/server
+        //Legger til DBLockerService dersom man kjÃ¸rer i singleVm. Denne tjenesten finnes ikke som en webservice, og kan derfor ikke legges til ved kjÃ¸ring av tester i client/server
         if (moduleConfiguration.getServiceMode() == ServiceMode.SINGLE_VM) {
             install(new RemoteServiceModule(moduleConfiguration, new StoreTestLocalServices().getServices(), mapping)); // Angir bare en mapping, siden det er irrelevant for en intern tjeneste
             bind(SkifUtil.typeLiteral(DBLockerService.class, Long.class)).to(no.statkart.skif.storetest.service.locker.DBLockerService.class);

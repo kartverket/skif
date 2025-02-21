@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Klasse for å holde på systemversjon og sammenligne disse.
+ * Klasse for Ã¥ holde pÃ¥ systemversjon og sammenligne disse.
  */
 public class SystemVersion implements Comparable<SystemVersion> {
     private static final Pattern sluttPattern = Pattern.compile("(\\d+)?((?:\\p{Alpha}|-).*)?");
@@ -16,7 +16,7 @@ public class SystemVersion implements Comparable<SystemVersion> {
 
     public SystemVersion(String systemVersion) {
         if (systemVersion == null) {
-            throw new ImplementationException("SystemVersion kan ikke være null");
+            throw new ImplementationException("SystemVersion kan ikke vÃ¦re null");
         }
 
         systemVersion = systemVersion.trim();
@@ -26,7 +26,7 @@ public class SystemVersion implements Comparable<SystemVersion> {
         } else {
             String[] ss = systemVersion.split("\\.");
 
-            // Siste del kan gi en eller to deler, så ta den først
+            // Siste del kan gi en eller to deler, sÃ¥ ta den fÃ¸rst
             int siste = ss.length - 1;
             Matcher sluttMatcher = sluttPattern.matcher(ss[siste]);
             if (sluttMatcher.matches()) {

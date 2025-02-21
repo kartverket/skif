@@ -3,8 +3,8 @@ package no.statkart.skif.service.ejb;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 
 /**
- * En ProxyHandler for service av type {@code S} som gjør kall til servicens EJB implementasjon. ProxyHandleren
- * håndterer EJB spesifikke exceptions slik at det blir transparent om kallet går via EJB eller direkte.
+ * En ProxyHandler for service av type {@code S} som gjÃ¸r kall til servicens EJB implementasjon. ProxyHandleren
+ * hÃ¥ndterer EJB spesifikke exceptions slik at det blir transparent om kallet gÃ¥r via EJB eller direkte.
  *
  * @author Henrik Fredholm
  * @since 2.0

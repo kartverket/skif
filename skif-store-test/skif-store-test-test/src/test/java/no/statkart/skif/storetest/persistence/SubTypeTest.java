@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 /**
- * Tester endring av subtype på tjenersiden.
+ * Tester endring av subtype pÃ¥ tjenersiden.
  *
  * @author Tor Egil R. Strand
  */

@@ -15,7 +15,7 @@ import jakarta.ejb.TransactionAttributeType;
 import jakarta.interceptor.Interceptors;
 
 /**
- * Service for å støtte UnitOfWork testing
+ * Service for Ã¥ stÃ¸tte UnitOfWork testing
  *
  * @author Henrik Fredholm
  * @since 2.9

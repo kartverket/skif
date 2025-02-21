@@ -15,7 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Hjelpeklasse for å liste alle filer i en gitt pakke.
+ * Hjelpeklasse for Ã¥ liste alle filer i en gitt pakke.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

@@ -11,8 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Et globalt trådsikkert register over alle konfigurerte {@link RelationStrategy}-objekter. Siden java metode
- * objekter ikke er unike knyttes strategien til en key som beregnes ut fra metodenavn og navn på declaringClass.
+ * Et globalt trÃ¥dsikkert register over alle konfigurerte {@link RelationStrategy}-objekter. Siden java metode
+ * objekter ikke er unike knyttes strategien til en key som beregnes ut fra metodenavn og navn pÃ¥ declaringClass.
  *
  * @author Henrik Fredholm
  * @since 2.6.0
@@ -23,7 +23,7 @@ public class RelationCacheRegistry {
 
 
     public RelationStrategy getStrategy(Method method) {
-        // Trenger en unik key for metoden. Kan ikke bruke metode objektet. Må ta med klasse da metodenavn i seg selv ikke er unikt.
+        // Trenger en unik key for metoden. Kan ikke bruke metode objektet. MÃ¥ ta med klasse da metodenavn i seg selv ikke er unikt.
         String key = method.getName() + ":" + method.getDeclaringClass().getName();
         RelationStrategy strategy = registry.get(key);
         if (strategy == null) {

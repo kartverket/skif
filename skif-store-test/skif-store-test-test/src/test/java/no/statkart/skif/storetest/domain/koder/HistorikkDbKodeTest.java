@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Tester historikk på databasekoder.
+ * Tester historikk pÃ¥ databasekoder.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
@@ -61,7 +61,7 @@ public class HistorikkDbKodeTest extends StoreTestTestCase {
             Assert.assertEquals(postInsertVersions.size(), 1, "Antall historikkinnslag etter opprettelse");
 
             SimpleLocalizedDbKode kodeForUpdate = lockService.lock(kodeId);
-            Assert.assertEquals(kodeForUpdate.getKodeverdi(), "ABC", "Kodebeskrivelse før oppdatering");
+            Assert.assertEquals(kodeForUpdate.getKodeverdi(), "ABC", "Kodebeskrivelse fÃ¸r oppdatering");
 
             kodeForUpdate.setKodeverdi("DEF");
             UnitOfWorkTransfer updateTransfer = new UnitOfWorkTransfer(Collections.emptyList(), Collections.<BubbleObject>singletonList(kodeForUpdate), Collections.emptyList());
