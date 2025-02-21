@@ -1,7 +1,7 @@
 package no.statkart.skif.store;
 
 /**
- * Interface metode for å sjekke at owner peker på child
+ * Interface metode for Ã¥ sjekke at owner peker pÃ¥ child
  *
  * @author Henrik Fredholm
  * @since 2.4

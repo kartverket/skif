@@ -13,10 +13,10 @@ import java.io.IOException;
 @Test
 public class ResourceListerTest {
     /**
-     * javax.swing.plaf.basic.icons.JavaCup16.png vil nok alltid være i en jar-fil (resources.jar).
+     * javax.swing.plaf.basic.icons.JavaCup16.png vil nok alltid vÃ¦re i en jar-fil (resources.jar).
      * <p>
-     * Av en eller annen grunn virker ikke dette trikset alltid for system-jar-filter. Det ser ut til å virker for
-     * våre egne heldigvis, og det er der vi stort sett skal lete etter ressurser.
+     * Av en eller annen grunn virker ikke dette trikset alltid for system-jar-filter. Det ser ut til Ã¥ virker for
+     * vÃ¥re egne heldigvis, og det er der vi stort sett skal lete etter ressurser.
      *
      * @throws IOException
      */
@@ -36,7 +36,7 @@ public class ResourceListerTest {
     }
 
     /**
-     * Denne klassen kan selv være på classpathen som en fil i en katalog.
+     * Denne klassen kan selv vÃ¦re pÃ¥ classpathen som en fil i en katalog.
      *
      * @throws IOException
      */

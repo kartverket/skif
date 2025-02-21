@@ -77,7 +77,7 @@ public interface StoreSession {
 
     /**
      * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes ikke
-     * TODO: Legge inn støtte til å kunne fjerne endret objekter etter flush/finishBatch har blitt kjørt
+     * TODO: Legge inn stÃ¸tte til Ã¥ kunne fjerne endret objekter etter flush/finishBatch har blitt kjÃ¸rt
      *
      * @return {@code true} hvis objektet ble fjernet
      */
@@ -85,7 +85,7 @@ public interface StoreSession {
 
     /**
      * Fjerner objektet fra sessionen. Objekter som har blitt endret fjernes ikke
-     * TODO: Legge inn støtte til å kunne fjerne endret objekter etter flush/finishBatch har blitt kjørt
+     * TODO: Legge inn stÃ¸tte til Ã¥ kunne fjerne endret objekter etter flush/finishBatch har blitt kjÃ¸rt
      *
      * @return {@code true} hvis objektet ble fjernet
      */
@@ -95,7 +95,7 @@ public interface StoreSession {
      * Oppretter objektet i sessionen. Metoden kaster exception hvis objektet allerede er knyttet til sessionen eller
      * det finnes en annen instans med samme id som er knyttet til sessionen.
      * <p/>
-     * Dersom som objektets id er null så tildeles objektet automatisk en ny id via kall til
+     * Dersom som objektets id er null sÃ¥ tildeles objektet automatisk en ny id via kall til
      * {@link no.statkart.skif.service.sequence.IdService}
      */
     <T extends BubbleObject> void insert(T bubbleObject);
@@ -103,7 +103,7 @@ public interface StoreSession {
     /**
      * Oppdaterer objektet i sessionen. Dersom det allerede finnes en annen instans knyttet til sessionen med samme
      * id vil dette objektet bli erstattet og markert som utdatert slik at denne instansen ikke kan brukes i senere kall
-     * mot sessionen. Metoden støtter endring av objektets subtype samt oppdatering av objekter med skjulte felter.
+     * mot sessionen. Metoden stÃ¸tter endring av objektets subtype samt oppdatering av objekter med skjulte felter.
      */
     <T extends BubbleObject> void update(T bubbleObject);
 
@@ -123,7 +123,7 @@ public interface StoreSession {
     <T extends BubbleObject> void undo(T bubbleObject);
 
     /**
-     * Endre på objektets oppdateringsrekkefølge i sessionen slik at objektet kommer etter alle andre objekter
+     * Endre pÃ¥ objektets oppdateringsrekkefÃ¸lge i sessionen slik at objektet kommer etter alle andre objekter
      * med samme sorteringsindex i sessionen.  Metoden kaster en exception hvis objektet ikke er endret i sessionen
      * eller hvis sessionen ikke er en unit of work
      */
@@ -151,33 +151,33 @@ public interface StoreSession {
     void register(Transfer<?> transfer);
 
     /**
-     * Henter ut en transfer med objekter som modifisert av inneværende eller av en underliggende session.
+     * Henter ut en transfer med objekter som modifisert av innevÃ¦rende eller av en underliggende session.
      * @return en transfer med insert, updated og deleted objekter. Hvis et objekt er modifisert
-     * både av inneværende og av en underliggende session gjelder følgende regler:
+     * bÃ¥de av innevÃ¦rende og av en underliggende session gjelder fÃ¸lgende regler:
      * <ul>
-     *     <li>Hvis en underliggende session har gjort en insert og inneværende session har gjort en
-     *     update så vil objektet ligge i {@code inserted}.</li>
-     *     <li>Hvis en underliggende session har gjort en insert og inneværende session har gjort en
-     *     delete så vil objektet ikke ligge i transferen.</li>
-     *     <li>Hvis en underliggende session har gjort en update og inneværende session har gjort en
-     *     delete så vil objektet ligge i {@code deleted}.</li>
-     *     <li>Hvis en underliggende session har gjort en delete og inneværende session har gjort en
-     *     insert så vil objektet ligge i {@code updated}</li>
+     *     <li>Hvis en underliggende session har gjort en insert og innevÃ¦rende session har gjort en
+     *     update sÃ¥ vil objektet ligge i {@code inserted}.</li>
+     *     <li>Hvis en underliggende session har gjort en insert og innevÃ¦rende session har gjort en
+     *     delete sÃ¥ vil objektet ikke ligge i transferen.</li>
+     *     <li>Hvis en underliggende session har gjort en update og innevÃ¦rende session har gjort en
+     *     delete sÃ¥ vil objektet ligge i {@code deleted}.</li>
+     *     <li>Hvis en underliggende session har gjort en delete og innevÃ¦rende session har gjort en
+     *     insert sÃ¥ vil objektet ligge i {@code updated}</li>
      * </ul>
      */
     UnitOfWorkTransfer getSnapshot();
 
     /**
-     * Henter ut en transfer med objekter som eksplisitt er modifisert i inneværende session uten å ta
+     * Henter ut en transfer med objekter som eksplisitt er modifisert i innevÃ¦rende session uten Ã¥ ta
      * med objekter som bare er modifisert av underliggende sessioner. Hvis et objekt er modifisert
-     * både av inneværende og av en underliggende session gjelder følgende regler:
+     * bÃ¥de av innevÃ¦rende og av en underliggende session gjelder fÃ¸lgende regler:
      * <ul>
-     *     <li>Hvis en underliggende session har gjort en insert og inneværende session har gjort en
-     *     update så vil objektet ligge i {@code updated}.</li>
-     *     <li>Hvis en underliggende session har gjort en insert eller update og inneværende session har gjort en
-     *     delete så vil objektet ligge i {@code deleted}.</li>
-     *     <li>Hvis en underliggende session har gjort en delete og inneværende session har gjort en
-     *     insert så vil objektet ligge i {@code inserted}</li>
+     *     <li>Hvis en underliggende session har gjort en insert og innevÃ¦rende session har gjort en
+     *     update sÃ¥ vil objektet ligge i {@code updated}.</li>
+     *     <li>Hvis en underliggende session har gjort en insert eller update og innevÃ¦rende session har gjort en
+     *     delete sÃ¥ vil objektet ligge i {@code deleted}.</li>
+     *     <li>Hvis en underliggende session har gjort en delete og innevÃ¦rende session har gjort en
+     *     insert sÃ¥ vil objektet ligge i {@code inserted}</li>
      * </ul>
      *
      * @return en transfer med insert, updated og deleted objekter
@@ -186,10 +186,10 @@ public interface StoreSession {
 
     /**
      * Legger alle objekter som er lastet inn i angitt transfer. Dersom en unit of work er aktiv vil objektet som
-     * gis ut være original versjonen som ble lastet. Hvis ingen unit of work er aktiv gis ut gjeldende versjon
-     * som vil være forskjellig fra objektet som ble lastet hvis objektet er endret. Hvis et objekt lastes og endres i
-     * en unit of work som deretter abortes, så vil man etterpå få ut original objektet som ble lastet da dette fortsatt
-     * vil være cachet i Store.
+     * gis ut vÃ¦re original versjonen som ble lastet. Hvis ingen unit of work er aktiv gis ut gjeldende versjon
+     * som vil vÃ¦re forskjellig fra objektet som ble lastet hvis objektet er endret. Hvis et objekt lastes og endres i
+     * en unit of work som deretter abortes, sÃ¥ vil man etterpÃ¥ fÃ¥ ut original objektet som ble lastet da dette fortsatt
+     * vil vÃ¦re cachet i Store.
      * @return transfer med alle lastede objekter
      */
     public <T extends Transfer<?>> T getAllLoaded(T transfer);

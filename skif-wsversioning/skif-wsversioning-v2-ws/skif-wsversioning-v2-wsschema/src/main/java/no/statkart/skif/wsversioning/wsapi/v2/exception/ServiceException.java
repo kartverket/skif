@@ -5,7 +5,7 @@ import jakarta.xml.ws.WebFault;
 /**
  * Se dokumentasjon i {@link ServiceFaultInfo}
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */

@@ -2,7 +2,7 @@ plugins {
     id 'sktools.dbtools'
 }
 
-System.setProperty('sql.file.encoding', 'windows-1252')
+System.setProperty('sql.file.encoding', 'utf-8')
 
 // properties for substituering
 def filterProperties = [

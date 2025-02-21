@@ -9,9 +9,9 @@ import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 import java.util.Set;
 
 /**
- * Entity som inngår i et set A som ligger i BubbleWithEntityComponent.
+ * Entity som inngÃ¥r i et set A som ligger i BubbleWithEntityComponent.
  *
- * <P>Komponenten har en ident {@code ident} som skal kunne endres mens komponenten inngår i et Set.
+ * <P>Komponenten har en ident {@code ident} som skal kunne endres mens komponenten inngÃ¥r i et Set.
  *
  * @author Henrik Fredholm
  * @since 2.4

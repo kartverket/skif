@@ -4,7 +4,7 @@ package no.statkart.skif.generics.domain.impl;
 /**
  * Ikke dokumentert
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 1.0 - sprint 28
  */
 public class AStrut<I extends AStrutId<?>> extends BaseStrut<I> {

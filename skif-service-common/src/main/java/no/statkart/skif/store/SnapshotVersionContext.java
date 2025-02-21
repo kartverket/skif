@@ -1,20 +1,20 @@
 package no.statkart.skif.store;
 
 /**
- * Holder på default {@link SnapshotVersion#CURRENT SnapshotVersion} for kjørende tråd og brukes bl.a av mapping rammeverket for mappe
+ * Holder pÃ¥ default {@link SnapshotVersion#CURRENT SnapshotVersion} for kjÃ¸rende trÃ¥d og brukes bl.a av mapping rammeverket for mappe
  * {@code BubbleId} i wsapi (som ikke har {@code SnapshotVersion}) til BubbleId i java-api (som har {@code SnapshotVersion}).
  *
- * <p>{@code SnapshotVersionContext} overføres automatisk fra klient til server for alle servicekall.
- * Det er mulig å få tak i {@code SnapshotVersionContext} og inneværende {@code SnapshotVersion} for kjørende tråd
- * via Guice injection, men det er også mulig å få tak {@code SnapshotVersionContext} direkte via
+ * <p>{@code SnapshotVersionContext} overfÃ¸res automatisk fra klient til server for alle servicekall.
+ * Det er mulig Ã¥ fÃ¥ tak i {@code SnapshotVersionContext} og innevÃ¦rende {@code SnapshotVersion} for kjÃ¸rende trÃ¥d
+ * via Guice injection, men det er ogsÃ¥ mulig Ã¥ fÃ¥ tak {@code SnapshotVersionContext} direkte via
  * {@link SnapshotVersionContext#getInstance()}.
  *
  * <br><br>
  * F.eks: <pre>{@code
- *  // Snapshot version for arbeidstråd
+ *  // Snapshot version for arbeidstrÃ¥d
  *  SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
  *  ...
- *  // Angir ny snapshot version for arbeidstråd
+ *  // Angir ny snapshot version for arbeidstrÃ¥d
  *  SnapshotVersionContext.getInstance().setSnapshotVersion(snapshotVersion);
  * }</pre>
  */

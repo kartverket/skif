@@ -11,7 +11,7 @@ public class SnapshotVersionHelper {
     }
 
     /**
-     * Endrer verdien med <code>nanos</code> nanosekunder. Støtter foreløpig ikke store endringer på mer enn ett sekund.
+     * Endrer verdien med <code>nanos</code> nanosekunder. StÃ¸tter forelÃ¸pig ikke store endringer pÃ¥ mer enn ett sekund.
      *
      * @since 2.4.4
      */

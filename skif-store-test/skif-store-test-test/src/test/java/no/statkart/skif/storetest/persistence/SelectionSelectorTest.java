@@ -98,8 +98,8 @@ public class SelectionSelectorTest extends StoreTestServerTestCase {
             if (sessionSelector!=null) sessionSelector.close();
         }
 
-        // Her er ingen sessioner låst.
-        // TODO: Vise at det går fint an å navigere i objekt graf om laste nye objekter for flere snapshots samtidig.
+        // Her er ingen sessioner lÃ¥st.
+        // TODO: Vise at det gÃ¥r fint an Ã¥ navigere i objekt graf om laste nye objekter for flere snapshots samtidig.
 
     }
 }

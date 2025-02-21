@@ -3,9 +3,9 @@ package no.statkart.skif.store;
 import java.io.Closeable;
 
 /**
- * Eksternt API for å forholde seg til en unit of work.
+ * Eksternt API for Ã¥ forholde seg til en unit of work.
  * <p>
- * Klassen implementerer {@link Closeable}, og kan derfor benyttes med try-with-resource. {@link #close()} vil medføre
+ * Klassen implementerer {@link Closeable}, og kan derfor benyttes med try-with-resource. {@link #close()} vil medfÃ¸re
  * at unit-of-work blir abortert dersom den fortsatt er aktiv.
  *
  * @see StoreUnitOfWork

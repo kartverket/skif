@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * Persisterer en {@link LocalDateTime} fra JodaTime ned i en Oracle-database uten å gå via {@link java.util.Date}.
+ * Persisterer en {@link LocalDateTime} fra JodaTime ned i en Oracle-database uten Ã¥ gÃ¥ via {@link java.util.Date}.
  * Dette betyr at tidssoner ikke blander seg inn.
  *
  * @author Tor Egil R. Strand

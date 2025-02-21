@@ -1,7 +1,7 @@
 package no.statkart.skif.store;
 
 /**
- * Baseklasse for EntityComponents som har mutabel ident og som derfor må ha en id for å sjekke på likhet. Og som
+ * Baseklasse for EntityComponents som har mutabel ident og som derfor mÃ¥ ha en id for Ã¥ sjekke pÃ¥ likhet. Og som
  * i tillegg har referanse til owner.
  *
  * @author Henrik Fredholm

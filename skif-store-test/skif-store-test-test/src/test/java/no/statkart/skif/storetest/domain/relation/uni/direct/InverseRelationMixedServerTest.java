@@ -44,7 +44,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
     /**
-     * Alle testcaser bruke samme StoreClient instans. Dette sikre at cachet state i klient blir evicted på tvers av
+     * Alle testcaser bruke samme StoreClient instans. Dette sikre at cachet state i klient blir evicted pÃ¥ tvers av
      * tester
      */
     @BeforeMethod
@@ -73,7 +73,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Hjelpestruktur som angir operasjoner som server skal gjøre på invers relasjon før boble sende til klient
+     * Hjelpestruktur som angir operasjoner som server skal gjÃ¸re pÃ¥ invers relasjon fÃ¸r boble sende til klient
      */
     private enum Action {
         LOAD, REQUEST
@@ -118,7 +118,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
             b1.getInvSomeBBIds().get();
             failBecauseExceptionWasNotThrown(IllegalStateException.class);
         } catch (IllegalStateException e) {
-            // Relasjonen var ikke cachet og kopiobjekt har ikke store så det går ikke an å hente relasjon
+            // Relasjonen var ikke cachet og kopiobjekt har ikke store sÃ¥ det gÃ¥r ikke an Ã¥ hente relasjon
         }
 
         // Registrer objekt i store slik at relasjon kan hentes
@@ -130,7 +130,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at materialiserte relasjoner ikke sendes til klient når requested ikke er satt
+     * Tester at materialiserte relasjoner ikke sendes til klient nÃ¥r requested ikke er satt
      */
     public void testSerializationMaterialisedUnrequestedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -145,7 +145,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
             b1.getInvSomeBBIds().get();
             failBecauseExceptionWasNotThrown(IllegalStateException.class);
         } catch (IllegalStateException e) {
-            // Relasjonen var ikke cachet og kopiobjekt har ikke store så det går ikke an å hente relasjon
+            // Relasjonen var ikke cachet og kopiobjekt har ikke store sÃ¥ det gÃ¥r ikke an Ã¥ hente relasjon
         }
 
         // Registrer objekt i store slik at relasjon kan materialiseres
@@ -158,7 +158,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
 
 
     /**
-     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt
+     * Tester at umaterialiserte relasjoner sendes til klient nÃ¥r requested er satt
      */
     public void testSerializationUnmaterialisedRequestedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -172,8 +172,8 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
 
         // Registrer b1 i Store. Siden det ikke er gjort endringer blir resultatet det samme
         register(b1);
-        assertFalse(b1.getInvSomeBBIds().isMaterialised(), "Forventet isMaterialised returnerer false etter registerering i Store på klient");
-        assertFalse(b1.getInvSomeBBIds().isRequested(), "Forventet isRequested returnerer false etter registerering i Store på klient");
+        assertFalse(b1.getInvSomeBBIds().isMaterialised(), "Forventet isMaterialised returnerer false etter registerering i Store pÃ¥ klient");
+        assertFalse(b1.getInvSomeBBIds().isRequested(), "Forventet isRequested returnerer false etter registerering i Store pÃ¥ klient");
         assertThat(b1.getInvSomeBBIds().get()).isEmpty();
 
         X1BBOne b3 = getBBOne(x1BBOneMockupFactory.getB3Id(), Action.REQUEST);
@@ -181,7 +181,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt
+     * Tester at umaterialiserte relasjoner sendes til klient nÃ¥r requested er satt
      */
     public void testSerializationMaterialisedRequestedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -202,7 +202,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at umaterialiserte relasjoner sendes til klient når requested er satt
+     * Tester at umaterialiserte relasjoner sendes til klient nÃ¥r requested er satt
      */
     public void testSerializationRequestedMaterialisedMany() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -222,8 +222,8 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at beregning av invers relasjoner blir korrekt når relation caching er disabled og invers relasjonen
-     * endres på serveren utenom klienten
+     * Tester at beregning av invers relasjoner blir korrekt nÃ¥r relation caching er disabled og invers relasjonen
+     * endres pÃ¥ serveren utenom klienten
      */
     public void testUpdateRelationsOnServerWithRelationCachingOnClientDisabled() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -240,8 +240,8 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at beregning av invers relasjoner blir korrekt når relation caching er enabled og inversrelasjonen
-     * endres på serveren utenom klienten - dersom man kaller Store.evictAll() før invers relasjonen beregnes.
+     * Tester at beregning av invers relasjoner blir korrekt nÃ¥r relation caching er enabled og inversrelasjonen
+     * endres pÃ¥ serveren utenom klienten - dersom man kaller Store.evictAll() fÃ¸r invers relasjonen beregnes.
      */
     public void testUpdateRelationsOnServerWithCachingOnClientEnabledEvictAll() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -255,7 +255,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
             assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).isEmpty();
             assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
             updateAAOnServer(x1AAMockupFactory.getA1Id(), x1BBOneMockupFactory.getB1Id());
-            store.evictAll(); // Uten denne feiler koden fordi relasjoner som er endret på serveren er cachet på klienten
+            store.evictAll(); // Uten denne feiler koden fordi relasjoner som er endret pÃ¥ serveren er cachet pÃ¥ klienten
             assertThat(store.get(x1BBOneMockupFactory.getB1Id()).findInvSomeBBIds()).containsOnly(x1AAMockupFactory.getA1Id());
             assertThat(store.get(x1BBOneMockupFactory.getB2Id()).findInvSomeBBIds()).isEmpty();
         } finally {
@@ -265,9 +265,9 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at beregning av invers relasjoner blir korrekt når relation caching er enabled og inversrelasjonen
-     * endres på serveren utenom klienten - dersom man kaller Store.evict() for boblen som er endret. Cachet
-     * inversrelasjoner som blir berørt skal da bli riktige likevel. Case a1->b2 endres til a1->b1. Se SKIF-583.
+     * Tester at beregning av invers relasjoner blir korrekt nÃ¥r relation caching er enabled og inversrelasjonen
+     * endres pÃ¥ serveren utenom klienten - dersom man kaller Store.evict() for boblen som er endret. Cachet
+     * inversrelasjoner som blir berÃ¸rt skal da bli riktige likevel. Case a1->b2 endres til a1->b1. Se SKIF-583.
      */
     public void testUpdateRelationsOnServerWithCachingOnClientEnabledEvictBubble() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -284,15 +284,15 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
             assertThat(store.getRelationCache().isEnabled()).isEqualTo(true);
             assertThat(store.get(b1Id).findInvSomeBBIds()).isEmpty();
             assertThat(store.get(b2Id).findInvSomeBBIds()).containsExactly(a1Id);
-            updateAAOnServer(a1Id, b1Id); // Her oppdateres a1 på serveren (uten om klienten) til å peke på b1 istedet for b2
+            updateAAOnServer(a1Id, b1Id); // Her oppdateres a1 pÃ¥ serveren (uten om klienten) til Ã¥ peke pÃ¥ b1 istedet for b2
             X1AA a1 = store.get(a1Id);
-            assertEquals(a1.getSomeBBId(), b1Id); // a1 peker nå på b1
-            // Materialisert relasjoner for a1 er feil fordi de fortsatt er cachet. Skal ikke være tom.
+            assertEquals(a1.getSomeBBId(), b1Id); // a1 peker nÃ¥ pÃ¥ b1
+            // Materialisert relasjoner for a1 er feil fordi de fortsatt er cachet. Skal ikke vÃ¦re tom.
             assertThat(store.getRelationCache().isMaterialised(store.get(b1Id).getInvSomeBBIds().getName(), b1Id));
             assertThat(store.get(b1Id).findInvSomeBBIds()).isEmpty();
             assertThat(store.get(b2Id).findInvSomeBBIds()).containsExactly(a1Id);
 
-            // Dette tømmer relasjonscachen. Hadde vært fint om det ikke var nødvendig.
+            // Dette tÃ¸mmer relasjonscachen. Hadde vÃ¦rt fint om det ikke var nÃ¸dvendig.
             store.getRelationCache().setEnabled(false);
             store.getRelationCache().setEnabled(true);
 
@@ -308,7 +308,7 @@ public class InverseRelationMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Hjelpemetode som oppdatere relasjon fra X1AA til X1BBOne på serveren uten om klienten. Metoden kjører
+     * Hjelpemetode som oppdatere relasjon fra X1AA til X1BBOne pÃ¥ serveren uten om klienten. Metoden kjÃ¸rer
      * i en egen transaksjon.
      */
     private void updateAAOnServer(final X1AAId<?> aId, final X1BBOneId<?> bbOneId) {

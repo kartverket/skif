@@ -1,8 +1,8 @@
 /**
- * Test domeneklasser for basal testing av SkIF baset på StoreTestServerModule og opprettelse at testobjekter via
+ * Test domeneklasser for basal testing av SkIF baset pÃ¥ StoreTestServerModule og opprettelse at testobjekter via
  * mockup-rammeverket.
  *
- * <P>Domeneklasser i denne pakken støtter mapping til Web Services, men skal ikke støtte avanserte features som
+ * <P>Domeneklasser i denne pakken stÃ¸tter mapping til Web Services, men skal ikke stÃ¸tte avanserte features som
  * for eksempel endringslogg eller validering.
  */
 package no.statkart.skif.storetest.domain.basic;

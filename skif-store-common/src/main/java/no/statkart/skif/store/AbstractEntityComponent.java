@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 
 /**
- * Baseklasse for EntityComponents som har mutabel ident og som derfor må ha en id for å sjekke på likhet.
+ * Baseklasse for EntityComponents som har mutabel ident og som derfor mÃ¥ ha en id for Ã¥ sjekke pÃ¥ likhet.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -52,7 +52,7 @@ public abstract class AbstractEntityComponent implements EntityComponent, Serial
 
     @Override
     public boolean equalsByFields(Object other, EqualsByFields comparator) {
-        // Kaller equals for å sammenligne id/pseudoId.
+        // Kaller equals for Ã¥ sammenligne id/pseudoId.
         return equals(other) && EqualityByFields.super.equalsByFields(other, comparator);
     }
 }

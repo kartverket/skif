@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Test av basisfunksjonalitet på {@link ComponentSet}. Dette er ikke brukseksempler.
+ * Test av basisfunksjonalitet pÃ¥ {@link ComponentSet}. Dette er ikke brukseksempler.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
@@ -45,7 +45,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertSame(b.getOwner(), bubble, "b.owner");
-        // Ønsker overload for Object, ikke for Set eller Collection
+        // Ã˜nsker overload for Object, ikke for Set eller Collection
         //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
@@ -58,7 +58,7 @@ public class ComponentSetTest {
         bubble.getComponents().add(a);
 
         Assert.assertSame(a.getOwner(), bubble, "a.owner");
-        // Ønsker overload for Object, ikke for Set eller Collection
+        // Ã˜nsker overload for Object, ikke for Set eller Collection
         //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Collections.singleton(a), "aaComponents");
     }
@@ -75,7 +75,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertSame(b.getOwner(), bubble, "b.owner");
-        // Ønsker overload for Object, ikke for Set eller Collection
+        // Ã˜nsker overload for Object, ikke for Set eller Collection
         //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
@@ -90,7 +90,7 @@ public class ComponentSetTest {
 
         Assert.assertSame(a.getOwner(), bubble, "a.owner");
         Assert.assertSame(b.getOwner(), bubble, "b.owner");
-        // Ønsker overload for Object, ikke for Set eller Collection
+        // Ã˜nsker overload for Object, ikke for Set eller Collection
         //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(a, b), "aaComponents");
     }
@@ -107,7 +107,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertSame(b.getOwner(), bubble, "b.owner");
-        // Ønsker overload for Object, ikke for Set eller Collection
+        // Ã˜nsker overload for Object, ikke for Set eller Collection
         //noinspection RedundantCast
         Assert.assertEquals((Object) bubble.getComponents(), (Object) Sets.newHashSet(b), "aaComponents");
     }
@@ -124,7 +124,7 @@ public class ComponentSetTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertNull(b.getOwner(), "b.owner");
-        // IntelliJ antar at collections oppfører seg riktig, men siden dette er vår implementasjon, så er det det vi vil sjekke
+        // IntelliJ antar at collections oppfÃ¸rer seg riktig, men siden dette er vÃ¥r implementasjon, sÃ¥ er det det vi vil sjekke
         //noinspection ConstantValue
         Assert.assertEquals(bubble.getComponents().size(), 0, "aaComponents.size");
     }

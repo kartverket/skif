@@ -22,7 +22,7 @@ public class ConfigurationTest {
         assertEquals(cfg.getString("multikey1"), "v2") ;
         assertEquals(cfg.getProperty("multikey2").getClass(), ArrayList.class) ;
         assertEquals(cfg.getProperty("multikey2"), Arrays.asList("v1", "v2")) ;
-        assertEquals(cfg.getString("multikey2"), "v1", "forventet første verdi") ;
+        assertEquals(cfg.getString("multikey2"), "v1", "forventet fÃ¸rste verdi") ;
 
         cfg.setProperty("key2", "changed");
         assertEquals(cfg.getProperty("key2"), "changed");

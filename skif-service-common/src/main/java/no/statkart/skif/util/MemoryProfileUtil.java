@@ -6,8 +6,8 @@ import javax.swing.*;
 import java.io.IOException;
 
 /**
- * Hjelpeklasse for å stanse programmet på veldefinerte steder slik at man kan studere memoryforbruk via JProfiler.
- * Klassen har en switch for å disable prompts slik at programmet ikke stopper opp. Det har også en switch for å angi
+ * Hjelpeklasse for Ã¥ stanse programmet pÃ¥ veldefinerte steder slik at man kan studere memoryforbruk via JProfiler.
+ * Klassen har en switch for Ã¥ disable prompts slik at programmet ikke stopper opp. Det har ogsÃ¥ en switch for Ã¥ angi
  * om det skal brukes MessageBox eller lese fra System.in
  *
  * @author Henrik Fredholm

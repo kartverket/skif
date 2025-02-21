@@ -13,7 +13,7 @@ import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 import java.lang.reflect.Method;
 
 /**
- * En ProxyHandler for service {@code S} som avgjør om kallet skal gå via EJB eller kan gå direkte ut fra
+ * En ProxyHandler for service {@code S} som avgjÃ¸r om kallet skal gÃ¥ via EJB eller kan gÃ¥ direkte ut fra
  * servicens ejb {@code TransactionAttribute}s . I {@code JEE}-mode brukes kun annotasjoner fra servicens bean
  * implementasjon, mens i {@code SINGLE_VM}-mode brukes servicens implementasjonsklasse dersom servicen
  * ikke har noen bean implementasjon.

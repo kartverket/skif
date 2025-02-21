@@ -18,9 +18,9 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Tester ut at server injectoren i en SingleVm konfigurasjonen ikke blir gjenbukt på tvers av testcases
- * når metoden {@link #createModuleBuilder()} returnerer en builder. Denne testcasen
- * antar at en annen testcase allerede har opprettet en konfigurasjon og formålet med testen her er å vise
+ * Tester ut at server injectoren i en SingleVm konfigurasjonen ikke blir gjenbukt pÃ¥ tvers av testcases
+ * nÃ¥r metoden {@link #createModuleBuilder()} returnerer en builder. Denne testcasen
+ * antar at en annen testcase allerede har opprettet en konfigurasjon og formÃ¥let med testen her er Ã¥ vise
  * at denne ikke blir gjenbrukt
  *
  * @author Henrik Fredholm
@@ -45,7 +45,7 @@ public class SkifTestCaseReusableInjectorNoReuseTest extends SkifTestCase {
 
     @Override
     protected void resetLogin() {
-        // Støtter ikke login for denne test
+        // StÃ¸tter ikke login for denne test
     }
 
     public void firstTestMethod() {

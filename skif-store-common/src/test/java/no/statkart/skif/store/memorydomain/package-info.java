@@ -1,4 +1,4 @@
 /**
- * Små klasser og hjelpere for å teste Store-funksjonalitet uten å måtte sette opp særlig mer enn en StoreClient.
+ * SmÃ¥ klasser og hjelpere for Ã¥ teste Store-funksjonalitet uten Ã¥ mÃ¥tte sette opp sÃ¦rlig mer enn en StoreClient.
  */
 package no.statkart.skif.store.memorydomain;

@@ -14,15 +14,15 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * Strategi for håndtering av inverse relasjoner. Denne strategi er basert på at endringer i releasjoner registreres
- * kontinuerlig i cachen. For å få dette til må objektet som eier relasjonen implementere setter-metoden slik at den
- * gjør kall til cachen med gammel og ny verdi. For collection-releasjoner må disse wrappes slik at cachen oppdateres
- * automatisk når det utføres endringer direkte på collectionene utenom objektets setter-metode. I tillegg må objektet
- * som eier relasjonen implementere en metode som gjør det mulig for Store automatisk å hente ut alle releasjonen ifm
+ * Strategi for hÃ¥ndtering av inverse relasjoner. Denne strategi er basert pÃ¥ at endringer i releasjoner registreres
+ * kontinuerlig i cachen. For Ã¥ fÃ¥ dette til mÃ¥ objektet som eier relasjonen implementere setter-metoden slik at den
+ * gjÃ¸r kall til cachen med gammel og ny verdi. For collection-releasjoner mÃ¥ disse wrappes slik at cachen oppdateres
+ * automatisk nÃ¥r det utfÃ¸res endringer direkte pÃ¥ collectionene utenom objektets setter-metode. I tillegg mÃ¥ objektet
+ * som eier relasjonen implementere en metode som gjÃ¸r det mulig for Store automatisk Ã¥ hente ut alle releasjonen ifm
  * registrering av endrede objekter i Store.
  * <p/>
- * Denne strategi gjør at releasjonscachen alltid er up-to-date så lenge objektet er knyttet til Store. Cachen er ikke
- * avhengig av at det gjøres kall til store.update() først.
+ * Denne strategi gjÃ¸r at releasjonscachen alltid er up-to-date sÃ¥ lenge objektet er knyttet til Store. Cachen er ikke
+ * avhengig av at det gjÃ¸res kall til store.update() fÃ¸rst.
  *
  * @author Henrik Fredholm
  * @since 2.6.0
@@ -48,7 +48,7 @@ public class InverseRelationStrategy extends RelationStrategy {
         if (!missingInverseValues.isEmpty()) {
             Object[] args = {missingInverseValues};
             Map<T, Object> uncachedMap = noCaching(chained, proxy, method, args);
-            // Støtter egentlig ikke multithreaded adgang, men gjør en ekstra sjekk her i tilfellet en annen tråd
+            // StÃ¸tter egentlig ikke multithreaded adgang, men gjÃ¸r en ekstra sjekk her i tilfellet en annen trÃ¥d
             // har lastet relasjonene i mellomtiden. Det vil fange de fleste tilfeller siden det er lastingen som tar tid.
             Collection<T> missingInverseValuesAfterLoading = cache.findNonMaterialised(name, inverseValues);
             for (Map.Entry<T, Object> entry : uncachedMap.entrySet()) {

@@ -12,9 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Standardimplementasjon av en sekvensblokkallokeringstjeneste. Både denne og interfacet må subklasses, samt at EJB må
- * lages, i hver enkelt applikasjon. Navn på disse bestemmes av applikasjonen, og må samsvare med hverandre på vanlig
- * måte.
+ * Standardimplementasjon av en sekvensblokkallokeringstjeneste. BÃ¥de denne og interfacet mÃ¥ subklasses, samt at EJB mÃ¥
+ * lages, i hver enkelt applikasjon. Navn pÃ¥ disse bestemmes av applikasjonen, og mÃ¥ samsvare med hverandre pÃ¥ vanlig
+ * mÃ¥te.
  *
  * @author Roar Ingebrigtsen
  * @author Tor Egil R. Strand
@@ -80,8 +80,8 @@ public class DefaultSequenceBlockAllocatorServiceImpl implements SequenceBlockAl
     }
 
     /**
-     * Standardoppførsel er at implementasjonen committer transaksjonen. De som ønsker å benytte sekvensnallokatoren i
-     * egen transaksjon overrider denne til å ikke gjøre noe.
+     * StandardoppfÃ¸rsel er at implementasjonen committer transaksjonen. De som Ã¸nsker Ã¥ benytte sekvensnallokatoren i
+     * egen transaksjon overrider denne til Ã¥ ikke gjÃ¸re noe.
      *
      * @param con    databaseforbindelsen
      * @throws SQLException

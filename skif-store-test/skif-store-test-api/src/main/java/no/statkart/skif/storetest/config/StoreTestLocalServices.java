@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Services i StoreTest som kun benyttes internt og dermed ikke har noen tilhørende webservice.
+ * Services i StoreTest som kun benyttes internt og dermed ikke har noen tilhÃ¸rende webservice.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

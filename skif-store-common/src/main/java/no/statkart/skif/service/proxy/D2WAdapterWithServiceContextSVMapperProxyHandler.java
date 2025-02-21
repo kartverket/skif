@@ -14,15 +14,15 @@ import java.lang.reflect.Method;
 
 /**
  * Proxy som adapterer java interface {@code T} til Web service interface {@code A}. Denne adapter har
- * tilleggsfunksjonalitet som anvender et sett av regler på java intefacemetodens parametre til å bestemme
+ * tilleggsfunksjonalitet som anvender et sett av regler pÃ¥ java intefacemetodens parametre til Ã¥ bestemme
  * hvilken  {@code SnapshotVersion} som skal gjelde for kallet. Bl.a tillader adapteren at java interface metoden har en
- * ekstra siste parameter som eksplisitt angir {@code SnapshotVersion} for kallet. Denne parameteren overføres
+ * ekstra siste parameter som eksplisitt angir {@code SnapshotVersion} for kallet. Denne parameteren overfÃ¸res
  * som en del av ServiceContext objektet og ikke som en selvstendig parameter i wsapi kallet. Dersom java interfacemetoden
- * ikke har en slik eksplisitt {@code SnapshotVersion} som siste parameter forsøker adapteren istedet å finne en
- * annen parameter i kallet som kan brukes til å bestemme {@code SnapshotVersion}. Hvis adapteren klarer å bestemme
- * {@code SnapshotVersion} settes denne {@code SnapshotVersion} inn i {@code SnapshotVersionContext} før kallet
- * utføres og etter kallet settes opprinnelig verdi på {@code SnapshotVersionContext}. Dersom det ikke er mulig å
- * anvende java interfacemetodens parametre til å bestemme {@code SnapshotVersion} anvendes verdien i
+ * ikke har en slik eksplisitt {@code SnapshotVersion} som siste parameter forsÃ¸ker adapteren istedet Ã¥ finne en
+ * annen parameter i kallet som kan brukes til Ã¥ bestemme {@code SnapshotVersion}. Hvis adapteren klarer Ã¥ bestemme
+ * {@code SnapshotVersion} settes denne {@code SnapshotVersion} inn i {@code SnapshotVersionContext} fÃ¸r kallet
+ * utfÃ¸res og etter kallet settes opprinnelig verdi pÃ¥ {@code SnapshotVersionContext}. Dersom det ikke er mulig Ã¥
+ * anvende java interfacemetodens parametre til Ã¥ bestemme {@code SnapshotVersion} anvendes verdien i
  * {@code SnapshotVersionContext} uforandret.
  *
  * <p>Algoritmen som bestemmer hvilken parameter som skal anvendes for en gitt javaa interfacemetode avhenger kun av

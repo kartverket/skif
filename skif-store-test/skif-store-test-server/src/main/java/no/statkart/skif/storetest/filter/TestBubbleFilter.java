@@ -13,9 +13,9 @@ import java.util.Collection;
 /**
  * Filtrerer objekter som er av typen FilteredBubble.
  * <p>
- * Filteret brukes også til å teste lasting av objekter hvor brukeren får PermissionDeniedException for
- * instanser det ikke er lov å laste. Bruker her teksten i feltet {@link FilteredBubble#getFilterText()} til
- * å simulere om brukren har lov til å se objektet eller ikke.
+ * Filteret brukes ogsÃ¥ til Ã¥ teste lasting av objekter hvor brukeren fÃ¥r PermissionDeniedException for
+ * instanser det ikke er lov Ã¥ laste. Bruker her teksten i feltet {@link FilteredBubble#getFilterText()} til
+ * Ã¥ simulere om brukren har lov til Ã¥ se objektet eller ikke.
  *
  * @author Jan Holmen
  * @since 2.1
@@ -78,7 +78,7 @@ public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionW
             FilteredBubble fb = (FilteredBubble) bubbleObject;
             if (fb.isFilter()) {
                 if (fb.getFilterText().contains("PermissionDenied")) {
-                    throw new PermissionDeniedException(String.format("Ikke lov å laste objektet: %s", fb.getBubbleId().toString()));
+                    throw new PermissionDeniedException(String.format("Ikke lov Ã¥ laste objektet: %s", fb.getBubbleId().toString()));
                 }
                 FilteredBubble ro = new FilteredBubble(fb.getId(), fb.getText(), fb.isFilter(), replaced);
                 return (T)ro;
@@ -142,7 +142,7 @@ public class TestBubbleFilter implements StoreSessionReadListener, StoreSessionW
     }
 
     /**
-     * Kaster exception hvis en prøver å slette objekter som er filtrert.
+     * Kaster exception hvis en prÃ¸ver Ã¥ slette objekter som er filtrert.
      *
      * @param storeBubbleObject
      * @param persistentBubbleObject

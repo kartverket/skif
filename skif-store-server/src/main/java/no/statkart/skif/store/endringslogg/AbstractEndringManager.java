@@ -22,7 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
- * Håndterer grunnleggende generering av endringer. Prosjekter må i det minste lage en tynn implementasjon.
+ * HÃ¥ndterer grunnleggende generering av endringer. Prosjekter mÃ¥ i det minste lage en tynn implementasjon.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0
@@ -120,8 +120,8 @@ public abstract class AbstractEndringManager<E extends AbstractEndring> implemen
     }
 
     /**
-     * Overstyr denne for å initialisere andre felter enn de som følger med {@link AbstractEndring}. Endringen har på
-     * dette tidspunktet ingen id, og er følgelig ikke lagt inn i store.
+     * Overstyr denne for Ã¥ initialisere andre felter enn de som fÃ¸lger med {@link AbstractEndring}. Endringen har pÃ¥
+     * dette tidspunktet ingen id, og er fÃ¸lgelig ikke lagt inn i store.
      *
      * @param storeServer    store
      * @param endring        endringen som nettopp har blitt laget

@@ -22,7 +22,7 @@ public class SkifTestCaseNoConfigFileTest extends SkifTestCase {
 
     @Override
     protected void resetLogin() {
-        // Støtter ikke login for denne test
+        // StÃ¸tter ikke login for denne test
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Tester måter entitycomponents kan brukes på.
+ * Tester mÃ¥ter entitycomponents kan brukes pÃ¥.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0

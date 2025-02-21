@@ -8,12 +8,12 @@ import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 /**
  * Baseklasse for alle endringer i StoreTest-prosjektet.
  *
- * For enkelt å kunne søke på subtype via Hibernate er det hensiktsmessig at det finne en endringstype per boblesubtype
- * man skal kunne søke på. Det er ikke noe krav at det skal være en en-til-en match mellom endringssubtyper og
- * boblesubtyper, men som minimum må det være en endringstype for hver boble basetype. Dermed kan klassen for
+ * For enkelt Ã¥ kunne sÃ¸ke pÃ¥ subtype via Hibernate er det hensiktsmessig at det finne en endringstype per boblesubtype
+ * man skal kunne sÃ¸ke pÃ¥. Det er ikke noe krav at det skal vÃ¦re en en-til-en match mellom endringssubtyper og
+ * boblesubtyper, men som minimum mÃ¥ det vÃ¦re en endringstype for hver boble basetype. Dermed kan klassen for
  * endringstypen brukes som filter i endringsloggmetodene.
  *
- * <P>Videre må
+ * <P>Videre mÃ¥
  *
  * @author Tor Egil R. Strand
  * @author Henrik Fredholm

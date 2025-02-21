@@ -5,7 +5,7 @@ import no.statkart.skif.store.StoreBubbleTransfer;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 
 /**
- * Service for å støtte UnitOfWork testing
+ * Service for Ã¥ stÃ¸tte UnitOfWork testing
  *
  * @author Henrik Fredholm
  * @since 2.9
@@ -15,10 +15,10 @@ public interface UowTestService {
     StoreBubbleTransfer findAndLock(BubbleId bubbleId);
 
     /**
-     * Oppdaterer en Simple boble ved å sette ny tekst på boblen i en egen transaksjon. Dette for å kunne teste
-     * refresh av en boble etter at den har blitt lest ifm at boblen låses eller vanlig refresh. Siden metoden vil
-     * frigir alle låser for inneværende bruker bør kun kalles når brukeren ikke har eksisterende låser. Det testes
-     * for dette i metoden slik at den feiler hvis den brukes når dette ikke er tilfellet.
+     * Oppdaterer en Simple boble ved Ã¥ sette ny tekst pÃ¥ boblen i en egen transaksjon. Dette for Ã¥ kunne teste
+     * refresh av en boble etter at den har blitt lest ifm at boblen lÃ¥ses eller vanlig refresh. Siden metoden vil
+     * frigir alle lÃ¥ser for innevÃ¦rende bruker bÃ¸r kun kalles nÃ¥r brukeren ikke har eksisterende lÃ¥ser. Det testes
+     * for dette i metoden slik at den feiler hvis den brukes nÃ¥r dette ikke er tilfellet.
      * oppdatering
      */
     void updateTextInNewTransaction(SimpleId<?> simpleId, String text);

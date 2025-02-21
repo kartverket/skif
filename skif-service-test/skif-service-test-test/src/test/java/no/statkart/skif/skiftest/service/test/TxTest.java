@@ -59,7 +59,7 @@ public class TxTest extends SkifTestCase {
 
     /**
      * Test kall til metoder hvor startende kall har REQUIRES eller
-     * REQUIRES_NEW transaction. Videre kall på server krever ikke transaksjoner
+     * REQUIRES_NEW transaction. Videre kall pÃ¥ server krever ikke transaksjoner
      */
     @Test
     public void testCrossCall_StartingCallHasTxOnMethod() {
@@ -79,7 +79,7 @@ public class TxTest extends SkifTestCase {
 
     /**
      * Test kall til metoder hvor startende kall har REQUIRES eller
-     * REQUIRES_NEW transaction. Videre kall på serveren krever også tx
+     * REQUIRES_NEW transaction. Videre kall pÃ¥ serveren krever ogsÃ¥ tx
      */
     @Test
     public void testCrossCall_StartingCallHasNoTxOnMethodFollowingCallHas() {

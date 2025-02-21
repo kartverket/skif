@@ -22,7 +22,7 @@ import java.util.Set;
 
 
 /**
- * Denne klassen forsøker å mappe alle felter som er felles mellom to klasser.
+ * Denne klassen forsÃ¸ker Ã¥ mappe alle felter som er felles mellom to klasser.
  *
  * @author Steinar Hansen
  * @author Tor Egil R. Strand
@@ -109,9 +109,9 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
     }
 
     /**
-     * Finner Since-annotasjon på feltet som ligger bak metoden sendt inn som parameter.
+     * Finner Since-annotasjon pÃ¥ feltet som ligger bak metoden sendt inn som parameter.
      *
-     * @param domainGetter Metode vi ønsker å finne since-versjon for
+     * @param domainGetter Metode vi Ã¸nsker Ã¥ finne since-versjon for
      * @return Strengverdi av since-annotasjonen hvis denne finnes, null ellers.
      * @throws MappingException dersom det ikke finnes et felt med samme navn som metode
      */
@@ -127,16 +127,16 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
     }
 
     /**
-     * Finner felt for get-metode på en klasse
+     * Finner felt for get-metode pÃ¥ en klasse
      *
-     * @param domainGetter Metode vi ønsker å finne felt for
+     * @param domainGetter Metode vi Ã¸nsker Ã¥ finne felt for
      * @return Field-element for feltet.
      */
     private Field findFieldForDomainGetter(Method domainGetter) {
 
         String methodName = domainGetter.getName();
 
-        //Fjerner "get" eller "is" fra navnet og gjør første bokstav til liten bokstav istedenfor stor
+        //Fjerner "get" eller "is" fra navnet og gjÃ¸r fÃ¸rste bokstav til liten bokstav istedenfor stor
         String fieldName = null;
         if (methodName.startsWith("get")) {
             fieldName = methodName.substring(3, 4).toLowerCase() + methodName.substring(4);
@@ -158,25 +158,25 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
         }
 
         //Det finnes ikke noe felt for getteren. Getteren er da enten feilskrevet eller er ikke en getter i det hele tatt.
-        //Kan ikke kaste exception da dette blant annet gjeldet "getBubbleId" på AbstractBubbleObject
+        //Kan ikke kaste exception da dette blant annet gjeldet "getBubbleId" pÃ¥ AbstractBubbleObject
         return null;
     }
 
     /**
-     * Override denne dersom målklassen avhenger av hva kildeklassen er.
+     * Override denne dersom mÃ¥lklassen avhenger av hva kildeklassen er.
      *
      * @param source kildeklassen
-     * @return initielt opprettet målklasse
+     * @return initielt opprettet mÃ¥lklasse
      */
     protected WsapiT createWsapiT(DomainT source) {
         return createWsapiT();
     }
 
     /**
-     * Override denne dersom målklassen avhenger av hva kildeklassen er.
+     * Override denne dersom mÃ¥lklassen avhenger av hva kildeklassen er.
      *
      * @param source kildeklassen
-     * @return initielt opprettet målklasse
+     * @return initielt opprettet mÃ¥lklasse
      */
     protected DomainT createDomainT(WsapiT source) {
         return createDomainT();
@@ -258,7 +258,7 @@ public class DefaultTypeMapper<WsapiT, DomainT, M extends Mapping> extends Abstr
             }
         }
 
-        return Lists.newArrayList(getters.values()); // Kan ikke returnere values() direkte, for den støtter ikke add()
+        return Lists.newArrayList(getters.values()); // Kan ikke returnere values() direkte, for den stÃ¸tter ikke add()
     }
 
     protected Method findSetterForGetter(Class<?> targetClass, Method getter) {

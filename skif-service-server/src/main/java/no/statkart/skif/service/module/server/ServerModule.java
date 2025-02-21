@@ -51,14 +51,14 @@ public class ServerModule extends ModuleWithStrategy<ServerModuleStrategy> {
         // Binder opp provider av call id
         bind(Long.class).annotatedWith(CallId.class).toProvider(CallIdProvider.class);
 
-        // Standard bindinger som må være med
+        // Standard bindinger som mÃ¥ vÃ¦re med
         bind(ServiceMode.class).toInstance(moduleConfiguration.getServiceMode());
         bind(ServiceContext.class).to(serviceContextClass);
         bind(serviceContextClass).in(ServiceRequestScoped.class);
         bind(Configuration.class).toInstance(moduleConfiguration.getConfiguration());
         bind(ModuleConfiguration.class).toInstance(moduleConfiguration);
 
-        // SnapshotVersionContext har trådlokal verdi og bindes opp som ekte singleton istedet for med ServiceRequest scope
+        // SnapshotVersionContext har trÃ¥dlokal verdi og bindes opp som ekte singleton istedet for med ServiceRequest scope
         bind(SnapshotVersionContext.class).toInstance(SnapshotVersionContext.getInstance());
 
         // ServiceMode avhengige bindinger

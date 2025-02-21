@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
- * Boble som har entity og set av entities i nestede nivåer.
+ * Boble som har entity og set av entities i nestede nivÃ¥er.
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -17,7 +17,7 @@ import java.util.Set;
 public class BubbleWithEntityComponent extends AbstractStoreTestBubble {
     private static final long serialVersionUID = 1L;
 
-    /* Angir logisk nummer på boblen innen for et testset*/
+    /* Angir logisk nummer pÃ¥ boblen innen for et testset*/
     private int nr;
     /* En tekst som beskriver boblen */
     private String text;

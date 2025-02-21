@@ -139,7 +139,7 @@ public class SingleVmModuleTest {
 
 
     /**
-     * Eksemple på alternativ ServerServiceModuleStrategy som forventer at services eksplisitt binnes til
+     * Eksemple pÃ¥ alternativ ServerServiceModuleStrategy som forventer at services eksplisitt binnes til
      * implementasjon i {@link AbstractModule#configure()}
      **/
     public static class ServerServiceModuleStrategyWithExplisitBindingSingleVm extends ServerServiceModuleStrategySingleVm {
@@ -160,7 +160,7 @@ public class SingleVmModuleTest {
 
 
     /**
-     * ImplementationServiceChainFactory skal være singleton og det skal være mulig å opprette en instans av klassen
+     * ImplementationServiceChainFactory skal vÃ¦re singleton og det skal vÃ¦re mulig Ã¥ opprette en instans av klassen
      * uten noe aktivt ServiceRequestScope.
      */
     public void testCreateImplementationServiceChainFactory() {
@@ -175,7 +175,7 @@ public class SingleVmModuleTest {
     }
 
     /**
-     * Kall til createChain() skal kunne kalles  uten ServiceRequestScope (først ved invoke trengs et
+     * Kall til createChain() skal kunne kalles  uten ServiceRequestScope (fÃ¸rst ved invoke trengs et
      * aktiv ServiceRequestScope)
      */
     public void testCreateImplementationServiceChainFactory_NoScope() {
@@ -203,7 +203,7 @@ public class SingleVmModuleTest {
 
 
     /**
-     * EJBServiceChainFactory skal være singleton og det skal være mulig å opprette en instans av klassen
+     * EJBServiceChainFactory skal vÃ¦re singleton og det skal vÃ¦re mulig Ã¥ opprette en instans av klassen
      * uten noe aktivt ServiceRequestScope.
      */
     public void testEJBServiceChainFactory() {
@@ -220,7 +220,7 @@ public class SingleVmModuleTest {
     }
 
     /**
-     * CallServiceChainFactory på server skal være singleton og det skal være mulig å opprette en instans av klassen
+     * CallServiceChainFactory pÃ¥ server skal vÃ¦re singleton og det skal vÃ¦re mulig Ã¥ opprette en instans av klassen
      * uten noe aktivt ServiceRequestScope.
      */
     public void testCallServiceChainFactory_Server() {
@@ -238,8 +238,8 @@ public class SingleVmModuleTest {
     }
 
     /**
-     * CallServiceChainFactory på klient skal være singleton og det skal være mulig å opprette en instans av klassen
-     * uten noe aktivt ServiceRequestScope. Det skal også være mulig å opprette en ServiceChain siden klieter ikke
+     * CallServiceChainFactory pÃ¥ klient skal vÃ¦re singleton og det skal vÃ¦re mulig Ã¥ opprette en instans av klassen
+     * uten noe aktivt ServiceRequestScope. Det skal ogsÃ¥ vÃ¦re mulig Ã¥ opprette en ServiceChain siden klieter ikke
      * brunke ServiceRequestScope.
      */
     public void testCallServiceChainFactory_Client() {
@@ -331,7 +331,7 @@ public class SingleVmModuleTest {
 
     /**
      * Test kall til metoder hvor startende kall har REQUIRES eller
-     * REQUIRES_NEW transaction. Videre kall på server krever ikke transaksjoner
+     * REQUIRES_NEW transaction. Videre kall pÃ¥ server krever ikke transaksjoner
      */
     public void testCrossCallSingleVmWireing_StartingCallHasTxOnMethod() {
         final Injector serverInjector = createServerInjectorWithTxAnnotation(services2);
@@ -355,7 +355,7 @@ public class SingleVmModuleTest {
 
     /**
      * Test kall til metoder hvor startende kall har REQUIRES eller
-     * REQUIRES_NEW transaction. Videre kall på serveren krever også tx
+     * REQUIRES_NEW transaction. Videre kall pÃ¥ serveren krever ogsÃ¥ tx
      */
     public void testCrossCallSingleVmWireing_StartingCallHasNoTxOnMethodFollowingCallHas() {
         final Injector serverInjector = createServerInjectorWithTxAnnotation(services2);
@@ -380,7 +380,7 @@ public class SingleVmModuleTest {
     }
 
     /**
-     * Test av hvordan man konfigurerer en {@link ServerServiceModule} til å override default service implementation
+     * Test av hvordan man konfigurerer en {@link ServerServiceModule} til Ã¥ override default service implementation
      * binding (serviceclassname + "Impl") og i stedet binne implementasjon i modulens {@code configure()} metode.
      */
     public void testBasicSingleVmWireinghatOverridesDefaultImplementationBindings_RequestScopeNotUsed() {
@@ -397,8 +397,8 @@ public class SingleVmModuleTest {
 }
 
 /**
- * En EJBServiceChainFactory  for test formål som legger på en ProxyHandler som endre på returverdien for metodekallet og legger
- * på informasjon om i hvilken context kallet ble uført. Denne factory'en kan kun brukte på metoder som
+ * En EJBServiceChainFactory  for test formÃ¥l som legger pÃ¥ en ProxyHandler som endre pÃ¥ returverdien for metodekallet og legger
+ * pÃ¥ informasjon om i hvilken context kallet ble ufÃ¸rt. Denne factory'en kan kun brukte pÃ¥ metoder som
  * returnerer {@code String}
  *
  * @param <S>

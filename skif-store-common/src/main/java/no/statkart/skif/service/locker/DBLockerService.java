@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Service for å behandle låser i egne transaksjoner.
+ * Service for Ã¥ behandle lÃ¥ser i egne transaksjoner.
  *
  * @author Roar Ingebrigtsen
  * @since 2.0
@@ -16,74 +16,74 @@ import java.util.Set;
 public interface DBLockerService<T> {
 
     /**
-     * Låser boble hørende til angitt bobleid med utløp etter lockTimeout millisekunder. Hvis boblen allerede er låst av
-     * kalderen vil låsen bli fornyet med en ny utløpsperiode på lockTimeout millisekunder. Hvis boblen er låst av en
-     * anden bruker, men låse perioden er utløpet vil kalderen få tildelt låsen med en ny utløpsperiode på lockTimeout
-     * millisekunder. Hvis det ikke er mulig å ta låsen kastes LockedException.
+     * LÃ¥ser boble hÃ¸rende til angitt bobleid med utlÃ¸p etter lockTimeout millisekunder. Hvis boblen allerede er lÃ¥st av
+     * kalderen vil lÃ¥sen bli fornyet med en ny utlÃ¸psperiode pÃ¥ lockTimeout millisekunder. Hvis boblen er lÃ¥st av en
+     * anden bruker, men lÃ¥se perioden er utlÃ¸pet vil kalderen fÃ¥ tildelt lÃ¥sen med en ny utlÃ¸psperiode pÃ¥ lockTimeout
+     * millisekunder. Hvis det ikke er mulig Ã¥ ta lÃ¥sen kastes LockedException.
      *
-     * @param lockKey     lockKey for boble som skal låses
-     * @param owner       brukernavn som forsøker å låse
-     * @param lockTimeout utløpstid i millisekunder  @return informasjon om låsen, bl.a om kalder hadde låsen fra før
-     * @return LockInfo for låsen
-     * @throws LockedException hvis boblen er låst av anden bruker
+     * @param lockKey     lockKey for boble som skal lÃ¥ses
+     * @param owner       brukernavn som forsÃ¸ker Ã¥ lÃ¥se
+     * @param lockTimeout utlÃ¸pstid i millisekunder  @return informasjon om lÃ¥sen, bl.a om kalder hadde lÃ¥sen fra fÃ¸r
+     * @return LockInfo for lÃ¥sen
+     * @throws LockedException hvis boblen er lÃ¥st av anden bruker
      */
     LockInfo<T> lock(LockKey<T> lockKey, String owner, long lockTimeout) throws LockedException;
 
     /**
-     * Låser alle bobler hørende til angitte bobleider med utløp etter lockTimeout millisekunder. Låser enten alle bobler
+     * LÃ¥ser alle bobler hÃ¸rende til angitte bobleider med utlÃ¸p etter lockTimeout millisekunder. LÃ¥ser enten alle bobler
      * eller ingen av dem.
      *
-     * @param lockKeys    ider for bobler som skal låses
-     * @param owner       brukernavn som forsøker å låse
-     * @param lockTimeout utløpstid i millisekunder  @return informasjon om låsene, bl.a om kalder hadde låsen fra før
-     * @throws LockedException hvis en eller flere bobler er låst av anden bruker
+     * @param lockKeys    ider for bobler som skal lÃ¥ses
+     * @param owner       brukernavn som forsÃ¸ker Ã¥ lÃ¥se
+     * @param lockTimeout utlÃ¸pstid i millisekunder  @return informasjon om lÃ¥sene, bl.a om kalder hadde lÃ¥sen fra fÃ¸r
+     * @throws LockedException hvis en eller flere bobler er lÃ¥st av anden bruker
      */
     Set<LockInfo<T>> lockAll(Set<LockKey<T>> lockKeys, String owner, long lockTimeout) throws LockedException;
 
     /**
-     * Låse opp boble med angitt lockKey. Har ingen effekt hvis kalder ikke har låsen (låsen kunne være løpet ut på tid)
+     * LÃ¥se opp boble med angitt lockKey. Har ingen effekt hvis kalder ikke har lÃ¥sen (lÃ¥sen kunne vÃ¦re lÃ¸pet ut pÃ¥ tid)
      *
-     * @param lockKey lockKey for boble som skal låses opp
-     * @param owner   brukernavn som forsøker å låse opp
+     * @param lockKey lockKey for boble som skal lÃ¥ses opp
+     * @param owner   brukernavn som forsÃ¸ker Ã¥ lÃ¥se opp
      */
     void unlock(LockKey<T> lockKey, String owner);
 
     /**
-     * Låse opp alle bobler med angitt ider. Har ingen effekt hvis kalder ikke har låsen (låsen kunne være løpet ut på
+     * LÃ¥se opp alle bobler med angitt ider. Har ingen effekt hvis kalder ikke har lÃ¥sen (lÃ¥sen kunne vÃ¦re lÃ¸pet ut pÃ¥
      * tid)
      *
-     * @param unLockKeys    lockKeys for bobler som skal låses opp
-     * @param owner         brukernavn som forsøker å låse opp
+     * @param unLockKeys    lockKeys for bobler som skal lÃ¥ses opp
+     * @param owner         brukernavn som forsÃ¸ker Ã¥ lÃ¥se opp
      */
     void unlockAll(Set<LockKey<T>> unLockKeys, String owner);
 
     /**
-     * Returnere alle låsene for kalder
+     * Returnere alle lÃ¥sene for kalder
      *
-     * @param owner@return alle låsene for kalder
+     * @param owner@return alle lÃ¥sene for kalder
      */
     Collection<LockInfo<T>> getLocksBy(String owner);
 
     /**
-     * Frigir alle låse for kalder
+     * Frigir alle lÃ¥se for kalder
      *
-     * @param owner    brukernavn som skal slippe alle sine låser
+     * @param owner    brukernavn som skal slippe alle sine lÃ¥ser
      */
     void releaseAllLocks(String owner);
 
     /**
-     * Fornyr alle låse for kalder med ny utløpsperiode på lockTimeout millisekunder. Låse som har lengere utløpsperiode
+     * Fornyr alle lÃ¥se for kalder med ny utlÃ¸psperiode pÃ¥ lockTimeout millisekunder. LÃ¥se som har lengere utlÃ¸psperiode
      * vil ikke bli endret.
      *
-     * @param owner       brukernavn som forsøker å fornye sine låser
-     * @param lockTimeout utløpstid i millisekunder
-     * @return informasjon om alle lås for kalder
+     * @param owner       brukernavn som forsÃ¸ker Ã¥ fornye sine lÃ¥ser
+     * @param lockTimeout utlÃ¸pstid i millisekunder
+     * @return informasjon om alle lÃ¥s for kalder
      */
     Collection<LockInfo<T>> renewAllLocks(String owner, long lockTimeout);
 
     /**
-     * Finner lås for lockKey dersom elementet er låst.
-     * @param lockKey LockKey for element vi ønsker å søke på
+     * Finner lÃ¥s for lockKey dersom elementet er lÃ¥st.
+     * @param lockKey LockKey for element vi Ã¸nsker Ã¥ sÃ¸ke pÃ¥
      * @return LockInfo<T> for lockKey dersom denne finnes, null ellers
      */
     LockInfo<T> getLock(LockKey<T> lockKey);

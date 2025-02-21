@@ -34,6 +34,6 @@ public class WSServerModule extends SkifModule {
     }
     @Override
     protected void configure() {
-        Preconditions.checkArgument(moduleConfiguration.getServiceMode()== ServiceMode.JEE, "Kun ServiceMode.JEE er støttet");
+        Preconditions.checkArgument(moduleConfiguration.getServiceMode()== ServiceMode.JEE, "Kun ServiceMode.JEE er stÃ¸ttet");
     }
 }

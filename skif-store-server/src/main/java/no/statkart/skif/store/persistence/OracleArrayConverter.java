@@ -10,10 +10,10 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * En hjelpeklasse for å opprette Oracle ARRAYs fra Collections. Det finnes en subklasse for hver element type.
+ * En hjelpeklasse for Ã¥ opprette Oracle ARRAYs fra Collections. Det finnes en subklasse for hver element type.
  *
- * <p>For å kunne bruke henholdsvis Number, Date, String, (Number,String) og (String,String) arrays i spørringer må
- * Oracle skjemaet inneholde følgende definisjoner:
+ * <p>For Ã¥ kunne bruke henholdsvis Number, Date, String, (Number,String) og (String,String) arrays i spÃ¸rringer mÃ¥
+ * Oracle skjemaet inneholde fÃ¸lgende definisjoner:
  * <pre>
  *    CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER;
  *    CREATE TYPE DATE_LIST_TYPE AS TABLE OF DATE;
@@ -24,10 +24,10 @@ import java.util.Iterator;
  *    CREATE TYPE STRING_STRING_LIST_TYPE AS TABLE OF STRING_STRING_TYPE;
  * </pre>
  *
- * Om du får ORA-01031 "insufficient privileges" så må du gi brukaren din "CREATE TYPE" system privilegiet på Oracle-skjemaet du brukar
+ * Om du fÃ¥r ORA-01031 "insufficient privileges" sÃ¥ mÃ¥ du gi brukaren din "CREATE TYPE" system privilegiet pÃ¥ Oracle-skjemaet du brukar
  * Ref. http://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_8001.htm.
  *
- * <p>Eksempel på bruk:
+ * <p>Eksempel pÃ¥ bruk:
  * <pre>
  *    Collection<Long> eierIds = List.of(1234L);
  *    Connection connection = OracleUtils.getOracleConnection(session.connection());
@@ -57,7 +57,7 @@ public class OracleArrayConverter<T> {
     }
 
     /**
-     * Denne metode kan overrides i subklasser til å være public dersom den underliggende elementtype kan brukes direkte
+     * Denne metode kan overrides i subklasser til Ã¥ vÃ¦re public dersom den underliggende elementtype kan brukes direkte
      * i et oracle ARRAY, dvs. er av type Object eller Object[] slik at man kan kalle
      * {@link #toArray(java.sql.Connection, java.util.Collection)} i stedet for
      * {@link #toObjectArray(java.sql.Connection, java.util.Collection)}
@@ -96,8 +96,8 @@ public class OracleArrayConverter<T> {
     }
 
     /**
-     * Denne må overrides i subklasser dersom {@code <T>} ikke kan brukes direkte i et oracle ARRAY.
-     * @return et Object eller Object[] som utgjør en elementtype som kan brukes i oracle ARRAY
+     * Denne mÃ¥ overrides i subklasser dersom {@code <T>} ikke kan brukes direkte i et oracle ARRAY.
+     * @return et Object eller Object[] som utgjÃ¸r en elementtype som kan brukes i oracle ARRAY
      */
     protected Object toValue(T object) {
         return object;

@@ -10,19 +10,19 @@ import no.statkart.skif.service.proxy.ProxyHandler;
 /**
  * En Guice provider som returnerer en service proxy av type {@code S} som sender kallet gjennom servicens
  * {@code EJBServiceChain} og {@code ImplementationServiceChain}. Provideren bruke en {@code EJBServiceChainFactory<S>}
- * og en {@code ImplementationServiceChainFactory} til å lage de ProxyHandlere som utgjøre ServiceChain'en. Hver
+ * og en {@code ImplementationServiceChainFactory} til Ã¥ lage de ProxyHandlere som utgjÃ¸re ServiceChain'en. Hver
  * service av type {@code S} har sin egen {@code EJBServiceChainFactory<S>} og
  * {@code ImplementationServiceChainFactory<S>} implementasjoner og kan derfor ha forskjellige innhold i deres
- * {@code EJBServiceChain}s om ønskelig.
+ * {@code EJBServiceChain}s om Ã¸nskelig.
  * <p>
  * Denne provider skal kun brukes av skif-rammeverket og skal ikke brukes direkte fra annen kode.
  * Provideren bindes inn av skif-rammeverket med en egen Guice key {@link no.statkart.skif.service.annotation.EJBRef}
  * for type {@code S} slik at den ikke kommer i konflikt med standard bindingen for  type {@code S}.
  * <p>
- * Servicens {@code EJBServiceChain} implementerer et abstraksjonlag som gjør det mulig å implementere services som
- * virker likt både med og uten en applikasjonsserver. Instanser fra denne provider brukes litt forskjellig i
- * {@code JEE} og {@code SINGLE_VM} mode siden applikasonstjenerens ejb-implementasjon automatisk gjør en del arbeide
- * rundt transaksjonshåndtering som må gjøres manulet i {@code SINGLE_VM}-mode. Derfor har de to modes forskjellige
+ * Servicens {@code EJBServiceChain} implementerer et abstraksjonlag som gjÃ¸r det mulig Ã¥ implementere services som
+ * virker likt bÃ¥de med og uten en applikasjonsserver. Instanser fra denne provider brukes litt forskjellig i
+ * {@code JEE} og {@code SINGLE_VM} mode siden applikasonstjenerens ejb-implementasjon automatisk gjÃ¸r en del arbeide
+ * rundt transaksjonshÃ¥ndtering som mÃ¥ gjÃ¸res manulet i {@code SINGLE_VM}-mode. Derfor har de to modes forskjellige
  * {@code EJBServiceChainFactory}-implementasjoner.
  *
  * @author Henrik Fredholm

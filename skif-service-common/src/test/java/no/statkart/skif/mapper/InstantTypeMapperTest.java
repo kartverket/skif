@@ -19,7 +19,7 @@ public class InstantTypeMapperTest {
 
     /**
      * Fra MAT-18031. Vi observerte at tidssone ikke ble respektert ved mapping av instants. To tidspunkt som representerer
-     * samme sted i tidslinjen ble forskjellig ved mapping på grunn av dette.
+     * samme sted i tidslinjen ble forskjellig ved mapping pÃ¥ grunn av dette.
      */
     @Test
     public void testForskjelligTidssoneSammeTid() {
@@ -45,7 +45,7 @@ public class InstantTypeMapperTest {
             .isEqualTo(fractionalSecond);
 
         assertThat(wsapiObject.getTimestamp().getFractionalSecond().movePointRight(9).intValue())
-            .as("Konvertert til nanosekunder ved å flytte komma")
+            .as("Konvertert til nanosekunder ved Ã¥ flytte komma")
             .isEqualTo(777_888_999);
 
         assertThat(mapper.mapWsapiObject(wsapiObject).getNano())
@@ -89,7 +89,7 @@ public class InstantTypeMapperTest {
     }
 
     /**
-     * Dersom tidssonen ikke er angitt så settes denne ihht til tidssone for tjener.
+     * Dersom tidssonen ikke er angitt sÃ¥ settes denne ihht til tidssone for tjener.
      * Offset er ikke statisk og varierer med om aktuell dato representerer vintertid eller sommertid.
      */
     @Test

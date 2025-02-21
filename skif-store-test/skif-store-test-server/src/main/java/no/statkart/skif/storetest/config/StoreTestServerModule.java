@@ -166,7 +166,7 @@ public class StoreTestServerModule extends SkifModule {
 
     @Override
     protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
-        // Konfigurer EJBServiceChain til å bruke en factory som har en ProxyHandler for transaksjonshåndtering
+        // Konfigurer EJBServiceChain til Ã¥ bruke en factory som har en ProxyHandler for transaksjonshÃ¥ndtering
         ModuleStrategyFactory factory = new StoreServerModuleStrategyFactory(RemoteServiceModuleStrategyWithServiceContextSVMapper.class);
         StrategyTuple<ServerServiceModuleStrategy> prototype = factory.getPrototype(ServerServiceModule.class);
         prototype.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(EJBResourceProxyHandlerForHibernateWithLocks.class));
@@ -282,7 +282,7 @@ public class StoreTestServerModule extends SkifModule {
     @Singleton
     BubbleModelConfiguration provideBubbleClassDependencyIndex() {
         return new BubbleModelConfiguration()
-                // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
+                // NB: RekkefÃ¸lgen er viktig. Objekter som ikke avhenger av andre mÃ¥ stÃ¥ fÃ¸rst
                 .addBubble(Simple.class)
                 .addBubble(BubbleWithRelation.class)
                 .addBubble(BubbleWithAnyBubbleRef.class)

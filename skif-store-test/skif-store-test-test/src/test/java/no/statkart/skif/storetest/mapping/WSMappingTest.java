@@ -59,7 +59,7 @@ public class WSMappingTest extends StoreTestTestCase {
     }
 
     public void testWSMapping() {
-        // Lager et write sett her for å tvinge generering av testsett ved hver kørsel
+        // Lager et write sett her for Ã¥ tvinge generering av testsett ved hver kÃ¸rsel
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
         checkMockupDataSet(mockupFacade);
     }
@@ -69,7 +69,7 @@ public class WSMappingTest extends StoreTestTestCase {
         Assert.assertEquals(a1.getId(), mockupFacade.getX1AAMockupFactory().getA1Id());
         Assert.assertEquals(a1.getNr(), 1);
 
-        // Sjekker at snapshotVersion settes riktig på id-er
+        // Sjekker at snapshotVersion settes riktig pÃ¥ id-er
         HistSimpleId<?> histSimpleId1 = mockupFacade.getHistSimpleMockupFactory().getHistSimpleId1().asSnapshotVersion(SnapshotVersions.S2);
         HistSimple histSimple1 = store.get(histSimpleId1);
         Assert.assertEquals(histSimple1.getId(), histSimpleId1);
@@ -84,7 +84,7 @@ public class WSMappingTest extends StoreTestTestCase {
         protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
             ClientModuleStrategyFactory clientModuleStrategyFactory = new ClientModuleStrategyFactory();
 
-            // Kjører dermed på en måte alltid i SINGLE_VM_XML-modus (det finnes kanskje en bedre måte å gjøre dette på)
+            // KjÃ¸rer dermed pÃ¥ en mÃ¥te alltid i SINGLE_VM_XML-modus (det finnes kanskje en bedre mÃ¥te Ã¥ gjÃ¸re dette pÃ¥)
             clientModuleStrategyFactory.addPrototype(RemoteServiceModule.class, new StrategyTuple<RemoteServiceModuleStrategy>(null, RemoteServiceModuleStrategyWithServiceContextSVMapperSingleVmXml.class, RemoteServiceModuleStrategyWithServiceContextSVMapperSingleVmXml.class));
 
             return clientModuleStrategyFactory;

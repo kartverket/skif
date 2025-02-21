@@ -10,8 +10,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Connection Manager som oppretter connections via factories. Denne implementasjon understøtter ikke endring av
- * SnapshotVersion på Connections.
+ * Connection Manager som oppretter connections via factories. Denne implementasjon understÃ¸tter ikke endring av
+ * SnapshotVersion pÃ¥ Connections.
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -99,12 +99,12 @@ public class ConnectionManagerUsingFactory implements ConnectionManager {
 
     @Override
     public void beginTransaction() {
-        // Ikke nødvendig å gjøre noe her
+        // Ikke nÃ¸dvendig Ã¥ gjÃ¸re noe her
     }
 
     @Override
     public void flush() {
-        // Ikke nødvendig å gjøre noe her
+        // Ikke nÃ¸dvendig Ã¥ gjÃ¸re noe her
     }
 
     @Override

@@ -3,8 +3,8 @@ package no.statkart.skif.mockup;
 import com.google.inject.Singleton;
 
 /**
- * Implementasjon av TestNumberFactory som gir mulighet for å angi hvilket offset som TestNumber objekter skal bruke.
- * Som default brukes {@code offset=10000}, men det kan endres ved eksplisitt å bind en opp egen instans i Guice.
+ * Implementasjon av TestNumberFactory som gir mulighet for Ã¥ angi hvilket offset som TestNumber objekter skal bruke.
+ * Som default brukes {@code offset=10000}, men det kan endres ved eksplisitt Ã¥ bind en opp egen instans i Guice.
  *
  * @author Henrik Fredholm
  * @since 2.1

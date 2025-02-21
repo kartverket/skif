@@ -10,10 +10,10 @@ import org.hibernate.engine.transaction.jta.platform.internal.AbstractJtaPlatfor
 import javax.naming.NamingException;
 
 /**
- * Det følger med en OpenEJBJtaPlatform2 i TomEE, men siden den arver fra AbstractJtaPlatform, som ikke følger med, så
- * er det ikke mulig å bruke den klassen. Det hjelper ikke at AbstractJtaPlatform følger med SKIF, på grunn av måten
+ * Det fÃ¸lger med en OpenEJBJtaPlatform2 i TomEE, men siden den arver fra AbstractJtaPlatform, som ikke fÃ¸lger med, sÃ¥
+ * er det ikke mulig Ã¥ bruke den klassen. Det hjelper ikke at AbstractJtaPlatform fÃ¸lger med SKIF, pÃ¥ grunn av mÃ¥ten
  * class loaders virker i JEE. Gjenskaper derfor OpenEJBJtaPlatform2 her slik at applikasjoner som bruke TomEE kan bruke
- * denne fremfor å lage sin egen greie.
+ * denne fremfor Ã¥ lage sin egen greie.
  */
 public class TomEEJtaPlatform extends AbstractJtaPlatform {
     public TomEEJtaPlatform() {

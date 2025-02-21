@@ -36,10 +36,10 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
     /**
      * Definerer mapping mellom intern og webservice service-klasser.
      * <br />
-     * Skal være på formen {@code <intern>:<extern>}
+     * Skal vÃ¦re pÃ¥ formen {@code <intern>:<extern>}
      */
     protected String[] classWSIPackageMappings = {"api:wsapi", "service:wsapi.service","domain:wsapi.service.domain",
-            // Midlertidig fix pga "SKIF-382 Håndtering av lange navne"
+            // Midlertidig fix pga "SKIF-382 HÃ¥ndtering av lange navne"
             "domain.relation.uni.component.entity:wsapi.service.domain.relation.uni.comp"
     };
 
@@ -81,7 +81,7 @@ public abstract class WSServerServiceModuleStrategy extends ModuleStrategy {
     protected <S,W extends ServiceWSI> void bindWSServiceChainFactoryForService(Binder outerBinder, PrivateBinder innerBinder, Class<S> serviceClass, Class<W> serviceWSIClass, Class<? extends W2DAdapterProxyHandler> w2DAdaptorProxyHandlerImplClass) {
         TypeLiteral<W2DAdapterProxyHandler<S,W>> w2DAdapterProxyHandlerType =typeLiteral(w2DAdaptorProxyHandlerImplClass, serviceWSIClass, serviceClass);
 
-        // W2DAdapterWithServiceContextMapperProxyHandler refererer til Mapping som er bunnet til innerBinder. Må derfor selv bindes i innerBinder
+        // W2DAdapterWithServiceContextMapperProxyHandler refererer til Mapping som er bunnet til innerBinder. MÃ¥ derfor selv bindes i innerBinder
         innerBinder.bind(typeLiteral(TerminatingProxyHandler.class, serviceWSIClass)).annotatedWith(WSServiceChain.class).to(w2DAdapterProxyHandlerType);
 
         // wsServiceChainFactoryClassForWSI refererer til TerminatingProxyHandler som er bunnet til innerBinder i innerBinder

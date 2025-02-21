@@ -21,7 +21,7 @@ public class StoreTestMockupFacadeFactoryTest extends StoreTestTestCase {
     @Inject
     StoreService storeService;
 
-    @Test(invocationCount = 2) // Kjør to ganger for å teste at readset bare forsøkes skrives ned én gang
+    @Test(invocationCount = 2) // KjÃ¸r to ganger for Ã¥ teste at readset bare forsÃ¸kes skrives ned Ã©n gang
     public void readSet() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         checkMockupDataSet(mockupFacade);

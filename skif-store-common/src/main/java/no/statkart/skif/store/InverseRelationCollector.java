@@ -11,17 +11,17 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Objekt som brukes til å samele inn referanser som inngår i inversrelasjoner. Null verdier og tommes sett samles ikke
- * inn fordi fravær av verdi håndteres ved sammenlikning mot innsamlede verder for objektet som
+ * Objekt som brukes til Ã¥ samele inn referanser som inngÃ¥r i inversrelasjoner. Null verdier og tommes sett samles ikke
+ * inn fordi fravÃ¦r av verdi hÃ¥ndteres ved sammenlikning mot innsamlede verder for objektet som
  * overskrives. Collectoren kan samle felter med enkelt releasjoner og sett relasjoner. I tillegg kan collectoren
  * samle inn relasjoner fra collections av like componenter. For disse brukes en egen objekttype {@code Values} som
- * samler samme relasjoner på tvers av slike component collections.
+ * samler samme relasjoner pÃ¥ tvers av slike component collections.
  */
 public class InverseRelationCollector {
     private final Map<RelationName, Object> map = Maps.newHashMap();
     private boolean inCollection;
 
-    /** Brukes for innsamling av releasjoner på tvers av collections av objekter med relasjoner */
+    /** Brukes for innsamling av releasjoner pÃ¥ tvers av collections av objekter med relasjoner */
     public static class Values implements Iterable {
         private final Set<Object> v = Sets.newHashSetWithExpectedSize(10);
 
@@ -31,7 +31,7 @@ public class InverseRelationCollector {
 
         /**
          * @param objects som skal legges til
-         * @return true hvis ingen av objektene fantes fra før
+         * @return true hvis ingen av objektene fantes fra fÃ¸r
          */
         boolean addAll(Set<? extends Object> objects) {
             boolean allAdded = true;
@@ -97,7 +97,7 @@ public class InverseRelationCollector {
         if (objects != null) {
             boolean oldValue = inCollection;
             try {
-                // Kolleksjoner av objekter krever specialhåndtering, siden roller kan gentas på tvers av objekter i kolleksjonen,
+                // Kolleksjoner av objekter krever specialhÃ¥ndtering, siden roller kan gentas pÃ¥ tvers av objekter i kolleksjonen,
                 // men ikke innenfor et objekt.
                 inCollection = true;
                 for (InverseRelationParticipation object : objects) {

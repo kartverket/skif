@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Context for test fixture for testing av {@link no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping}
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.4.0
  */
 public class StoreTestMappingTestContext {

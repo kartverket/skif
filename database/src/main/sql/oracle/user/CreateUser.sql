@@ -16,7 +16,7 @@ GRANT ALTER SESSION TO "@db_username@";
 GRANT CREATE SESSION TO "@db_username@";
 
 -- trenger noen privilegier for opprettelse og patching av schema
--- todo: vurdere om en ønsker å revoke disse i byggesystemet etter at schema er opprettet og patchet opp.
+-- todo: vurdere om en Ã¸nsker Ã¥ revoke disse i byggesystemet etter at schema er opprettet og patchet opp.
 GRANT CREATE SEQUENCE TO "@db_username@";
 GRANT CREATE TABLE TO "@db_username@";
 GRANT CREATE VIEW TO "@db_username@";

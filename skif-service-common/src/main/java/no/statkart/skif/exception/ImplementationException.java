@@ -3,9 +3,9 @@ package no.statkart.skif.exception;
 import org.slf4j.Logger;
 
 /**
- * Klasse som representerer implemetasjonsfeil i kode enten på server, eller i kall fra klient.
+ * Klasse som representerer implemetasjonsfeil i kode enten pÃ¥ server, eller i kall fra klient.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 public class ImplementationException extends SystemException {

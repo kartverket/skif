@@ -11,11 +11,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
- * Adapter proxy som adapterer domain interface T til webservice interface A ved å mappe metoder med samme navn til hverandre og transformere
+ * Adapter proxy som adapterer domain interface T til webservice interface A ved Ã¥ mappe metoder med samme navn til hverandre og transformere
  * argumentene og resultatet vha et {@code map} objekt
  * <p>
- * Adapteren har også exception håndtering dersom denne er tildelt og satt (ikke null).
- * Mapperen får som rolle å holde styr på evt wrapping av exceptions. Et eksempel kan være å wrappe alle ikke skif exceptions i en {@link no.statkart.skif.exception.ImplementationException}.
+ * Adapteren har ogsÃ¥ exception hÃ¥ndtering dersom denne er tildelt og satt (ikke null).
+ * Mapperen fÃ¥r som rolle Ã¥ holde styr pÃ¥ evt wrapping av exceptions. Et eksempel kan vÃ¦re Ã¥ wrappe alle ikke skif exceptions i en {@link no.statkart.skif.exception.ImplementationException}.
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -101,7 +101,7 @@ public class W2DAdapterProxyHandler<T, A> extends AdapterProxyHandler<T, A> {
      * Mapper argumenter i args slik at de kan brukes som inn-parametre til {@code doapiMethod}.
      * Det opprettes like mange parametre som det {@code doapiMethod} krever, men det mappes kun {@code length}
      * antall argumenter fra {@code args}. Metoden er laget slik fordi {@code wsapiMethod} kan ha en ekstra context
-     * parameter i forhold til {@code doapiMethod}. Videre så kan {@code doapiMethod} også ha
+     * parameter i forhold til {@code doapiMethod}. Videre sÃ¥ kan {@code doapiMethod} ogsÃ¥ ha
      * parametre som mappes via context parameteren i {@code wsapiMethod}.
      */
     protected Object[] mapArgs(Object[] args, Method wsapiMethod, Method doapiMethod, int length) {

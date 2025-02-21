@@ -140,7 +140,7 @@ public class StoreHistoricVersionTest extends StoreTestTestCase {
 
     /**
      * Tester at returnert map alltid bruker SnapshotVersion.CURRENT som keys uansett hvilken snapshot version som
-     * søke id'ene bruker. Denne test bruker SnapshotVersion.OLD som innput for søkeid, men må hente ut resultatet med id'er
+     * sÃ¸ke id'ene bruker. Denne test bruker SnapshotVersion.OLD som innput for sÃ¸keid, men mÃ¥ hente ut resultatet med id'er
      * som har SnapshotVersion.CURRENT
      *
      */

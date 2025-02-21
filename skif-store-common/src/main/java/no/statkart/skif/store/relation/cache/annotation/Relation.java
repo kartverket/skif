@@ -7,7 +7,7 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotasjon som brukes til å knytte relasjoner og invers relasjoner sammen.
+ * Annotasjon som brukes til Ã¥ knytte relasjoner og invers relasjoner sammen.
  *
  * @author Henrik Fredholm
  * @since 2.4

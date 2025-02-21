@@ -13,7 +13,7 @@ import java.util.List;
 public class DefaultResourceManager implements ResourceManager {
     private boolean inTransaction;
 
-    /** Angir om ResourceManager har vært i bruk */
+    /** Angir om ResourceManager har vÃ¦rt i bruk */
     private boolean isActive;
 
     private HashMap<Key<?>, Entry> map = new HashMap<>();

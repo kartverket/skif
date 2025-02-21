@@ -35,7 +35,7 @@ public class EnumKodeSupport<T extends Kode, I extends KodeId<T>, KL extends Kod
     public synchronized void addKode(T kode) {
         I kodeId = kodeIdClass.cast(kode.getId());
         if (koder.containsKey(kodeId)) {
-            throw new ImplementationException("Forsøk på å definere samme kode flere ganger: " + kode);
+            throw new ImplementationException("ForsÃ¸k pÃ¥ Ã¥ definere samme kode flere ganger: " + kode);
         }
         koder.put(kodeId, kode);
     }

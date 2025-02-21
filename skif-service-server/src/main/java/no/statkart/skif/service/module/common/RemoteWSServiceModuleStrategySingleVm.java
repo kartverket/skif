@@ -14,7 +14,7 @@ import no.statkart.skif.service.proxy.SingleVmWSRemoteCallProxyHandler;
 import no.statkart.skif.service.ws.ServiceWSI;
 
 /**
- * Kobler umappede webservice-kall direkte opp mot implementasjonskjeden på singlevm-tjeneren.
+ * Kobler umappede webservice-kall direkte opp mot implementasjonskjeden pÃ¥ singlevm-tjeneren.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

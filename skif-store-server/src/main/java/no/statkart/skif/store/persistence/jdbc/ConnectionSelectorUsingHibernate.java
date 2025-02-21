@@ -9,11 +9,11 @@ import no.statkart.skif.store.persistence.SessionSelector;
 import java.sql.Connection;
 
 /**
- * Klasse for å hente ut en Hibernate session og låse denne til å bruke en gitt snapshotversion. Når man er
- * ferdig med å bruke sessionen må den frigis slik at sessionen senere kan gjenbrukes for en annen snapshotversion.
- * Dette skjer automatisk når man skifter snapshotversion via selectoren og når selectoren lukkes.
+ * Klasse for Ã¥ hente ut en Hibernate session og lÃ¥se denne til Ã¥ bruke en gitt snapshotversion. NÃ¥r man er
+ * ferdig med Ã¥ bruke sessionen mÃ¥ den frigis slik at sessionen senere kan gjenbrukes for en annen snapshotversion.
+ * Dette skjer automatisk nÃ¥r man skifter snapshotversion via selectoren og nÃ¥r selectoren lukkes.
  * <p>
- * <strong>Eksempel på bruk</strong>
+ * <strong>Eksempel pÃ¥ bruk</strong>
  * <pre>
  *     class SessionSelectorUsage {
  *         &#064;Inject

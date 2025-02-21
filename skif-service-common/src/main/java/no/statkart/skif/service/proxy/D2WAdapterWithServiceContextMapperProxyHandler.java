@@ -12,13 +12,13 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**
- * Proxy som adapterer java interface {@code T} til Web service interface {@code A} ved å mappe metoder med
+ * Proxy som adapterer java interface {@code T} til Web service interface {@code A} ved Ã¥ mappe metoder med
  * samme navn til hverandre og transformere argumentene og resultatet vha et mappingobjekt {@link Mapping}.
- * I tillegg legger adapteren på et wsapi {@code ServiceContext} object som siste parameter i Web service kallet.
- * Adapteren har et {@code ServiceContextMapper<?>} objekt som brukes til å lage {@code ServiceContext}
+ * I tillegg legger adapteren pÃ¥ et wsapi {@code ServiceContext} object som siste parameter i Web service kallet.
+ * Adapteren har et {@code ServiceContextMapper<?>} objekt som brukes til Ã¥ lage {@code ServiceContext}
  * objektet. slik at relevant context state blir lagt inn {@code ServiceContext}.
  * <p>
- * Adapteren har også exception håndtering dersom denne er tildelt og satt (ikke null).
+ * Adapteren har ogsÃ¥ exception hÃ¥ndtering dersom denne er tildelt og satt (ikke null).
  * Alle {@link Exception}s annotert med {@link jakarta.xml.ws.WebFault} blir mappet over til korresponderende exceptions ihht til mapper.
  * All andre exceptions blir fanget og wrappet til {@link no.statkart.skif.exception.ImplementationException}.
  *
@@ -48,7 +48,7 @@ public class D2WAdapterWithServiceContextMapperProxyHandler<T, A> extends D2WAda
     }
 
     /**
-     * Map alle argumenter til Web service objekter. Opprett deretter ServiceContext objekt av riktig type og legg på som siste
+     * Map alle argumenter til Web service objekter. Opprett deretter ServiceContext objekt av riktig type og legg pÃ¥ som siste
      * parameter i wsapi kall
      */
     protected Object[] mapArgs(Object[] args, Method fromMethod, Method toMethod, int length) {

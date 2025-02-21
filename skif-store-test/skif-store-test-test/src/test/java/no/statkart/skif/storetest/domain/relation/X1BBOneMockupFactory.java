@@ -33,9 +33,9 @@ public class X1BBOneMockupFactory extends AbstractMockupFactory {
 
     @Override
     public void createAllMockups() {
-        store.insert(createObject(b1Id, (int) (getTestNumber().getPrefix() * 100 + 1), "Ingen A'er peker på denne"));
-        store.insert(createObject(b2Id, (int) (getTestNumber().getPrefix() * 100 + 2), "Kun en A peker på denne"));
-        store.insert(createObject(b3Id, (int) (getTestNumber().getPrefix() * 100 + 3), "Flere A'er peker på denne"));
+        store.insert(createObject(b1Id, (int) (getTestNumber().getPrefix() * 100 + 1), "Ingen A'er peker pÃ¥ denne"));
+        store.insert(createObject(b2Id, (int) (getTestNumber().getPrefix() * 100 + 2), "Kun en A peker pÃ¥ denne"));
+        store.insert(createObject(b3Id, (int) (getTestNumber().getPrefix() * 100 + 3), "Flere A'er peker pÃ¥ denne"));
     }
 
     private X1BBOne createObject(X1BBOneId<?> id, int nr, String text) {

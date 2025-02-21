@@ -21,11 +21,11 @@ public class CopyHelper {
     private static final int BUFFER_SIZE = 1024;
 
     /**
-     * Trådlokal variable som normalt er null, men som CopyHelper setter til en non-null verdi dersom
-     * kopiering av et objekt skal fører til at utvalgte SnapshotVersion felter i objektet overskrives med den satte
+     * TrÃ¥dlokal variable som normalt er null, men som CopyHelper setter til en non-null verdi dersom
+     * kopiering av et objekt skal fÃ¸rer til at utvalgte SnapshotVersion felter i objektet overskrives med den satte
      * verdien. Etter bruk sette variablen tilbake til null.
      *
-     * <p>Hvilke felter som får overskrevet snapshotVersion felter styres av klassen selv ved å implementere følgende
+     * <p>Hvilke felter som fÃ¥r overskrevet snapshotVersion felter styres av klassen selv ved Ã¥ implementere fÃ¸lgende
      * serialiseringslogikk:
      * <pre>
      * private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {

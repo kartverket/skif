@@ -5,7 +5,7 @@ import com.google.inject.ImplementedBy;
 import java.util.Comparator;
 
 /**
- * Interface for å sorterer slik at boble i avhenginghetsrekkefølge
+ * Interface for Ã¥ sorterer slik at boble i avhenginghetsrekkefÃ¸lge
  * @author Henrik Fredholm
  * @since 2.1
  */

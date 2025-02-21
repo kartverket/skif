@@ -29,24 +29,24 @@ import static org.testng.Assert.assertFalse;
 
 /**
  * Tester relationcaching av identer gjennom Store, herunder samspillet med relation cachingen og Unit of Work konseptet.
- * Store støtter at relation caching kan slås av og på, dvs at søk på identer blir riktig når cachingen slås på selv
- * om det har blitt gjort endringer på objekter mens cachingen har vært slått av.
+ * Store stÃ¸tter at relation caching kan slÃ¥s av og pÃ¥, dvs at sÃ¸k pÃ¥ identer blir riktig nÃ¥r cachingen slÃ¥s pÃ¥ selv
+ * om det har blitt gjort endringer pÃ¥ objekter mens cachingen har vÃ¦rt slÃ¥tt av.
  * <p/>
- * Identer oppfører seg litt anderledes enn relasjonsverdier fordi en ident kan være sammensatt av flere felter og være
- * bygget opp av verdier fra andre objekter som nås via navigering på id gjennom Store. Dette krever ekstra støtte i
+ * Identer oppfÃ¸rer seg litt anderledes enn relasjonsverdier fordi en ident kan vÃ¦re sammensatt av flere felter og vÃ¦re
+ * bygget opp av verdier fra andre objekter som nÃ¥s via navigering pÃ¥ id gjennom Store. Dette krever ekstra stÃ¸tte i
  * relasjonscachingen.
  * <p/>
- * Spesielt gjelder det at en ident som består av flere felter først er endret når alle felter er oppdatert. Dvs
- * relasjonscachen må bli fortalt når identendringen er ferdig. På det tidspunktet kan den gamle identen ikke
- * hentes ut fra objektet så hvilken ident som utgår må angis på annen vis enn å hente det fra objektet som har
- * fått ny ident.
+ * Spesielt gjelder det at en ident som bestÃ¥r av flere felter fÃ¸rst er endret nÃ¥r alle felter er oppdatert. Dvs
+ * relasjonscachen mÃ¥ bli fortalt nÃ¥r identendringen er ferdig. PÃ¥ det tidspunktet kan den gamle identen ikke
+ * hentes ut fra objektet sÃ¥ hvilken ident som utgÃ¥r mÃ¥ angis pÃ¥ annen vis enn Ã¥ hente det fra objektet som har
+ * fÃ¥tt ny ident.
  * <p/>
- * Videre kan en ident endre seg hvis et annet objekt som inngår i identen endre sine felter som inngår i identen.
- * Når dette skjer må relasjonscachingen bli fortalt om dette.
+ * Videre kan en ident endre seg hvis et annet objekt som inngÃ¥r i identen endre sine felter som inngÃ¥r i identen.
+ * NÃ¥r dette skjer mÃ¥ relasjonscachingen bli fortalt om dette.
  * <p/>
- * Testen anvender 2 objekter X1AA og X1BBOne, hvor X1AA->X1BBOne. X1AA har ident X1AAIdent som består av 2 felter
- * hvor den ene er hentet fra et felt i X1BBOne. X1BBOne har ident X1BBOneIdent som består av dette feltet. Når X1BBOne
- * endre sitt identfelt så endre også alle X1AA som peker på X1BBOne sin ident.
+ * Testen anvender 2 objekter X1AA og X1BBOne, hvor X1AA->X1BBOne. X1AA har ident X1AAIdent som bestÃ¥r av 2 felter
+ * hvor den ene er hentet fra et felt i X1BBOne. X1BBOne har ident X1BBOneIdent som bestÃ¥r av dette feltet. NÃ¥r X1BBOne
+ * endre sitt identfelt sÃ¥ endre ogsÃ¥ alle X1AA som peker pÃ¥ X1BBOne sin ident.
  *
  * @author Henrik Fredholm
  * @since 2.7
@@ -93,8 +93,8 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at når et objekt får endret sin ident så må man eksplisitt fortelle cachen om det
-     * via kall til onIdentChanged(). Tester også at commit fra inner unit of work virker slik
+     * Tester at nÃ¥r et objekt fÃ¥r endret sin ident sÃ¥ mÃ¥ man eksplisitt fortelle cachen om det
+     * via kall til onIdentChanged(). Tester ogsÃ¥ at commit fra inner unit of work virker slik
      * ident relasjoner automatisk blir riktig i out unit of work.
      */
     public void testOnClientChangeCompositeIdent() {
@@ -134,10 +134,10 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
 
     /**
      * Tester at commitUnitOfWork ikke sletter cachet informasjon om opprinnelig ident. Se SKIF-617.
-     * I outer unit of work gjøres det et søk på identen slik at den blir cachet og objekt som har identen
-     * låses. Deretter startes og  commites en UnitOfWork som ikke berører identen. Dvs ikke gjørs hverken
-     * søk eller last av objektet hørende til identen. Etter commit av UOW endres identen og onChangeIdent kalles.
-     * Endelig gjøres et søk med gammel ident. Den skal nå ikke finnes.
+     * I outer unit of work gjÃ¸res det et sÃ¸k pÃ¥ identen slik at den blir cachet og objekt som har identen
+     * lÃ¥ses. Deretter startes og  commites en UnitOfWork som ikke berÃ¸rer identen. Dvs ikke gjÃ¸rs hverken
+     * sÃ¸k eller last av objektet hÃ¸rende til identen. Etter commit av UOW endres identen og onChangeIdent kalles.
+     * Endelig gjÃ¸res et sÃ¸k med gammel ident. Den skal nÃ¥ ikke finnes.
      *
      */
     public void testOnClientGammelIdentBevaresICacheVedTomCommitUnitOfWork() {
@@ -161,8 +161,8 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at ident endring i inner unit of work med cahcing slått av gir riktig resultat
-     * i out unit of work som har caching på.
+     * Tester at ident endring i inner unit of work med cahcing slÃ¥tt av gir riktig resultat
+     * i out unit of work som har caching pÃ¥.
      */
     public void testOnClientChangeCompositeIdentWithInnerUnitOfWorkDisabled() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -185,7 +185,7 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
                 a1.onIdentChanged();  // Angi at ident er endret
                 storeClient.update(a1);
 
-                storeClient.getRelationCache().setEnabled(true); // Pt må dette skje manuell før commit
+                storeClient.getRelationCache().setEnabled(true); // Pt mÃ¥ dette skje manuell fÃ¸r commit
                 assertThat(findIdent(oldIdent)).isEmpty();
                 assertThat(findIdent(newIdent)).containsExactly(a1Id);
                 storeClient.commitUnitOfWork(inner);
@@ -198,9 +198,9 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
 
 
     /**
-     * Tester at når et objekt får endret sin ident og at denne inngår i en avledet ident så må man
+     * Tester at nÃ¥r et objekt fÃ¥r endret sin ident og at denne inngÃ¥r i en avledet ident sÃ¥ mÃ¥ man
      * eksplisitt fortelle cachen om det via kall til onIdentChanged() som kalder videre til
-     * onchangedDerivedIdents. Tester også at commit fra inner unit of work virker slik
+     * onchangedDerivedIdents. Tester ogsÃ¥ at commit fra inner unit of work virker slik
      * ident relasjoner automatisk blir riktig i out unit of work.
      */
     public void testOnClientChangeIdentWithDerivedIdents() {
@@ -241,7 +241,7 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
 
     /**
      * Tester at abort fra inner unit of work virker slik ident relasjoner automatisk blir riktig i out unit of work
-     * når de er endret i inner uow. Et objekt får endret sin ident som inngår i en avledet ident så må man
+     * nÃ¥r de er endret i inner uow. Et objekt fÃ¥r endret sin ident som inngÃ¥r i en avledet ident sÃ¥ mÃ¥ man
      * eksplisitt fortelle cachen om det via kall til onIdentChanged() som kalder videre til
      * onchangedDerivedIdents.
      */
@@ -282,9 +282,9 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester av cache når identendringer er utført med caching disabled i inner uow. Et objekt med avledede
-     * identer får endret sin ident. I outer unit of work er caching enabled. Ident søk med gamle identer skal da gi
-     * null mens ident søk med ny ident skal gi objekt etter commit i inner uow.
+     * Tester av cache nÃ¥r identendringer er utfÃ¸rt med caching disabled i inner uow. Et objekt med avledede
+     * identer fÃ¥r endret sin ident. I outer unit of work er caching enabled. Ident sÃ¸k med gamle identer skal da gi
+     * null mens ident sÃ¸k med ny ident skal gi objekt etter commit i inner uow.
      */
     public void testOnClientChangeIdentWithDerivedIdentsWithCachingDisabledInInnerUOWOnCommit() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -316,9 +316,9 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester caching når identendringer er utført med caching disabled i inner uow. Et objekt med avledede
-     * identer får endret sin ident. I outer unit of work er caching enabled. Ident søk med gamle identer skal da gi
-     * opprinnelig objecter  mens ident søk med ny ident skal gi null etter abort av inner uow
+     * Tester caching nÃ¥r identendringer er utfÃ¸rt med caching disabled i inner uow. Et objekt med avledede
+     * identer fÃ¥r endret sin ident. I outer unit of work er caching enabled. Ident sÃ¸k med gamle identer skal da gi
+     * opprinnelig objecter  mens ident sÃ¸k med ny ident skal gi null etter abort av inner uow
      */
     public void testOnClientChangeIdentWithDerivedIdentsWithCachingDisabledInInnerUOWOnAbort() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -350,8 +350,8 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at når et objekt får endret sin ident så må man eksplisitt fortelle cachen om det
-     * via kall til onIdentChanged(). Tester også at commit fra inner unit of work virker slik
+     * Tester at nÃ¥r et objekt fÃ¥r endret sin ident sÃ¥ mÃ¥ man eksplisitt fortelle cachen om det
+     * via kall til onIdentChanged(). Tester ogsÃ¥ at commit fra inner unit of work virker slik
      * ident relasjoner automatisk blir riktig i out unit of work.
      */
     public void testOnClientChangeAndRemoveCompositeIdent() {
@@ -381,9 +381,9 @@ public class StoreRelationCacheIdentTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at når et objekt får endret sin ident så må man eksplisitt fortelle cachen om det
-     * via kall til onIdentChanged(). Deretter vil søk på gammel ident ikke finne opprinnelig
-     * objekt da det nå har fått ny ident. Dvs gammel ident er ledig og kan brukes av et annet
+     * Tester at nÃ¥r et objekt fÃ¥r endret sin ident sÃ¥ mÃ¥ man eksplisitt fortelle cachen om det
+     * via kall til onIdentChanged(). Deretter vil sÃ¸k pÃ¥ gammel ident ikke finne opprinnelig
+     * objekt da det nÃ¥ har fÃ¥tt ny ident. Dvs gammel ident er ledig og kan brukes av et annet
      * objekt.
      */
     public void testOnClientChangeAndRemoveCompositeIdentVariant2() {

@@ -53,7 +53,7 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
 
 
     /**
-     * Denne test viser sletting av en komponent ved å sette den til null ikke er mulig når komponenten inneholder en
+     * Denne test viser sletting av en komponent ved Ã¥ sette den til null ikke er mulig nÃ¥r komponenten inneholder en
      * collection.
      */
     public void testDeleteComponentBySettingItToNullNotPossibleInAttachedState() {
@@ -79,7 +79,7 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Denne test viser sletting av en komponent ved å sette den til null ikke er mulig når komponenten inneholder en
+     * Denne test viser sletting av en komponent ved Ã¥ sette den til null ikke er mulig nÃ¥r komponenten inneholder en
      * collection.
      */
     public void testDeleteComponentBySettingItToNullNotPossibleInDetachedState() {
@@ -112,8 +112,8 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Denne test viser for attached state at sletting av en komponent ved å erstatte den med en ny tom komponent
-     * ikke er mulig når komponenten inneholder en collection.
+     * Denne test viser for attached state at sletting av en komponent ved Ã¥ erstatte den med en ny tom komponent
+     * ikke er mulig nÃ¥r komponenten inneholder en collection.
      */
     public void testDeleteComponentBySettingItToNewEmptyComponentNotPossibleInAttachedState() {
         final StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -140,7 +140,7 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Denne test viser for detached state at sletting av en komponent ved å erstatte den med en ny tom komponent
+     * Denne test viser for detached state at sletting av en komponent ved Ã¥ erstatte den med en ny tom komponent
      * er mulig.
      */
     public void testDeleteComponentBySettingItToNewEmptyComponentIsPossibleInDetachedState() {

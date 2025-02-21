@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.wsapi.mapping.testmapping;
 /**
  * Klasse for testing mapping for angivelse av tid og dato over WebServices
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.4 - ny grunnbok sprint 29
  */
 public class DateTimeDemoImpl1 {

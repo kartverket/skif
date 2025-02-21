@@ -3,7 +3,7 @@ package no.statkart.skif.store;
 import java.io.Serializable;
 
 /**
- * Hjelpeklasse for transparent å hente ut eiende boble for et objekt som enten kan være en boble eller en
+ * Hjelpeklasse for transparent Ã¥ hente ut eiende boble for et objekt som enten kan vÃ¦re en boble eller en
  * {@code ComponentWithOwnerReference}.
  *
  * @since 2.8.0

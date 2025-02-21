@@ -27,8 +27,8 @@ import static org.testng.Assert.assertSame;
 /**
  * Tester for {@link  no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate}
  * <p>
- * Dette er en stand-alone-test som går direkte mot databasen uten å bruke StoreTestServer. Mest naturlig at testene
- * kjøres i singleVM mode.
+ * Dette er en stand-alone-test som gÃ¥r direkte mot databasen uten Ã¥ bruke StoreTestServer. Mest naturlig at testene
+ * kjÃ¸res i singleVM mode.
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -70,7 +70,7 @@ public class ConnectionManagerUsingHibernateTest {
 
         try {
             Connection wrappedConnection = connectionForSnapshotVersion.reserve();
-            OracleConnection oracleConnection = wrappedConnection.unwrap(OracleConnection.class);// Sjekk at vi har muligheten for å få tak i denne
+            OracleConnection oracleConnection = wrappedConnection.unwrap(OracleConnection.class);// Sjekk at vi har muligheten for Ã¥ fÃ¥ tak i denne
             assertEquals(oracleConnection.getClass().getName(), "oracle.jdbc.driver.T4CConnection");
         } finally {
             connectionForSnapshotVersion.release();
@@ -81,7 +81,7 @@ public class ConnectionManagerUsingHibernateTest {
 
         assertNotSame(connectionForSnapshotVersion, connectionOld);
 
-        // Denne gjøre ingen ting
+        // Denne gjÃ¸re ingen ting
         connectionManager.close();
 
         // Det er denne som lukker

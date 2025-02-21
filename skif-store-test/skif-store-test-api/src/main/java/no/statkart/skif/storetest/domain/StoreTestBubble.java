@@ -9,7 +9,7 @@ import no.statkart.skif.store.BubbleObject;
  * @since 2.1
  */
 public interface StoreTestBubble extends BubbleObject {
-    // Java tillater ikke overskrivning av return type som kan føre til diamanthieraki
+    // Java tillater ikke overskrivning av return type som kan fÃ¸re til diamanthieraki
     //@Override
     //StoreTestBubbleId<?> getId();
 }

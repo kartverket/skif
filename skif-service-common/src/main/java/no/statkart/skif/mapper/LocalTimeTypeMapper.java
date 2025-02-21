@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Mapper mellom {@link LocalTime} og en wrappet {@link javax.xml.datatype.XMLGregorianCalendar}.
  * <p>
- * Typen i XML-skjema skal være:
+ * Typen i XML-skjema skal vÃ¦re:
  * <pre>
  * &lt;xs:complexType name="LocalTime"&gt;
  *     &lt;xs:sequence&gt;
@@ -56,7 +56,7 @@ public class LocalTimeTypeMapper<WsapiT> extends AbstractWrappedDateTypeMapper<W
     }
 
     /**
-     * Validerer at alle nødvendig felter er angitt. Subsekunder er valgfritt. Dato og timezone er forbudt.
+     * Validerer at alle nÃ¸dvendig felter er angitt. Subsekunder er valgfritt. Dato og timezone er forbudt.
      *
      * @param dateTime XML-dato som skal valideres som tidspunkt
      */

@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public class SkifTestMapper<M extends SkifTestMapping> extends AbstractMapper<M> {
     public SkifTestMapper() {
-        this((Class) SkifTestMapping.class); // Dette forutsetter at denne konstruktøren kun benyttes når denne klassen, og ikke en subklasse av den, benyttes rå
+        this((Class) SkifTestMapping.class); // Dette forutsetter at denne konstruktÃ¸ren kun benyttes nÃ¥r denne klassen, og ikke en subklasse av den, benyttes rÃ¥
     }
 
     protected SkifTestMapper(Class<? extends M> mappingClass) {

@@ -6,8 +6,8 @@ import com.google.inject.Singleton;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Provider av call id-er, som er longs som stiger og er unike innenfor oppetiden til en tjener. Flere tråder deler
- * denne, så den må være trådsikker.
+ * Provider av call id-er, som er longs som stiger og er unike innenfor oppetiden til en tjener. Flere trÃ¥der deler
+ * denne, sÃ¥ den mÃ¥ vÃ¦re trÃ¥dsikker.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0

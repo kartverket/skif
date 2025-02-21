@@ -36,14 +36,14 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Denne testklassen går gjennom alle klasser som ligger i den angitte wsapiPkg eller under og tester mappingen av de, ved å:
+ * Denne testklassen gÃ¥r gjennom alle klasser som ligger i den angitte wsapiPkg eller under og tester mappingen av de, ved Ã¥:
  * <ul>
- * <li>Opprette et testobjekt ved å instansiere klassen og fylle inn vilkårlige verdier i alle felter</li>
- * <li>Dersom feltet er av en abstrakt type så settes det inn en verdi med en vilkårlig konkret subklasse av den abstrakte typen</li>
+ * <li>Opprette et testobjekt ved Ã¥ instansiere klassen og fylle inn vilkÃ¥rlige verdier i alle felter</li>
+ * <li>Dersom feltet er av en abstrakt type sÃ¥ settes det inn en verdi med en vilkÃ¥rlig konkret subklasse av den abstrakte typen</li>
  * <li>Klasser som er angitt i skipTestingForTheseClasses testes ikke</li>
- * <li>Klasser som er abstrakte, enten i wsapi modellen, eller den motstående klassen i domenemodellen, testes ikke.</li>
- * <li>Klasser som er lister, basert på at klassenavnet i wsapi-modellen slutter på *List, testes ikke, fordi disse uansett vil bli testet av </li>
- * <li>For de resterende mappes klassen fra wsapi-modellen, til domenemodellen, og tilbake. Så sjekkes det at det opprinnelige og remappede objektet er like.</li>
+ * <li>Klasser som er abstrakte, enten i wsapi modellen, eller den motstÃ¥ende klassen i domenemodellen, testes ikke.</li>
+ * <li>Klasser som er lister, basert pÃ¥ at klassenavnet i wsapi-modellen slutter pÃ¥ *List, testes ikke, fordi disse uansett vil bli testet av </li>
+ * <li>For de resterende mappes klassen fra wsapi-modellen, til domenemodellen, og tilbake. SÃ¥ sjekkes det at det opprinnelige og remappede objektet er like.</li>
  * </ul>
  *
  * @author Steinar Hansen
@@ -198,10 +198,10 @@ public class AutomagicTest {
             for (Iterator<Field> iterator = fields.iterator(); iterator.hasNext(); ) {
                 Field field = iterator.next();
                 field.setAccessible(true);
-                //static felter har ingenting med mapping å gjøre
+                //static felter har ingenting med mapping Ã¥ gjÃ¸re
                 if (!Modifier.isStatic(field.getModifiers())) {
-                    //Vi må 'kappe' referansegrafen et sted, og det gjøres enkelt (kanskje for enkelt) ved å si at når
-                    //pakkestien blir lengre enn 10 pakker så traverserer vi ikke referansene lenger.
+                    //Vi mÃ¥ 'kappe' referansegrafen et sted, og det gjÃ¸res enkelt (kanskje for enkelt) ved Ã¥ si at nÃ¥r
+                    //pakkestien blir lengre enn 10 pakker sÃ¥ traverserer vi ikke referansene lenger.
                     if (!(fieldPath.split("\\.").length > 10)) {
                         Object instance = generateInstanceForClass(field.getType());
                         if (instance != null) {
@@ -221,7 +221,7 @@ public class AutomagicTest {
         if (type.getRawType().isPrimitive()) {
             if (type.getRawType().equals(Integer.TYPE)) {
                 if (clazz.toString().endsWith("SnapshotVersion") || clazz.toString().endsWith("Timestamp")) {
-                    //Må bruke SnapshotVersion.CURRENT.getNanos() (som er 0) pga EnumKodeId som kun kan være current.
+                    //MÃ¥ bruke SnapshotVersion.CURRENT.getNanos() (som er 0) pga EnumKodeId som kun kan vÃ¦re current.
                     retVal = 0;
                 } else {
                     retVal = randomGenerator.nextInt();
@@ -232,7 +232,7 @@ public class AutomagicTest {
                 retVal = randomGenerator.nextDouble();
             } else if (type.getRawType().equals(Long.TYPE)) {
                 if (clazz.toString().endsWith("SnapshotVersion") || clazz.toString().endsWith("Timestamp")) {
-                    //på grun av enumKodeId må vi bruke SnapshotVersion.CURRENT
+                    //pÃ¥ grun av enumKodeId mÃ¥ vi bruke SnapshotVersion.CURRENT
                     retVal = 253370761200000L;
                 } else if (clazz.toString().endsWith("KodeId") && field.getName().equals("value")) {
                     retVal = randomGenerator.nextInt(2);
@@ -248,10 +248,10 @@ public class AutomagicTest {
             }
         } else if (type.getRawType().equals(String.class)) {
             if (clazz.toString().endsWith("KodeId")) {
-                //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
+                //ikke sÃ¥ mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
                 retVal = "" + (randomGenerator.nextInt(1) + 1);
             } else if (clazz.toString().endsWith("Id")) {
-                //Id må settes til string men kun nummeric verdier
+                //Id mÃ¥ settes til string men kun nummeric verdier
                 retVal = "" + randomGenerator.nextInt();
             } else if (field.getName().equals("kodeIdClass")) {
                 retVal = "no.statkart.skif.storetest.wsapi.domain.demo.koder.TestAEnumKodeId";
@@ -262,7 +262,7 @@ public class AutomagicTest {
                 retVal = field.getName() + "_testdata_rnd_" + randomGenerator.nextInt(100);
             }
         } else if (type.getRawType().isArray()) {
-            throw new IllegalArgumentException("Støtte for array-felter er ikke implementert enda.");
+            throw new IllegalArgumentException("StÃ¸tte for array-felter er ikke implementert enda.");
         } else if (type.getRawType().equals(XMLGregorianCalendar.class)) {
             retVal = createXMLGregorianCalendar(field);
         } else if (type.getRawType().equals(BigInteger.class)) {
@@ -277,7 +277,7 @@ public class AutomagicTest {
             } else if (clazz.toString().endsWith("SnapshotVersion") || clazz.toString().endsWith("Timestamp")) {
                 retVal = 253370761200000L;
             } else if (clazz.toString().endsWith("formId")) {
-                //ikke så mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
+                //ikke sÃ¥ mange teseelementer i kodelisten. Begrenser antallet mulig verdier til [1,2]
                 retVal = "" + (randomGenerator.nextInt(1) + 1);
             } else {
                 retVal = randomGenerator.nextLong();
@@ -355,14 +355,14 @@ public class AutomagicTest {
             try {
                 aClass = Class.forName(reroutedPackageName + "." + clazz.getSimpleName());
                 if (Modifier.isAbstract(aClass.getModifiers()) || aClass.isInterface()) {
-                    //Den "andre sidens" klasse er abstrakt. Håndter det som at denne sidens klasse er abstrakt
+                    //Den "andre sidens" klasse er abstrakt. HÃ¥ndter det som at denne sidens klasse er abstrakt
                     return true;
                 }
             } catch (ClassNotFoundException e) {
-                //Fant ikke denne klassen på den andre siden,
-                //Dette skjer f.eks. for lister, som har navn som slutter på List i wsapi, men ikke i domain
+                //Fant ikke denne klassen pÃ¥ den andre siden,
+                //Dette skjer f.eks. for lister, som har navn som slutter pÃ¥ List i wsapi, men ikke i domain
                 if (!clazz.getSimpleName().endsWith("List")) {
-                    //Men ellers så er det sannsynligvis feil, men vil uansett bli håndtert av testen på mappingen, så vi bare ignorerer dette her
+                    //Men ellers sÃ¥ er det sannsynligvis feil, men vil uansett bli hÃ¥ndtert av testen pÃ¥ mappingen, sÃ¥ vi bare ignorerer dette her
                     logger.debug("Fant ikke noen klasse: " + reroutedPackageName + "." + clazz.getSimpleName());
                 }
             }
@@ -374,10 +374,10 @@ public class AutomagicTest {
 
 
     /**
-     * Denne finner antatt beste match, ved å se på hvor mange av pakkenavn-elementene, tekst mellom punktum,
-     * som er lik i domenemodellen. Den antar at den beste matchen vil få flest treff.
+     * Denne finner antatt beste match, ved Ã¥ se pÃ¥ hvor mange av pakkenavn-elementene, tekst mellom punktum,
+     * som er lik i domenemodellen. Den antar at den beste matchen vil fÃ¥ flest treff.
      * <p>
-     * Den antar også at man alltid søker fra wsapi-pakke til domene-pakke.
+     * Den antar ogsÃ¥ at man alltid sÃ¸ker fra wsapi-pakke til domene-pakke.
      *
      * @param finnDenne
      * @return
@@ -469,9 +469,9 @@ public class AutomagicTest {
     protected <T> T createNewInstance(Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T t = null;
         if (clazz.equals(Long.class)) {
-            t = clazz.cast(randomGenerator.nextLong()); // Caster for å unngå warning
+            t = clazz.cast(randomGenerator.nextLong()); // Caster for Ã¥ unngÃ¥ warning
         } else if (clazz.equals(BigInteger.class)) {
-            t = clazz.cast(BigInteger.ONE); // Caster for å unngå warning
+            t = clazz.cast(BigInteger.ONE); // Caster for Ã¥ unngÃ¥ warning
         } else {
             t = clazz.newInstance();
         }
@@ -539,7 +539,7 @@ public class AutomagicTest {
     }
 
     /**
-     * initierer testen, her må 'toppen' av pakkestien for wsapi- og domene-klasser legges inn. Alle klasser under disse
+     * initierer testen, her mÃ¥ 'toppen' av pakkestien for wsapi- og domene-klasser legges inn. Alle klasser under disse
      * vil (stort sett) oppdages automatisk.
      *
      * @throws ClassNotFoundException

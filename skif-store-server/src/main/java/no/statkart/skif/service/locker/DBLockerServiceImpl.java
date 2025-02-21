@@ -60,13 +60,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
 
         boolean rollback = true;
         try {
-            // Anta at låsen ikke finnes. Gjør en insert
+            // Anta at lÃ¥sen ikke finnes. GjÃ¸r en insert
             lockInfo = insertLock(con, lockKey, owner, expires);
             if (lockInfo == null) {
-                // Lås finnes. Sjekk om bruker allerede har låsen eller den kan times ut.
+                // LÃ¥s finnes. Sjekk om bruker allerede har lÃ¥sen eller den kan times ut.
                 lockInfo = getLock(con, lockKey);
                 if (lockInfo == null) {
-                    // Race condition: Kan ikke opprette eller finne lås. Lite sannsynlig at dette skal oppstå
+                    // Race condition: Kan ikke opprette eller finne lÃ¥s. Lite sannsynlig at dette skal oppstÃ¥
                     throw new LockedException(owner, new LockInfo<>(lockKey, null));
                 } else if (lockInfo.isOwnedBy(owner)) {
                     lockInfo = renewLock(con, lockInfo, expires);
@@ -103,26 +103,26 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             if (insertedLocks != null) {
                 result = insertedLocks;
             } else {
-                // Kunne ikke låse alle i første forsøk. Finn ut hvilke som finnes fra før og timeout låse som er expired.
+                // Kunne ikke lÃ¥se alle i fÃ¸rste forsÃ¸k. Finn ut hvilke som finnes fra fÃ¸r og timeout lÃ¥se som er expired.
                 result = new HashSet<>();
                 Set<LockInfo<Long>> existingLocks = findExistingLocks(con, lockKeys);
                 Set<LockInfo<Long>> locksNotOwnedByKey = getLocksNotOwnedByKey(existingLocks, owner);
-                // Sjekk at alle låse vi ikke eier kan times ut
+                // Sjekk at alle lÃ¥se vi ikke eier kan times ut
                 verifyAllLocksExpired(locksNotOwnedByKey, owner);
                 Set<LockKey<Long>> idsWithNoLock = getIdsWithNoLock(lockKeys, existingLocks);
                 insertedLocks = insertLocks(con, idsWithNoLock, owner, expires);
                 if (insertedLocks == null) {
-                    // Race condition: Fikk ikke lov å opprettet låse, noen av dem må vært tatt av anden bruker akkurat nå
+                    // Race condition: Fikk ikke lov Ã¥ opprettet lÃ¥se, noen av dem mÃ¥ vÃ¦rt tatt av anden bruker akkurat nÃ¥
                     existingLocks = findExistingLocks(con, idsWithNoLock);
                     throw new LockedException(owner, existingLocks);
                 }
 
-                // Renew låse vi allerede selv eier
+                // Renew lÃ¥se vi allerede selv eier
                 Set<LockInfo<Long>> locksToRenew = existingLocks;
                 locksToRenew.removeAll(locksNotOwnedByKey);
                 Set<LockInfo<Long>> renewedLocks = renewLocks(con, locksToRenew, expires, owner);
 
-                // Ta låse som ikke eies av OWNER, men som muligvis kan times ut
+                // Ta lÃ¥se som ikke eies av OWNER, men som muligvis kan times ut
                 Set<LockInfo<Long>> timedoutLocks = timeoutAndTakeLocks(con, locksNotOwnedByKey, owner, expires);
 
                 result.addAll(insertedLocks);
@@ -246,13 +246,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Beregner utløpstidspunkt for lås. Tar hensyn til tidsforskjell mellom server og database slik at lockTimeout
-     * justeres dersom appserveren har en klokke som er tidligere enn databasens. Motsatt vei gjøres ingen justering.
+     * Beregner utlÃ¸pstidspunkt for lÃ¥s. Tar hensyn til tidsforskjell mellom server og database slik at lockTimeout
+     * justeres dersom appserveren har en klokke som er tidligere enn databasens. Motsatt vei gjÃ¸res ingen justering.
      *
      * @param con         databaseforbindelse
-     * @param lockTimeout låse periode i millisekunder
-     * @return beregnet utløpstidspunkt
-     * @throws OperationalException hvis tidsforskjellen mellom appserver og databaseserver er størren enn {@link #MAX_TIME_DIFF_THRESHOLD}
+     * @param lockTimeout lÃ¥se periode i millisekunder
+     * @return beregnet utlÃ¸pstidspunkt
+     * @throws OperationalException hvis tidsforskjellen mellom appserver og databaseserver er stÃ¸rren enn {@link #MAX_TIME_DIFF_THRESHOLD}
      */
     private Timestamp calcExpiration(Connection con, long lockTimeout) throws OperationalException {
         long diff = getDBMillisecDifference(con);
@@ -268,11 +268,11 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * Hvis serveren har en tid som er senere enn databasen returneres 0. Hvis tidsforskjellen er vesentlig
      * (MAX_TIME_DIFF_THRESHOLD) logges en feilmelding men det kastes ingen exception.
      * <p>
-     * Forskjellen beregnes kun en gang, da forskjellen antas å være konstant.
+     * Forskjellen beregnes kun en gang, da forskjellen antas Ã¥ vÃ¦re konstant.
      *
      * @param con databaseforbindelse
-     * @return tidsforskejlljustering i millisekunder. Alltid større eller lik 0.
-     * @throws OperationalException hvis tidsforskjellen mellom appserver og databaseserver er størren enn {@link #MAX_TIME_DIFF_THRESHOLD}
+     * @return tidsforskejlljustering i millisekunder. Alltid stÃ¸rre eller lik 0.
+     * @throws OperationalException hvis tidsforskjellen mellom appserver og databaseserver er stÃ¸rren enn {@link #MAX_TIME_DIFF_THRESHOLD}
      */
     private static synchronized long getDBMillisecDifference(Connection con) throws OperationalException {
         if (!dbMilliescDifferenceInitialized) {
@@ -289,7 +289,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
                     throw new OperationalException(msg);
                 }
             }
-            // Hvis database klokken er mindre enn server klokken, betyder det at låsen får lengre levetid hvilket ikke er noe problem.
+            // Hvis database klokken er mindre enn server klokken, betyder det at lÃ¥sen fÃ¥r lengre levetid hvilket ikke er noe problem.
             if (dbMillisecDifference < 0) {
                 dbMillisecDifference = 0;
             }
@@ -316,14 +316,14 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Forsøker å opprette en ny lås uten å ta hensyn til om lås finnes fra før. Returner lås med låseinformasjon
-     * hvis lås ble opprettet. Returnerer null hvis låsen ikke ble opprettet.
+     * ForsÃ¸ker Ã¥ opprette en ny lÃ¥s uten Ã¥ ta hensyn til om lÃ¥s finnes fra fÃ¸r. Returner lÃ¥s med lÃ¥seinformasjon
+     * hvis lÃ¥s ble opprettet. Returnerer null hvis lÃ¥sen ikke ble opprettet.
      *
      * @param con     databaseforbindelse
-     * @param lockKey angi lockKey'en som skal låses
-     * @param owner   nøkkel som brukes for låsing (brukerid)
-     * @param expires utløpstidspunkt
-     * @return låsen som ble opprettet, eller {@code null} hvis låsen ikke kunne opprettes
+     * @param lockKey angi lockKey'en som skal lÃ¥ses
+     * @param owner   nÃ¸kkel som brukes for lÃ¥sing (brukerid)
+     * @param expires utlÃ¸pstidspunkt
+     * @return lÃ¥sen som ble opprettet, eller {@code null} hvis lÃ¥sen ikke kunne opprettes
      */
     protected LockInfo<Long> insertLock(Connection con, LockKey<Long> lockKey, String owner, Timestamp expires) {
         String sql = "INSERT INTO " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " (ID, CLASS, OWNER, EXPIRES) VALUES (?,?,?,?)";
@@ -351,15 +351,15 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Forsøker å opprette en haug med låser uten å ta hensyn til om lås finnes fra før. Returner låser med
-     * låseinformasjon hvis alle låser ble opprettet. Returnerer null hvis noen låser feilet.
+     * ForsÃ¸ker Ã¥ opprette en haug med lÃ¥ser uten Ã¥ ta hensyn til om lÃ¥s finnes fra fÃ¸r. Returner lÃ¥ser med
+     * lÃ¥seinformasjon hvis alle lÃ¥ser ble opprettet. Returnerer null hvis noen lÃ¥ser feilet.
      * false.
      *
      * @param con      databaseforbindelse
-     * @param lockKeys angi lockKey-ene som skal låses
-     * @param owner    nøkkel som brukes for låsing (brukerid)
-     * @param expires  utløpstidspunkt
-     * @return låsene som ble opprettet, eller {@code null} hvis noen av låsene ikke kunne opprettes
+     * @param lockKeys angi lockKey-ene som skal lÃ¥ses
+     * @param owner    nÃ¸kkel som brukes for lÃ¥sing (brukerid)
+     * @param expires  utlÃ¸pstidspunkt
+     * @return lÃ¥sene som ble opprettet, eller {@code null} hvis noen av lÃ¥sene ikke kunne opprettes
      */
     protected Set<LockInfo<Long>> insertLocks(Connection con, Collection<LockKey<Long>> lockKeys, String owner, Timestamp expires) {
         Set<LockInfo<Long>> newLockInfos = new HashSet<>();
@@ -383,7 +383,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
             stmt.executeBatch();
             return newLockInfos;
         } catch (BatchUpdateException e) {
-            // Fikk ikke lov å opprette alle låsene
+            // Fikk ikke lov Ã¥ opprette alle lÃ¥sene
             try {
                 con.rollback();
                 return null;
@@ -402,11 +402,11 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
 
 
     /**
-     * Henter opp lås for gitt lockKey.
+     * Henter opp lÃ¥s for gitt lockKey.
      *
      * @param con     connection
-     * @param lockKey key som skal låses
-     * @return lås eller null hvis lås ikke lengre finnes
+     * @param lockKey key som skal lÃ¥ses
+     * @return lÃ¥s eller null hvis lÃ¥s ikke lengre finnes
      */
     private LockInfo<Long> getLock(Connection con, LockKey<Long> lockKey) {
                 String sqlString = "SELECT OWNER, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID=? AND CLASS=?";
@@ -432,13 +432,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Fornyer eksisterende lås med nytt utløpstidspunkt
+     * Fornyer eksisterende lÃ¥s med nytt utlÃ¸pstidspunkt
      *
      * @param con      databaseforbindelse
-     * @param lockInfo lås som skal fornyes
-     * @param expires  nytt utløpstidspunkt
-     * @return lås med fornyet utløpstidspunkt
-     * @throws LockedException hvis låsen ikke kunne fornyes
+     * @param lockInfo lÃ¥s som skal fornyes
+     * @param expires  nytt utlÃ¸pstidspunkt
+     * @return lÃ¥s med fornyet utlÃ¸pstidspunkt
+     * @throws LockedException hvis lÃ¥sen ikke kunne fornyes
      */
     private LockInfo<Long> renewLock(Connection con, LockInfo<Long> lockInfo, Timestamp expires) throws LockedException {
         String sql = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE ID=? AND CLASS=? AND OWNER=?";
@@ -469,14 +469,14 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Overtar eierskap av lås fra annen bruker og setter nytt utløpstidspunkt. Verifiserer at låsen virkelig er
-     * utløpt.
+     * Overtar eierskap av lÃ¥s fra annen bruker og setter nytt utlÃ¸pstidspunkt. Verifiserer at lÃ¥sen virkelig er
+     * utlÃ¸pt.
      *
      * @param con      databaseforbindelse
-     * @param owner    nøkkel som brukes for låsing (brukerid)
-     * @param expires  utløpstidspunkt
-     * @param lockInfo lås som skal opprettes
-     * @return ny lås
+     * @param owner    nÃ¸kkel som brukes for lÃ¥sing (brukerid)
+     * @param expires  utlÃ¸pstidspunkt
+     * @param lockInfo lÃ¥s som skal opprettes
+     * @return ny lÃ¥s
      */
     private LockInfo<Long> timeoutAndTakeLock(Connection con, String owner, Timestamp expires, LockInfo<Long> lockInfo) {
         String sql = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET OWNER=?, EXPIRES=? WHERE ID=? AND CLASS=? AND EXPIRES<SYSTIMESTAMP";
@@ -506,7 +506,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
      * Finner eksisterende lock for lockKeys.
      *
      * @param con      Connection
-     * @param lockKeys lockKeys å finne låser for
+     * @param lockKeys lockKeys Ã¥ finne lÃ¥ser for
      * @return map av eksisterende locks (key=BubbleId, value=DBLock)
      */
     private Set<LockInfo<Long>> findExistingLocks(Connection con, Set<LockKey<Long>> lockKeys) {
@@ -519,15 +519,15 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Gjør et søk i databasen etter låse med bestemt id'er. Det søkes etter 10 id'er per kald.
+     * GjÃ¸r et sÃ¸k i databasen etter lÃ¥se med bestemt id'er. Det sÃ¸kes etter 10 id'er per kald.
      *
      * @param con         Connection
-     * @param lockInfos   Collection låser skal puttes inn i
-     * @param keyIterator Iterator for keys det skal søkes for
+     * @param lockInfos   Collection lÃ¥ser skal puttes inn i
+     * @param keyIterator Iterator for keys det skal sÃ¸kes for
      */
     private void findLocksForBatch(Connection con, Set<LockInfo<Long>> lockInfos, Iterator<LockKey<Long>> keyIterator) {
         Set<LockKey<Long>> idsWanted = new HashSet<>();
-        // Vi spør ikke etter CLASS da det komplisere query. Gjør en filter etter på
+        // Vi spÃ¸r ikke etter CLASS da det komplisere query. GjÃ¸r en filter etter pÃ¥
         String sqlString = "SELECT ID, CLASS, OWNER, EXPIRES FROM " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " WHERE ID IN (?,?,?,?,?,?,?,?,?,?)";
         try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
             for (int i = 1; i <= 10; i++) {
@@ -557,11 +557,11 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Hjelpemetode som returnerer låse i locks som ikke eies av key
+     * Hjelpemetode som returnerer lÃ¥se i locks som ikke eies av key
      *
      * @param locks LockInfos vi skal sjekke eier for
-     * @param owner Owner vi skal søke for
-     * @return låse i locks som ikke eies av key
+     * @param owner Owner vi skal sÃ¸ke for
+     * @return lÃ¥se i locks som ikke eies av key
      */
     private Set<LockInfo<Long>> getLocksNotOwnedByKey(Set<LockInfo<Long>> locks, String owner) {
         Set<LockInfo<Long>> notOwnedByKey = new HashSet<>();
@@ -587,11 +587,11 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Hjelpemetod som returnerer de id'er i ids som ikke har en tilhørende lås i locks.
+     * Hjelpemetod som returnerer de id'er i ids som ikke har en tilhÃ¸rende lÃ¥s i locks.
      *
      * @param ids   Set av id'er som skal brukes som i utgangspunkt i filtreringen
-     * @param locks låse hvis id'er skal fjernes
-     * @return set av id'er som ikke har en tilhørende lås i locks
+     * @param locks lÃ¥se hvis id'er skal fjernes
+     * @return set av id'er som ikke har en tilhÃ¸rende lÃ¥s i locks
      */
     private Set<LockKey<Long>> getIdsWithNoLock(Set<LockKey<Long>> ids, Set<LockInfo<Long>> locks) {
         Set<LockKey<Long>> result = new HashSet<>(ids);
@@ -602,14 +602,14 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Forlenger låsetiden på spesifiserte låser for key
+     * Forlenger lÃ¥setiden pÃ¥ spesifiserte lÃ¥ser for key
      *
      * @param con           databaseforbindelse
-     * @param existingLocks låser som skal fornyes
-     * @param expires       nytt utløpstidspunkt
-     * @param owner         nøkkel som brukes for låsing (brukerid)
-     * @return fornyet låser
-     * @throws LockedException dersom ikke alle låser kunne fornyes (f.eks noen av låsene var timet ut)
+     * @param existingLocks lÃ¥ser som skal fornyes
+     * @param expires       nytt utlÃ¸pstidspunkt
+     * @param owner         nÃ¸kkel som brukes for lÃ¥sing (brukerid)
+     * @return fornyet lÃ¥ser
+     * @throws LockedException dersom ikke alle lÃ¥ser kunne fornyes (f.eks noen av lÃ¥sene var timet ut)
      */
     private Set<LockInfo<Long>> renewLocks(Connection con, Set<LockInfo<Long>> existingLocks, Timestamp expires, String owner) throws LockedException {
         try {
@@ -664,13 +664,13 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     /**
-     * Legger inn fiktive låser for de ide'er som ikke allerede har en lås i existingLocks slik at existingLocks får en lås
-     * for hver id i ids. Denne metode brukes ifm feilrapportering hvor det i teorien kan oppstå en race condition hvor
-     * en bruker ikke får tatt eller fornyet en lås men ikke finner låsen i databasen under feilrapportering fordi
-     * låsen i mellomtiden den har blitt slettet av brukeren som eide den.
+     * Legger inn fiktive lÃ¥ser for de ide'er som ikke allerede har en lÃ¥s i existingLocks slik at existingLocks fÃ¥r en lÃ¥s
+     * for hver id i ids. Denne metode brukes ifm feilrapportering hvor det i teorien kan oppstÃ¥ en race condition hvor
+     * en bruker ikke fÃ¥r tatt eller fornyet en lÃ¥s men ikke finner lÃ¥sen i databasen under feilrapportering fordi
+     * lÃ¥sen i mellomtiden den har blitt slettet av brukeren som eide den.
      *
-     * @param lockKeys      id'er som må ha en lås
-     * @param existingLocks eksisterende låser.
+     * @param lockKeys      id'er som mÃ¥ ha en lÃ¥s
+     * @param existingLocks eksisterende lÃ¥ser.
      */
     private void addMissingLocks(Set<LockKey<Long>> lockKeys, Set<LockInfo<Long>> existingLocks) {
         HashSet<LockKey<Long>> lockKeys2 = new HashSet<>(lockKeys);
@@ -787,7 +787,7 @@ public class DBLockerServiceImpl implements DBLockerService<Long> {
     }
 
     private void renewAllLocks(Connection con, String owner, Timestamp expires) {
-        // NB: Records som har en lengre utløpstid enn den nye utløpstid oppdateres ikke.
+        // NB: Records som har en lengre utlÃ¸pstid enn den nye utlÃ¸pstid oppdateres ikke.
         String sqlString = "UPDATE " + configuration.getString(SkifConfigConstants.DB_LOCK_TABLENAME) + " SET EXPIRES=? WHERE OWNER=? AND EXPIRES < ?";
         try (PreparedStatement stmt = con.prepareStatement(sqlString)) {
             stmt.setTimestamp(1, expires);

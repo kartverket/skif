@@ -15,7 +15,7 @@ import no.statkart.skif.storetest.domain.endringslogg.SubTypedBubbleEndring;
 /**
  * Deklarasjon av endringslogg generering for domenet
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @author Henrik Fredholm
  * @since 2.4
  */

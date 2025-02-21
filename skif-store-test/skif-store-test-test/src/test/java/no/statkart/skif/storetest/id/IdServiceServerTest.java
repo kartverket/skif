@@ -10,7 +10,7 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Tester id allokering for kode som kjører på serveren
+ * Tester id allokering for kode som kjÃ¸rer pÃ¥ serveren
  *
  * @author Henrik Fredholm
  * @since 2.1

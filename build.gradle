@@ -13,7 +13,7 @@ allprojects {
     }
 
     tasks.withType(JavaCompile) {
-        options.encoding = 'windows-1252'
+        options.encoding = 'utf-8'
     }
 
     apply plugin: 'idea'

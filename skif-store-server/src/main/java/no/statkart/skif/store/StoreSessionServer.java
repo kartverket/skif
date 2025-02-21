@@ -134,7 +134,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     /**
-     * Låser tatt for inneværende service
+     * LÃ¥ser tatt for innevÃ¦rende service
      */
     private LockerStrategy lockerStrategy;
 
@@ -188,7 +188,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             evicted = false;
         } else {
             if (storeEntry.getLockCreatedByLevel() > 0) {
-                // Kan ikke evicte entry fordi UnitOfWork må kunne gjøre en unlock ved abort
+                // Kan ikke evicte entry fordi UnitOfWork mÃ¥ kunne gjÃ¸re en unlock ved abort
                 evicted = false;
             } else {
                 if (storeEntry.getBubbleObject(0).isFlushed()) {
@@ -212,7 +212,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                 allWasEvicted = false;
             } else {
                 if (storeEntry.getLockCreatedByLevel() > 0) {
-                    // Kan ikke entry for UnitOfWork må kunne gjøre en unlock ved abort
+                    // Kan ikke entry for UnitOfWork mÃ¥ kunne gjÃ¸re en unlock ved abort
                     allWasEvicted = false;
                 } else {
                     if (storeEntry.getBubbleObject(0).isFlushed()) {
@@ -232,15 +232,15 @@ public class StoreSessionServer extends AbstractStoreSession {
      * @see StoreServer#finish()
      */
     public void finish() {
-        //Flusher først for å sikre at sql kjørt i finishListeners kjøres mot riktige data
+        //Flusher fÃ¸rst for Ã¥ sikre at sql kjÃ¸rt i finishListeners kjÃ¸res mot riktige data
         flush();
 
         for (StoreSessionFinishListener finishListener : finishListeners) {
             finishListener.onFinish((StoreServer) store);
-            // Ikke nødvendig å kalle flush for hver loop iterasjon siden søk via hibernate flusher automatisk først.
+            // Ikke nÃ¸dvendig Ã¥ kalle flush for hver loop iterasjon siden sÃ¸k via hibernate flusher automatisk fÃ¸rst.
         }
 
-        // TODO: Optimaliser bort flush ved å la onFinish returnere true hvis finishListener endret state.
+        // TODO: Optimaliser bort flush ved Ã¥ la onFinish returnere true hvis finishListener endret state.
         flush();
 
         for (StoreEntry storeEntry : storeCache.values()) {
@@ -250,7 +250,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             storeEntry.getBubbleObject(0).setFlushed(false);
         }
 
-        // Må endre state for alle modifiserte objekter
+        // MÃ¥ endre state for alle modifiserte objekter
         for (StoreEntry storeEntry : modifiedMap.values()) {
             if (storeEntry.getState(0) == StoreEntryState.DELETED || storeEntry.getState(0) == StoreEntryState.INSERTED_DELETED) {
                 storeCache.remove(storeEntry.getId());
@@ -294,7 +294,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                 storeEntry = loadEntry(level, bubbleId, false);
             }
             StoreEntryState oldState = storeEntry.getState(level);
-            // Må ta vare på om objektet var modifisert på forhånd slik at flushed flagget får riktig verdi ved feil
+            // MÃ¥ ta vare pÃ¥ om objektet var modifisert pÃ¥ forhÃ¥nd slik at flushed flagget fÃ¥r riktig verdi ved feil
             boolean oldFlushed = storeEntry.getBubbleObject(level).isFlushed();
             boolean markedForRollbackOnly = !session.getTransactionCoordinator().getTransactionDriverControl().isActive(false);
             try {
@@ -332,13 +332,13 @@ public class StoreSessionServer extends AbstractStoreSession {
         Map<BubbleId, BubbleObject> fullyInitializedBubbles = persistenceSessionMaster.getFullyInitializedBubbles();
         List<StoreEntry> lazyLoaded = Lists.newArrayList();
 
-        // Finn alle modifiserte entries som kan være lazyloaded. De som er inserted eller deleted er ikke interessante
+        // Finn alle modifiserte entries som kan vÃ¦re lazyloaded. De som er inserted eller deleted er ikke interessante
         // Fjern alle readOnly entries
         for (StoreEntry storeEntry : storeCache.values()) {
             if (!fullyInitializedBubbles.containsKey(storeEntry.getId())) {
                 StoreEntryState state = storeEntry.getState(level);
                 if (state == StoreEntryState.UNCHANGED || state == StoreEntryState.UPDATED) {
-                    // Objekt kan være lazyloaded og må legges inn i session igjen for å unngå lazyloading feil senere
+                    // Objekt kan vÃ¦re lazyloaded og mÃ¥ legges inn i session igjen for Ã¥ unngÃ¥ lazyloading feil senere
                     lazyLoaded.add(storeEntry);
                 }
             }
@@ -356,8 +356,8 @@ public class StoreSessionServer extends AbstractStoreSession {
             }
             persistenceSessionMaster.update(persistentBubbleObject);
         }
-        // Hibernate kommer til å flushe alle objekter som attaches, også de som ikke er modifisert.
-        // Må derfor gjøre flushen her og så sette flushed flagget til false for de objekter som egnetlig var umodifiserte
+        // Hibernate kommer til Ã¥ flushe alle objekter som attaches, ogsÃ¥ de som ikke er modifisert.
+        // MÃ¥ derfor gjÃ¸re flushen her og sÃ¥ sette flushed flagget til false for de objekter som egnetlig var umodifiserte
         flush();
         for (StoreEntry storeEntry : unmodifiedEntries) {
             storeEntry.getPersistentBubbleObject().setFlushed(false);
@@ -400,7 +400,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         List<Map.Entry<BubbleId<?>, StoreEntry>> updated = Lists.newArrayList();
         List<Map.Entry<BubbleId<?>, StoreEntry>> deleted = Lists.newArrayList();
 
-        // Legg inn i ovenstående lister;
+        // Legg inn i ovenstÃ¥ende lister;
         for (Map.Entry<BubbleId<?>, StoreEntry> entry : modifiedAndLocked.entrySet()) {
             switch (entry.getValue().getState(level + 1)) {
                 case INSERTED:
@@ -444,52 +444,52 @@ public class StoreSessionServer extends AbstractStoreSession {
             modifiedSorted.put(mapEntry.getKey(), mapEntry.getValue());
         }
 
-        super.commitUnitOfWork(modifiedSorted); // Gjøres av ovenstående istedet
+        super.commitUnitOfWork(modifiedSorted); // GjÃ¸res av ovenstÃ¥ende istedet
     }
 
 
     /**
-     * Låser objekt og lager en kopi av objektet hvis låsingen skjer i en unit of work. Hvis låsingen skjer direkte
-     * på StoreSessionServer lages ingen kopi og objekt som er koblet mot underliggende session brukes.
+     * LÃ¥ser objekt og lager en kopi av objektet hvis lÃ¥singen skjer i en unit of work. Hvis lÃ¥singen skjer direkte
+     * pÃ¥ StoreSessionServer lages ingen kopi og objekt som er koblet mot underliggende session brukes.
      * <p>
-     * Objektet kan være følgende tilstander:
+     * Objektet kan vÃ¦re fÃ¸lgende tilstander:
      * <ul>
-     * <li>Allerede låst for level</li>
-     * <li>Låst for lavere level</li>
-     * <li>Ikke låst</li>
-     * <li>Ikke loaded, men allerede låst</li>
-     * <li>Ikke loaded og ikke låst</li>
+     * <li>Allerede lÃ¥st for level</li>
+     * <li>LÃ¥st for lavere level</li>
+     * <li>Ikke lÃ¥st</li>
+     * <li>Ikke loaded, men allerede lÃ¥st</li>
+     * <li>Ikke loaded og ikke lÃ¥st</li>
      * </ul>
      * <p>
-     * Et av målene for implementasjonen er å utnytte tilgjengelig informasjon for å unngå å måtte gjøre kall mot
+     * Et av mÃ¥lene for implementasjonen er Ã¥ utnytte tilgjengelig informasjon for Ã¥ unngÃ¥ Ã¥ mÃ¥tte gjÃ¸re kall mot
      * databasen.
      *
-     * @param level    StoreSession level som ønsker å låse objektet
-     * @param bubbleId objekt som skal låses
-     * @return låst objekt
+     * @param level    StoreSession level som Ã¸nsker Ã¥ lÃ¥se objektet
+     * @param bubbleId objekt som skal lÃ¥ses
+     * @return lÃ¥st objekt
      */
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
         StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry != null) {
-            // Entry finnes, må sjekk om objekt er låst på underliggende nivå
+            // Entry finnes, mÃ¥ sjekk om objekt er lÃ¥st pÃ¥ underliggende nivÃ¥
             int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
             if (lockLevel != level) {
-                // Ikke allerede låst for level
+                // Ikke allerede lÃ¥st for level
                 if (lockLevel >= 0) {
-                    // Låst for underliggende level
+                    // LÃ¥st for underliggende level
                     lockEntry(storeEntry, level, false);
                 } else {
-                    // Uvist om låst
+                    // Uvist om lÃ¥st
                     boolean isNewLock = lockerStrategy.lock(bubbleId);
                     if (isNewLock) {
-                        // Objekt var ikke låst fra før, må gjøre en refresh
+                        // Objekt var ikke lÃ¥st fra fÃ¸r, mÃ¥ gjÃ¸re en refresh
                         refreshEntry(storeEntry);
                     }
                     lockEntry(storeEntry, level, isNewLock);
                 }
             }
         } else {
-            // Ingen entry, opprett entry, refresh objekt hvis det ikke allerede er låst
+            // Ingen entry, opprett entry, refresh objekt hvis det ikke allerede er lÃ¥st
             boolean isNewLock = lockerStrategy.lock(bubbleId);
             storeEntry = loadEntry(level, bubbleId, isNewLock);
             lockEntry(storeEntry, level, true);
@@ -525,24 +525,24 @@ public class StoreSessionServer extends AbstractStoreSession {
     }
 
     /**
-     * Låser objekter og lager en kopier av objektene hvis låsingen skjer i en unit of work. Hvis låsingen skjer direkte
-     * på StoreSessionServer lages ingen kopier og objekter som er koblet mot underliggende session brukes.
+     * LÃ¥ser objekter og lager en kopier av objektene hvis lÃ¥singen skjer i en unit of work. Hvis lÃ¥singen skjer direkte
+     * pÃ¥ StoreSessionServer lages ingen kopier og objekter som er koblet mot underliggende session brukes.
      * <p>
-     * Et objekt kan være følgende tilstander:
+     * Et objekt kan vÃ¦re fÃ¸lgende tilstander:
      * <ul>
-     * <li>Allerede låst for level</li>
-     * <li>Låst for lavere level</li>
-     * <li>Ikke låst</li>
-     * <li>Ikke loaded, men allerede låst</li>
-     * <li>Ikke loaded og ikke låst</li>
+     * <li>Allerede lÃ¥st for level</li>
+     * <li>LÃ¥st for lavere level</li>
+     * <li>Ikke lÃ¥st</li>
+     * <li>Ikke loaded, men allerede lÃ¥st</li>
+     * <li>Ikke loaded og ikke lÃ¥st</li>
      * </ul>
      * <p>
-     * Et av målene for implementasjonen er å utnytte tilgjengelig informasjon for å unngå å måtte gjøre kall mot
+     * Et av mÃ¥lene for implementasjonen er Ã¥ utnytte tilgjengelig informasjon for Ã¥ unngÃ¥ Ã¥ mÃ¥tte gjÃ¸re kall mot
      * databasen.
      *
-     * @param level     StoreSession level som ønsker å låse objektet
-     * @param bubbleIds objekter som skal låses
-     * @return låste objekter
+     * @param level     StoreSession level som Ã¸nsker Ã¥ lÃ¥se objektet
+     * @param bubbleIds objekter som skal lÃ¥ses
+     * @return lÃ¥ste objekter
      */
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<StoreEntry> lockEntries(int level, Set<I> bubbleIds) {
         Collection<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
@@ -552,16 +552,16 @@ public class StoreSessionServer extends AbstractStoreSession {
         for (I bubbleId : bubbleIds) {
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry != null) {
-                // Entry finnes, må sjekk om objekt er låst på underliggende nivå
+                // Entry finnes, mÃ¥ sjekk om objekt er lÃ¥st pÃ¥ underliggende nivÃ¥
                 int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
                 if (lockLevel != level) {
-                    // Ikke allerede låst for level
+                    // Ikke allerede lÃ¥st for level
                     if (lockLevel >= 0) {
-                        // Låst for underliggende level
+                        // LÃ¥st for underliggende level
                         lockEntry(storeEntry, level, false);
                         entries.add(storeEntry);
                     } else {
-                        // Uvist om låst
+                        // Uvist om lÃ¥st
                         possiblyUnlockedEntries.add(storeEntry);
                     }
                 }
@@ -576,7 +576,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             // TODO: Bulk optimize
             boolean isNewLock = newLocks.contains(storeEntry.getId());
             if (isNewLock) {
-                // Objekt var ikke låst fra før, må gjøre en refresh
+                // Objekt var ikke lÃ¥st fra fÃ¸r, mÃ¥ gjÃ¸re en refresh
                 refreshEntry(storeEntry);
             }
             lockEntry(storeEntry, level, isNewLock);
@@ -617,10 +617,10 @@ public class StoreSessionServer extends AbstractStoreSession {
                             storeEntry.setLockCreatedByLevel(-1);
                         }
                         if (level>0) {
-                            // På serveren kan disse være endret og evt flushet, men det vil bli fanget opp senere siden
-                            // man ikke har kallt Store.update. Videre vil objektet være knyttet til hibernate sessionen
-                            // og siden det ikke evictes fra denne vil man uansett få tilbake samme instans ved get.
-                            // Hvis kan i stedet for unlock kalte undo ville man ha fått en feil hvis objektet fra
+                            // PÃ¥ serveren kan disse vÃ¦re endret og evt flushet, men det vil bli fanget opp senere siden
+                            // man ikke har kallt Store.update. Videre vil objektet vÃ¦re knyttet til hibernate sessionen
+                            // og siden det ikke evictes fra denne vil man uansett fÃ¥ tilbake samme instans ved get.
+                            // Hvis kan i stedet for unlock kalte undo ville man ha fÃ¥tt en feil hvis objektet fra
                             // flushet.
                             storeEntry.setBubbleObject(level, null);
                         }
@@ -631,7 +631,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                     throw new ImplementationException("Object has been changed and can not be unlocked");
             }
         } else {
-            // SKIF-480: Skal klienten kunne låse opp ting, så må server-store være villig til å låse opp objekter den ikke kjenner til.
+            // SKIF-480: Skal klienten kunne lÃ¥se opp ting, sÃ¥ mÃ¥ server-store vÃ¦re villig til Ã¥ lÃ¥se opp objekter den ikke kjenner til.
             if (lockerStrategy.isLockedByCaller(bubbleId)) {
                 lockerStrategy.unlock(bubbleId);
             }
@@ -644,8 +644,8 @@ public class StoreSessionServer extends AbstractStoreSession {
         List<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
         Set<BubbleId> unlockIds = new HashSet<>(bubbleIds.size());
 
-        // Gjør dette i tre trinn ettersom hvor sannsynlig det er at de feiler, slik at ingen trinn skal bli bare delvis gjennomført.
-        // Trinn 1 (denne kan ende opp med å bare bli delvis gjennomført, men den er uten sideeffekter)
+        // GjÃ¸r dette i tre trinn ettersom hvor sannsynlig det er at de feiler, slik at ingen trinn skal bli bare delvis gjennomfÃ¸rt.
+        // Trinn 1 (denne kan ende opp med Ã¥ bare bli delvis gjennomfÃ¸rt, men den er uten sideeffekter)
         for (BubbleId<?> bubbleId : bubbleIds) {
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry != null) {
@@ -663,7 +663,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                         throw new ImplementationException("Object has been changed and can not be unlocked");
                 }
             } else {
-                // SKIF-480: Skal klienten kunne låse opp ting, så må server-store være villig til å låse opp objekter den ikke kjenner til.
+                // SKIF-480: Skal klienten kunne lÃ¥se opp ting, sÃ¥ mÃ¥ server-store vÃ¦re villig til Ã¥ lÃ¥se opp objekter den ikke kjenner til.
                 if (lockerStrategy.isLockedByCaller(bubbleId)) {
                     unlockIds.add(bubbleId);
                 }
@@ -675,17 +675,17 @@ public class StoreSessionServer extends AbstractStoreSession {
             lockerStrategy.unlock(unlockIds);
         }
 
-        // Trinn 3 (dette skal være ren bokføring)
+        // Trinn 3 (dette skal vÃ¦re ren bokfÃ¸ring)
         for (StoreEntry storeEntry : entries) {
             if (isLocked(storeEntry)) {
                 if (storeEntry.getLockCreatedByLevel() == level) {
                     storeEntry.setLockCreatedByLevel(-1);
                 }
                 if (level>0) {
-                    // På serveren kan disse være endret og evt flushet, men det vil bli fanget opp senere siden
-                    // man ikke har kallt Store.update. Videre vil objektet være knyttet til hibernate sessionen
-                    // og siden det ikke evictes fra denne vil man uansett få tilbake samme instans ved get.
-                    // Hvis kan i stedet for unlock kalte undo ville man ha fått en feil hvis objektet fra
+                    // PÃ¥ serveren kan disse vÃ¦re endret og evt flushet, men det vil bli fanget opp senere siden
+                    // man ikke har kallt Store.update. Videre vil objektet vÃ¦re knyttet til hibernate sessionen
+                    // og siden det ikke evictes fra denne vil man uansett fÃ¥ tilbake samme instans ved get.
+                    // Hvis kan i stedet for unlock kalte undo ville man ha fÃ¥tt en feil hvis objektet fra
                     // flushet.
                     storeEntry.setBubbleObject(level, null);
                 }
@@ -709,11 +709,11 @@ public class StoreSessionServer extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> Map<I, List<I>> getVersionsForList(Collection<? extends I> ids, SnapshotVersion start, SnapshotVersion end) {
         VersionFinder versionFinder = versionFinderProvider.get();
 
-// Denne metode kan opptimaliseres, ved å først å sortere ids på basetype og så gjøre en list query basert på
+// Denne metode kan opptimaliseres, ved Ã¥ fÃ¸rst Ã¥ sortere ids pÃ¥ basetype og sÃ¥ gjÃ¸re en list query basert pÃ¥
 // OracleArrayType for hver basetype.
         Map<I, List<I>> retur = new HashMap<>();
         for (I id : ids) {
-            // Sliter litt med generics her. Vi passe litt på fordi dette kun er lovlig hvis <I> faktisk er en basetype dersom id kan skifte subtype.
+            // Sliter litt med generics her. Vi passe litt pÃ¥ fordi dette kun er lovlig hvis <I> faktisk er en basetype dersom id kan skifte subtype.
             //noinspection unchecked
             retur.put((I) (BubbleId) id.asSnapshotVersion(snapshotVersionProvider.get()), versionFinder.findBubbleIdsForInterval(id, start, end));
         }
@@ -827,10 +827,10 @@ public class StoreSessionServer extends AbstractStoreSession {
         StoreEntry entry = storeCache.register(level, persistentBubbleObject, bubbleObject);
 
         if (level > 0) {
-            // Dersom vi er i en unit-of-work på server, så må/bør vi sjekke låsetilstanden til objektet.
+            // Dersom vi er i en unit-of-work pÃ¥ server, sÃ¥ mÃ¥/bÃ¸r vi sjekke lÃ¥setilstanden til objektet.
             boolean locked = lockerStrategy.isLockedByCaller(bubbleObject.getId());
             if (locked) {
-                lockEntry(entry, 0, false); // level er 0 fordi låsen var der fra før
+                lockEntry(entry, 0, false); // level er 0 fordi lÃ¥sen var der fra fÃ¸r
             }
         }
 
@@ -852,7 +852,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
         Collection<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
         if (!bubbleIds.isEmpty()) {
-            // Litt komplisert kode fordi vi ikke ønsker å kaste første exception videre og undertrykke følge exceptions
+            // Litt komplisert kode fordi vi ikke Ã¸nsker Ã¥ kaste fÃ¸rste exception videre og undertrykke fÃ¸lge exceptions
             RuntimeException firstException = null;
             try {
                 fireOnPreRegisterBubbles(persistentBubbleObjects);
@@ -860,7 +860,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                     try {
                         entries.add(createEntry(level, originalBubbleObject));
                     } catch (RuntimeException e) {
-                        // Fjern boblen så den ikke ligger igjen i persistenceSessionManager
+                        // Fjern boblen sÃ¥ den ikke ligger igjen i persistenceSessionManager
                         firstException = e;
                         try {
                             persistenceSessionManager.evict(originalBubbleObject.getBubbleId());
@@ -913,7 +913,7 @@ public class StoreSessionServer extends AbstractStoreSession {
                     try {
                         entries.add(createEntry(level, originalBubbleObject));
                     } catch (PermissionDeniedException e) {
-                        // Fjern boblen så den ikke ligger igjen i persistenceSessionManager
+                        // Fjern boblen sÃ¥ den ikke ligger igjen i persistenceSessionManager
                         // Kaster ikke exception videre her. Denne boblen blir ikke med i entries som returneres
                         persistenceSessionManager.evict(originalBubbleObject.getBubbleId());
                     }
@@ -988,7 +988,7 @@ public class StoreSessionServer extends AbstractStoreSession {
     @Override
     public Collection<StoreEntry> registerEntries(int level, Transfer<?> transfer) {
         for (BubbleObject bubbleObject : transfer.getBubbleObjects().values()) {
-            Preconditions.checkState(bubbleObject.store() == store, "Ved registering av bobler på server forventes boble ligge i servers store allerede: %s", bubbleObject.getId());
+            Preconditions.checkState(bubbleObject.store() == store, "Ved registering av bobler pÃ¥ server forventes boble ligge i servers store allerede: %s", bubbleObject.getId());
         }
         return Collections.EMPTY_SET;
     }
@@ -1007,8 +1007,8 @@ public class StoreSessionServer extends AbstractStoreSession {
 
     @Override
     public BubbleObject getPersistedBubbleObjectForLocked(StoreEntry storeEntry) {
-        Preconditions.checkState(storeEntry.isLocked(), "Entry må være låst: %s", storeEntry);
-        return Preconditions.checkNotNull(storeEntry.getBubbleObject(0), "Entry.getBubbleObject[0] kan ikke være null: %s", storeEntry);
+        Preconditions.checkState(storeEntry.isLocked(), "Entry mÃ¥ vÃ¦re lÃ¥st: %s", storeEntry);
+        return Preconditions.checkNotNull(storeEntry.getBubbleObject(0), "Entry.getBubbleObject[0] kan ikke vÃ¦re null: %s", storeEntry);
     }
 
     @Override

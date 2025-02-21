@@ -8,24 +8,24 @@ package no.statkart.skif.store.endringslogg;
  */
 public enum Endringstype {
     /**
-     * Kommer når objekt opprettes. Endret id angir subtype objektet hadde da det ble opprettet
+     * Kommer nÃ¥r objekt opprettes. Endret id angir subtype objektet hadde da det ble opprettet
      */
     Nyoppretting,
 
     /**
-     * Kommer når et objekt endre subtype, dersom endringsloggen modellerer de to subtypene forskjellig.
-     *  Endret id vil da være av gammel type. Slike endringer etterfølges alltid av en
-     *  tilhørende {@link #Oppdatering} som angir ny id type.
+     * Kommer nÃ¥r et objekt endre subtype, dersom endringsloggen modellerer de to subtypene forskjellig.
+     *  Endret id vil da vÃ¦re av gammel type. Slike endringer etterfÃ¸lges alltid av en
+     *  tilhÃ¸rende {@link #Oppdatering} som angir ny id type.
      */
     Typeendring,
 
     /**
-     * Kommer når et objekt oppdateres. Endret id angir subtype etter oppdatering for det endrede objektet
+     * Kommer nÃ¥r et objekt oppdateres. Endret id angir subtype etter oppdatering for det endrede objektet
      */
     Oppdatering,
 
     /**
-     * Kommer når et objekt slettes. Endret id angir  subtypen objekt hadde da det ble slettet
+     * Kommer nÃ¥r et objekt slettes. Endret id angir  subtypen objekt hadde da det ble slettet
      */
     Sletting
 }

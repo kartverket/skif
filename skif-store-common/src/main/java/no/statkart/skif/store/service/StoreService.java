@@ -29,23 +29,23 @@ public interface StoreService {
      * {@code ids} inneholder den samme id flere ganger returneres kun et objekt. Id-er som er null ignoreres.
      *
      * @param ids id-er som skal hentes
-     * @return objekter for id-er i udefinert rekkefølge.
+     * @return objekter for id-er i udefinert rekkefÃ¸lge.
      * @throws no.statkart.skif.exception.ObjectNotFoundException hvis ikke alle id-er kunne lastes.
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjects(Collection<I> ids);
 
     /**
-     * Henter en collection av {@link BubbleObject}s av type {@code <T>} for {@code ids} av type {@code <I>}, uten å
-     * kaste en exception dersom objekter ikke kan finnes. Returlisten vil derfor kunne være kortere enn parameteren.
+     * Henter en collection av {@link BubbleObject}s av type {@code <T>} for {@code ids} av type {@code <I>}, uten Ã¥
+     * kaste en exception dersom objekter ikke kan finnes. Returlisten vil derfor kunne vÃ¦re kortere enn parameteren.
      * Hvis {@code ids} inneholder den samme id flere ganger returneres kun et objekt. Id-er som er null ignoreres.
      *
      * @param ids id-er som skal hentes
-     * @return objekter for id-er i udefinert rekkefølge.
+     * @return objekter for id-er i udefinert rekkefÃ¸lge.
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> getObjectsIgnoreMissing(Collection<I> ids);
 
     /**
-     * Henter alle versjoner av en id for et gitt tidsrom. Id-ene er sortert på versjon i stigende rekkefølge.
+     * Henter alle versjoner av en id for et gitt tidsrom. Id-ene er sortert pÃ¥ versjon i stigende rekkefÃ¸lge.
      *
      * @param id    id som det skal hentes historikk for
      * @param start starttidspunkt som er inkludert i intervallet
@@ -57,8 +57,8 @@ public interface StoreService {
 
     /**
      * Henter alle versjoner for et liste av id-er for et gitt tidsrom. Id-en returneres i en map som
-     * har id-en som nøkkel og listen av funnede id-er som verdi. Listen inneholder id-ene sortert på versjon i
-     * stigende rekkefølge.
+     * har id-en som nÃ¸kkel og listen av funnede id-er som verdi. Listen inneholder id-ene sortert pÃ¥ versjon i
+     * stigende rekkefÃ¸lge.
      *
      * @param ids   id-er som det skal hentes historikk for
      * @param start starttidspunkt som er inkludert i intervallet

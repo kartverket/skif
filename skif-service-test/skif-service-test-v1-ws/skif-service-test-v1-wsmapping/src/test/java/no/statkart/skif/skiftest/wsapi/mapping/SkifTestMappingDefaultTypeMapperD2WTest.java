@@ -97,7 +97,7 @@ public class SkifTestMappingDefaultTypeMapperD2WTest {
     }
 
     /**
-     * Tester for å belyse 	SKIF-160
+     * Tester for Ã¥ belyse 	SKIF-160
      */
     public void testMapTestC(){
         C source = new C();

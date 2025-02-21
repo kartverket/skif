@@ -45,10 +45,10 @@ import static java.util.Objects.requireNonNull;
 
 
 /**
- * En slags {@link Store} som kan brukes for å navigere blant mockup-objekter. Alle id-er
+ * En slags {@link Store} som kan brukes for Ã¥ navigere blant mockup-objekter. Alle id-er
  *
  * @author Tor Egil R. Strand
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.1
  */
 @Singleton
@@ -58,12 +58,12 @@ public class MockupStore implements Store {
     final protected StoreRelationCache storeRelationCache = new StoreRelationCacheImpl(this) {
         @Override
         protected WrappableStoreSession getStoreSession() {
-            throw new UnsupportedOperationException("MockupStore støtter ikke operasjon på StoreRelationCache");
+            throw new UnsupportedOperationException("MockupStore stÃ¸tter ikke operasjon pÃ¥ StoreRelationCache");
         }
 
         @Override
         public void setEnabled(boolean enabled) {
-            throw new UnsupportedOperationException("MockupStore støtter ikke operasjon på StoreRelationCache");
+            throw new UnsupportedOperationException("MockupStore stÃ¸tter ikke operasjon pÃ¥ StoreRelationCache");
         }
 
         @Override
@@ -73,7 +73,7 @@ public class MockupStore implements Store {
     };
 
     /**
-     * {@link SnapshotVersion} objekter skal legges inn/oppdateres/slettes på. Standardverdien er
+     * {@link SnapshotVersion} objekter skal legges inn/oppdateres/slettes pÃ¥. Standardverdien er
      * {@link SnapshotVersion#CURRENT}, som er passe for ikke-versjonerte systemer.
      */
     private SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
@@ -82,7 +82,7 @@ public class MockupStore implements Store {
     private final Collection<Class<? extends BubbleId>> ignoredIdClasses;
 
     /**
-     * @param ignoredIdClasses id-klasser som ikke skal følges
+     * @param ignoredIdClasses id-klasser som ikke skal fÃ¸lges
      */
     @Inject
     public MockupStore(Injector injector, TestNumber testNumber, IdService idService, @Named("ignoredIdClasses") Collection<Class<? extends BubbleId>> ignoredIdClasses) {
@@ -98,14 +98,14 @@ public class MockupStore implements Store {
     }
 
     /**
-     * @return snapshotVersion objektene for øyeblikket legges inn på
+     * @return snapshotVersion objektene for Ã¸yeblikket legges inn pÃ¥
      */
     public SnapshotVersion getSnapshotVersion() {
         return snapshotVersion;
     }
 
     /**
-     * Endrer snapshotVersion objektene skal manipuleres på.
+     * Endrer snapshotVersion objektene skal manipuleres pÃ¥.
      *
      * @param snapshotVersion nytt snapshot-tidspunkt
      */
@@ -114,7 +114,7 @@ public class MockupStore implements Store {
     }
 
     /**
-     * Endrer snapshotVersion objektene skal manipuleres på.
+     * Endrer snapshotVersion objektene skal manipuleres pÃ¥.
      *
      * @param snapshotVersionString nytt snapshot-tidspunkt
      */
@@ -136,7 +136,7 @@ public class MockupStore implements Store {
                 // Denne spesielle snapshotversion styres etter tidspunktet mockupstore befinner seg i.
                 return bubbleId.getType().cast(mockupPersister.get(bubbleId, snapshotVersion));
             } else {
-                // Her kan det være aktuelt å forby id-er nyere enn gjeldende snapshotVersion, men det kan også være nyttig å ha det løst som dette.
+                // Her kan det vÃ¦re aktuelt Ã¥ forby id-er nyere enn gjeldende snapshotVersion, men det kan ogsÃ¥ vÃ¦re nyttig Ã¥ ha det lÃ¸st som dette.
                 BubbleId<?> currentBubbleId = bubbleId.asSnapshotVersionCurrent();
                 return bubbleId.getType().cast(mockupPersister.get(currentBubbleId, bubbleId.getSnapshotVersion()));
             }
@@ -439,12 +439,12 @@ public class MockupStore implements Store {
     /**
      * Finner alle id-ene til alle bobler referert til fra angitte bobleobjekt rekursivt.
      *
-     * @param bubbleObjects    en eller flere bobleobjekt søket skal starte med
+     * @param bubbleObjects    en eller flere bobleobjekt sÃ¸ket skal starte med
      * @return id-ene, inkludert de til gitte bobleobjekt
      */
     private Set<BubbleId<?>> findLinkedBubbleIds(Collection<BubbleObject> bubbleObjects) {
         ArrayDeque<BubbleObject> uncheckedObjects = new ArrayDeque<>(bubbleObjects);
-        Set<BubbleObject> linkedObjects = new LinkedHashSet<>(); // Ønsker å bevare insert rekkefølgen
+        Set<BubbleObject> linkedObjects = new LinkedHashSet<>(); // Ã˜nsker Ã¥ bevare insert rekkefÃ¸lgen
 
         while (!uncheckedObjects.isEmpty()) {
             BubbleObject object = uncheckedObjects.remove();
@@ -477,7 +477,7 @@ public class MockupStore implements Store {
     /**
      * Finner alle BubbleIds som refereres til fra dette objektet og alle underkomponenter.
      * <p>
-     * Algoritmen tar høyde for at domenemodellen har doble eller sirkulære linker. Benytter derfor en {@code Stack} for å overkomme dette.
+     * Algoritmen tar hÃ¸yde for at domenemodellen har doble eller sirkulÃ¦re linker. Benytter derfor en {@code Stack} for Ã¥ overkomme dette.
      *
      * @param object           objektet som skal granskes
      * @return alle id-er, inkludert potensielt objektets egen id
@@ -559,7 +559,7 @@ public class MockupStore implements Store {
     }
 
     public SortedMap<SnapshotVersion, MockupTransfer> getAllTransfersForIds(Collection<? extends BubbleId> ids, SnapshotVersion beforeSnapshotVersion) {
-        Set<BubbleId<?>> allReferencedIds = new LinkedHashSet<>(); // Ønsker å bevare rekkefølgen slik at den ikke avhenger av hashkoden til id-verdien
+        Set<BubbleId<?>> allReferencedIds = new LinkedHashSet<>(); // Ã˜nsker Ã¥ bevare rekkefÃ¸lgen slik at den ikke avhenger av hashkoden til id-verdien
 
         SortedMap<SnapshotVersion, MockupTransfer> allCompleteTransfers = mockupPersister.getTransfersBefore(beforeSnapshotVersion);
         for (Map.Entry<SnapshotVersion, MockupTransfer> entry : allCompleteTransfers.entrySet()) {

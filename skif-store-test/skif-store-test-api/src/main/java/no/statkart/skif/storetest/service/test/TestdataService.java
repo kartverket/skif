@@ -11,7 +11,7 @@ public interface TestdataService extends no.statkart.skif.service.test.TestdataS
 
     /**
      * TODO: Ta bort
-     * Hjelpe tjeneste for skif-tester som brukes til å slette data i tester som ikke bruker unike testdatasett
+     * Hjelpe tjeneste for skif-tester som brukes til Ã¥ slette data i tester som ikke bruker unike testdatasett
      *
      * @param id id-verdi
      * @param tableName tabellnavn

@@ -8,9 +8,9 @@ package no.statkart.skif.mapper;
  */
 public interface MappingBase {
     /**
-     * Dersom man har sirkluære referanser på begge sider av en mapping, er det viktig at man registrerer target slik
-     * at man kan gjenbruke referansen senere. {@link DefaultTypeMapper} gjør dette. Det er viktig at target
-     * registereres før feltene dens mappes.
+     * Dersom man har sirkluÃ¦re referanser pÃ¥ begge sider av en mapping, er det viktig at man registrerer target slik
+     * at man kan gjenbruke referansen senere. {@link DefaultTypeMapper} gjÃ¸r dette. Det er viktig at target
+     * registereres fÃ¸r feltene dens mappes.
      *
      * @param source    objekt det mappes fra
      * @param target    objekt det mappes til

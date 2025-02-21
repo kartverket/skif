@@ -51,13 +51,13 @@ public class HistorikkEnumKodeTest extends StoreTestTestCase {
     public void getHistoriskKode() {
         try {
             store.get(HistorikkEnumKodeId.Kode2Id);
-            Assert.fail("Skulle fått exception");
+            Assert.fail("Skulle fÃ¥tt exception");
         } catch (FinderException e) { // Egentlig ObjectNotFoundException
             // OK
         }
 
         HistorikkEnumKodeId kodeId = (HistorikkEnumKodeId) HistorikkEnumKodeId.Kode2Id.asSnapshotVersion(SnapshotVersion.createInstance("2012-09-10 00:00:00.0"));
         HistorikkEnumKode kode = store.get(kodeId);
-        Assert.assertEquals(kode.getSluttdato(), SnapshotVersion.CURRENT.getTimestamp(), "Sluttdato er current før den er slettet");
+        Assert.assertEquals(kode.getSluttdato(), SnapshotVersion.CURRENT.getTimestamp(), "Sluttdato er current fÃ¸r den er slettet");
     }
 }

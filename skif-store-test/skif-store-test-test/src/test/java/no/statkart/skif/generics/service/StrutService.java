@@ -4,7 +4,7 @@ import no.statkart.skif.generics.domain.Strut;
 import no.statkart.skif.generics.domain.StrutId;
 
 /**
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 1.0 - sprint 28
  */
 public interface StrutService {

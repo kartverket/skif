@@ -27,14 +27,14 @@ public class SnapshotVersionArgumentListAnalyser {
         Annotation[][] parameterAnnotations = apiMethod.getParameterAnnotations();
         int length = types.length;
 
-        // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping på metodenivå  => Bruk SnapshotVersionContext
+        // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping pÃ¥ metodenivÃ¥  => Bruk SnapshotVersionContext
         if (length == 0 || hasSuppressSVMappingAnnotation(apiMethod)) return new SnapshotVersionD2WResult(length);
 
         // Regel 2: siste parameter er av type SnapshotVersion og er  annotert med @ServiceContextMapped. Denne skal da mappes via ServiceContext og ikke som egen parameter
         if (isSnapshotVersionType(types[length - 1]) && hasServiceContextMappedAnnotation(parameterAnnotations[length - 1]))
             return new SnapshotVersionD2WResult((SnapshotVersion)args[length - 1], length - 1);
 
-        // Regel 3: Første parameter fra start som ikke er annotert med {@code @Nullable} eller {@code SuppressSnapshotVersionMapping} og som
+        // Regel 3: FÃ¸rste parameter fra start som ikke er annotert med {@code @Nullable} eller {@code SuppressSnapshotVersionMapping} og som
         // er en subtype av SnapshotVersion, BubbleId eller Collection<? extends BubbleId>.
         for (int i=0; i<length; i++) {
             if (!hasIngnoreAnnotation(parameterAnnotations[i])) {
@@ -72,12 +72,12 @@ public class SnapshotVersionArgumentListAnalyser {
         Annotation[][] parameterAnnotations = apiMethod.getParameterAnnotations();
         int length = types.length;
 
-        // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping på metodenivå => apimethod skal ikke ha egen snapshotVersion parameter
+        // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping pÃ¥ metodenivÃ¥ => apimethod skal ikke ha egen snapshotVersion parameter
         if (length == 0 || hasSuppressSVMappingAnnotation(apiMethod) ) return new SnapshotVersionW2DResult(false, length);
 
         // Regel 2: siste parameter er av type SnapshotVersion og er annotert med @ServiceContextMapped => apimethod har en ekstra SnapshotVersion parameter
         if (isSnapshotVersionType(types[length - 1]) && hasServiceContextMappedAnnotation(parameterAnnotations[length - 1]))
-            return new SnapshotVersionW2DResult(true, length-1); // length må være en mindre fordi siste argument skal ikke komme fra wsapi args men må settes manuelt av proxy
+            return new SnapshotVersionW2DResult(true, length-1); // length mÃ¥ vÃ¦re en mindre fordi siste argument skal ikke komme fra wsapi args men mÃ¥ settes manuelt av proxy
 
         return new SnapshotVersionW2DResult(false, length);
     }

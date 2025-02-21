@@ -66,7 +66,7 @@ public class MockupFrameworkTest extends StoreTestTestCase {
         MockupFacade readFacade = mockupFacadeFactory.getReadMockupFacade();
         Assert.assertTrue(readFacade.getTestNumber().isNR_0(), "readFacade har feil testnummer");
 
-        Assert.assertEquals(injector.getInstance(MockupFacadeFactory.class), mockupFacadeFactory, "MockupFacadeBuilder skal være singleton slik at read testsett gjenbrukes automatisk");
+        Assert.assertEquals(injector.getInstance(MockupFacadeFactory.class), mockupFacadeFactory, "MockupFacadeBuilder skal vÃ¦re singleton slik at read testsett gjenbrukes automatisk");
 
         MockupTransfer transfer = readFacade.getTransfer(SnapshotVersion.createInstance("2011-10-02 08:00:00.00"));
         Assert.assertEquals(1, transfer.getInsertedObjects().size(), "Antall inserts i transfer");
@@ -83,7 +83,7 @@ public class MockupFrameworkTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester persistering av readset. Multible kall til TestdataService.saveAll skal kun føre til at readsettet
+     * Tester persistering av readset. Multible kall til TestdataService.saveAll skal kun fÃ¸re til at readsettet
      * lagres en gang
      */
     public void testSaveReadSet() {
@@ -91,7 +91,7 @@ public class MockupFrameworkTest extends StoreTestTestCase {
         MockupFacade readFacade = mockupFacadeBuilder.getReadMockupFacadeAndSaveData();
         Assert.assertNotNull(store.get(readFacade.getFooMockupFactory().getFooIdGamleveien()));
 
-        // Dette kall skal ikke gjemme readsett på nytt da det finnes fra før. Skal ikke feile heller
+        // Dette kall skal ikke gjemme readsett pÃ¥ nytt da det finnes fra fÃ¸r. Skal ikke feile heller
         final MockupFacade readFacade2 = mockupFacadeBuilder.getReadMockupFacade();
         testdataService.saveAll(readFacade2.getAllTransfers());
         Assert.assertEquals(readFacade.getFooMockupFactory().getFooIdGamleveien(), readFacade.getFooMockupFactory().getFooIdGamleveien());
@@ -113,7 +113,7 @@ public class MockupFrameworkTest extends StoreTestTestCase {
     }
 
     /**
-     * Forsøk på å gjemme samme writeset flere ganger skal gi exeption
+     * ForsÃ¸k pÃ¥ Ã¥ gjemme samme writeset flere ganger skal gi exeption
      */
     @Test(expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Testset already exists in database: TestNumber.*")
     public void testSaveSameWriteSetMultipleTimes() {
@@ -162,7 +162,7 @@ public class MockupFrameworkTest extends StoreTestTestCase {
 
     // TODO: Erstatte med full bruk av mockuprammeverk, slik at id blir unik
     @Test(groups = "broken")
-    // Får Error in custom provider, com.google.inject.OutOfScopeException: Cannot access Key[type=no.statkart.skif.service.ServiceRequestContext, annotation=[none]] outside of a scoping block
+    // FÃ¥r Error in custom provider, com.google.inject.OutOfScopeException: Cannot access Key[type=no.statkart.skif.service.ServiceRequestContext, annotation=[none]] outside of a scoping block
     public void testSaveRaz() {
         TestdataService testService = injector.getInstance(TestdataService.class);
 
@@ -183,7 +183,7 @@ public class MockupFrameworkTest extends StoreTestTestCase {
         }
     }
 
-    //@Test(groups="broken") // Får følgende feil på Jenkins: Error in custom provider, com.google.inject.OutOfScopeException: Cannot access Key[type=no.statkart.skif.service.ServiceRequestContext, annotation=[none]] outside of a scoping block
+    //@Test(groups="broken") // FÃ¥r fÃ¸lgende feil pÃ¥ Jenkins: Error in custom provider, com.google.inject.OutOfScopeException: Cannot access Key[type=no.statkart.skif.service.ServiceRequestContext, annotation=[none]] outside of a scoping block
     public void testSaveUpdateRaz() {
         TestdataService testService = injector.getInstance(TestdataService.class);
 
@@ -233,17 +233,17 @@ public class MockupFrameworkTest extends StoreTestTestCase {
         MockupFacadeFactory mockupFacadeFactory = injector.getInstance(MockupFacadeFactory.class);
         MockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacade();
 
-        // Får her bare sjekket at det ikke kommer ut mer enn forventet. Grafen får ikke blitt særlig komplisert uten flere sammenkoblede historiske objekter.
+        // FÃ¥r her bare sjekket at det ikke kommer ut mer enn forventet. Grafen fÃ¥r ikke blitt sÃ¦rlig komplisert uten flere sammenkoblede historiske objekter.
         FooId<?> idGamleveien = mockupFacade.getFooMockupFactory().getFooIdGamleveien();
         SortedMap<SnapshotVersion, MockupTransfer> allTransfersForIds = mockupFacade.getAllTransfersForIds(Sets.newHashSet(idGamleveien));
         Assert.assertEquals(allTransfersForIds.size(), 2, "Antall snapshots eller transfers");
 
         SnapshotVersion firstSnapshot = SnapshotVersion.createInstance("2011-10-02 08:03:00.00");
         MockupTransfer firstTransfer = allTransfersForIds.get(firstSnapshot);
-        Assert.assertNotNull(firstTransfer, "Første transfer");
-        Assert.assertEquals(firstTransfer.getInsertedObjects(), Lists.newArrayList(mockupFacade.getStore().get(idGamleveien.asSnapshotVersion(firstSnapshot))), "Inserted i første transfer");
-        Assert.assertEquals(firstTransfer.getUpdatedObjects(), Lists.newArrayList(), "Updated i første transfer");
-        Assert.assertEquals(firstTransfer.getDeletedObjects(), Lists.newArrayList(), "Deleted i første transfer");
+        Assert.assertNotNull(firstTransfer, "FÃ¸rste transfer");
+        Assert.assertEquals(firstTransfer.getInsertedObjects(), Lists.newArrayList(mockupFacade.getStore().get(idGamleveien.asSnapshotVersion(firstSnapshot))), "Inserted i fÃ¸rste transfer");
+        Assert.assertEquals(firstTransfer.getUpdatedObjects(), Lists.newArrayList(), "Updated i fÃ¸rste transfer");
+        Assert.assertEquals(firstTransfer.getDeletedObjects(), Lists.newArrayList(), "Deleted i fÃ¸rste transfer");
 
         SnapshotVersion secondSnapshot = SnapshotVersion.createInstance("2011-10-02 08:04:00.00");
         MockupTransfer secondTransfer = allTransfersForIds.get(secondSnapshot);
@@ -330,7 +330,7 @@ public class MockupFrameworkTest extends StoreTestTestCase {
     }
 
     /**
-     * Verifiserer at man får feil ved overskridelse av {@link TestIdServiceLong#PREFIX_FACTOR}
+     * Verifiserer at man fÃ¥r feil ved overskridelse av {@link TestIdServiceLong#PREFIX_FACTOR}
      */
     @Test //SKIF-663
     public void assignIdGirFeilVedOverflowAvIdsekvens() {

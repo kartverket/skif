@@ -6,7 +6,7 @@ import java.util.Objects;
 
 
 /**
- * Hjelpestruktur for å returnere 2 verdier fra metoden
+ * Hjelpestruktur for Ã¥ returnere 2 verdier fra metoden
  *
  * @author Henrik Fredholm
  * @since 2.4

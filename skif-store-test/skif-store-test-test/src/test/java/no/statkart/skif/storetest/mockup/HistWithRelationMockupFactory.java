@@ -34,7 +34,7 @@ public class HistWithRelationMockupFactory extends AbstractMockupFactory {
     }
 
     /**
-     * Oppretter 3 objekter som peker på HistSimpleId2 på forskjellige tidspunkter.
+     * Oppretter 3 objekter som peker pÃ¥ HistSimpleId2 pÃ¥ forskjellige tidspunkter.
      * <ul>
      *     <li>Kl '2011-10-02 08:02:01.00' Er det en som peker</li>
      *     <li>Kl '2011-10-02 08:02:02.00' Er det to som peker</li>

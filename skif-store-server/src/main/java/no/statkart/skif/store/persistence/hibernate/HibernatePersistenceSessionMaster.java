@@ -9,7 +9,7 @@ import org.hibernate.internal.SessionImpl;
 public interface HibernatePersistenceSessionMaster extends PersistenceSessionMaster {
 
     /**
-     * Gir ut {@code SessionImpl} for å kunne få adgang til connection direkte.
+     * Gir ut {@code SessionImpl} for Ã¥ kunne fÃ¥ adgang til connection direkte.
      */
     SessionImpl reserveSession();
 

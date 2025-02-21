@@ -3,14 +3,14 @@ package no.statkart.skif.mapper;
 import com.google.common.reflect.TypeToken;
 
 /**
- * Interface for å opprette {@link TypeMapper}e dynamisk.
+ * Interface for Ã¥ opprette {@link TypeMapper}e dynamisk.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
 public interface TypeMapperFactory {
     /**
-     * Prøver å opprette en mapper mellom gitte typer.
+     * PrÃ¸ver Ã¥ opprette en mapper mellom gitte typer.
      *
      *
      * @param wsapiTypeToken     Web service-type

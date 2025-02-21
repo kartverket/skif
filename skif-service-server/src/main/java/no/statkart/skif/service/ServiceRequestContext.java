@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.security.Principal;
 
 /**
- * Denne klasseninneholder infomasjon om inneværende kall som vedlikeholdes av servicerammeverket.
+ * Denne klasseninneholder infomasjon om innevÃ¦rende kall som vedlikeholdes av servicerammeverket.
  *
  * @author Henrik Fredholm
  * @since 2.0

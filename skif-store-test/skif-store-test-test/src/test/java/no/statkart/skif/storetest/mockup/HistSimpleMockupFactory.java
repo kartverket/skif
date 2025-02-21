@@ -31,7 +31,7 @@ public class HistSimpleMockupFactory extends AbstractMockupFactory {
 
     @Override
     public void createAllMockups() {
-        // histSimpleId1. Ingen HistWithRelation peker på denne
+        // histSimpleId1. Ingen HistWithRelation peker pÃ¥ denne
 
         store.setSnapshotVersion(MockupSnapshots.S0);
         store.insert(createSimple(histSimpleId1, 1, "KARTGATA"));
@@ -44,7 +44,7 @@ public class HistSimpleMockupFactory extends AbstractMockupFactory {
         store.setSnapshotVersion(MockupSnapshots.S4);
         store.update(createSimple(histSimpleId1, 1, "KARTVEIEN"));
 
-        // histSimpleId2. En eller flere HistWithRelation peker på denne avhengig av tidspunkt
+        // histSimpleId2. En eller flere HistWithRelation peker pÃ¥ denne avhengig av tidspunkt
         store.setSnapshotVersion(MockupSnapshots.S2);
         store.insert(createSimple(histSimpleId2, 2, "GAMMELVEIEN"));
         store.setSnapshotVersion(MockupSnapshots.S3);

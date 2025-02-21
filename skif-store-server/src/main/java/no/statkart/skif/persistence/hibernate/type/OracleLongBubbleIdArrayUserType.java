@@ -2,9 +2,9 @@ package no.statkart.skif.persistence.hibernate.type;
 
 /**
  * En Hibernate {@code UserType} for persistering av collections via Oracle {@code oracle.sql.ARRAY}. Klassen brukes
- * hovedsakelig i forbindelse med spørringer med collections av vilkårlig stor størrelse.
+ * hovedsakelig i forbindelse med spÃ¸rringer med collections av vilkÃ¥rlig stor stÃ¸rrelse.
  *
- * <p>For å kunne bruke henholdsvis Number, Date og String arrays i spørringer må Oracle skjemaet inneholde følgende definisjoner:
+ * <p>For Ã¥ kunne bruke henholdsvis Number, Date og String arrays i spÃ¸rringer mÃ¥ Oracle skjemaet inneholde fÃ¸lgende definisjoner:
  * <pre>
  *    CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER;
  *    CREATE TYPE DATE_LIST_TYPE AS TABLE OF DATE;

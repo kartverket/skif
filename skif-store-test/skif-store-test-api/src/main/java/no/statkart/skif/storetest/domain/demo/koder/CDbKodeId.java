@@ -5,13 +5,13 @@ import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.domain.kodeliste.StoreTestDbKodeId;
 
 /**
- * Id superklasse for alle koder av type CDbKode. Denne klasse kan ikke være abstrakt siden hibernate oppretter
- * instanser av denne type når idene lastes. I hibernate interceptoren bytte CDbKodeId ut med id av riktig
+ * Id superklasse for alle koder av type CDbKode. Denne klasse kan ikke vÃ¦re abstrakt siden hibernate oppretter
+ * instanser av denne type nÃ¥r idene lastes. I hibernate interceptoren bytte CDbKodeId ut med id av riktig
  * subtype.
  * <p>
  * Det at en kode arver fra CDbKode betyder i denne sammenheng blot at koden skal hentes fra tabellen til CDbKode.
- * Det vil f.eks ikke være noen kodeliste som inneholder alle kode av type CDbKode. Det er kun kodelister for
- * hver individuel kode. Det vil heller ikke være noen domeneobjekter som har felter av type CDbKode. Det har ingen
+ * Det vil f.eks ikke vÃ¦re noen kodeliste som inneholder alle kode av type CDbKode. Det er kun kodelister for
+ * hver individuel kode. Det vil heller ikke vÃ¦re noen domeneobjekter som har felter av type CDbKode. Det har ingen
  * mening.
  *
  * @author Henrik Fredholm
@@ -38,6 +38,6 @@ public class CDbKodeId<T extends CDbKode> extends StoreTestDbKodeId<T> {
 
     @Override
     public KodelisteId<?> getKodelisteId() {
-        throw new UnsupportedOperationException("Må implementeres i subklasse ");
+        throw new UnsupportedOperationException("MÃ¥ implementeres i subklasse ");
     }
 }

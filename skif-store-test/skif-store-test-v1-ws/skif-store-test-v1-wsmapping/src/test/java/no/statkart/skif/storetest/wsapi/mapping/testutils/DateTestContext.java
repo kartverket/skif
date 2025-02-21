@@ -17,7 +17,7 @@ import java.util.TimeZone;
 /**
  * Test klasse for testing av tidsangivelse og tidsforskjeller.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.4 - ny grunnbok sprint 29
  */
 public class DateTestContext {
@@ -133,7 +133,7 @@ public class DateTestContext {
     }
 
     /**
-     * Tester at representasjon av tid har samme verdi på tidslinjen.
+     * Tester at representasjon av tid har samme verdi pÃ¥ tidslinjen.
      * @param filters optional filtrering av felter som sjekkes. Se {@link FILTER}.
      */
     public void assertSameTimeFor(XMLGregorianCalendar actual, String message, FILTER... filters) {
@@ -171,7 +171,7 @@ public class DateTestContext {
 
 
     /**
-     * Tester at representasjon av tid har samme verdi på tidslinjen.
+     * Tester at representasjon av tid har samme verdi pÃ¥ tidslinjen.
      */
     public void assertSameTimeFor(java.sql.Time actual, String message) {
         final GregorianCalendar gregorianCalendar = new GregorianCalendar(timeZone);
@@ -182,7 +182,7 @@ public class DateTestContext {
     }
 
     /**
-     * Tester at representasjon av tid har samme verdi på tidslinjen.
+     * Tester at representasjon av tid har samme verdi pÃ¥ tidslinjen.
      */
     public void assertSameTimeFor(java.sql.Date actual, String message) {
         final GregorianCalendar gregorianCalendar = new GregorianCalendar(timeZone);
@@ -193,7 +193,7 @@ public class DateTestContext {
     }
 
     /**
-     * Tester at representasjon av tid har samme verdi på tidslinjen.
+     * Tester at representasjon av tid har samme verdi pÃ¥ tidslinjen.
      */
     public void assertSameTimeFor(java.sql.Timestamp actual, String message) {
         final GregorianCalendar gregorianCalendar = new GregorianCalendar(timeZone);
@@ -205,7 +205,7 @@ public class DateTestContext {
 
 
     /**
-     * Tester at representasjon av tid har samme verdi på tidslinjen.
+     * Tester at representasjon av tid har samme verdi pÃ¥ tidslinjen.
      */
     public void assertSameTimeFor(java.util.Date actual, String message) {
         final GregorianCalendar gregorianCalendar = new GregorianCalendar(timeZone);

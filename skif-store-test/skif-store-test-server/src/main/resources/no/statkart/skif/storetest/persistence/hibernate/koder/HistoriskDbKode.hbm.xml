@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
@@ -13,7 +13,7 @@
 
         <property name="kodeverdi"/>
 
-        <!-- For øyeblikket er alle StoreTest-koder lokalisert, siden de var det i forrige revisjon. Mapper derfor lokaliseringen allerede her. -->
+        <!-- For Ã¸yeblikket er alle StoreTest-koder lokalisert, siden de var det i forrige revisjon. Mapper derfor lokaliseringen allerede her. -->
         <map name="localizationMap" table="HistoriskDbKodeLoc" lazy="true" fetch="join">
             <key column="id"/>
             <composite-map-key class="no.statkart.skif.store.localization.LocalizationMap$LocalizationKey">

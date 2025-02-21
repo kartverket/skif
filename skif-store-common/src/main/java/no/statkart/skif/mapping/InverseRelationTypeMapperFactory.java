@@ -7,7 +7,7 @@ import no.statkart.skif.mapper.TypeMapperFactory;
 import no.statkart.skif.store.InverseRelation;
 
 /**
- * Oppretter {@link InverseRelationTypeMapper}-e for mappinger som ser ut til å være slikt.
+ * Oppretter {@link InverseRelationTypeMapper}-e for mappinger som ser ut til Ã¥ vÃ¦re slikt.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0

@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Annotasjon som kan brukes for å si hvilken versjon en klasse eller et felt ble introdusert i.
+ * Annotasjon som kan brukes for Ã¥ si hvilken versjon en klasse eller et felt ble introdusert i.
  *
  * @author Roar Ingebrigtsen
  * @since 2.7

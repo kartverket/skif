@@ -45,7 +45,7 @@ public class TestNumber implements Serializable {
     }
 
     /**
-     * Genererer prefiks for id basert på testnummer.
+     * Genererer prefiks for id basert pÃ¥ testnummer.
      *
      * @return id-prefiks unikt for testsett
      */

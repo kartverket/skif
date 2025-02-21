@@ -4,10 +4,10 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
- * {@link Map#equals(Object)} kaller {@link Object#equals(Object)} på {@link Map.Entry}. Vi ønsker vanligvis ikke dette,
- * men heller bruke {@link EqualsByFields} for å sammenligne.
+ * {@link Map#equals(Object)} kaller {@link Object#equals(Object)} pÃ¥ {@link Map.Entry}. Vi Ã¸nsker vanligvis ikke dette,
+ * men heller bruke {@link EqualsByFields} for Ã¥ sammenligne.
  * <p/>
- * Denne oppfyller kontrakten for {@link Map#equals(Object)} ved å delegere til bruk av {@link SetHandler} på
+ * Denne oppfyller kontrakten for {@link Map#equals(Object)} ved Ã¥ delegere til bruk av {@link SetHandler} pÃ¥
  * {@link Map#entrySet()} pluss {@link MapEntryHandler}.
  */
 public class MapHandler implements EqualityHandler<Map<?, ?>> {

@@ -22,16 +22,16 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tester tracking av inversrelasjoner nÂr objekter med relasjonspeker ligger i et Set. NÂr innhold i settet endres
- * sÂ endres ogsÂ inversrelasjoner til den boblen som eier settet. Hvis settets elementer er Component eller
+ * Tester tracking av inversrelasjoner n√•r objekter med relasjonspeker ligger i et Set. N√•r innhold i settet endres
+ * s√• endres ogs√• inversrelasjoner til den boblen som eier settet. Hvis settets elementer er Component eller
  * ValueObject kan flere inversrelasjoner endres seg samtidig.
  * <p/>
  * Model 1:
- * X1AA1 -REL-*> X1CCMany. X1AA1 har en one-many relasjon til X1CCMany. Dvs. det er kun X1AA som kan peke pÂ samme
+ * X1AA1 -REL-*> X1CCMany. X1AA1 har en one-many relasjon til X1CCMany. Dvs. det er kun X1AA som kan peke p√• samme
  * X1CCMany. Som relasjonsnavn brukes REL1.
  * <p/>
  * Model 2:
- * X1AA1 *-REL-*> X1CCMany. X1AA1 har en many-many relasjon til X1CCMany. Dvs. det er fler X1AA som kan peke pÂ samme
+ * X1AA1 *-REL-*> X1CCMany. X1AA1 har en many-many relasjon til X1CCMany. Dvs. det er fler X1AA som kan peke p√• samme
  * X1CCMany. Som relasjonsnavn brukes REL1.
  * <p/>
  * Model 3:
@@ -236,7 +236,7 @@ public class AbstractInverseRelationTrackingSetTest extends StoreTestTestCase {
     }
 
     /**
-     * Model 1: flytt tidligere lagt til objekt til et set tilh¯rende en annen boble
+     * Model 1: flytt tidligere lagt til objekt til et set tilh√∏rende en annen boble
      */
     public void moveOperationForSingleInverseRelationWithCardinalityOne() {
         try (UnitOfWork ignore = store.beginUnitOfWork()) {

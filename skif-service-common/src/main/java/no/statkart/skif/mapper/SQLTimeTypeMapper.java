@@ -13,9 +13,9 @@ import static no.statkart.skif.mapper.SQLTimestampTypeMapper.createPureGregorian
 
 /**
  * Mapper mellom {@link java.sql.Time} og {@link XMLGregorianCalendar}.
- * Typen i XML-skjema skal være {@code xs:time}.
+ * Typen i XML-skjema skal vÃ¦re {@code xs:time}.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.4 - ny grunnbok sprint 29
  */
 public class SQLTimeTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, java.sql.Time, Mapping> {

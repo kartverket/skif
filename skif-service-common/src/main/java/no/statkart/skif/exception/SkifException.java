@@ -3,13 +3,13 @@ package no.statkart.skif.exception;
 import org.slf4j.Logger;
 
 /**
- * Felles baseklasse for alle typer exception som kan oppstå i systemet.
+ * Felles baseklasse for alle typer exception som kan oppstÃ¥ i systemet.
  * <p>
  * Feiltyper deles strengt inn i {@link ApplicationException applikasjonsfeil} og {@link SystemException systemfeil}.
  *
  *
  * @author Henrik Fredholm
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 public class SkifException extends RuntimeException {
@@ -27,7 +27,7 @@ public class SkifException extends RuntimeException {
     }
 
     /**
-     * Constructor som må finnes i alle avledede klasser. Dette for å understøtte reflection.
+     * Constructor som mÃ¥ finnes i alle avledede klasser. Dette for Ã¥ understÃ¸tte reflection.
      */
     public SkifException(String message, Throwable cause) {
         super(message, cause);

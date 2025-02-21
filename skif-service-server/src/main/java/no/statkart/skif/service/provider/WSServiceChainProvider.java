@@ -6,10 +6,10 @@ import com.google.inject.TypeLiteral;
 import no.statkart.skif.service.chain.WSServiceChainFactory;
 
 /**
- * Guice provider for å lage en {@code WSServiceChain} instans av type {@code T}. For å unngå å komme i konflikt
- * med Guice binder for {@code T} bør denne provider bindes til {@code T} med annotation {@code @WSServiceChain}.
+ * Guice provider for Ã¥ lage en {@code WSServiceChain} instans av type {@code T}. For Ã¥ unngÃ¥ Ã¥ komme i konflikt
+ * med Guice binder for {@code T} bÃ¸r denne provider bindes til {@code T} med annotation {@code @WSServiceChain}.
  * <p>
- * Klassen bruker {@code WSServiceChainFactory<T>} til å lage en kjede av {@code ProxyHandler<T>}'ere og
+ * Klassen bruker {@code WSServiceChainFactory<T>} til Ã¥ lage en kjede av {@code ProxyHandler<T>}'ere og
  * legger en {@code Proxy<T>} foran.
  *
  * @author Henrik Fredholm

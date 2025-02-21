@@ -33,7 +33,7 @@ public class SerializableTest {
     );
 
     /**
-     * Verifiserer alle kjente klasser som er serialiserbare har fått
+     * Verifiserer alle kjente klasser som er serialiserbare har fÃ¥tt
      * satt serialVersionUID ihht standard
      */
     public void testSerialVersionUID() {

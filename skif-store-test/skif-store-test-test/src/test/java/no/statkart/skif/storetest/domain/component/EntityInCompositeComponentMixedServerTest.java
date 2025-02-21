@@ -53,14 +53,14 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
     }
 
     /**
-     * Tester persistering av mockup testset for BubbleWithEntityInCompositeComponent og herunder også "SKIF-428:
-     * Hibernate Batch insert ordering does not consider associations i composite components". Når testen kjøres må
-     * hibernate sql logging være slått på og man må manulet sjekket at sql inserts batches riktig. Testsettet
-     * består av:
+     * Tester persistering av mockup testset for BubbleWithEntityInCompositeComponent og herunder ogsÃ¥ "SKIF-428:
+     * Hibernate Batch insert ordering does not consider associations i composite components". NÃ¥r testen kjÃ¸res mÃ¥
+     * hibernate sql logging vÃ¦re slÃ¥tt pÃ¥ og man mÃ¥ manulet sjekket at sql inserts batches riktig. Testsettet
+     * bestÃ¥r av:
      *  - en BubbleWithEntityInCompositeComponent boble som ikke har relasjon til level1 og level2 entities
      *  - to BubbleWithEntityInCompositeComponent bobler med relasjon til level1 entities
      *  - tre BubbleWithEntityInCompositeComponent bobler med relasjon til level1 og level2 entities
-     * Dette testsett skal føre til at Hibernate produserer tre insert batchgrupper for
+     * Dette testsett skal fÃ¸re til at Hibernate produserer tre insert batchgrupper for
      * BubbleWithEntityInCompositeComponent med henholdsvis en, to, og tre  BubbleWithEntityInCompositeComponent
      * inserts. For updates skal Hibernate kun produsere en update batchgruppe som setter ownerId.
      */
@@ -74,7 +74,7 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         final BubbleWithEntityInCompositeComponentMockupFactory mockupFactory = mockupFacade.getBubbleWithEntityInCompositeComponentMockupFactory();
         final BubbleWithEntityInCompositeComponent bubbleWithNullComponents = store.get(mockupFactory.getWithNullComponentsId());
         assertEquals(bubbleWithNullComponents.getText(), "Obj " + 1 + " med null components");
-        // Composite components som inneholder Set vil aldrig være null da de alltid vil ha et tomt Set i seg.
+        // Composite components som inneholder Set vil aldrig vÃ¦re null da de alltid vil ha et tomt Set i seg.
         assertNotNull(bubbleWithNullComponents.getLevel1Component());
         assertSame(bubbleWithNullComponents, bubbleWithNullComponents.getLevel1Component().getOwner());
         assertSame(bubbleWithNullComponents, bubbleWithNullComponents.getLevel1Component().getCompositeRootOwner());
@@ -104,7 +104,7 @@ public class EntityInCompositeComponentMixedServerTest extends StoreTestMixedTes
         assertSame(bubbleWithNullLevel2Components, bubbleWithNullLevel2Components.getLevel1Component().getEntity().getOwner());
         assertThat(bubbleWithNullLevel2Components.getLevel1Component().getEntitySet()).hasSize(1).are(new CheckOwner<>(bubbleWithNullLevel2Components));
 
-        // Composite components som inneholder Set vil aldrig være null da de alltid vil ha en tomt Set.
+        // Composite components som inneholder Set vil aldrig vÃ¦re null da de alltid vil ha en tomt Set.
         assertNotNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component());
         assertTrue(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().isNullComponent());
         assertNull(bubbleWithNullLevel2Components.getLevel1Component().getLevel2Component().getText());

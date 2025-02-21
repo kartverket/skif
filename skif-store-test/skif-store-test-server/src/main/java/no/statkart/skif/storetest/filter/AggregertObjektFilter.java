@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.domain.demo.AggregertObjekt;
 import java.sql.Timestamp;
 
 /**
- * Legger på metadata på AggregertObjekt.
+ * Legger pÃ¥ metadata pÃ¥ AggregertObjekt.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

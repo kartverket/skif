@@ -139,7 +139,7 @@ public class MappingTest extends AutomagicTest {
     }
 
     /**
-     * Callback metode som hjelper AutomaticTest med å lage instanser for felter som krever spesial behandling
+     * Callback metode som hjelper AutomaticTest med Ã¥ lage instanser for felter som krever spesial behandling
      * @param clazz
      * @return
      * @throws IllegalAccessException

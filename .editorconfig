@@ -1,7 +1,7 @@
 root = true
 
 [*]
-charset = latin1
+charset = utf-8
 indent_size = 4
 indent_style = space
 insert_final_newline = true
@@ -10,6 +10,3 @@ insert_final_newline = true
 ij_java_class_count_to_use_import_on_demand = 9999
 ij_java_names_count_to_use_import_on_demand = 9999
 ij_java_packages_to_use_import_on_demand = java.awt.*,javax.swing.*
-
-[*.gradle]
-charset = utf-8

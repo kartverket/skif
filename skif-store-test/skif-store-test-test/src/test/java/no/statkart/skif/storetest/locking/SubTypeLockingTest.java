@@ -17,7 +17,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tester at låsing virker med subtyper.
+ * Tester at lÃ¥sing virker med subtyper.
  *
  * @author Tor Egil R. Strand
  * @since 2.3.0
@@ -45,8 +45,8 @@ public class SubTypeLockingTest extends StoreTestServerTestCase {
 
         lockerStrategy.lock(new SubTypeWithPrimitiveId(idValue));
 
-        Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypeWithPrimitiveId(idValue)), "Objektet ble ikke låst i det hele tatt");
-        Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypedBubbleId(idValue)), "Objektet er ikke låst som sin supertype");
+        Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypeWithPrimitiveId(idValue)), "Objektet ble ikke lÃ¥st i det hele tatt");
+        Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypedBubbleId(idValue)), "Objektet er ikke lÃ¥st som sin supertype");
     }
 
     public void testSupertypeLockSubtypeIsLocked() {
@@ -58,8 +58,8 @@ public class SubTypeLockingTest extends StoreTestServerTestCase {
 
         lockerStrategy.lock(new SubTypeWithPrimitiveId(idValue));
 
-        Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypedBubbleId(idValue)), "Objektet ble ikke låst i det hele tatt");
-        Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypeWithPrimitiveId(idValue)), "Objektet er ikke låst som sin supertype");
+        Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypedBubbleId(idValue)), "Objektet ble ikke lÃ¥st i det hele tatt");
+        Assert.assertTrue(lockerStrategy.isLockedByCaller(new SubTypeWithPrimitiveId(idValue)), "Objektet er ikke lÃ¥st som sin supertype");
     }
 
     public void testOtherLockDifferentType() {
@@ -74,7 +74,7 @@ public class SubTypeLockingTest extends StoreTestServerTestCase {
 
         try {
             lockerStrategy.lock(new SubTypeWithPrimitiveId(idValue));
-            Assert.fail("Skulle ikke fått låst dette objektet");
+            Assert.fail("Skulle ikke fÃ¥tt lÃ¥st dette objektet");
         } catch (LockedException e) {
             // Dette er det som skal skje
         }

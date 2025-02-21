@@ -17,6 +17,6 @@ public class CopyHelperTest {
         assertThat(a1.a).isEqualTo("a");
         assertThat(a2.a).isEqualTo("a");
         assertThat(a1.b).isTrue();
-        assertThat(a2.b).isFalse(); // b er transient så den blir ikke med ved copy.
+        assertThat(a2.b).isFalse(); // b er transient sÃ¥ den blir ikke med ved copy.
     }
 }

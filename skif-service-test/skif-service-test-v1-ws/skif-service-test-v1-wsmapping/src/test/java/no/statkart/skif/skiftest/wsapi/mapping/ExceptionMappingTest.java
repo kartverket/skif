@@ -21,8 +21,8 @@ import static org.testng.Assert.assertTrue;
 @Test
 public class ExceptionMappingTest {
     /**
-     * Tester at AbstractExceptionMapper gjør om EJBAccessException til PersmissionDeniedException.
-     * Tester også at PersmissionDeniedException konverteres riktig til ServiceException og tilbake igjen.
+     * Tester at AbstractExceptionMapper gjÃ¸r om EJBAccessException til PersmissionDeniedException.
+     * Tester ogsÃ¥ at PersmissionDeniedException konverteres riktig til ServiceException og tilbake igjen.
      */
     public void testEjbAccessException() {
         SkifTestExceptionMapper skifTestExceptionMapper = new SkifTestExceptionMapper();

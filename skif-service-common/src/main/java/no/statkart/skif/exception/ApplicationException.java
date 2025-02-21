@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 /**
  * Felles klasse for alle typer applikasjonsfeil.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 public class ApplicationException extends SkifException {

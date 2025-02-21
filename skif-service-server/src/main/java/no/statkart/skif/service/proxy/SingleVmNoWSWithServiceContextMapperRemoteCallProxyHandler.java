@@ -48,7 +48,7 @@ public class SingleVmNoWSWithServiceContextMapperRemoteCallProxyHandler<S> exten
     }
 
     protected Object invokeMethodWithSnapshot(Object proxy, Method method, Object[] args, SnapshotVersion snapshotVersion) throws Throwable {
-        // Sett snapshotVersion som skal brukes av mappingrammeverket for inneværende request
+        // Sett snapshotVersion som skal brukes av mappingrammeverket for innevÃ¦rende request
         serviceRequestScope.enter();
         SnapshotVersion orignalSnapshotVersion = snapshotVersionContext.setSnapshotVersion(snapshotVersion); // Denne feiler aldrig
         try {

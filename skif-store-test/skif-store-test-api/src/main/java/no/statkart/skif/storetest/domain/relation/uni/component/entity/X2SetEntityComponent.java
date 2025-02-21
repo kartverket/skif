@@ -6,7 +6,7 @@ import no.statkart.skif.store.InverseRelationCollector;
 import no.statkart.skif.store.InverseRelationParticipation;
 
 /**
- * En EntityComponent som inngår i et sett i boblen X2AAWithEntityComponent og som har en referanse til X2BBOne.
+ * En EntityComponent som inngÃ¥r i et sett i boblen X2AAWithEntityComponent og som har en referanse til X2BBOne.
  */
 public class X2SetEntityComponent implements EntityComponentWithOwnerReference<X2AAWithEntityComponent>, InverseRelationParticipation {
     private Long id;

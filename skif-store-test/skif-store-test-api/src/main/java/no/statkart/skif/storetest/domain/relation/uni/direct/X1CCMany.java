@@ -7,20 +7,20 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
- * Klasse for å test unidireksjonelle relasjoner. Klassen inngår i følgende relasjon:
+ * Klasse for Ã¥ test unidireksjonelle relasjoner. Klassen inngÃ¥r i fÃ¸lgende relasjon:
  * <ul>
  * <li>{@link X1AA#getSomeCCsIds()} - med invers relasjon {@link X1AAFinderService#findInvSomeCCsId}</li>
  * </ul>
  *
  * Relasjonen mellom {@link X1AA} og {@link X1CCMany} er implementer i database via en foreign key som ligger i tabellen
- * for X1CCmany. Derfor kan relasjonen kun inngå ett sett om gangen. Kardinaliteten på invers relasjonen er derfor
+ * for X1CCmany. Derfor kan relasjonen kun inngÃ¥ ett sett om gangen. Kardinaliteten pÃ¥ invers relasjonen er derfor
  * {@code ONE}.
  *
- * <P>Invers relasjonen er modellert både via en eksplisitt property og via en egen findermetode på klassen.
- * Findermetoden er egentlig overflødig og finnes kun for test formål samt for demonstrasjon av hvordan slike
+ * <P>Invers relasjonen er modellert bÃ¥de via en eksplisitt property og via en egen findermetode pÃ¥ klassen.
+ * Findermetoden er egentlig overflÃ¸dig og finnes kun for test formÃ¥l samt for demonstrasjon av hvordan slike
  * findermetoder skal implementeres. Findermetoden spiller kun indirekte sammen med property {@link #invSomeCCsId}
- * ved at den bruker samme underliggende mekanisme for caching av relasjonen. For at relasjonen skal bli cachet må
- * caching i {@code StoreRelationCache} enables først.
+ * ved at den bruker samme underliggende mekanisme for caching av relasjonen. For at relasjonen skal bli cachet mÃ¥
+ * caching i {@code StoreRelationCache} enables fÃ¸rst.
  *
  * @author Henrik Fredholm
  * @since 2.4

@@ -1,4 +1,4 @@
--- Script for manuell opprettelse av brukere i SKIF sikkerhetsskjema basert på dokumentasjon fra SKIF-394.
+-- Script for manuell opprettelse av brukere i SKIF sikkerhetsskjema basert pÃ¥ dokumentasjon fra SKIF-394.
 ALTER SESSION SET CURRENT_SCHEMA = "SKIF_USERS";
 
 INSERT INTO "USERS" VALUES ('admin', '{Sha-1}Rqk6y/Woa5q+Xcoejfprtu1cgaowe5s=', 'Initielt Opprettet Administrator');

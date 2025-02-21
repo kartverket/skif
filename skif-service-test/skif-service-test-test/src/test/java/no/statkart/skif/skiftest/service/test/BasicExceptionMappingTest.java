@@ -32,9 +32,9 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     }
 
     /**
-     * NoTx service kaster checked exception som mappes av server og klient. På server mappes exceptionen til en
-     * wsapi exception annotert med @WebFault. På klient mappes wsapi excpetionen tilbake igjen til opprindelig exception
-     * klasse (siden det brukes samme mapper på klient og server).
+     * NoTx service kaster checked exception som mappes av server og klient. PÃ¥ server mappes exceptionen til en
+     * wsapi exception annotert med @WebFault. PÃ¥ klient mappes wsapi excpetionen tilbake igjen til opprindelig exception
+     * klasse (siden det brukes samme mapper pÃ¥ klient og server).
      */
     @Test
     public void testThrowMappedExceptionNoTx() throws SimpleException, SimpleNonMappedException {
@@ -92,7 +92,7 @@ public class BasicExceptionMappingTest extends SkifTestCase {
     }
 
     /**
-     * Test kall til service virker når det ikke genereres exception. Kombinasjon indirect (3 typer) samt
+     * Test kall til service virker nÃ¥r det ikke genereres exception. Kombinasjon indirect (3 typer) samt
      * indirect (3 typer) etterfulgt av direct (3 typer).
      */
     @Test

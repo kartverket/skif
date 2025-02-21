@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 
 /**
  * ProxyHandler som setter SnapshotVersionContext ut fra parametrene slik {@link D2WAdapterWithServiceContextSVMapperProxyHandler}
- * gjør. Denne er ment å brukes i call-chain på tjeneren.
+ * gjÃ¸r. Denne er ment Ã¥ brukes i call-chain pÃ¥ tjeneren.
  *
  * @since 2.9.0
  */

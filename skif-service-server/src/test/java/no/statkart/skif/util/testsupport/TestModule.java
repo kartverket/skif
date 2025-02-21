@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Guice Module for å teste konfigurasjonsrammeverket. Inneholder en singleton liste
- * ved navn "test"  man kan hente ut og teste på.
+ * Guice Module for Ã¥ teste konfigurasjonsrammeverket. Inneholder en singleton liste
+ * ved navn "test"  man kan hente ut og teste pÃ¥.
  *
  * @author Henrik Fredholm
  * @since 2.0

@@ -33,9 +33,9 @@ public class X1CCManyMockupFactory extends AbstractMockupFactory {
 
     @Override
     public void createAllMockups() {
-        store.insert(createObject(c1Id, 1, "Ingen A'er peker på denne"));
-        store.insert(createObject(c2Id, 2, "A3 peker på denne"));
-        store.insert(createObject(c3Id, 3, "A3 peker på denne"));
+        store.insert(createObject(c1Id, 1, "Ingen A'er peker pÃ¥ denne"));
+        store.insert(createObject(c2Id, 2, "A3 peker pÃ¥ denne"));
+        store.insert(createObject(c3Id, 3, "A3 peker pÃ¥ denne"));
     }
 
     private X1CCMany createObject(X1CCManyId<?> id, int nr, String text) {

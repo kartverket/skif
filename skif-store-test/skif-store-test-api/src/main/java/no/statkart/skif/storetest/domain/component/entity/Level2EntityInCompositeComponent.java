@@ -6,7 +6,7 @@ import no.statkart.skif.store.InverseRelationCollector;
 import no.statkart.skif.store.InverseRelationParticipation;
 
 /**
- * En entity som inngår i en composite component og som har som har {@code BubbleWithEntityInCompositeComponent} som owner.
+ * En entity som inngÃ¥r i en composite component og som har som har {@code BubbleWithEntityInCompositeComponent} som owner.
  *
  * @author Henrik Fredholm
  * @since 2.4

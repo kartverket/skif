@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * RemoteServiceModule som i SingleVm mode installere tjenester som gjøre det mulig for en klient å kjøre
- * vilkårlig kode på serveren uten først å måtte definere en service som inneholder koden.
+ * RemoteServiceModule som i SingleVm mode installere tjenester som gjÃ¸re det mulig for en klient Ã¥ kjÃ¸re
+ * vilkÃ¥rlig kode pÃ¥ serveren uten fÃ¸rst Ã¥ mÃ¥tte definere en service som inneholder koden.
  *
  * Denne modul brukes for testing og patching i SingleVm mode. I JEE mode installerer modulen ingen tjenester.
  *

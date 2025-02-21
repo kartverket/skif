@@ -7,7 +7,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotation som angir at parameteren overføres via ServiceContext istedet for en selvstendig parameter
+ * Annotation som angir at parameteren overfÃ¸res via ServiceContext istedet for en selvstendig parameter
  *
  * @author Henrik Fredholm
  * @since 2.4

@@ -4,14 +4,14 @@ import java.io.Serializable;
 import java.util.Locale;
 
 /**
- * Holder på parametre som normalt ikke endrer seg og må være med i alle kall, enten direkte eller indirekte.
+ * Holder pÃ¥ parametre som normalt ikke endrer seg og mÃ¥ vÃ¦re med i alle kall, enten direkte eller indirekte.
  *
  * @author Henrik Fredholm
  * @since 2.0
  */
 public interface ServiceContext extends Serializable {
     /**
-     * Den konkrete versjonen av systemet som kaller er laget for å gå mot. Dette brukes for å kompensere for mindre
+     * Den konkrete versjonen av systemet som kaller er laget for Ã¥ gÃ¥ mot. Dette brukes for Ã¥ kompensere for mindre
      * endringer i API-er.
      *
      * @return et versjonsnummer
@@ -19,7 +19,7 @@ public interface ServiceContext extends Serializable {
     String getSystemVersion();
 
     /**
-     * Angir den konkrete versjonen av systemet som kaller er laget for å gå mot. Dette brukes for å kompensere for mindre
+     * Angir den konkrete versjonen av systemet som kaller er laget for Ã¥ gÃ¥ mot. Dette brukes for Ã¥ kompensere for mindre
      * endringer i API-er.
      *
      * @param systemVersion    versjonsnummer API-et skal etterligne

@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Baseklasse for mockupfactories. Holder på sentrale ting som store og testnummer.
+ * Baseklasse for mockupfactories. Holder pÃ¥ sentrale ting som store og testnummer.
  * SKIF-applikasjoner definerer opp en eller flere egne implementasjoner av denne i en facade-implementasjon.
  *
  * @author Tor Egil R. Strand
@@ -53,17 +53,17 @@ public abstract class AbstractMockupFactory {
      * Finner alle definerte id-er for gitt klasse.
      *
      * @param idClass            id-klasse som skal finnes
-     * @param includeSubTypes    om subklasser av gitt id-klasse også skal returneres
+     * @param includeSubTypes    om subklasser av gitt id-klasse ogsÃ¥ skal returneres
      * @return id-ene
      */
     public <I extends BubbleId> Set<I> getAllIds(Class<I> idClass, boolean includeSubTypes) {
-        Set<I> ids = new LinkedHashSet<I>(); // Ønsker å bevare rekkefølge samt gjøre funksjonen deterministisk (dvs at rekkefølgen ikke avhenger av hashkoden til id-verdien)
+        Set<I> ids = new LinkedHashSet<I>(); // Ã˜nsker Ã¥ bevare rekkefÃ¸lge samt gjÃ¸re funksjonen deterministisk (dvs at rekkefÃ¸lgen ikke avhenger av hashkoden til id-verdien)
 
         try {
             Field[] fields = getClass().getDeclaredFields();
             for (Field field : fields) {
                 if ((includeSubTypes && idClass.isAssignableFrom(field.getType())) || (!includeSubTypes && field.getType().equals(idClass))) {
-                    field.setAccessible(true); // Foreldreklasser har tydeligvis ikke lov til å tukle med sine barns private deler, men det blåser vi i
+                    field.setAccessible(true); // Foreldreklasser har tydeligvis ikke lov til Ã¥ tukle med sine barns private deler, men det blÃ¥ser vi i
                     ids.add(idClass.cast(field.get(this)));
                 }
             }

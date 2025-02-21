@@ -4,7 +4,7 @@ import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 
 /**
- * Service for å hent alle kodelister
+ * Service for Ã¥ hent alle kodelister
  *
  * @author Henrik Fredholm
  * @since 2.1

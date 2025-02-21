@@ -25,21 +25,21 @@ public class StoreServer extends AbstractStore {
 
     /**
      * Fjerner alle umodifiserte objekter fra Store og underliggende sessioner. Hvis Store inneholder modifiserte objekter
-     * så  utføres det {@link #evictAll()}  kall. Hvis Store ikke inneholder modifiserte objekter så nullstilles
-     * Store og underliggende sessioner. Informasjon låste objekter kastes fra minnet, men finnes fortsatt i database
-     * og går derfor ikke tapt.
+     * sÃ¥  utfÃ¸res det {@link #evictAll()}  kall. Hvis Store ikke inneholder modifiserte objekter sÃ¥ nullstilles
+     * Store og underliggende sessioner. Informasjon lÃ¥ste objekter kastes fra minnet, men finnes fortsatt i database
+     * og gÃ¥r derfor ikke tapt.
      */
     public void clear() {
         storeServerSession().clear();
     }
 
     /**
-     * Starter en ny transaksjon ved manuell transaksjonshåndtering.
+     * Starter en ny transaksjon ved manuell transaksjonshÃ¥ndtering.
      * <p>
-     * Denne metoden er kun en hjelpemetode for verktøy som kjører utelukkende i tjenermodus. Når Store kjører i
+     * Denne metoden er kun en hjelpemetode for verktÃ¸y som kjÃ¸rer utelukkende i tjenermodus. NÃ¥r Store kjÃ¸rer i
      * servicerammeverket er det {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate#beginService()}
      * eller {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks#beginService()}
-     * som utfører denne jobben. Disse må derfor være holdes synkronisert.
+     * som utfÃ¸rer denne jobben. Disse mÃ¥ derfor vÃ¦re holdes synkronisert.
      */
     public void beginTransaction() {
         storeServerSession().beginTransaction();
@@ -51,24 +51,24 @@ public class StoreServer extends AbstractStore {
     }
 
     /**
-     * Committer en transaksjon ved manuell transaksjonshåndtering.
+     * Committer en transaksjon ved manuell transaksjonshÃ¥ndtering.
      * <p>
-     * Denne metoden er kun en hjelpemetode for verktøy som kjører utelukkende i tjenermodus. Når Store kjører i
+     * Denne metoden er kun en hjelpemetode for verktÃ¸y som kjÃ¸rer utelukkende i tjenermodus. NÃ¥r Store kjÃ¸rer i
      * servicerammeverket er det {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate#completeService()}
      * eller {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks#completeService()}
-     * som utfører denne jobben. Disse må derfor være holdes synkronisert.
+     * som utfÃ¸rer denne jobben. Disse mÃ¥ derfor vÃ¦re holdes synkronisert.
      */
     public void commitTransaction() {
         storeServerSession().commitTransaction();
     }
 
     /**
-     * Ruller tilbake en transaksjon ved manuell transaksjonshåndtering.
+     * Ruller tilbake en transaksjon ved manuell transaksjonshÃ¥ndtering.
      * <p>
-     * Denne metoden er kun en hjelpemetode for verktøy som kjører utelukkende i tjenermodus. Når Store kjører i
+     * Denne metoden er kun en hjelpemetode for verktÃ¸y som kjÃ¸rer utelukkende i tjenermodus. NÃ¥r Store kjÃ¸rer i
      * servicerammeverket er det {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernate#abortService()}
      * eller {@link no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks#abortService()}
-     * som utfører denne jobben. Disse må derfor være holdes synkronisert.
+     * som utfÃ¸rer denne jobben. Disse mÃ¥ derfor vÃ¦re holdes synkronisert.
      */
     public void rollbackTransaction() {
         storeServerSession().rollbackTransaction();
@@ -79,12 +79,12 @@ public class StoreServer extends AbstractStore {
     }
 
     /**
-     * Flusher endringer, kaller finishListeners, flusher på nytt om nødvendig. Tar deretter og fjerner alle
+     * Flusher endringer, kaller finishListeners, flusher pÃ¥ nytt om nÃ¸dvendig. Tar deretter og fjerner alle
      * objekter som har blitt slettet fra Store og setter status for alle andre endret objekter til {@code
      * UNCHANGED}.
      * <p>
-     * Kall til finish() bør etterfølges av kall til enten {@link #commitTransaction()} eller {@link
-     * #rollbackTransaction()} uten at det utføres andre mellomliggende operasjoner på {@code StoreServer}.
+     * Kall til finish() bÃ¸r etterfÃ¸lges av kall til enten {@link #commitTransaction()} eller {@link
+     * #rollbackTransaction()} uten at det utfÃ¸res andre mellomliggende operasjoner pÃ¥ {@code StoreServer}.
      */
     public void finish() {
         storeServerSession().finish();
@@ -108,7 +108,7 @@ public class StoreServer extends AbstractStore {
 
     @Override
     public UnitOfWorkTransfer getUnitOfWorkTransfer() {
-        // TODO: Kaste feil dersom  objekter er låst på level 0.
+        // TODO: Kaste feil dersom  objekter er lÃ¥st pÃ¥ level 0.
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
         return storeUnitOfWork.getUnitOfWorkTransfer();
     }
@@ -119,7 +119,7 @@ public class StoreServer extends AbstractStore {
 
         StoreUnitOfWork storeUnitOfWork = storeUnitOfWork();
         storeSession = storeUnitOfWork.endUnitOfWork();
-        // Nødvendig å kjøre clear() her slik at vi får lest inn objekter på nytt som har blitt oppdatert utenom inneværende session
+        // NÃ¸dvendig Ã¥ kjÃ¸re clear() her slik at vi fÃ¥r lest inn objekter pÃ¥ nytt som har blitt oppdatert utenom innevÃ¦rende session
         clear();
     }
 

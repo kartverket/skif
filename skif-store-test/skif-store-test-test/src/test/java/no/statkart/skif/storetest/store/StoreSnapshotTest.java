@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 /**
- * Tester uthenting av snapshot på klient og server bruk av UnitOfWork på server.
+ * Tester uthenting av snapshot pÃ¥ klient og server bruk av UnitOfWork pÃ¥ server.
  *
  * @author Henrik Fredholm
  * @since 2.8

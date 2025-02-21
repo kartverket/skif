@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
         version="1.0"
         elementFormDefault="qualified"
@@ -19,7 +19,7 @@
             <jaxb:schemaBindings>
                 <jaxb:package>
                     <jaxb:javadoc><![CDATA[
-                        <body>Denne pakken inneholder navn og typer for feil og feiltyper som kan oppstå i API-et.</body>
+                        <body>Denne pakken inneholder navn og typer for feil og feiltyper som kan oppstÃ¥ i API-et.</body>
                     ]]></jaxb:javadoc>
                 </jaxb:package>
             </jaxb:schemaBindings>
@@ -37,7 +37,7 @@
             <xs:appinfo>
                 <jaxb:class>
                     <jaxb:javadoc><![CDATA[
-                        Generell feilmelding for alle hånterte feil ifra systemet.
+                        Generell feilmelding for alle hÃ¥nterte feil ifra systemet.
 
                         For klassifisering av feil, se {@link #category} feltet.
                     ]]></jaxb:javadoc>
@@ -55,10 +55,10 @@
                                 Det siste leddet annoterer da konkret subtype av exception.
 
                                 <br>
-                                En eksempelimplementasjon kan ønske å skille systemfeil ifra applikasjonsfeil. Dette gjøres enkelt ved å matche {@link #category}-streng mot ":SystemException:" osv..
+                                En eksempelimplementasjon kan Ã¸nske Ã¥ skille systemfeil ifra applikasjonsfeil. Dette gjÃ¸res enkelt ved Ã¥ matche {@link #category}-streng mot ":SystemException:" osv..
 
                                 <p>
-                                Kategorisering av feil skjer etter følgende struktur:
+                                Kategorisering av feil skjer etter fÃ¸lgende struktur:
                                 <ul>
                                   <li type="circle">
                                     <h3>ServiceException</h5>
@@ -69,21 +69,21 @@
                                         verdi = {@code ":ServiceException:SystemException:"}
                                         <br>
                                             Felles klasse for alle typer systemfeil. <br />
-                                            Systemfeil skiller seg ifra applikasjonsfeil på den måte da dette er feil som oppstår i og ved kjøring av miljøet som applikasjonen kjører i.
-                                            Eksempler er implementasjonsfeil og feil som kan oppstå når deler av det fysiske miljøet rundt ikke er tigjengelig.
+                                            Systemfeil skiller seg ifra applikasjonsfeil pÃ¥ den mÃ¥te da dette er feil som oppstÃ¥r i og ved kjÃ¸ring av miljÃ¸et som applikasjonen kjÃ¸rer i.
+                                            Eksempler er implementasjonsfeil og feil som kan oppstÃ¥ nÃ¥r deler av det fysiske miljÃ¸et rundt ikke er tigjengelig.
                                         <ul>
                                           <li type="circle">
                                             <h3>ImplementationException</h5>
                                             verdi = {@code ":ServiceException:SystemException:ImplementationException:"}
                                             <br>
-                                                Feil som oppstår i kode enten på server, eller på bagrunn av feil i kall fra klient.
+                                                Feil som oppstÃ¥r i kode enten pÃ¥ server, eller pÃ¥ bagrunn av feil i kall fra klient.
                                           </li>
                                           <li type="circle">
                                             <h3>OperationalException</h5>
                                             verdi = {@code ":ServiceException:SystemException:OperationalException:"}
                                             <br>
-                                                Operasjonelle feil har feilkilder som stammer utelukkende ifra det utenpåliggende miljøet systemet kjører i.
-                                                Typiske eksempler er at serveren går tom for diskplass, eller at forbindelsen med databasen blir borte.
+                                                Operasjonelle feil har feilkilder som stammer utelukkende ifra det utenpÃ¥liggende miljÃ¸et systemet kjÃ¸rer i.
+                                                Typiske eksempler er at serveren gÃ¥r tom for diskplass, eller at forbindelsen med databasen blir borte.
                                           </li>
                                         </ul>
                                       </li>
@@ -92,8 +92,8 @@
                                         verdi = {@code ":ServiceException:ApplicationException:"}
                                         <br>
                                             Felles type for alle applikasjonsfeil.
-                                            Applikasjonsfeil skiller seg ifra systemfeil på den måte da dette er feil som direkte skyldes applikasjons-spesifik logikk og validering.
-                                            Med dette forstås brukerfeil så vel som domeneregler applikasjonen definerer.
+                                            Applikasjonsfeil skiller seg ifra systemfeil pÃ¥ den mÃ¥te da dette er feil som direkte skyldes applikasjons-spesifik logikk og validering.
+                                            Med dette forstÃ¥s brukerfeil sÃ¥ vel som domeneregler applikasjonen definerer.
                                         <ul>
                                           <li type="circle">
                                             <h3>FinderException</h5>
@@ -143,7 +143,7 @@
             <xs:appinfo>
                 <jaxb:class>
                     <jaxb:javadoc><![CDATA[
-                        Informasjon om exception oppstått på server med hirarki, stacktrace mm.
+                        Informasjon om exception oppstÃ¥tt pÃ¥ server med hirarki, stacktrace mm.
                     ]]></jaxb:javadoc>
                 </jaxb:class>
             </xs:appinfo>
@@ -171,7 +171,7 @@
                 <xs:annotation>
                     <xs:appinfo>
                         <jaxb:property>
-                            <jaxb:javadoc><![CDATA[Evt nøstet exception kan komme her.]]></jaxb:javadoc>
+                            <jaxb:javadoc><![CDATA[Evt nÃ¸stet exception kan komme her.]]></jaxb:javadoc>
                         </jaxb:property>
                     </xs:appinfo>
                 </xs:annotation>

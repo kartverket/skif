@@ -41,10 +41,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Global kodeliste manager som håndterer EnumKoder og tilhørende kodelister. Manageren inneholder
+ * Global kodeliste manager som hÃ¥ndterer EnumKoder og tilhÃ¸rende kodelister. Manageren inneholder
  * en global map med alle EnumKoder og kodelister. Den gir alltid ut kopier av objektene sine slik
- * at disse kan lokaliseres og tilpasses riktig SnapshotVersion uten å påvirke det globale objektet.
- * Manageren har ansvar for å hente opp lokaliserte verdi fra resourcefiler.
+ * at disse kan lokaliseres og tilpasses riktig SnapshotVersion uten Ã¥ pÃ¥virke det globale objektet.
+ * Manageren har ansvar for Ã¥ hente opp lokaliserte verdi fra resourcefiler.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -65,7 +65,7 @@ public class EnumKodelisteManager {
     private Map<String, Map<String, Properties>> resourceFiles = new HashMap<>();
 
     /**
-     * Installerer EnumKoder og tilhørende kodelister
+     * Installerer EnumKoder og tilhÃ¸rende kodelister
      *
      * @param enumKodeIdClass id-klassen til kode-klassen
      */
@@ -103,7 +103,7 @@ public class EnumKodelisteManager {
         Kodeliste kodeliste = kodeSupport.getKodelisteId().createTypeInstance();
         kodeliste.setId(kodeSupport.getKodelisteId());
         kodeliste.setKodeIdClass(kodeIdClass);
-        kodeliste.setKoderIds(null); // Marker at dette må lastes senere
+        kodeliste.setKoderIds(null); // Marker at dette mÃ¥ lastes senere
         if (kodeliste instanceof Localized) {
             initializeLocalizedFieldsForKodeliste(kodeSupport, (Kodeliste & Localized) kodeliste);
         }
@@ -122,7 +122,7 @@ public class EnumKodelisteManager {
 
             int lastDot = baseName.lastIndexOf('.');
             final String packageName, resourceName;
-            if (lastDot < 1) { // Hvis baseName starter med punktum, så er det ingen pakke foran
+            if (lastDot < 1) { // Hvis baseName starter med punktum, sÃ¥ er det ingen pakke foran
                 packageName = "";
                 resourceName = baseName;
             } else {
@@ -197,7 +197,7 @@ public class EnumKodelisteManager {
             Properties properties = entry.getValue();
 
             for (Map.Entry<Object, Object> propertyEntry : properties.entrySet()) {
-                // Det er bevisst at key castes og verdi toString-es. Key skal være en String, men value kan i prinsippet være hva som helst.
+                // Det er bevisst at key castes og verdi toString-es. Key skal vÃ¦re en String, men value kan i prinsippet vÃ¦re hva som helst.
                 String key = (String) propertyEntry.getKey();
 
                 if (key.startsWith(prefix)) {
@@ -240,7 +240,7 @@ public class EnumKodelisteManager {
 
         if (copyObject != null) {
             if (copyObject instanceof BubbleObjectWithHistory) {
-                // Dersom objektet kunne hentes ut, så er det ikke slettet enda. Dermed må sluttdato være current.
+                // Dersom objektet kunne hentes ut, sÃ¥ er det ikke slettet enda. Dermed mÃ¥ sluttdato vÃ¦re current.
                 ((BubbleObjectWithHistory) copyObject).setSluttdato(SnapshotVersion.CURRENT.getTimestamp());
             }
 
@@ -250,10 +250,10 @@ public class EnumKodelisteManager {
                 kodeliste.setId(kodeliste.getId().asSnapshotVersion(bubbleId));
 
                 List<KodeId<?>> originalKodeIds = kodeliste.getKoderIds();
-                if (originalKodeIds != null) { // Dersom null, så ligger kodene i databasen og skal ikke håndteres her
+                if (originalKodeIds != null) { // Dersom null, sÃ¥ ligger kodene i databasen og skal ikke hÃ¥ndteres her
                     List<KodeId<?>> kodeIds = new ArrayList<>(originalKodeIds.size());
                     if (BubbleObjectWithHistory.class.isAssignableFrom(kodeliste.getKodeClass())) {
-                        // Må filtrer vekk id-er for kodeverdier som ikke fantes for kodelistens snapshotversion
+                        // MÃ¥ filtrer vekk id-er for kodeverdier som ikke fantes for kodelistens snapshotversion
                         for (KodeId<?> originalKodeId : originalKodeIds) {
                             BubbleObjectWithHistory kode = (BubbleObjectWithHistory) enumCache.get(originalKodeId);
                             if (bubbleId.getSnapshotVersion().between(kode.getOppdateringsdato(), kode.getSluttdato())) {

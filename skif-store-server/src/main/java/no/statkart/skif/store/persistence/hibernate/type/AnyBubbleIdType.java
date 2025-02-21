@@ -32,7 +32,7 @@ public class AnyBubbleIdType extends BubbleIdType {
     public Class<? extends BubbleId> returnedClass() { return BubbleId.class; }
 
     /**
-     * Denne metode kan overskrives av subklasser som ønsker å bruke noe annet enn fully qualified classname som discriminator
+     * Denne metode kan overskrives av subklasser som Ã¸nsker Ã¥ bruke noe annet enn fully qualified classname som discriminator
      */
     @SuppressWarnings("unchecked")
     protected Class<? extends BubbleId<?>> returnedClass(Object value) {
@@ -84,7 +84,7 @@ public class AnyBubbleIdType extends BubbleIdType {
     }
 
     /**
-     * Oppretter id med den spesifisert verdi. Id classen må være av den type metoden {@link
+     * Oppretter id med den spesifisert verdi. Id classen mÃ¥ vÃ¦re av den type metoden {@link
      * #returnedClass()} spesifisere. SnapshotVersion kan ha defalut verdi siden den overskrive
      * automatisk av {@link #createId } metoden.
      *

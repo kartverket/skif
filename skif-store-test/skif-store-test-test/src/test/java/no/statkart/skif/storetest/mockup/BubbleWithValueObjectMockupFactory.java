@@ -51,7 +51,7 @@ public class BubbleWithValueObjectMockupFactory extends AbstractMockupFactory {
         BeloepValueObject sharedBeloep = CopyHelper.copy(beloepNOK1WithText);
         store.insert(createBubbleWithKode(withSameBeloepId, 1, null, sharedBeloep, sharedBeloep));
         store.insert(createBubbleWithKode(withBeloepSetId, 1, null, beloepNOK1, beloepDKR1, ImmutableSet.of(beloepNOK1, beloepDKR1)));
-        store.insert(createBubbleWithKode(withBeloepSetId2, 2, "Another set with beløp", beloepNOK1, beloepDKR1, ImmutableSet.of(beloepDKR1, beloepSEK20)));
+        store.insert(createBubbleWithKode(withBeloepSetId2, 2, "Another set with belÃ¸p", beloepNOK1, beloepDKR1, ImmutableSet.of(beloepDKR1, beloepSEK20)));
     }
 
     private BubbleWithValueObject createBubbleWithKode(BubbleWithValueObjectId<?> id, int nr, String text, @Nullable BeloepValueObject a, @Nullable BeloepValueObject b) {

@@ -19,8 +19,8 @@ import java.util.List;
 
 /**
  * En Hibernate {@code UserType} for persistering av collections med elementer av type {@code <E>} via Oracle
- * {@code oracle.sql.ARRAY}. Klassen brukes hovedsakelig i forbindelse med spørringer hvor collections
- * kan være  vilkårlig store.
+ * {@code oracle.sql.ARRAY}. Klassen brukes hovedsakelig i forbindelse med spÃ¸rringer hvor collections
+ * kan vÃ¦re  vilkÃ¥rlig store.
  *
  * @author Henrik Fredholm
  * @since 2.6

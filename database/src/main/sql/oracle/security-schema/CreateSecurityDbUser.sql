@@ -1,6 +1,6 @@
--- Script for manuell opprettelse av sikkerhetsdatabasebruker for SKIF basert på dokumentasjon fra SKIF-394.
--- Dette script må kjøres som systembruker for databasen
--- NB: Lokasjon for DATAFILE må tilpasse til databasen som anvendes
+-- Script for manuell opprettelse av sikkerhetsdatabasebruker for SKIF basert pÃ¥ dokumentasjon fra SKIF-394.
+-- Dette script mÃ¥ kjÃ¸res som systembruker for databasen
+-- NB: Lokasjon for DATAFILE mÃ¥ tilpasse til databasen som anvendes
 
 CREATE TABLESPACE "SKIF_USERS"
 DATAFILE 'C:\oracle\Oradata\DEV1\SKIF_USERS_01.DBF' SIZE 1M

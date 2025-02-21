@@ -6,11 +6,11 @@ import no.statkart.skif.service.logging.ServerCallLogger;
 import java.lang.reflect.Method;
 
 /**
- * Proxyledd for å logge kall til web service. Hvordan det skal logges bestemmes av implementasjonen av
+ * Proxyledd for Ã¥ logge kall til web service. Hvordan det skal logges bestemmes av implementasjonen av
  * {@link no.statkart.skif.service.logging.ServerCallLogger} som benyttes.
  * <p>
  * Denne proxyen skal ligge i ws-kjeden. Det betyr at denne proxyen kalles inne i metoden WSBean, slik at kallet til
- * den og alt før det allerede har skjedd. Kall som blir avvist pga. ugyldig brukernavn og/eller passord vil ikke bli
+ * den og alt fÃ¸r det allerede har skjedd. Kall som blir avvist pga. ugyldig brukernavn og/eller passord vil ikke bli
  * logget, da de bli avvist lenger ut.
  *
  * @author Tor Egil R. Strand

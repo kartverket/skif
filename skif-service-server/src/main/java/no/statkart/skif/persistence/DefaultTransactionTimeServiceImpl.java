@@ -5,9 +5,9 @@ import no.statkart.skif.service.scope.ServiceRequestScoped;
 import java.sql.Timestamp;
 
 /**
- * Dette er en enkel implementasjon som bruker tidspunktet denne tjenesten først blir etterspurt innenfor et
+ * Dette er en enkel implementasjon som bruker tidspunktet denne tjenesten fÃ¸rst blir etterspurt innenfor et
  * {@link no.statkart.skif.service.scope.ServiceRequestScope} som transaksjonstidspunkt. Dette betyr at flere
- * transaksjoner innenfor samme ServiceRequestScope får samme transaksjonstidspunkt. Hvis dette ikke er ønskelig, så må
+ * transaksjoner innenfor samme ServiceRequestScope fÃ¥r samme transaksjonstidspunkt. Hvis dette ikke er Ã¸nskelig, sÃ¥ mÃ¥
  * man bruke en annen implementasjon.
  *
  * @since 2.8.0

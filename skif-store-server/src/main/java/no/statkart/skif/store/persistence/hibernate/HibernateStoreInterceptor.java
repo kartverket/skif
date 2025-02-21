@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 
 /**
- * Interceptor for hibernate. Dvs. at metoder på denne klassen alltid blir kalt når objekter blir lastet, lagret og
+ * Interceptor for hibernate. Dvs. at metoder pÃ¥ denne klassen alltid blir kalt nÃ¥r objekter blir lastet, lagret og
  * fjernet gjennom en hibernate <code>Session</code>.
  *
  * @author Henrik Fredholm
@@ -35,7 +35,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
 
     /**
      * Denne metoden retter opp id'en for entiteter hvor hibernate har brukt supertypens idklasse
-     * @return false fordi vi ikke endrer på <code>state</code> til <code>entity</code>
+     * @return false fordi vi ikke endrer pÃ¥ <code>state</code> til <code>entity</code>
      * @see {@link org.hibernate.Interceptor#onLoad(Object, java.io.Serializable, Object[], String[], org.hibernate.type.Type[])}
      */
     public boolean onLoad(Object entity, Serializable hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
@@ -69,7 +69,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
 
     public Object instantiate(Class entitetClazz, Serializable id) throws CallbackException {
         sjekkSnapshotVersjon(id);
-        //Retur av null gjør at Hibernate bruker default oppførsel
+        //Retur av null gjÃ¸r at Hibernate bruker default oppfÃ¸rsel
         return null;
     }
 

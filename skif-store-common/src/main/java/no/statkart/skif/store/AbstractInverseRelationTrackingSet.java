@@ -11,17 +11,17 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Wrapper klasse for {@link Set} som inneholder objekter med boblereferanser som inngår i invers relasjoner. Slike
- * {@code Set} må overvåkes for ({@code add}- og {@code remove}-operasjoner for å kunne holde invers
- * relasjoner i {@link no.statkart.skif.store.relation.cache.RelationCache} oppdatert når innhold i settet endres.
+ * Wrapper klasse for {@link Set} som inneholder objekter med boblereferanser som inngÃ¥r i invers relasjoner. Slike
+ * {@code Set} mÃ¥ overvÃ¥kes for ({@code add}- og {@code remove}-operasjoner for Ã¥ kunne holde invers
+ * relasjoner i {@link no.statkart.skif.store.relation.cache.RelationCache} oppdatert nÃ¥r innhold i settet endres.
  * <p/>
- * Bemerk: I definisjonen av denne klassen burde {@link #getOwner()} egentlig extende både {@code BubbleObject} og
- * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da må man for owners at typen
+ * Bemerk: I definisjonen av denne klassen burde {@link #getOwner()} egentlig extende bÃ¥de {@code BubbleObject} og
+ * {@code InverseRelationParticipation}, men det er ikke hensiktsmessig fordi da mÃ¥ man for owners at typen
  * {@link ComponentWithOwnerReference} eksplisitt angi den eidende bobleklassen i tillegg til den direkte eiende klassen
- * og det blir veldig tungvint. Har derfor istedet valgt å lage en package private hjelpemetode
+ * og det blir veldig tungvint. Har derfor istedet valgt Ã¥ lage en package private hjelpemetode
  * {@link Bubbles#onChangeRelationImpl} som kun krever at owner som hentes ut er av type BubbleObject.
  * <p>
- * Eksempel på bruk:
+ * Eksempel pÃ¥ bruk:
  * <pre>{@code
  *     final Set<MyValueObject> myObjects = new AbstractInverseRelationTrackingSet<MyValueObject>(this, new HashSet<>()) {
  *         private static final long serialVersionUID = 1L;

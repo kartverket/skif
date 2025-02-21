@@ -3,8 +3,8 @@ package no.statkart.skif.config;
 import java.util.Iterator;
 
 /**
- * Overordnet konfigurasjonspakke som leser inn fra vilkårlig antall properties-filer, samt systemkonfigurasjon, i den rekkefølgen.
- * I tillegg er det også mulig å overstyre individuelle egenskaper programmatisk.
+ * Overordnet konfigurasjonspakke som leser inn fra vilkÃ¥rlig antall properties-filer, samt systemkonfigurasjon, i den rekkefÃ¸lgen.
+ * I tillegg er det ogsÃ¥ mulig Ã¥ overstyre individuelle egenskaper programmatisk.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

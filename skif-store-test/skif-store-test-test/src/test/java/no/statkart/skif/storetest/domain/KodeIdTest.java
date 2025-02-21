@@ -43,7 +43,7 @@ public class KodeIdTest {
 
 
     /**
-     * Tester sammenlikning av koder på tvers av versjoner
+     * Tester sammenlikning av koder pÃ¥ tvers av versjoner
      */
     public void testEqualsWithDifferentSnapshotVersions() {
         AEnumKodeId aOld = new AEnumKodeId(1L, SnapshotVersion.OLD);
@@ -51,7 +51,7 @@ public class KodeIdTest {
         assertTrue(AEnumKodeId.KodeAId.equalsIgnoreSnapshotVersion(aOld));
         assertEquals(AEnumKodeId.KodeAId.asSnapshotVersion(aOld), aOld);
 
-        // Skulle gjerne ha hatt kompiliering feil her, men får det ikke med dagens design
+        // Skulle gjerne ha hatt kompiliering feil her, men fÃ¥r det ikke med dagens design
         assertFalse(AEnumKodeId.KodeAId.equalsIgnoreSnapshotVersion(bOld));
     }
 

@@ -19,7 +19,7 @@ public class SkifServerModule extends SkifModule {
 
     @Override
     protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
-        // Konfigurer EJBServiceChain til å bruke en factory som har en ProxyHandler for transaksjonshåndtering
+        // Konfigurer EJBServiceChain til Ã¥ bruke en factory som har en ProxyHandler for transaksjonshÃ¥ndtering
         ModuleStrategyFactory factory = new ServerModuleStrategyFactory();
         StrategyTuple<ServerServiceModuleStrategy> prototype = factory.getPrototype(ServerServiceModule.class);
         prototype.getStrategy(ServiceMode.SINGLE_VM).setEjbServiceChainFactorySpecification(new EJBServiceChainFactorySpecification(EJBResourceProxyHandlerForConnection.class));

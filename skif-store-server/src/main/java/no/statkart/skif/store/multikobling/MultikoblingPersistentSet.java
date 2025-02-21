@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Utvider Hibernates {@link PersistentSet} til å håndtere {@link Multikobling}-er for {@link EntityComponent}-elementer
- * korrekt. Hvis en kobling fjernes via {@link #remove} for så senere å bli opprettet med en annen rolle, så sikre denne
+ * Utvider Hibernates {@link PersistentSet} til Ã¥ hÃ¥ndtere {@link Multikobling}-er for {@link EntityComponent}-elementer
+ * korrekt. Hvis en kobling fjernes via {@link #remove} for sÃ¥ senere Ã¥ bli opprettet med en annen rolle, sÃ¥ sikre denne
  * implementasjonen at entity-instansen for koblingen blir gjenbrukt. Klassen er designet for bli brukt sammen med
  * {@link Multikobling} som kun krever funksjonaliteten ifm {@link #add}-operasjoner.
  *

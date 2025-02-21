@@ -19,12 +19,12 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 
 /**
- * Tester identitet for komponenter basert på {@link no.statkart.skif.store.AbstractEntityComponent}.
+ * Tester identitet for komponenter basert pÃ¥ {@link no.statkart.skif.store.AbstractEntityComponent}.
  *
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-@Deprecated // Skrives om til å bruke andre objekter og mockupfactory
+@Deprecated // Skrives om til Ã¥ bruke andre objekter og mockupfactory
 public class EntityComponentTest extends SkifServerTestCase {
 
     @Inject
@@ -71,7 +71,7 @@ public class EntityComponentTest extends SkifServerTestCase {
         Assert.assertEquals(component.hashCode(), initialHashCode, "Hashcode har endret seg");
         Assert.assertNotSame(getPseudoId(component), component.getId(), "Id er pseudo-id");
 
-        // Få Store og Hibernate til å glemme objektet i minnet, og lese det opp fra databasen på nytt
+        // FÃ¥ Store og Hibernate til Ã¥ glemme objektet i minnet, og lese det opp fra databasen pÃ¥ nytt
         store.evict(bubbleWithComponents.getId());
 
         store.beginTransaction();
@@ -82,7 +82,7 @@ public class EntityComponentTest extends SkifServerTestCase {
 
         Assert.assertEquals(persistedComponent.getId(), component.getId(), "Id-ene er forskjellig etter opplesing");
         Assert.assertEquals(getPseudoId(persistedComponent), persistedComponent.getId(), "Id er ikke pseudo-id");
-        Assert.assertFalse(component.equals(persistedComponent), "Nytt objekt er ikke foventet å være likt det samme objektet i neste transaksjon");
+        Assert.assertFalse(component.equals(persistedComponent), "Nytt objekt er ikke foventet Ã¥ vÃ¦re likt det samme objektet i neste transaksjon");
     }
 
     private static Long getPseudoId(AbstractEntityComponent component) {

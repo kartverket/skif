@@ -3,7 +3,7 @@ package no.statkart.skif.store.relation.cache;
 import no.statkart.skif.store.Store;
 
 /**
- * En facade for håndtering av relation caching i Store. Klassen henter ut aktivt UnitOfWork level fra Store og
+ * En facade for hÃ¥ndtering av relation caching i Store. Klassen henter ut aktivt UnitOfWork level fra Store og
  * bruker dette level i kall videre til {@link no.statkart.skif.store.relation.cache.RelationCache}.
  *
  * @author Henrik Fredholm

@@ -36,14 +36,14 @@ public class W2DAdapterWithServiceContextMapperProxyHandler<T, A> extends W2DAda
 
     /**
      * Mapper argumenter i args slik at de kan brukes som innput parametre til {@code doapiMethod}. Hvis {@code contextMapper}
-     * er satt så mappes siste parameter i {@code args} til et intern domain ServiceContext objekt. De resterende parameter
-     * mappes på standard vis via {@code map}.
+     * er satt sÃ¥ mappes siste parameter i {@code args} til et intern domain ServiceContext objekt. De resterende parameter
+     * mappes pÃ¥ standard vis via {@code map}.
      *
      * @param args argumenter som skal mappes
      * @param wsapiMethod  wsapi metode som ble kallt. Inneholder informasjon om source parameter typer
      * @param doapiMethod  doapi metode som skal kalles. Inneholder informasjon om target parameter typer.
-     * @param length antall parametre i [@code args} som skal mappes. Hvis {@code contextMapper} er satt bør verdien være
-     *              {@code args.length-1} ellers bør den være {@code args.length} slik at siste parameter også mappes på
+     * @param length antall parametre i [@code args} som skal mappes. Hvis {@code contextMapper} er satt bÃ¸r verdien vÃ¦re
+     *              {@code args.length-1} ellers bÃ¸r den vÃ¦re {@code args.length} slik at siste parameter ogsÃ¥ mappes pÃ¥
      *               standard vis.
      * @return mappet parametre.
      */
@@ -53,7 +53,7 @@ public class W2DAdapterWithServiceContextMapperProxyHandler<T, A> extends W2DAda
                 throw new ImplementationException(String.format("Method '%s' must have at least one parameter. Is the context parameter missing in the definition of the Web Service method?", wsapiMethod));
             }
 
-            // Contextobjektet må mappes først siden det setter gjeldende snapshotVersion.
+            // Contextobjektet mÃ¥ mappes fÃ¸rst siden det setter gjeldende snapshotVersion.
             Object wsServiceContext = args[args.length - 1];
             contextMapper.setDomainServiceContextFromWSServiceContext(map, wsServiceContext);
         }

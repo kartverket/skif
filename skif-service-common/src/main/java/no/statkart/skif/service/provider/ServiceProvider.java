@@ -6,16 +6,16 @@ import com.google.inject.TypeLiteral;
 import no.statkart.skif.service.chain.OrderedCallServiceChainFactoryList;
 
 /**
- * En Guice provider som produserer service-instanser av type {@code S}. Provideren oppretter service-instansen ved å
+ * En Guice provider som produserer service-instanser av type {@code S}. Provideren oppretter service-instansen ved Ã¥
  * sette sammen en {@code CallServiceChain} ut fra en ordnet {@code CallServiceChainFactory}-liste. Hver service
  * av type {@code <S>} kan spesifisere sin egen {@code CallServiceChainFactory}-liste slik at services kan ha forskjellig
  * innhold i deres {@code CallServiceChain}.  Hver {@code CallServiceChainFactory} i listen produserer en frakment
- * av {@code CallServiceChain}. Frakmentene settes sammen rekkefølge som deres factory står i listen.
+ * av {@code CallServiceChain}. Frakmentene settes sammen rekkefÃ¸lge som deres factory stÃ¥r i listen.
  * <p>
  * {@code CallServiceChainFactory}-listen spesifiseres via en Guice {@code Multibinder<CallServiceChainFactory>} binding
- * som gir tilbake et uordnet sett av {@code CallServiceChainFactory}-instanser. For å unngå å måtte sorterer
+ * som gir tilbake et uordnet sett av {@code CallServiceChainFactory}-instanser. For Ã¥ unngÃ¥ Ã¥ mÃ¥tte sorterer
  * settet hvergang provideren opprettes brukes en singleton {@link OrderedCallServiceChainFactoryList}-instans. Det
- * er greit å bruke en singleton instans her siden {@code CallServiceChainFactory}-settet er konstant for hver servicetype
+ * er greit Ã¥ bruke en singleton instans her siden {@code CallServiceChainFactory}-settet er konstant for hver servicetype
  * [@code S}.
  * <p>
  * Guice oppretter en instans av provideren hvergang Guice trenger en ny service-instans av type {@code S} og er dermed

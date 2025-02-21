@@ -6,9 +6,9 @@ import no.statkart.skif.store.endringslogg.Endringstype;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 
 /**
- * Mapper mellom {@code wsapi:Endring} og {@code domainT:Endring}. Det må installeres en instans av mapperen
- * for hver domainT subtype som skal mappes til sin egen wsapiT subtype. Subtyper som skal slås sammen håndteres
- * av samme mapper instans som må være definert for supertypen av alle typer som skal slås sammen.
+ * Mapper mellom {@code wsapi:Endring} og {@code domainT:Endring}. Det mÃ¥ installeres en instans av mapperen
+ * for hver domainT subtype som skal mappes til sin egen wsapiT subtype. Subtyper som skal slÃ¥s sammen hÃ¥ndteres
+ * av samme mapper instans som mÃ¥ vÃ¦re definert for supertypen av alle typer som skal slÃ¥s sammen.
  *
  * @author Henrik Fredholm
  * @since 2.4.0

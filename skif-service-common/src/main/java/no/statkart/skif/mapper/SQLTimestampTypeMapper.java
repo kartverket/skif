@@ -11,9 +11,9 @@ import java.util.GregorianCalendar;
 
 /**
  * Mapper mellom {@link java.sql.Timestamp} og {@link XMLGregorianCalendar}.
- * Typen i XML-skjema skal være {@code xs:dateTime}.
+ * Typen i XML-skjema skal vÃ¦re {@code xs:dateTime}.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.4 - ny grunnbok sprint 29
  */
 public class SQLTimestampTypeMapper extends AbstractTypeMapper<XMLGregorianCalendar, java.sql.Timestamp, Mapping> {

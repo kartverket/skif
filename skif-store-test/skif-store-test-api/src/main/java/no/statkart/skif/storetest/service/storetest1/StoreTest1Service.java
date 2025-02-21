@@ -2,9 +2,9 @@ package no.statkart.skif.storetest.service.storetest1;
 
 /**
  * Enkel test service som ikke har ServiceContext parameter, som ikke kaller andre tjenester og som bruker en
- * identity mapping for å mappe mellom domene og Web Service modell.
+ * identity mapping for Ã¥ mappe mellom domene og Web Service modell.
  * <p/>
- * Servicen har metoder for å lagre key-value par til database og hente disse opp igjen. Implementasjonen bruker
+ * Servicen har metoder for Ã¥ lagre key-value par til database og hente disse opp igjen. Implementasjonen bruker
  * ikke store, men kun en hibernate session som injectes via en provider
  *
  * @author Henrik Fredholm
