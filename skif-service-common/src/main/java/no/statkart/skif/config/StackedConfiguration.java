@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * En stack av konfigurasjoner. På toppen ligger alltid en MapConfiguration, som er den som mottar alle set-kall.
+ * En stack av konfigurasjoner. PÃ¥ toppen ligger alltid en MapConfiguration, som er den som mottar alle set-kall.
  * Alle andre underliggende konfigurasjoner kan ikke endres via denne klassen, men de kan endres av de som har en
  * referanse direkte til dem.
  *
@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class StackedConfiguration extends AbstractConfiguration {
     /**
-     * Konfigurasjoner med høyere prioritet hav lavere indeks.
+     * Konfigurasjoner med hÃ¸yere prioritet hav lavere indeks.
      */
     final List<Configuration> configurations = new ArrayList<Configuration>();
     final MapConfiguration mapConfiguration;

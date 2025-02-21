@@ -5,7 +5,7 @@ import no.statkart.skif.store.BubbleId;
 import java.util.Set;
 
 /**
- * Funksjonelt interface for å angi spesifikke id-er ved oppretting av mockup facade.
+ * Funksjonelt interface for Ã¥ angi spesifikke id-er ved oppretting av mockup facade.
  *
  * @author Tor Egil R. Strand
  * @since 2.3.0

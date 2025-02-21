@@ -1,4 +1,4 @@
--- Tabeller som tilhører standalone pakken og som ikke brukes via mockup-rammeverket
+-- Tabeller som tilhÃ¸rer standalone pakken og som ikke brukes via mockup-rammeverket
 
 create table TestEntity (
   id number(19,0) not null,

@@ -12,7 +12,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotation som brukes til å anngi objekt som har EJB Service Chain proxies foran seg.
+ * Annotation som brukes til Ã¥ anngi objekt som har EJB Service Chain proxies foran seg.
  *
  * @author Henrik Fredholm
  * @since 2.0

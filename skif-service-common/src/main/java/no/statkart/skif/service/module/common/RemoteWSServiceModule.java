@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Klientmodul for å binde opp direkte tilgang til webservices.
+ * Klientmodul for Ã¥ binde opp direkte tilgang til webservices.
  *
  * @author Tor Egil R. Strand
  * @since 2.1
@@ -22,7 +22,7 @@ public class RemoteWSServiceModule extends ModuleWithStrategy<RemoteWSServiceMod
     * Oppretter en ny klientmodul for direkte tilgang til gitte webservices.
     *
     * @param moduleConfiguration konfigurasjon
-    * @param services interface til webservices som skal gjøres tilgjengelig på klienten
+    * @param services interface til webservices som skal gjÃ¸res tilgjengelig pÃ¥ klienten
     */
    public RemoteWSServiceModule(ModuleConfiguration moduleConfiguration, Collection<Class<?>> services) {
       super(RemoteWSServiceModuleStrategy.class, moduleConfiguration);

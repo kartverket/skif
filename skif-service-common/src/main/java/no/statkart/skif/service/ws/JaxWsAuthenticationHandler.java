@@ -21,7 +21,7 @@ public class JaxWsAuthenticationHandler implements LogicalHandler<LogicalMessage
     @Inject
     public JaxWsAuthenticationHandler(
             LoginUserHolder loginUserHolder,
-            @SuppressWarnings("OptionalUsedAsFieldOrParameterType") // ønsker ikke å injecte null
+            @SuppressWarnings("OptionalUsedAsFieldOrParameterType") // Ã¸nsker ikke Ã¥ injecte null
             Optional<HttpRequestAuthenticationOverride> httpRequestHeadersOverride) {
         this.loginUserHolder = loginUserHolder;
         this.httpRequestHeadersOverride = httpRequestHeadersOverride.orElse(null);
@@ -35,7 +35,7 @@ public class JaxWsAuthenticationHandler implements LogicalHandler<LogicalMessage
         }
 
         if (overrideHeaders != null && overrideHeaders.size() > 0) {
-            // Ny logikk til bruk f.eks. ved Bearer Authorization, må sette HTTP header(e) direkte, men ikke overskriv evt andre headere
+            // Ny logikk til bruk f.eks. ved Bearer Authorization, mÃ¥ sette HTTP header(e) direkte, men ikke overskriv evt andre headere
             @SuppressWarnings("unchecked")
             Map<String, List<String>> headers = (Map<String, List<String>>) context.computeIfAbsent(MessageContext.HTTP_REQUEST_HEADERS, k -> new HashMap<>());
             headers.putAll(overrideHeaders);
@@ -61,6 +61,6 @@ public class JaxWsAuthenticationHandler implements LogicalHandler<LogicalMessage
 
     @Override
     public void close(MessageContext context) {
-        // ingenting å gjøre
+        // ingenting Ã¥ gjÃ¸re
     }
 }

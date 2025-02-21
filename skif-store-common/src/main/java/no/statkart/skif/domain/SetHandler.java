@@ -7,11 +7,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * {@link Set#equals(Object)} kaller {@link Object#equals(Object)} på elementene. Vi ønsker vanligvis ikke dette, men
- * heller bruke {@link EqualsByFields} for å sammenligne.
+ * {@link Set#equals(Object)} kaller {@link Object#equals(Object)} pÃ¥ elementene. Vi Ã¸nsker vanligvis ikke dette, men
+ * heller bruke {@link EqualsByFields} for Ã¥ sammenligne.
  * <p/>
- * Denne oppfyller kontrakten for {@link Set#equals(Object)}, som sier at settene må ha samme lengde, alle elementene i
- * det ene settet må ha en maken i det andre settet og alle elementene i det andre settet må ha en maken i det første.
+ * Denne oppfyller kontrakten for {@link Set#equals(Object)}, som sier at settene mÃ¥ ha samme lengde, alle elementene i
+ * det ene settet mÃ¥ ha en maken i det andre settet og alle elementene i det andre settet mÃ¥ ha en maken i det fÃ¸rste.
  */
 public class SetHandler implements EqualityHandler<Set<?>> {
     @Override
@@ -26,10 +26,10 @@ public class SetHandler implements EqualityHandler<Set<?>> {
         Map<?, ?> m2 = s2.stream().collect(Collectors.toMap(Function.identity(), Function.identity()));
 
         for (Object e1 : o1) {
-            // Hvis e1 og e2 er EqualsByFields, så er de også equals slik HashMap ser det
+            // Hvis e1 og e2 er EqualsByFields, sÃ¥ er de ogsÃ¥ equals slik HashMap ser det
             Object e2 = m2.get(e1);
 
-            // Gjør ikke null-sjekk her. Dette skal påfølgende kode håndtere selv.
+            // GjÃ¸r ikke null-sjekk her. Dette skal pÃ¥fÃ¸lgende kode hÃ¥ndtere selv.
             if (!comparator.isEqualByFields(e1, e2)) {
                 return false;
             }

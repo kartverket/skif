@@ -16,54 +16,54 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * Testcase klasse for skif baserte TestNG tester. Det overordnede ønske med denne klassen er å
- * gjøre det mulig å få tester til å kjøre raskt ved at tung initialisering fortrinsvis skjer en gang per testsuite
- * eller testklasse og ikke for hver testmetode. Samtidig skal det være enkelt å skifte mellom å kjøre testene i
- * JEE og SINGLE_VM mode ved f.eks å endre en parameter i en ekstern konfigurasjonsfil. Endring av en slik ekstern
- * parameter skal kun påvirke de tester som er designet til valgfritt å kunne kjøres i begge modes. Tester som krever
- * bestemt mode eller eksplisitt tester alle modes skal ikke påvirkes av en slik ekstern parameter. Det skal være mulig
- * selektivt å kjøre tester som tilhører en bestemt testgruppe eller ekskluderer tester som tilhører en bestemt testgruppe.
+ * Testcase klasse for skif baserte TestNG tester. Det overordnede Ã¸nske med denne klassen er Ã¥
+ * gjÃ¸re det mulig Ã¥ fÃ¥ tester til Ã¥ kjÃ¸re raskt ved at tung initialisering fortrinsvis skjer en gang per testsuite
+ * eller testklasse og ikke for hver testmetode. Samtidig skal det vÃ¦re enkelt Ã¥ skifte mellom Ã¥ kjÃ¸re testene i
+ * JEE og SINGLE_VM mode ved f.eks Ã¥ endre en parameter i en ekstern konfigurasjonsfil. Endring av en slik ekstern
+ * parameter skal kun pÃ¥virke de tester som er designet til valgfritt Ã¥ kunne kjÃ¸res i begge modes. Tester som krever
+ * bestemt mode eller eksplisitt tester alle modes skal ikke pÃ¥virkes av en slik ekstern parameter. Det skal vÃ¦re mulig
+ * selektivt Ã¥ kjÃ¸re tester som tilhÃ¸rer en bestemt testgruppe eller ekskluderer tester som tilhÃ¸rer en bestemt testgruppe.
  * <p/>
- * Videre skal støtte i denne klassen være slik at der er enkelt å kjøre testene fra både fra byggeverktøy (f.eks Gradle)
- * og fra IntelliJ. Spesielt skal det være mulig å velge en enkelt testmetode eller testklasse i IntelliJ, høyre-klikke
- * på metoden og kjøre denne. TestNG støtten i IntelliJ (versjon 10) er slik at ikke alle TestNG annotasjoner umiddelbart
- * gir ønsket oppførsel i IntelliJ. Spesielt bør man unngå å bruke dependsOnGroups i stor stil (i noen få tilfeller kan
- * det med hensikt anvendes mellom testklasser i samme pakke). Annotasjonen dependsOnMethods bør kun brukes innenfor
- * samme testklasse og gjør at man ikke lengere kan kjøre metodene enkeltvis fra IntelliJ og bør derfor ikke brukes
+ * Videre skal stÃ¸tte i denne klassen vÃ¦re slik at der er enkelt Ã¥ kjÃ¸re testene fra bÃ¥de fra byggeverktÃ¸y (f.eks Gradle)
+ * og fra IntelliJ. Spesielt skal det vÃ¦re mulig Ã¥ velge en enkelt testmetode eller testklasse i IntelliJ, hÃ¸yre-klikke
+ * pÃ¥ metoden og kjÃ¸re denne. TestNG stÃ¸tten i IntelliJ (versjon 10) er slik at ikke alle TestNG annotasjoner umiddelbart
+ * gir Ã¸nsket oppfÃ¸rsel i IntelliJ. Spesielt bÃ¸r man unngÃ¥ Ã¥ bruke dependsOnGroups i stor stil (i noen fÃ¥ tilfeller kan
+ * det med hensikt anvendes mellom testklasser i samme pakke). Annotasjonen dependsOnMethods bÃ¸r kun brukes innenfor
+ * samme testklasse og gjÃ¸r at man ikke lengere kan kjÃ¸re metodene enkeltvis fra IntelliJ og bÃ¸r derfor ikke brukes
  * i stor utstrekning.
  * <p/>
- * Tanken bak designet av testklassen var opprindelig å bruke  {@code @BeforeSuite} til å gjøre all nødvendig tung
- * initialisering, men det virket dårlig fordi {@code @BeforeSuite} ikke blir kjørt når man bruker grupper
- * ( {@code @BeforeSuite} blir ikke med i grupper som subklassen tilhører) og dermed blir  {@code @BeforeSuite} ikke
- * alltid kjørt når man bruke grupper. Hvis man bruker {@code alwaysRun} kan det også fører til at denne koden  bli
- * kjørt flere ganger. Det vi ønsker er at "BeforeSuite-metoden" alltid blir kjørt nettopp en gang hvis en av testene
- * i en av subklassene kjøres. Dette skal skje uavhengig av hvordan testene blir utvalgt. Det er ikke mulig å få til
- * med {@code @BeforeSuite} annotasjonen. Derfor blir {@code @BeforeClass} og {@code alwaysRun} brukt i stedet. Man må
- * da teste på en statisk variable eller lignende slik at initialiseringen ikke skjer flere ganger.
+ * Tanken bak designet av testklassen var opprindelig Ã¥ bruke  {@code @BeforeSuite} til Ã¥ gjÃ¸re all nÃ¸dvendig tung
+ * initialisering, men det virket dÃ¥rlig fordi {@code @BeforeSuite} ikke blir kjÃ¸rt nÃ¥r man bruker grupper
+ * ( {@code @BeforeSuite} blir ikke med i grupper som subklassen tilhÃ¸rer) og dermed blir  {@code @BeforeSuite} ikke
+ * alltid kjÃ¸rt nÃ¥r man bruke grupper. Hvis man bruker {@code alwaysRun} kan det ogsÃ¥ fÃ¸rer til at denne koden  bli
+ * kjÃ¸rt flere ganger. Det vi Ã¸nsker er at "BeforeSuite-metoden" alltid blir kjÃ¸rt nettopp en gang hvis en av testene
+ * i en av subklassene kjÃ¸res. Dette skal skje uavhengig av hvordan testene blir utvalgt. Det er ikke mulig Ã¥ fÃ¥ til
+ * med {@code @BeforeSuite} annotasjonen. Derfor blir {@code @BeforeClass} og {@code alwaysRun} brukt i stedet. Man mÃ¥
+ * da teste pÃ¥ en statisk variable eller lignende slik at initialiseringen ikke skjer flere ganger.
  * <p/>
- * Det er ønskelig å kunne skjeldne mellom release- og unit-tester da disse vil gå mot forskjellige typer databaser. Unit-
- * tester må ikke få lov å ødelegge releasetestdatabasen da denne kan ta lang tid å gjenetablere.
- * For release-tester er det også ønskelig å kunne skjeldne mellom read- og write-tester siden write-tester krever at
- * man må gjøre en database-flashback for rask tilbakestilling mellom hver kjøring. Den enkleste løsning her er å ha
- * forskjellige brukere for hver database type og evt en liten sjekk som får unit tester til å feile hvis de
- * forsøker å skrive data til en releasetest database.  Denne basisklassen har dog ikke noen eksplisitt støtte for dette
+ * Det er Ã¸nskelig Ã¥ kunne skjeldne mellom release- og unit-tester da disse vil gÃ¥ mot forskjellige typer databaser. Unit-
+ * tester mÃ¥ ikke fÃ¥ lov Ã¥ Ã¸delegge releasetestdatabasen da denne kan ta lang tid Ã¥ gjenetablere.
+ * For release-tester er det ogsÃ¥ Ã¸nskelig Ã¥ kunne skjeldne mellom read- og write-tester siden write-tester krever at
+ * man mÃ¥ gjÃ¸re en database-flashback for rask tilbakestilling mellom hver kjÃ¸ring. Den enkleste lÃ¸sning her er Ã¥ ha
+ * forskjellige brukere for hver database type og evt en liten sjekk som fÃ¥r unit tester til Ã¥ feile hvis de
+ * forsÃ¸ker Ã¥ skrive data til en releasetest database.  Denne basisklassen har dog ikke noen eksplisitt stÃ¸tte for dette
  * konseptet. Dette kan implementeres i en subklasse.
  * <p/>
- * Klassen har avansert støtte for å gjenbruke konfigurasjon på tvers av testcaser og testmetoder slik at initialisering
- * av tunge ressurser kan reduseres. Default er følgende:
+ * Klassen har avansert stÃ¸tte for Ã¥ gjenbruke konfigurasjon pÃ¥ tvers av testcaser og testmetoder slik at initialisering
+ * av tunge ressurser kan reduseres. Default er fÃ¸lgende:
  * <ul>
- * <li>Testklassens injector gjenbrukes på tvers av testmetoder innenfor samme klasse
- * <li>I SingleVm oppsett gjenbrukes samme underliggen serverinjectoren på tvers av alle testcases
- * <li>Tester som bruker samme konfigurasonsoppsett vil normalt dele injector-instans, men kan ha sin egen hvis ønskelig
+ * <li>Testklassens injector gjenbrukes pÃ¥ tvers av testmetoder innenfor samme klasse
+ * <li>I SingleVm oppsett gjenbrukes samme underliggen serverinjectoren pÃ¥ tvers av alle testcases
+ * <li>Tester som bruker samme konfigurasonsoppsett vil normalt dele injector-instans, men kan ha sin egen hvis Ã¸nskelig
  * <li>Tester som bruker forskjellig konfigurasjonsoppsett vil aldri dele injector</li>
  * </ul>
- * Det er mulig å endre oppførslen for en test slik at den alltid kjører i SingleVm eller JEE mode. Det er også mulig å angi
+ * Det er mulig Ã¥ endre oppfÃ¸rslen for en test slik at den alltid kjÃ¸rer i SingleVm eller JEE mode. Det er ogsÃ¥ mulig Ã¥ angi
  * at hver enkelt testmetode skal ha sin egen injector eller at testcasen ikke skal dele konfigurasjon med andre testcases.
  * <p/>
- * Klassen støtter automatisk member injection av via @Inject slik testcasens membervariable er satt før test metoden
+ * Klassen stÃ¸tter automatisk member injection av via @Inject slik testcasens membervariable er satt fÃ¸r test metoden
  * kalles. Member variablene sette hvergang klasse skifter injector.
  * <p/>
- * Klassen har en tom {@link #resetLogin()}-metode som kalles automatisk før hver testmetode.
+ * Klassen har en tom {@link #resetLogin()}-metode som kalles automatisk fÃ¸r hver testmetode.
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -115,17 +115,17 @@ public class SkifTestCase extends AbstractSkifTestCase {
 
 
     /**
-     * Beregner konfigurasjonsnøkkel for testcase på basis av hvilke konfigurasjonsklasser testcasen bruker.
+     * Beregner konfigurasjonsnÃ¸kkel for testcase pÃ¥ basis av hvilke konfigurasjonsklasser testcasen bruker.
      */
     protected final String calcConfigurationKey() {
         return super.calcConfigurationKey();
     }
 
     /**
-     * Setter injector for første testmetode kalles, og før hver testmetode hvis {@link #isReuseInjector()} returnerer
+     * Setter injector for fÃ¸rste testmetode kalles, og fÃ¸r hver testmetode hvis {@link #isReuseInjector()} returnerer
      * false. TestNG krever at den ikke er private.
      *
-     * @param context leveres at TestNG rammeverket og holder state på tvers av testcases
+     * @param context leveres at TestNG rammeverket og holder state pÃ¥ tvers av testcases
      */
     @BeforeMethod(alwaysRun = true)
     protected void beforeMethod(ITestContext context) {
@@ -137,7 +137,7 @@ public class SkifTestCase extends AbstractSkifTestCase {
     }
 
     /**
-     * Kalles før hver testmetode og bør brukes til å nullstille pålogget bruker. Overskriv denne metode hvis
+     * Kalles fÃ¸r hver testmetode og bÃ¸r brukes til Ã¥ nullstille pÃ¥logget bruker. Overskriv denne metode hvis
      * modulen ikke krever login eller krever annen form for login.
      */
     protected void resetLogin() {

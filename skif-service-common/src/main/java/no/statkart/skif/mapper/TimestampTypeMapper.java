@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Mapper mellom {@link Timestamp} og wrappet {@link XMLGregorianCalendar}.
  * <p>
- * Typen i XML-skjema skal være:
+ * Typen i XML-skjema skal vÃ¦re:
  * <pre>
  * &lt;xs:complexType name="SnapshotVersion"&gt;
  *     &lt;xs:sequence&gt;
@@ -62,7 +62,7 @@ public class TimestampTypeMapper<WsapiT> extends AbstractJavaDateTypeMapper<Wsap
     }
 
     /**
-     * Validerer at alle nødvendig felter er angitt. Kun tidssone og subsekunder er valgfrie.
+     * Validerer at alle nÃ¸dvendig felter er angitt. Kun tidssone og subsekunder er valgfrie.
      *
      * @param timestamp XML-dato som skal valideres som timestamp
      */

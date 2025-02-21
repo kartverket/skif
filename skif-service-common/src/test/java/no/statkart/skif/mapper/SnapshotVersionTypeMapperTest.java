@@ -20,7 +20,7 @@ import java.util.Random;
 public class SnapshotVersionTypeMapperTest {
     // Tilsvarende test finnes i TimestampTypeMapperTest
     public void testManyCombinations() {
-        Random random = new Random(31415L); // Bruker fast seed, slik at testen skal være repeterbar
+        Random random = new Random(31415L); // Bruker fast seed, slik at testen skal vÃ¦re repeterbar
         SnapshotVersionTypeMapper<SnapshotVersionWS> mapper = new SnapshotVersionTypeMapper<>(SnapshotVersionWS.class);
 
         for (int i = 0; i < 10000; ++i) {

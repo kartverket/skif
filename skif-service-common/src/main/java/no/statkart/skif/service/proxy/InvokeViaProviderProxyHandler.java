@@ -11,8 +11,8 @@ import java.lang.reflect.Method;
  * {@code ProxyHandler} for service {@code S} som sender kallet videre via en {@code Provider}
  * for instans av type {@code S}.
  * <p>
- * Denne proxy handler gjør at {@code S} først blir opprettet i det øyeblikk at en metode på
- * {@code S} utføres. Dersom denne indireksjon ikke trengs kan
+ * Denne proxy handler gjÃ¸r at {@code S} fÃ¸rst blir opprettet i det Ã¸yeblikk at en metode pÃ¥
+ * {@code S} utfÃ¸res. Dersom denne indireksjon ikke trengs kan
  * {@link InvokeViaInstanceProxyHandler} med fordel brukes i stedet.
  *
  * @author Henrik Fredholm

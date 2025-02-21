@@ -123,8 +123,8 @@ public class KodeTest extends StoreTestTestCase {
     }
 
     /**
-     * Test sammenlikning av koder. Ved sammenlikning mot konstanter bør man alltid konverterer til
-     * SnapshotVersion.CURRENT først eller bruke equalsIgnoreSnapshotVersion
+     * Test sammenlikning av koder. Ved sammenlikning mot konstanter bÃ¸r man alltid konverterer til
+     * SnapshotVersion.CURRENT fÃ¸rst eller bruke equalsIgnoreSnapshotVersion
      *
      */
     public void testKodeEquals() {
@@ -141,7 +141,7 @@ public class KodeTest extends StoreTestTestCase {
     }
 
     /**
-     * Koder bør ha egen metode som gir kompileringsfeil ved sammenlikning av koder av forskjellig type og som
+     * Koder bÃ¸r ha egen metode som gir kompileringsfeil ved sammenlikning av koder av forskjellig type og som
      * ikke tar hensyn til SnapshotVersion
      */
     public void testEqualsTo() {
@@ -218,7 +218,7 @@ public class KodeTest extends StoreTestTestCase {
     public void testGetKodelisteTransfer() {
         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
         KodelisteTransfer<? extends KodelisteId<?>> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
-        List<KodelisteId<?>> kodelisteIds = (List<KodelisteId<?>>) kodelisteTransfer.getKodelisterIds(); // Ellers feiler det som følger på Java 8
+        List<KodelisteId<?>> kodelisteIds = (List<KodelisteId<?>>) kodelisteTransfer.getKodelisterIds(); // Ellers feiler det som fÃ¸lger pÃ¥ Java 8
 
         assertThat(kodelisteIds).contains(
                 AEnumKodeId.KODELISTE_ID,
@@ -230,7 +230,7 @@ public class KodeTest extends StoreTestTestCase {
                 C2DbKodeId.KODELISTE_ID
                 );
 
-        store.evictAll(); // Sørg for å ha en ren Store, ellers blir det en situasjon SKIF-477 ikke tar høyde for
+        store.evictAll(); // SÃ¸rg for Ã¥ ha en ren Store, ellers blir det en situasjon SKIF-477 ikke tar hÃ¸yde for
         store.register(kodelisteTransfer);
         List list = store.get(kodelisteIds);
 
@@ -238,10 +238,10 @@ public class KodeTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester opprettelse og sletting av koder og tilhørende oppdatering av kodeliste. Testen viser
-     * dagens rammeverk pt ikke støtter automatisk oppdatering av kodelisten på klient.
+     * Tester opprettelse og sletting av koder og tilhÃ¸rende oppdatering av kodeliste. Testen viser
+     * dagens rammeverk pt ikke stÃ¸tter automatisk oppdatering av kodelisten pÃ¥ klient.
      *
-     * TODO: Videre viser testen at inneværende versjon av SKIF ved store.register ikke refresher eksterende objekter
+     * TODO: Videre viser testen at innevÃ¦rende versjon av SKIF ved store.register ikke refresher eksterende objekter
      */
     public void testInsertUpdateAndDeleteDbKode() {
         TestNumber testNumber = mockupFacadeFactory.getWriteMockupFacade().getTestNumber();
@@ -251,7 +251,7 @@ public class KodeTest extends StoreTestTestCase {
 
         KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
         KodelisteTransfer<?> kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
-        // TODO: store.register virker ikke når objekter finnes fra før. Denne linje kan tas vekk nå det er fixet
+        // TODO: store.register virker ikke nÃ¥r objekter finnes fra fÃ¸r. Denne linje kan tas vekk nÃ¥ det er fixet
         store.evictAll();
         store.register(kodelisteTransfer);
 
@@ -262,31 +262,31 @@ public class KodeTest extends StoreTestTestCase {
         UnitOfWork unitOfWork = store.beginUnitOfWork();
         store.insert(c1DbKodeNew);
         assertEquals(c1DbKodeNew.getKodelisteId(), C1DbKodeId.KODELISTE_ID);
-        // TODO: Endre kodeliste til å bruke inversrelasjon slik at idlisten blir oppdatert automatisk på klient
-        assertFalse(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet ikke at cachet kodelisten på klient  blir oppdatert automatisk når nye koder legges til");
+        // TODO: Endre kodeliste til Ã¥ bruke inversrelasjon slik at idlisten blir oppdatert automatisk pÃ¥ klient
+        assertFalse(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet ikke at cachet kodelisten pÃ¥ klient  blir oppdatert automatisk nÃ¥r nye koder legges til");
         updateService.saveTransfer(store.getUnitOfWorkTransfer());
         unitOfWork.close();
 
         kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
-        // TODO: store.register virker ikke når objekter finnes fra før. Denne linje kan tas vekk nå det er fixet
+        // TODO: store.register virker ikke nÃ¥r objekter finnes fra fÃ¸r. Denne linje kan tas vekk nÃ¥ det er fixet
         store.evictAll();
         store.register(kodelisteTransfer);
-        assertTrue(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet at kodeliste fra server har blitt oppdatert automatisk når nye koder har blitt lagt til");
+        assertTrue(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet at kodeliste fra server har blitt oppdatert automatisk nÃ¥r nye koder har blitt lagt til");
 
         // Slett koden og test at er fjernet i kodelisten fra server.
         unitOfWork = store.beginUnitOfWork();
         CDbKode c1DbKodeToDelete = store.lock(c1DbKodeNew.getId());
         store.delete(c1DbKodeToDelete);
-        // TODO: Endre kodeliste til å bruke inversrelasjon slik at idlisten blir oppdatert automatisk på klient
-        assertTrue(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet ikke at cachet kodelisten på klient  blir oppdatert automatisk når koder fjernes");
+        // TODO: Endre kodeliste til Ã¥ bruke inversrelasjon slik at idlisten blir oppdatert automatisk pÃ¥ klient
+        assertTrue(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet ikke at cachet kodelisten pÃ¥ klient  blir oppdatert automatisk nÃ¥r koder fjernes");
         updateService.saveTransfer(store.getUnitOfWorkTransfer());
         unitOfWork.close();
 
         kodelisteTransfer = kodelisteService.getKodelister(SnapshotVersion.CURRENT);
-        // TODO: store.register virker ikke når objekter finnes fra før. Denne linje kan tas vekk nå det er fixet
+        // TODO: store.register virker ikke nÃ¥r objekter finnes fra fÃ¸r. Denne linje kan tas vekk nÃ¥ det er fixet
         store.evictAll();
         store.register(kodelisteTransfer);
-        assertFalse(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet at kodeliste fra server har blitt oppdatert automatisk når koder fjernes");
+        assertFalse(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet at kodeliste fra server har blitt oppdatert automatisk nÃ¥r koder fjernes");
     }
 
 //    public void testKodeIdLookup() {

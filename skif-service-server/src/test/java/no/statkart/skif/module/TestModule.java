@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Guice Module for å teste konfigurasjonsrammeverket. Inneholder en singleton liste
- * ved navn "test"  man kan hente ut og teste på. Har også en hjelpemetode
+ * Guice Module for Ã¥ teste konfigurasjonsrammeverket. Inneholder en singleton liste
+ * ved navn "test"  man kan hente ut og teste pÃ¥. Har ogsÃ¥ en hjelpemetode
  * {@link #configureModulename()} som binder opp binder opp en konstant 'modulename' som kan
  * brukes for testing. Subklasser av denne modulen overskriver denne metoden slik at verdien blir
  * forskjellig for hver subklasse.

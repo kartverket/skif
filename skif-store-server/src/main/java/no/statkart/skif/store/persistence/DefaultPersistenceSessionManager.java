@@ -100,7 +100,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
         PersistenceSessionForSnapshot forSnapshotVersion = getForSnapshotVersion(SnapshotVersion.CURRENT);
         PersistenceSessionMaster implementation = forSnapshotVersion.getImplementation(PersistenceSessionMaster.class);
         implementation.commit();
-        //TODO: Lage generell mekanisme for for nedenstående
+        //TODO: Lage generell mekanisme for for nedenstÃ¥ende
         KodelistePersistenceSessionSubtypeHandler kodelistePersistenceSessionSubtypeHandler = forSnapshotVersion.getImplementation(KodelistePersistenceSessionSubtypeHandler.class);
         if (kodelistePersistenceSessionSubtypeHandler instanceof CachingKodelistePersistenceSessionSubtypeHandler) {
             ((CachingKodelistePersistenceSessionSubtypeHandler) kodelistePersistenceSessionSubtypeHandler).afterTransactionCommit();
@@ -145,7 +145,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
     }
 
     private <T extends BubbleObject, I extends BubbleId<? extends T>> Map<SnapshotVersion, Map<PersistenceSessionForSnapshot, Collection<I>>> calcSnapshotToPersistenceSessionMap(Collection<I> bubbleIds) {
-        // Denne metode er optimaliser med henblikk på at alle objekter har samme snapshotVersion og er av samme type.
+        // Denne metode er optimaliser med henblikk pÃ¥ at alle objekter har samme snapshotVersion og er av samme type.
         SnapshotVersion prevSnapshotVersion = null;
         Class prevClass = null;
         Collection<I> prevCollection = null;
@@ -165,7 +165,7 @@ public class DefaultPersistenceSessionManager implements PersistenceSessionManag
 
                 Collection<I> collection = snapshotManagedCollectionMap.get(persistenceManager);
                 if (collection == null) {
-                    // Dersom alle tilhører samme collection så blir estimated size riktig med en gang.
+                    // Dersom alle tilhÃ¸rer samme collection sÃ¥ blir estimated size riktig med en gang.
                     collection = (prevCollection == null ? new ArrayList<I>(bubbleIds.size()) : new ArrayList<I>());
                     snapshotManagedCollectionMap.put(persistenceManager, collection);
                 }

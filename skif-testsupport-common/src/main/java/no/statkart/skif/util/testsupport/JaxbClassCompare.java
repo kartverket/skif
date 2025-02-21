@@ -25,7 +25,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * Et lite program for å sammenlikne to jar-filer som i teorien skal inneholde de samme klassene basert på like
+ * Et lite program for Ã¥ sammenlikne to jar-filer som i teorien skal inneholde de samme klassene basert pÃ¥ like
  * XSD-filer, typisk jar-ene fra wsschema og wsclient.
  *
  * @author Tor Egil R. Strand

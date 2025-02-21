@@ -23,7 +23,7 @@ import java.sql.Statement;
  * @author Tor Egil R. Strand
  * @since 2.1
  */
-@Deprecated // Skrives om til å bruke andre objekter og mockupfactory
+@Deprecated // Skrives om til Ã¥ bruke andre objekter og mockupfactory
 @Test(groups = "singlevm-required")
 public class AggregertTest extends StoreTestMixedTestCase {
     @AfterMethod
@@ -118,7 +118,7 @@ public class AggregertTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Ønsker å unngå å bruke Store-klient, siden den kan finne på å cache.
+     * Ã˜nsker Ã¥ unngÃ¥ Ã¥ bruke Store-klient, siden den kan finne pÃ¥ Ã¥ cache.
      */
     private static class Getter extends RunOnServerMethod {
         @Inject

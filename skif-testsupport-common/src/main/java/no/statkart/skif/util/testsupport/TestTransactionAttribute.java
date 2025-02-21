@@ -1,7 +1,7 @@
 package no.statkart.skif.util.testsupport;
 
 /**
- * Annotation for å angi transaction-attribute for server-test-metode i unittester av type ServerTestCase
+ * Annotation for Ã¥ angi transaction-attribute for server-test-metode i unittester av type ServerTestCase
  *
  * @author Henrik Fredholm
  * @see TestTransactionAttributeType

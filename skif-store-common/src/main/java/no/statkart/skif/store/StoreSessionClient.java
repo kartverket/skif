@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * StoreSession som utgjør avsluttende ledd på klienten. Klassen anvender en {@link StoreService} for å hente
+ * StoreSession som utgjÃ¸r avsluttende ledd pÃ¥ klienten. Klassen anvender en {@link StoreService} for Ã¥ hente
  * objekter fra server
  *
  * @author Henrik Fredholm
@@ -205,18 +205,18 @@ public class StoreSessionClient extends AbstractStoreSession {
     public <T extends BubbleObject, I extends BubbleId<? extends T>> StoreEntry lockEntry(int level, I bubbleId) {
         StoreEntry storeEntry = storeCache.get(bubbleId);
         if (storeEntry != null) {
-            // Entry finnes, må sjekke om objekt er låst på underliggende nivå
+            // Entry finnes, mÃ¥ sjekke om objekt er lÃ¥st pÃ¥ underliggende nivÃ¥
             int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
             if (lockLevel != level) {
-                // Ikke allerede låst for level
+                // Ikke allerede lÃ¥st for level
                 if (lockLevel >= 0) {
-                    // Låst for underliggende level
+                    // LÃ¥st for underliggende level
                     BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
                     BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
                     copy.register(store);
                     storeEntry.setLocked(level, copy);
                 } else {
-                    // Ikke låst, hent seneste versjon fra server og erstatt eksisterende readOnly instans med versjon fra server hvis nyere.
+                    // Ikke lÃ¥st, hent seneste versjon fra server og erstatt eksisterende readOnly instans med versjon fra server hvis nyere.
                     BubbleObject lockedBubbleObject = lockService.lock(bubbleId);
                     int levelForExisting = storeEntry.getLevelForDerivedBubbleObject(level);
                     BubbleObject existingInstance = storeEntry.getDerivedBubbleObject(levelForExisting);
@@ -252,12 +252,12 @@ public class StoreSessionClient extends AbstractStoreSession {
         for (I bubbleId : bubbleIds) {
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry != null) {
-                // Entry finnes, må sjekke om objekt er låst på underliggende nivå
+                // Entry finnes, mÃ¥ sjekke om objekt er lÃ¥st pÃ¥ underliggende nivÃ¥
                 int lockLevel = storeEntry.calcLockLevelStartingFrom(level);
                 if (lockLevel != level) {
-                    // Ikke allerede låst for level
+                    // Ikke allerede lÃ¥st for level
                     if (lockLevel >= 0) {
-                        // Låst for underliggende level
+                        // LÃ¥st for underliggende level
                         BubbleObject derivedBubbleObject = storeEntry.getDerivedBubbleObject(level - 1);
                         BubbleObject copy = CopyHelper.copy(derivedBubbleObject);
                         copy.register(store);
@@ -276,7 +276,7 @@ public class StoreSessionClient extends AbstractStoreSession {
         Map<? extends BubbleId<?>, BubbleObject> lockedObjects = lockService.lockForList(fetchIds).stream().collect(Collectors.toMap(BubbleObject::getId, Function.identity()));
 
         for (StoreEntry storeEntry : unlockedEntries) {
-            // Ikke låst. Erstatt eksisterende readOnly instans med hent seneste versjon fra server hvis nyere.
+            // Ikke lÃ¥st. Erstatt eksisterende readOnly instans med hent seneste versjon fra server hvis nyere.
             BubbleObject lockedBubbleObject = lockedObjects.get(storeEntry.getId());
             int levelForExisting = storeEntry.getLevelForDerivedBubbleObject(level);
             BubbleObject existingInstance = storeEntry.getDerivedBubbleObject(levelForExisting);
@@ -318,7 +318,7 @@ public class StoreSessionClient extends AbstractStoreSession {
                             storeEntry.setLockCreatedByLevel(-1);
                         }
                         if (level>0) {
-                            // Objekter på level 0 skal ikke kastes. På klienten vil disse aldri være endret.
+                            // Objekter pÃ¥ level 0 skal ikke kastes. PÃ¥ klienten vil disse aldri vÃ¦re endret.
                             storeEntry.setBubbleObject(level, null);
                         }
                         storeEntry.unlock(level);
@@ -338,8 +338,8 @@ public class StoreSessionClient extends AbstractStoreSession {
         List<StoreEntry> entries = new ArrayList<>(bubbleIds.size());
         Set<BubbleId<?>> unlockIds = new HashSet<>(bubbleIds.size());
 
-        // Gjør dette i tre trinn ettersom hvor sannsynlig det er at de feiler, slik at ingen trinn skal bli bare delvis gjennomført.
-        // Trinn 1 (denne kan ende opp med å bare bli delvis gjennomført, men den er uten sideeffekter)
+        // GjÃ¸r dette i tre trinn ettersom hvor sannsynlig det er at de feiler, slik at ingen trinn skal bli bare delvis gjennomfÃ¸rt.
+        // Trinn 1 (denne kan ende opp med Ã¥ bare bli delvis gjennomfÃ¸rt, men den er uten sideeffekter)
         for (BubbleId<?> bubbleId : bubbleIds) {
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry != null) {
@@ -366,14 +366,14 @@ public class StoreSessionClient extends AbstractStoreSession {
             lockService.unlockForList(unlockIds);
         }
 
-        // Trinn 3 (dette skal være ren bokføring)
+        // Trinn 3 (dette skal vÃ¦re ren bokfÃ¸ring)
         for (StoreEntry storeEntry : entries) {
             if (isLocked(storeEntry)) {
                 if (storeEntry.getLockCreatedByLevel() == level) {
                     storeEntry.setLockCreatedByLevel(-1);
                 }
                 if (level>0) {
-                    // Objekter på level 0 skal ikke kastes. På klienten vil disse aldri være endret.
+                    // Objekter pÃ¥ level 0 skal ikke kastes. PÃ¥ klienten vil disse aldri vÃ¦re endret.
                     storeEntry.setBubbleObject(level, null);
                 }
                 storeEntry.unlock(level);
@@ -403,10 +403,10 @@ public class StoreSessionClient extends AbstractStoreSession {
                 }
                 store.getRelationCache().cacheMaterialisedRelationsAndClearLocallyCachedValues(bubbleObjectFromTransfer, level);
             } else {
-                // Entry finnes, må sjekke om objekt er låst på underliggende nivå
+                // Entry finnes, mÃ¥ sjekke om objekt er lÃ¥st pÃ¥ underliggende nivÃ¥
                 int lockLevel = entry.calcLockLevelStartingFrom(level);
                 if (lockLevel < 0) {
-                    // Objekt ikke låst i klienten. Må sjekke om objekt i transfer skal erstatte eksisterende readonly instans og om objektet nå skal være låst
+                    // Objekt ikke lÃ¥st i klienten. MÃ¥ sjekke om objekt i transfer skal erstatte eksisterende readonly instans og om objektet nÃ¥ skal vÃ¦re lÃ¥st
                     int derivedLevel = entry.getLevelForDerivedBubbleObject(level);
                     int versionComparison = selectVersion(entry.getDerivedBubbleObject(derivedLevel), bubbleObjectFromTransfer);
                     if (versionComparison < 0) {
@@ -427,7 +427,7 @@ public class StoreSessionClient extends AbstractStoreSession {
                         lockedEntriesNotAlreadyLocked.add(entry);
                     }
                 }
-                // Hvis objektet i Store er allerede låst, så ignoreres den innkommende kopien fra transfer
+                // Hvis objektet i Store er allerede lÃ¥st, sÃ¥ ignoreres den innkommende kopien fra transfer
             }
         }
         return lockedEntriesNotAlreadyLocked;
@@ -465,7 +465,7 @@ public class StoreSessionClient extends AbstractStoreSession {
 
     @Override
     public <T extends BubbleObject> void ensureFullyLoaded(T bubbleObject) {
-        // No-op, bobler er alltid fullt lastet på klient
+        // No-op, bobler er alltid fullt lastet pÃ¥ klient
     }
 
     @Override
@@ -484,13 +484,13 @@ public class StoreSessionClient extends AbstractStoreSession {
     }
 
     /**
-     * På klienten vil level 0 inneholde det opprindelige objektet i uforandret state eller null dersom det er nytt
+     * PÃ¥ klienten vil level 0 inneholde det opprindelige objektet i uforandret state eller null dersom det er nytt
      */
     @Override
     public BubbleObject getPersistedBubbleObjectForLocked(StoreEntry storeEntry) {
-        Preconditions.checkState(storeEntry.isLocked(), "Entry må være låst: %s", storeEntry);
+        Preconditions.checkState(storeEntry.isLocked(), "Entry mÃ¥ vÃ¦re lÃ¥st: %s", storeEntry);
         if (storeEntry.getState(0) == StoreEntryState.UNCHANGED) {
-            return Preconditions.checkNotNull(storeEntry.getBubbleObject(0), "Entry.getBubbleObject[0] kan ikke være null: %s", storeEntry);
+            return Preconditions.checkNotNull(storeEntry.getBubbleObject(0), "Entry.getBubbleObject[0] kan ikke vÃ¦re null: %s", storeEntry);
         } else {
             return storeEntry.getBubbleObject(0);
         }

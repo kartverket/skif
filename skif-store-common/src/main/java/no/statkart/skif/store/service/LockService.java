@@ -6,50 +6,50 @@ import no.statkart.skif.store.BubbleObject;
 import java.util.Collection;
 
 /**
- * Tjenester for å låse og låse opp objekter. Utfyller oppdateringsfunksjonaliteten i Store.
+ * Tjenester for Ã¥ lÃ¥se og lÃ¥se opp objekter. Utfyller oppdateringsfunksjonaliteten i Store.
  */
 public interface LockService {
     /**
-     * Låser {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} for kallende bruker og
+     * LÃ¥ser {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} for kallende bruker og
      * returnerer objektet.
      *
-     * @param id BubbleId for objekt som skal låses og lastes
+     * @param id BubbleId for objekt som skal lÃ¥ses og lastes
      * @return BubbleObject for {@code id}
      * @throws no.statkart.skif.exception.ObjectNotFoundException kastes hvis {@code id} ikke finnes
-     * @throws no.statkart.skif.exception.LockedException         kastes hvis objekt er låst av en annen bruker
+     * @throws no.statkart.skif.exception.LockedException         kastes hvis objekt er lÃ¥st av en annen bruker
      */
     <T extends BubbleObject> T lock(BubbleId<? extends T> id);
 
     /**
-     * Låser {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} for kallende bruker og
+     * LÃ¥ser {@link BubbleObject} av type {@code <T>} for {@code id} av type {@code <I>} for kallende bruker og
      * returnerer objektet.
      *
-     * @param ids BubbleIds for objekter som skal låses og lastes
+     * @param ids BubbleIds for objekter som skal lÃ¥ses og lastes
      * @return BubbleObject for {@code ids}
      * @throws no.statkart.skif.exception.ObjectsNotFoundException kastes hvis noen {@code ids} ikke finnes
-     * @throws no.statkart.skif.exception.LockedException          kastes hvis et objekt er låst av en annen bruker
+     * @throws no.statkart.skif.exception.LockedException          kastes hvis et objekt er lÃ¥st av en annen bruker
      */
     <T extends BubbleObject, I extends BubbleId<? extends T>> Collection<T> lockForList(Collection<I> ids);
 
     /**
-     * Låser opp {@link BubbleObject} for {@code id} av type {@code <I>} dersom det er låst av kallende bruker.
+     * LÃ¥ser opp {@link BubbleObject} for {@code id} av type {@code <I>} dersom det er lÃ¥st av kallende bruker.
      *
-     * @param id BubbleId for objekt som skal låses opp
+     * @param id BubbleId for objekt som skal lÃ¥ses opp
      */
     <I extends BubbleId<?>> void unlock(I id);
 
     /**
-     * Låser opp {@link BubbleObject}-er for gitte {@code ids} dersom det er låst av kallende bruker.
+     * LÃ¥ser opp {@link BubbleObject}-er for gitte {@code ids} dersom det er lÃ¥st av kallende bruker.
      *
-     * @param ids BubbleIds for objekter som skal låses opp
+     * @param ids BubbleIds for objekter som skal lÃ¥ses opp
      */
     void unlockForList(Collection<? extends BubbleId<?>> ids);
 
     /**
-     * Rerturnerer true dersom objektet er låst av kallende bruker
+     * Rerturnerer true dersom objektet er lÃ¥st av kallende bruker
      *
-     * @param id BubbleId for objekt som skal sjekkes om er låst
-     * @return {@code true} dersom objektet er låst av kallende bruker, {@code false} hvis ikke låst eller låst av andre
+     * @param id BubbleId for objekt som skal sjekkes om er lÃ¥st
+     * @return {@code true} dersom objektet er lÃ¥st av kallende bruker, {@code false} hvis ikke lÃ¥st eller lÃ¥st av andre
      */
     <I extends BubbleId<?>> boolean isLocked(I id);
 }

@@ -55,7 +55,7 @@ public interface WrappableStoreSession extends StoreSession {
 
     /**
      * Returnerer et BubbleObject med samme innhold som databasen eller null dersom objektet er nytt. Metoden
-     * er kun implementert for objekter som allerede er låst (kan vurdere å utvidet hvis det er et behov for det)
+     * er kun implementert for objekter som allerede er lÃ¥st (kan vurdere Ã¥ utvidet hvis det er et behov for det)
      */
     BubbleObject getPersistedBubbleObjectForLocked(StoreEntry storeEntry);
 

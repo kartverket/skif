@@ -84,9 +84,9 @@ public class StoreEntry {
     }
 
     /**
-     * Beregner hvilket level eksisterende lås gjelder for startende fra {@code level}
+     * Beregner hvilket level eksisterende lÃ¥s gjelder for startende fra {@code level}
      *
-     * @return level som lås gjelder for eller -1 hvis ingen lås
+     * @return level som lÃ¥s gjelder for eller -1 hvis ingen lÃ¥s
      */
     public int calcLockLevelStartingFrom(int level) {
         while (!locked[level]) {
@@ -97,7 +97,7 @@ public class StoreEntry {
     }
 
     /**
-     * Setter level til locked og setter bubbleObject som må være dekoplet underliggende session
+     * Setter level til locked og setter bubbleObject som mÃ¥ vÃ¦re dekoplet underliggende session
      *
      */
     public void setLocked(int level, BubbleObject bubbleObject) {
@@ -151,7 +151,7 @@ public class StoreEntry {
         boolean removeEntry = state[level] == StoreEntryState.INSERTED || state[level] == StoreEntryState.INSERTED_DELETED;
         state[level] = StoreEntryState.NULL;
         bubbleObject[level] = null;
-        // Kan ikke nullstille locked, da opplåsing av objekt er en egen ting som skjer etter at denne metoden blir kalt
+        // Kan ikke nullstille locked, da opplÃ¥sing av objekt er en egen ting som skjer etter at denne metoden blir kalt
         return removeEntry;
     }
 

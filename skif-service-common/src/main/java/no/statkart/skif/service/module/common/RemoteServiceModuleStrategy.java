@@ -17,10 +17,10 @@ public abstract class RemoteServiceModuleStrategy extends ModuleStrategy {
     /**
      * Definerer mapping mellom intern og webservice service-klasser.
      * <br>
-     * Skal være på formen {@code &lt;intern&gt;:&lt;extern&gt;}
+     * Skal vÃ¦re pÃ¥ formen {@code &lt;intern&gt;:&lt;extern&gt;}
      */
     protected String[] classWSPackageMappings = {"api:wsapi", "service:wsapi.service","domain:wsapi.service.domain",
-            // Midlertidig fix pga "SKIF-382 Håndtering av lange navne"
+            // Midlertidig fix pga "SKIF-382 HÃ¥ndtering av lange navne"
             "domain.relation.uni.component.entity:wsapi.service.domain.relation.uni.comp"
     };
 

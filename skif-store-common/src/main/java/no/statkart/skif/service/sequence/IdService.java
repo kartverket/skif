@@ -3,7 +3,7 @@ package no.statkart.skif.service.sequence;
 import no.statkart.skif.store.BubbleId;
 
 /**
- * Interface for utgivelse av unike id-verdier en om gangen fra en blokk av allerede allokert sekvensnumre. Når
+ * Interface for utgivelse av unike id-verdier en om gangen fra en blokk av allerede allokert sekvensnumre. NÃ¥r
  * sekvensblokken er brukt opp allokeres en ny sekvensblokk ved kall til {@link SequenceBlockAllocatorService}.
  *
  * @author Henrik Fredholm
@@ -30,7 +30,7 @@ public interface IdService {
     <T extends BubbleId<?>> T getNextId(Class<T> idClass);
 
     /**
-     * Returnere blokstørrelse som vil bli brukt neste gang det skal allokeres en ny sekvensblokk
+     * Returnere blokstÃ¸rrelse som vil bli brukt neste gang det skal allokeres en ny sekvensblokk
      *
      * @return antall id'er som vil blir allokert
      */
@@ -38,7 +38,7 @@ public interface IdService {
 
 
     /**
-     * Setter blokstørrelse som vil bli brukt neste gang det skal allokeres en ny sekvensblokk
+     * Setter blokstÃ¸rrelse som vil bli brukt neste gang det skal allokeres en ny sekvensblokk
      *
      * @param blockSize antall id'er som vil blir allokert
      */
@@ -46,7 +46,7 @@ public interface IdService {
 
     /**
      * Nullstiller cachet sekvens. Neste kall til {@link #getNextIdValue} vil allokere en ny sekvensblokk. Ubrukte
-     * sekvensnumre vil gå tapt.
+     * sekvensnumre vil gÃ¥ tapt.
      */
     void clear();
 

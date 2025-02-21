@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Testklasse som inneholder en samling av entitycomponents som igjen har en enum i seg. Denne klassen ble opprettet for å teste
+ * Testklasse som inneholder en samling av entitycomponents som igjen har en enum i seg. Denne klassen ble opprettet for Ã¥ teste
  * SKIF-210.
  *
  * @author Roar Ingebrigtsen

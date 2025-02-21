@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Hibernate har kun innebygget støtte for å hente DataSource fra JNDI. Denne utvider dette til å kunne få en DataSource
+ * Hibernate har kun innebygget stÃ¸tte for Ã¥ hente DataSource fra JNDI. Denne utvider dette til Ã¥ kunne fÃ¥ en DataSource
  * angitt eksplisitt.
  */
 public class PoolConnectionProvider extends DatasourceConnectionProviderImpl {

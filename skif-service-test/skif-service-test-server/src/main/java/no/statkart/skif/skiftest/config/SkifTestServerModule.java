@@ -78,8 +78,8 @@ class  AnnotatingEjbServiceChainFactorySpecification extends EJBServiceChainFact
 }
 
 /**
- * En EJBServiceChainFactory  for test formål som legger på en ProxyHandler som endre på returverdien for metodekallet og legger
- * på informasjon om i hvilken context kallet ble uført. Denne factory'en kan kun brukte på metoder som
+ * En EJBServiceChainFactory  for test formÃ¥l som legger pÃ¥ en ProxyHandler som endre pÃ¥ returverdien for metodekallet og legger
+ * pÃ¥ informasjon om i hvilken context kallet ble ufÃ¸rt. Denne factory'en kan kun brukte pÃ¥ metoder som
  * returnerer {@code String}
  *
  * @param <S>

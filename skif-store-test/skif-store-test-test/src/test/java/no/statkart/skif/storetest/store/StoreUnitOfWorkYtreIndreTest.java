@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tester bruk av UnitOfWork på klient og server.
+ * Tester bruk av UnitOfWork pÃ¥ klient og server.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -49,7 +49,7 @@ public class StoreUnitOfWorkYtreIndreTest extends StoreTestMixedTestCase {
 
     public void ytreUnitOfWorkSkalFrigiLaaserVedAbortUnitOfWork() {
         UowTestService uowTestService = clientStore.getInstance(UowTestService.class);
-        releaseAllLockForCurrentUser(); // Så vi har en veldefinert tilstand
+        releaseAllLockForCurrentUser(); // SÃ¥ vi har en veldefinert tilstand
         SimpleId<?> simpleId = createSimpleObjectOnServer("foo");
         assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(0);
         try (UnitOfWork ytre = clientStore.beginUnitOfWork()) {
@@ -79,7 +79,7 @@ public class StoreUnitOfWorkYtreIndreTest extends StoreTestMixedTestCase {
             try (UnitOfWork indre = clientStore.beginUnitOfWork()) {
                 StoreBubbleTransfer storeBubbleTransfer = findAndLock(simpleId);
                 Simple transferedBubble = (Simple) storeBubbleTransfer.getBubbleObjects().get(simpleId);
-                assertThat(transferedBubble.getText()).isEqualTo("external"); // Server ved ikke om endring, men store gjør
+                assertThat(transferedBubble.getText()).isEqualTo("external"); // Server ved ikke om endring, men store gjÃ¸r
                 clientStore.register(storeBubbleTransfer);
                 Simple simple2 = clientStore.get(simpleId);
                 assertThat(simple2.getText()).isEqualTo("ytre");
@@ -88,7 +88,7 @@ public class StoreUnitOfWorkYtreIndreTest extends StoreTestMixedTestCase {
                 clientStore.commitUnitOfWork(indre);
             }
             assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
-            Simple simple3 = clientStore.get(simpleId); // Boble er uforandret i ytre, fortsatt samme instans som før indre startet
+            Simple simple3 = clientStore.get(simpleId); // Boble er uforandret i ytre, fortsatt samme instans som fÃ¸r indre startet
             assertThat(simple3).isSameAs(simple1);
             assertThat(simple1.getText()).isEqualTo("ytre");
             clientStore.abortUnitOfWork(ytre);
@@ -136,14 +136,14 @@ public class StoreUnitOfWorkYtreIndreTest extends StoreTestMixedTestCase {
                 assertThat(store.isLocked(simpleId)).isTrue();
                 assertThat(fooLockedIndre).isNotSameAs(foo);
                 assertThat(fooLockedIndre.getText()).isEqualTo("external update");
-                // Objektet låses og oppdateres
-                // Har lagt inn endring så man kan se den blir med.
+                // Objektet lÃ¥ses og oppdateres
+                // Har lagt inn endring sÃ¥ man kan se den blir med.
                 fooLockedIndre.setText("changed indre");
                 store.update(fooLockedIndre);
                 store.commitUnitOfWork(indre);
             }
             assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
-            // Uthenting via lock og get skal ha samme effekt, da objektet allerede er låst
+            // Uthenting via lock og get skal ha samme effekt, da objektet allerede er lÃ¥st
             Simple fooAfter = useLockOperation ? store.lock(simpleId) : store.get(simpleId);
             assertThat(fooAfter).isNotNull();
             assertThat(fooAfter).isNotSameAs(foo);
@@ -190,7 +190,7 @@ public class StoreUnitOfWorkYtreIndreTest extends StoreTestMixedTestCase {
                 serverStore.beginTransaction();
                 StoreBubbleTransfer transfer = uowTestService.findAndLock(simpleId); // Kall til container managed service
                 assertThat(transfer.getBubbleObjects().get(simpleId).store())
-                        .describedAs("bobler fra cmt service forventes å ligge i samme store som ytre bmt service")
+                        .describedAs("bobler fra cmt service forventes Ã¥ ligge i samme store som ytre bmt service")
                         .isSameAs(serverStore);
                 serverStore.commitTransaction();
                 return null;
@@ -215,13 +215,13 @@ public class StoreUnitOfWorkYtreIndreTest extends StoreTestMixedTestCase {
                 assertThat(store.isLocked(simpleId)).isTrue();
                 assertThat(fooLockedIndre).isNotSameAs(foo);
                 assertThat(fooLockedIndre.getText()).isEqualTo("external update");
-                // Objektet låses men indre gjør ingen oppdatering.
-                // Har lagt inn endring så man kan se den ikke blir med.
+                // Objektet lÃ¥ses men indre gjÃ¸r ingen oppdatering.
+                // Har lagt inn endring sÃ¥ man kan se den ikke blir med.
                 fooLockedIndre.setText("changed indre");
                 store.commitUnitOfWork(indre);
             }
             assertThat(uowTestService.antallLaaserForBruker()).isEqualTo(1);
-            // Uthenting via lock og get skal ha samme effekt, da objektet allerede er låst
+            // Uthenting via lock og get skal ha samme effekt, da objektet allerede er lÃ¥st
             Simple fooAfter = useLockOperation ? store.lock(simpleId) : store.get(simpleId);
             assertThat(fooAfter).isNotNull();
             assertThat(fooAfter).isNotSameAs(foo);
@@ -273,8 +273,8 @@ public class StoreUnitOfWorkYtreIndreTest extends StoreTestMixedTestCase {
                 assertThat(store.isLocked(simpleId)).isTrue();
                 assertThat(fooLockedIndre).isNotSameAs(foo);
                 assertThat(fooLockedIndre.getText()).isEqualTo("external update");
-                // Objektet låses men indre gjør ingen oppdatering.
-                // Har lagt inn endring så man kan se den ikke blir med.
+                // Objektet lÃ¥ses men indre gjÃ¸r ingen oppdatering.
+                // Har lagt inn endring sÃ¥ man kan se den ikke blir med.
                 fooLockedIndre.setText("changed indre");
                 store.abortUnitOfWork(indre);
             }

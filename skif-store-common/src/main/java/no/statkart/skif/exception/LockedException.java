@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Exception for å signalisere at man forsøkte å låse én eller flere bobler som allerede var låst av noen andre.
+ * Exception for Ã¥ signalisere at man forsÃ¸kte Ã¥ lÃ¥se Ã©n eller flere bobler som allerede var lÃ¥st av noen andre.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -129,11 +129,11 @@ public class LockedException extends ApplicationException {
     }
 
     /**
-     * Returnerer en kommaseparert string som viser opp til <code>maxLocks</code> av låsene i {@link #locksNotAquired} som ikke ble tatt.
-     * Hvis antall låser er større enn <code>maxLocks</code> inneholder strengen siste element det totale antall låser.
+     * Returnerer en kommaseparert string som viser opp til <code>maxLocks</code> av lÃ¥sene i {@link #locksNotAquired} som ikke ble tatt.
+     * Hvis antall lÃ¥ser er stÃ¸rre enn <code>maxLocks</code> inneholder strengen siste element det totale antall lÃ¥ser.
      *
-     * @param maxLocks maksimalt antall låser som strengen skal kunne inneholde
-     * @return Returnerer en kommaseparert string som viser opp til <code>maxLocks</code> av låsene i {@link #locksNotAquired} som ikke ble tatt.
+     * @param maxLocks maksimalt antall lÃ¥ser som strengen skal kunne inneholde
+     * @return Returnerer en kommaseparert string som viser opp til <code>maxLocks</code> av lÃ¥sene i {@link #locksNotAquired} som ikke ble tatt.
      */
     private String getLocksNotAquiredListString(int maxLocks) {
         StringBuilder buf = new StringBuilder();

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<!--  Mapping av koder. Hver enummerert kode må mappes til egen hibernate type.
-      Navnekonvensjon på type navn er Pakkenavn_KlassenavnForEnumKodeType.
+<!--  Mapping av koder. Hver enummerert kode mÃ¥ mappes til egen hibernate type.
+      Navnekonvensjon pÃ¥ type navn er Pakkenavn_KlassenavnForEnumKodeType.
    -->
 
 <hibernate-mapping default-cascade="none" default-lazy="false">

@@ -295,7 +295,7 @@ alter table SetAaL2EntBeloepVOSet add constraint FK_SetAaL2EntBeloepVOSet_ownId 
 
 create table NestedEntityComp (
   id number(19,0) not null,
-  ownerId number(19,0), -- denne er null hvis objektet blir pekt på direkte fra en annet objekt istedet for å inngå i et sett
+  ownerId number(19,0), -- denne er null hvis objektet blir pekt pÃ¥ direkte fra en annet objekt istedet for Ã¥ inngÃ¥ i et sett
   text varchar2(255),
   nestedComponentId number(19,0),
   primary key (id)
@@ -326,7 +326,7 @@ alter table BubbleWithEntInCompComponent add constraint FK_BubbleWithEntInComp_l
 
 create table L1SetEntInCompComponent (
   id number(19,0) not null,
-  ownerId number(19,0) constraint L1SetEntInComp_ownerId_null not null initially deferred,  -- Hibernate setter feltet til null før sletting. Kan derfor ikke bruke 'not null' direkte
+  ownerId number(19,0) constraint L1SetEntInComp_ownerId_null not null initially deferred,  -- Hibernate setter feltet til null fÃ¸r sletting. Kan derfor ikke bruke 'not null' direkte
   text varchar2(255),
   primary key (id)
 );
@@ -342,7 +342,7 @@ alter table BubbleWithEntInCompComponent add constraint FK_BubbleWithEntInComp_l
 
 create table L2SetEntInCompComponent (
   id number(19,0) not null,
-  ownerId number(19,0) constraint L2SetEntInComp_ownerId_null not null initially deferred,  -- Hibernate setter feltet til null før sletting. Kan derfor ikke bruke 'not null' direkte
+  ownerId number(19,0) constraint L2SetEntInComp_ownerId_null not null initially deferred,  -- Hibernate setter feltet til null fÃ¸r sletting. Kan derfor ikke bruke 'not null' direkte
   text varchar2(255),
   primary key (id)
 );

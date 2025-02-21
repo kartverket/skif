@@ -12,7 +12,7 @@ import org.testng.annotations.BeforeMethod;
 /**
  *
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.4 - ny grunnbok sprint 29
  */
 public abstract class DateTimeDemoTestCase {

@@ -26,8 +26,8 @@ import java.util.Locale;
 /**
  * Tester oppdatering av databasekodelister.
  * <p>
- * Testen er på ingen måte representativ for faktisk bruk, da man aldri vil opprette eller slette kodelister på denne
- * måten. Oppdateringsdelen er muligens relevant.
+ * Testen er pÃ¥ ingen mÃ¥te representativ for faktisk bruk, da man aldri vil opprette eller slette kodelister pÃ¥ denne
+ * mÃ¥ten. Oppdateringsdelen er muligens relevant.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
@@ -60,13 +60,13 @@ public class DbKodelisteTest extends StoreTestTestCase {
             UnitOfWorkTransfer insertTransfer = new UnitOfWorkTransfer(Collections.<BubbleObject>singletonList(kodelisteForInsert), Collections.emptyList(), Collections.emptyList());
             updateService.saveTransfer(insertTransfer);
 
-            // Det finnes ikke historikk på kodelister
+            // Det finnes ikke historikk pÃ¥ kodelister
 //            List<? extends StoreTestKodelisteLongId<?>> postInsertVersions = storeService.getVersions(kodelisteId, SnapshotVersion.START, SnapshotVersion.CURRENT);
 //            Assert.assertEquals(postInsertVersions.size(), 1, "Antall historikkinnslag etter opprettelse");
 
             StoreTestKodelisteLong kodelisteForUpdate = lockService.lock(kodelisteId);
-            Assert.assertEquals(kodelisteForUpdate.getKodeTypeNavn(), "Testkodeliste", "Kodelistetype før oppdatering");
-            Assert.assertEquals(kodelisteForUpdate.getNavn().getText(norsk), "Testkodeliste", "Kodelistenavn før oppdatering");
+            Assert.assertEquals(kodelisteForUpdate.getKodeTypeNavn(), "Testkodeliste", "Kodelistetype fÃ¸r oppdatering");
+            Assert.assertEquals(kodelisteForUpdate.getNavn().getText(norsk), "Testkodeliste", "Kodelistenavn fÃ¸r oppdatering");
 
             LocalizedString navnForUpdate = kodelisteForUpdate.getNavn();
             navnForUpdate.setText(norsk, "Kodeliste for test");
@@ -74,7 +74,7 @@ public class DbKodelisteTest extends StoreTestTestCase {
             UnitOfWorkTransfer updateTransfer = new UnitOfWorkTransfer(Collections.emptyList(), Collections.<BubbleObject>singletonList(kodelisteForUpdate), Collections.emptyList());
             updateService.saveTransfer(updateTransfer);
 
-            // Det finnes ikke historikk på kodelister
+            // Det finnes ikke historikk pÃ¥ kodelister
 //            List<? extends StoreTestKodelisteLongId<?>> postUpdateVersions = storeService.getVersions(kodelisteId, SnapshotVersion.START, SnapshotVersion.CURRENT);
 //            Assert.assertEquals(postUpdateVersions.size(), 2, "Antall historikkinnslag etter oppdatering");
 
@@ -85,7 +85,7 @@ public class DbKodelisteTest extends StoreTestTestCase {
             UnitOfWorkTransfer deleteTransfer = new UnitOfWorkTransfer(Collections.emptyList(), Collections.emptyList(), Collections.<BubbleObject>singletonList(kodelisteForDelete));
             updateService.saveTransfer(deleteTransfer);
 
-            // Det finnes ikke historikk på kodelister
+            // Det finnes ikke historikk pÃ¥ kodelister
 //            List<? extends StoreTestKodelisteLongId<?>> postDeleteVersions = storeService.getVersions(kodelisteId, SnapshotVersion.START, SnapshotVersion.CURRENT);
 //            Assert.assertEquals(postDeleteVersions.size(), 2, "Antall historikkinnslag etter sletting");
         } finally {

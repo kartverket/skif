@@ -80,7 +80,7 @@ public class RemoteServiceModule extends ModuleWithStrategy<RemoteServiceModuleS
     }
 
     /**
-     * Legger på de samme kallkjedeproxyleddene for SingleVM og JEE-modus.
+     * Legger pÃ¥ de samme kallkjedeproxyleddene for SingleVM og JEE-modus.
      *
      * @param callServiceChainProxyHandlers proxyledd
      * @since 2.5.0

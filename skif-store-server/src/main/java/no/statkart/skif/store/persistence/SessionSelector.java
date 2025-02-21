@@ -8,11 +8,11 @@ import org.hibernate.internal.SessionImpl;
 import java.util.Objects;
 
 /**
- * Klasse for å hente ut en Hibernate session og låse denne til å bruke en gitt snapshotversion. Når man er
- * ferdig med å bruke sessionen må den frigis slik at sessionen senere kan gjenbrukes for en annen snapshotversion.
- * Dette skjer automatisk når man skifter snapshotversion via selectoren samt når selectoren lukkes.
+ * Klasse for Ã¥ hente ut en Hibernate session og lÃ¥se denne til Ã¥ bruke en gitt snapshotversion. NÃ¥r man er
+ * ferdig med Ã¥ bruke sessionen mÃ¥ den frigis slik at sessionen senere kan gjenbrukes for en annen snapshotversion.
+ * Dette skjer automatisk nÃ¥r man skifter snapshotversion via selectoren samt nÃ¥r selectoren lukkes.
  * <p>
- * <strong>Eksempel på bruk</strong>
+ * <strong>Eksempel pÃ¥ bruk</strong>
  * <pre>
  *     class SessionSelectorUsage {
  *         &#064;Inject
@@ -40,7 +40,7 @@ public class SessionSelector implements AutoCloseable {
     }
 
     /**
-     * Returnerer en session som er låst til en gitt snapshotversion. Sessionen er kun gyldig sålenge det ikke hentes
+     * Returnerer en session som er lÃ¥st til en gitt snapshotversion. Sessionen er kun gyldig sÃ¥lenge det ikke hentes
      * ut en session for en annen snapshotversion via selectoren.
      */
     public SessionImpl get(SnapshotVersion snapshotVersion) {
@@ -55,7 +55,7 @@ public class SessionSelector implements AutoCloseable {
 
 
     /**
-     * Frigir inneværende session dersom en slik har blit allokert og lukker selectoren slik at den ikke lengre kan brukes
+     * Frigir innevÃ¦rende session dersom en slik har blit allokert og lukker selectoren slik at den ikke lengre kan brukes
      */
     @Override
     public void close() {
@@ -70,7 +70,7 @@ public class SessionSelector implements AutoCloseable {
     }
 
     /**
-     * Frigir inneværende session dersom en slik har blit allokert. Selectoren kan forsatt brukes.
+     * Frigir innevÃ¦rende session dersom en slik har blit allokert. Selectoren kan forsatt brukes.
      */
     private void release() {
         if (implementation != null) {

@@ -14,7 +14,7 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Tester ut at server injectoren blir gjenbukt på tvers av testmetoder og testcases
+ * Tester ut at server injectoren blir gjenbukt pÃ¥ tvers av testmetoder og testcases
  * for SkifServerCase tester. Denne legger inn state i serveren
  *
  * @author Henrik Fredholm

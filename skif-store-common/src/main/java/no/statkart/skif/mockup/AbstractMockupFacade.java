@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.SortedMap;
 
 /**
- * Baseklasse for mockupfacader. Inneholder store og grunnleggende metoder for å hente ut transfer.
+ * Baseklasse for mockupfacader. Inneholder store og grunnleggende metoder for Ã¥ hente ut transfer.
  * SKIF-applikasjoner lager sin egen implementasjon som definerer opp mockupfactories.
  *
  * @author Tor Egil R. Strand
@@ -35,7 +35,7 @@ public abstract class AbstractMockupFacade {
     }
 
     /**
-     * @return En {@link IdService} som brukes for å generere test-sett spesifike id-er.
+     * @return En {@link IdService} som brukes for Ã¥ generere test-sett spesifike id-er.
      */
     public IdService getIdService() {
         return idService;

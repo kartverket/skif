@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotasjon som kan plasseres på gettere og/eller settere for å indikere at egenskapen ikke skal mappes.
+ * Annotasjon som kan plasseres pÃ¥ gettere og/eller settere for Ã¥ indikere at egenskapen ikke skal mappes.
  *
  * @author Tor Egil R. Strand
  * @since 2.3.1

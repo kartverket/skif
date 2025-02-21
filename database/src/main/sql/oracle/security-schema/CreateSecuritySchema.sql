@@ -1,4 +1,4 @@
--- Script for manuell opprettelse av sikkerhetsskjema for SKIF basert på dokumentasjon fra SKIF-394.
+-- Script for manuell opprettelse av sikkerhetsskjema for SKIF basert pÃ¥ dokumentasjon fra SKIF-394.
 
 ALTER SESSION SET CURRENT_SCHEMA = "SKIF_USERS";
 

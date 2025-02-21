@@ -5,7 +5,7 @@ import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import java.lang.reflect.Method;
 
 /**
- * En EJBServiceChain ProxyHandler som har ansvar for å avslutte ressurser som har vært i bruk under servicekallet
+ * En EJBServiceChain ProxyHandler som har ansvar for Ã¥ avslutte ressurser som har vÃ¦rt i bruk under servicekallet
  *
  * @author Henrik Fredholm
  * @since 2.0

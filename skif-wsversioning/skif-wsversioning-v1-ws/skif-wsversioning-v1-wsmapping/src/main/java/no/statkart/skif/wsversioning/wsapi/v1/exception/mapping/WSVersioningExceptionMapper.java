@@ -11,14 +11,14 @@ import java.util.Map;
 /**
  * Mapper for JAX-WS exception classes in API
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @author Tor Egil R. Strand
  * @since 2.4.0
  */
 public class WSVersioningExceptionMapper extends AbstractExceptionMapper<WSVersioningExceptionMapping> {
 
     /**
-     * Definisjon av hvordan man mapper tilbake til domenet basert på 'category'
+     * Definisjon av hvordan man mapper tilbake til domenet basert pÃ¥ 'category'
      *
      * NB: insertion order er viktig. legg superklasser til sist!
      */
@@ -63,7 +63,7 @@ public class WSVersioningExceptionMapper extends AbstractExceptionMapper<WSVersi
     /**
      * Kategorisering av exceptions
      *
-     * @author Leif Lislegård
+     * @author Leif LislegÃ¥rd
      * @since 2.0
      */
     public enum Kategori {

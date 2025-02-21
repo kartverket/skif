@@ -6,11 +6,11 @@ import org.hibernate.MappingException;
 import org.hibernate.type.CustomType;
 
 /**
- * En Hibernate {@code CustomType} klasse som gjør det mulig å bruke collections av vilkårlig størrelse
- * som innput parameter i hibernate spørringer. Klassen baserer seg på [@code OracleLongBubbleIdArrayUserType}
+ * En Hibernate {@code CustomType} klasse som gjÃ¸r det mulig Ã¥ bruke collections av vilkÃ¥rlig stÃ¸rrelse
+ * som innput parameter i hibernate spÃ¸rringer. Klassen baserer seg pÃ¥ [@code OracleLongBubbleIdArrayUserType}
  * som er en Hibernate {@code UserType} for persistering av Oracle {@code oracle.sql.ARRAY}.
  * <p>
- * <strong>Eksempel på bruk:</strong>
+ * <strong>Eksempel pÃ¥ bruk:</strong>
  * <pre>
  *    Collection<String> stringValues = ...;
  *    SQLQuery query = session.createSQLQuery("select {e.*} from Eier {e} where e.someText in (select * from table(:stringValues))");

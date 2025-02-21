@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 /**
- * Service for testing av låsing.
+ * Service for testing av lÃ¥sing.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

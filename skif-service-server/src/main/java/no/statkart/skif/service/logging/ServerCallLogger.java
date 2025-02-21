@@ -3,16 +3,16 @@ package no.statkart.skif.service.logging;
 import java.lang.reflect.Method;
 
 /**
- * Interface for loggrapportering fra en LoggingProxyHandler på tjeneren. Implementasjoner av
- * dette interfacet bestemmer (sammen med logback.xml e.l.) til hvilke logger og på hvilket format det skal logges.
- * Implmentasjonen bindes opp i SKIF. Den kan være singleton.
+ * Interface for loggrapportering fra en LoggingProxyHandler pÃ¥ tjeneren. Implementasjoner av
+ * dette interfacet bestemmer (sammen med logback.xml e.l.) til hvilke logger og pÃ¥ hvilket format det skal logges.
+ * Implmentasjonen bindes opp i SKIF. Den kan vÃ¦re singleton.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
 public interface ServerCallLogger {
     /**
-     * Kalles før en EJB blir kalt.
+     * Kalles fÃ¸r en EJB blir kalt.
      *
      * @param method metoden som skal kalles
      * @param args   argumentene til metoden som skal kalles
@@ -34,7 +34,7 @@ public interface ServerCallLogger {
      *
      * @param method metoden som kastet exception
      * @param args   argumentene metoden ble kalt med
-     * @param t      exception som ble kastet (kan også være Error)
+     * @param t      exception som ble kastet (kan ogsÃ¥ vÃ¦re Error)
      * @param time   tiden kallet tok, i millisekunder
      */
     void logEjbError(Method method, Object[] args, Throwable t, long time);
@@ -50,7 +50,7 @@ public interface ServerCallLogger {
     /**
      * Kalles i det en web service skal returnere.
      *
-     * @param method      metoden som er i ferd med å returnere
+     * @param method      metoden som er i ferd med Ã¥ returnere
      * @param args        argumentene metoden ble kalt med
      * @param returnValue returverdien fra metoden som ble kalt
      * @param time        tiden kallet tok, i millisekunder
@@ -62,7 +62,7 @@ public interface ServerCallLogger {
      *
      * @param method metoden som kastet exception
      * @param args   argumentene metoden ble kalt med
-     * @param t      exception som ble kastet (kan også være Error)
+     * @param t      exception som ble kastet (kan ogsÃ¥ vÃ¦re Error)
      * @param time   tiden kallet tok, i millisekunder
      */
     void logWsError(Method method, Object[] args, Throwable t, long time);

@@ -134,7 +134,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
             if (value == null) {
                 st.setNull(index, Types.SMALLINT);
             } else {
-                // TODO: Fix så det virker for string også
+                // TODO: Fix sÃ¥ det virker for string ogsÃ¥
                 long idValue = (Long) returnedClass().cast(value).getValue();
                 st.setInt(index, (int) idValue);
             }

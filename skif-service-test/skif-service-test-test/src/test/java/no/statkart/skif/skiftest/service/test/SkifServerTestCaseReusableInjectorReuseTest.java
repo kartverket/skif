@@ -11,10 +11,10 @@ import java.util.List;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Tester ut at server injectoren blir gjenbukt på tvers av testmetoder og testcases
- * for SkifServerCase tester. Denne test henter ut state fra serveren som allerede skal være lagt inn.
+ * Tester ut at server injectoren blir gjenbukt pÃ¥ tvers av testmetoder og testcases
+ * for SkifServerCase tester. Denne test henter ut state fra serveren som allerede skal vÃ¦re lagt inn.
  *
- * NB: Denne test kan ikke kjøres for seg selv i Idea. Må kjøre hele pakken
+ * NB: Denne test kan ikke kjÃ¸res for seg selv i Idea. MÃ¥ kjÃ¸re hele pakken
  *
  * @author Henrik Fredholm
  * @since 2.0

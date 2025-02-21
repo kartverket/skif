@@ -25,9 +25,9 @@ import java.util.HashMap;
  * <p>
  * I forkant av hvert kall til serveren henter ProxyHandleren ut {@code UserLogin}, og evt {@code ServiceContext}
  * hvis kallet krever det, fra klients injector. Disse data legges inn i et {@link SingleVmRemoteCallContext}-objekt
- * som overføres til serveren uten om selve service-kallet ved å binde objektet i serverens injector med
- * scope {@link ServiceRequestScope}. Det er nødvendig å opprette et ServiceRequestScope for å gjøre kall
- * til serveren slik at kallet utføres trådsikker siden flere klienter kan kalle serveren samtidig.
+ * som overfÃ¸res til serveren uten om selve service-kallet ved Ã¥ binde objektet i serverens injector med
+ * scope {@link ServiceRequestScope}. Det er nÃ¸dvendig Ã¥ opprette et ServiceRequestScope for Ã¥ gjÃ¸re kall
+ * til serveren slik at kallet utfÃ¸res trÃ¥dsikker siden flere klienter kan kalle serveren samtidig.
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -71,9 +71,9 @@ public abstract class SingleVmRemoteCallProxyHandler<S> extends TerminatingProxy
     }
 
     /**
-     * Serialiserer argumenter før de sendes til server. Hvis argumentet er av type {@code
-     * RunOnServerMethod} så serialiseres argumentet. Forsøk på å serialisere RunOnServerMethod
-     * vil føre til en masse problemer siden objektet ofte er implementert som en anonym klasse og vil
+     * Serialiserer argumenter fÃ¸r de sendes til server. Hvis argumentet er av type {@code
+     * RunOnServerMethod} sÃ¥ serialiseres argumentet. ForsÃ¸k pÃ¥ Ã¥ serialisere RunOnServerMethod
+     * vil fÃ¸re til en masse problemer siden objektet ofte er implementert som en anonym klasse og vil
      * har peker til et outer objekt (testcasen) som ikke kan serialiseres.
      * @param args
      * @return

@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tester låsing gjennom Store, i samspill med låsebehandlingen i transaksjonshåndteringen.
+ * Tester lÃ¥sing gjennom Store, i samspill med lÃ¥sebehandlingen i transaksjonshÃ¥ndteringen.
  *
  * @author Tor Egil R. Strand
  * @since 2.1
@@ -49,26 +49,26 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
         UnitOfWork unitOfWork = clientStore.beginUnitOfWork();
         try {
 
-            Assert.assertFalse(clientStore.isLocked(Simple.getId()), "Nyopprettet objekt skal ikke være låst.");
+            Assert.assertFalse(clientStore.isLocked(Simple.getId()), "Nyopprettet objekt skal ikke vÃ¦re lÃ¥st.");
 
             clientStore.insert(Simple);
 
-            Assert.assertTrue(clientStore.isLocked(Simple.getId()), "Nyinsertet objekt skal være låst.");
+            Assert.assertTrue(clientStore.isLocked(Simple.getId()), "Nyinsertet objekt skal vÃ¦re lÃ¥st.");
 
             try {
                 clientStore.unlock(Simple.getId());
-                Assert.fail("Nyinsertet objekt skal ikke kunne låses opp.");
+                Assert.fail("Nyinsertet objekt skal ikke kunne lÃ¥ses opp.");
             } catch (ImplementationException e) {
                 Assert.assertTrue(e.getMessage().startsWith("Object has been changed and can not be unlocked"), "Annen exception enn forventet: " + e.getMessage());
             }
 
             clientStore.lock(Simple.getId());
 
-            Assert.assertTrue(clientStore.isLocked(Simple.getId()), "Nyinsertet objekt skal fortsatt være låst.");
+            Assert.assertTrue(clientStore.isLocked(Simple.getId()), "Nyinsertet objekt skal fortsatt vÃ¦re lÃ¥st.");
 
             final UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
 
-            Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), Simple.getId().getValue())), "Nyinsertet objekt skal ikke være låst i lockerservice.");
+            Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), Simple.getId().getValue())), "Nyinsertet objekt skal ikke vÃ¦re lÃ¥st i lockerservice.");
 
             server.runInTxRequired(new RunOnServerMethod() {
                 @Inject
@@ -76,11 +76,11 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
                 @Override
                 public Object run() {
-                    Assert.assertFalse(serverStore.isLocked(Simple.getId()), "Nyinsertet objekt skal ikke enda være låst på tjener.");
+                    Assert.assertFalse(serverStore.isLocked(Simple.getId()), "Nyinsertet objekt skal ikke enda vÃ¦re lÃ¥st pÃ¥ tjener.");
 
                     serverStore.registerTransfer(unitOfWorkTransfer);
 
-                    Assert.assertTrue(serverStore.isLocked(Simple.getId()), "Nyinsertet objekt skal nå være låst på tjener.");
+                    Assert.assertTrue(serverStore.isLocked(Simple.getId()), "Nyinsertet objekt skal nÃ¥ vÃ¦re lÃ¥st pÃ¥ tjener.");
 
                     return null;
                 }
@@ -88,8 +88,8 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
             clientStore.endUnitOfWork(unitOfWork);
 
-            Assert.assertFalse(clientStore.isLocked(Simple.getId()), "Nycommittet objekt skal ikke lenger være låst.");
-            Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), Simple.getId().getValue())), "Nyinsertet objekt skal ikke være låst i lockerservice.");
+            Assert.assertFalse(clientStore.isLocked(Simple.getId()), "Nycommittet objekt skal ikke lenger vÃ¦re lÃ¥st.");
+            Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), Simple.getId().getValue())), "Nyinsertet objekt skal ikke vÃ¦re lÃ¥st i lockerservice.");
         } finally {
             clientStore.closeUnitOfWork(unitOfWork);
         }
@@ -116,22 +116,22 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
             }
         });
 
-        Assert.assertFalse(clientStore.isLocked(id), "Ikke-oppdatert objekt skal ikke være låst.");
-        Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Ikke-oppdatert objekt skal ikke være låst i lockerservice.");
+        Assert.assertFalse(clientStore.isLocked(id), "Ikke-oppdatert objekt skal ikke vÃ¦re lÃ¥st.");
+        Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Ikke-oppdatert objekt skal ikke vÃ¦re lÃ¥st i lockerservice.");
 
         UnitOfWork unitOfWork = clientStore.beginUnitOfWork();
         try {
             clientStore.get(id);
             Simple Simple = clientStore.lock(id);
 
-            Assert.assertTrue(clientStore.isLocked(id), "Ikke-oppdatert objekt skal være låst.");
-            Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Ikke-oppdatert objekt skal være låst i lockerservice.");
+            Assert.assertTrue(clientStore.isLocked(id), "Ikke-oppdatert objekt skal vÃ¦re lÃ¥st.");
+            Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Ikke-oppdatert objekt skal vÃ¦re lÃ¥st i lockerservice.");
 
             Simple.setText("UpdateTestUpdated");
             clientStore.update(Simple);
 
-            Assert.assertTrue(clientStore.isLocked(id), "Oppdatert objekt skal være låst.");
-            Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Oppdatert objekt skal være låst i lockerservice.");
+            Assert.assertTrue(clientStore.isLocked(id), "Oppdatert objekt skal vÃ¦re lÃ¥st.");
+            Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Oppdatert objekt skal vÃ¦re lÃ¥st i lockerservice.");
 
             final UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
 
@@ -144,13 +144,13 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
                 @Override
                 public Object run() {
-                    Assert.assertTrue(serverStore.isLocked(id), "Oppdatert objekt skal allerede være låst på tjener.");
-                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Oppdatert objekt skal fortsatt være låst i lockerservice.");
+                    Assert.assertTrue(serverStore.isLocked(id), "Oppdatert objekt skal allerede vÃ¦re lÃ¥st pÃ¥ tjener.");
+                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Oppdatert objekt skal fortsatt vÃ¦re lÃ¥st i lockerservice.");
 
                     serverStore.registerTransfer(unitOfWorkTransfer);
 
-                    Assert.assertTrue(serverStore.isLocked(id), "Oppdatert objekt skal nå være låst på tjener.");
-                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Oppdatert objekt skal fortsatt være låst i lockerservice.");
+                    Assert.assertTrue(serverStore.isLocked(id), "Oppdatert objekt skal nÃ¥ vÃ¦re lÃ¥st pÃ¥ tjener.");
+                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Oppdatert objekt skal fortsatt vÃ¦re lÃ¥st i lockerservice.");
 
                     return null;
                 }
@@ -158,8 +158,8 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
             clientStore.endUnitOfWork(unitOfWork);
 
-            Assert.assertFalse(clientStore.isLocked(Simple.getId()), "Oppdatert objekt skal ikke lenger være låst.");
-            Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), Simple.getId().getValue())), "Oppdatert objekt skal ikke være låst i lockerservice.");
+            Assert.assertFalse(clientStore.isLocked(Simple.getId()), "Oppdatert objekt skal ikke lenger vÃ¦re lÃ¥st.");
+            Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), Simple.getId().getValue())), "Oppdatert objekt skal ikke vÃ¦re lÃ¥st i lockerservice.");
         } finally {
             clientStore.closeUnitOfWork(unitOfWork);
         }
@@ -185,21 +185,21 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
             }
         });
 
-        Assert.assertFalse(clientStore.isLocked(id), "Ikke-slettet objekt skal ikke være låst.");
-        Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Ikke-slettet objekt skal ikke være låst i lockerservice.");
+        Assert.assertFalse(clientStore.isLocked(id), "Ikke-slettet objekt skal ikke vÃ¦re lÃ¥st.");
+        Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Ikke-slettet objekt skal ikke vÃ¦re lÃ¥st i lockerservice.");
 
         UnitOfWork unitOfWork = clientStore.beginUnitOfWork();
         try {
             clientStore.get(id);
             Simple Simple = clientStore.lock(id);
 
-            Assert.assertTrue(clientStore.isLocked(id), "Ikke-slettet objekt skal være låst.");
-            Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Ikke-slettet objekt skal være låst i lockerservice.");
+            Assert.assertTrue(clientStore.isLocked(id), "Ikke-slettet objekt skal vÃ¦re lÃ¥st.");
+            Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Ikke-slettet objekt skal vÃ¦re lÃ¥st i lockerservice.");
 
             clientStore.delete(Simple);
 
-            Assert.assertTrue(clientStore.isLocked(id), "Slettet objekt skal være låst.");
-            Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Slettet objekt skal være låst i lockerservice.");
+            Assert.assertTrue(clientStore.isLocked(id), "Slettet objekt skal vÃ¦re lÃ¥st.");
+            Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Slettet objekt skal vÃ¦re lÃ¥st i lockerservice.");
 
             final UnitOfWorkTransfer unitOfWorkTransfer = clientStore.getUnitOfWorkTransfer();
 
@@ -212,13 +212,13 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
                 @Override
                 public Object run() {
-                    Assert.assertTrue(serverStore.isLocked(id), "Slettet objekt skal allerede være låst på tjener.");
-                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Slettet objekt skal fortsatt være låst i lockerservice.");
+                    Assert.assertTrue(serverStore.isLocked(id), "Slettet objekt skal allerede vÃ¦re lÃ¥st pÃ¥ tjener.");
+                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Slettet objekt skal fortsatt vÃ¦re lÃ¥st i lockerservice.");
 
                     serverStore.registerTransfer(unitOfWorkTransfer);
 
-                    Assert.assertTrue(serverStore.isLocked(id), "Slettet objekt skal nå være låst på tjener.");
-                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Slettet objekt skal fortsatt være låst i lockerservice.");
+                    Assert.assertTrue(serverStore.isLocked(id), "Slettet objekt skal nÃ¥ vÃ¦re lÃ¥st pÃ¥ tjener.");
+                    Assert.assertNotNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), id.getValue())), "Slettet objekt skal fortsatt vÃ¦re lÃ¥st i lockerservice.");
 
                     return null;
                 }
@@ -226,17 +226,17 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
 
             clientStore.endUnitOfWork(unitOfWork);
 
-            Assert.assertFalse(clientStore.isLocked(Simple.getId()), "Slettet objekt skal ikke lenger være låst.");
-            Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), Simple.getId().getValue())), "Slettet objekt skal ikke være låst i lockerservice.");
+            Assert.assertFalse(clientStore.isLocked(Simple.getId()), "Slettet objekt skal ikke lenger vÃ¦re lÃ¥st.");
+            Assert.assertNull(dbLockerService.getLock(new LockKey<>(SimpleId.class.getName(), Simple.getId().getValue())), "Slettet objekt skal ikke vÃ¦re lÃ¥st i lockerservice.");
         } finally {
             clientStore.closeUnitOfWork(unitOfWork);
         }
     }
 
     /**
-     * Tester at StoreSessionServer tar seg bryet med å hente låsinformasjon fra databasen ved vanlig get, dersom man er i unit-of-work.
+     * Tester at StoreSessionServer tar seg bryet med Ã¥ hente lÃ¥sinformasjon fra databasen ved vanlig get, dersom man er i unit-of-work.
      */
-    @Test(enabled = false) // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
+    @Test(enabled = false) // TODO: SKIF-610. Midlertidig disabling av denne i pÃ¥vente av GBOK-9889. GjÃ¸r klienten feiler.
     public void testGetLocked() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
@@ -264,7 +264,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at objekter kan låses og låses opp på i StoreSessionServer så lenge de ikke er modifisert.
+     * Tester at objekter kan lÃ¥ses og lÃ¥ses opp pÃ¥ i StoreSessionServer sÃ¥ lenge de ikke er modifisert.
      */
     public void testStoreSessionServerUnlockUnmodified() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -283,9 +283,9 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at objekter ikke kan låses direkte i en StoreSessionClient
+     * Tester at objekter ikke kan lÃ¥ses direkte i en StoreSessionClient
      */
-    @Test(enabled = false) // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
+    @Test(enabled = false) // TODO: SKIF-610. Midlertidig disabling av denne i pÃ¥vente av GBOK-9889. GjÃ¸r klienten feiler.
     public void testStoreSessionClientCannotLock() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
@@ -299,21 +299,21 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at klient kan låse opp objekter som bare er låst på serveren
+     * Tester at klient kan lÃ¥se opp objekter som bare er lÃ¥st pÃ¥ serveren
      */
-    @Test(enabled = false) // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
+    @Test(enabled = false) // TODO: SKIF-610. Midlertidig disabling av denne i pÃ¥vente av GBOK-9889. GjÃ¸r klienten feiler.
     public void testUnlockFromClient() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final SimpleId<?> simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
 
         lockOnServer(simpleId1);
-        Assert.assertTrue(clientStore.getInstance(LockService.class).isLocked(simpleId1), "Objekt ikke låst som forventet");
+        Assert.assertTrue(clientStore.getInstance(LockService.class).isLocked(simpleId1), "Objekt ikke lÃ¥st som forventet");
         clientStore.unlock(simpleId1);
-        Assert.assertFalse(clientStore.getInstance(LockService.class).isLocked(simpleId1), "Kall til unlock låser ikke opp på server");
+        Assert.assertFalse(clientStore.getInstance(LockService.class).isLocked(simpleId1), "Kall til unlock lÃ¥ser ikke opp pÃ¥ server");
     }
 
     private void lockOnServer(final SimpleId<?> simpleId1) {
-        // Må være runInTxNotSupported for å beholde låsen, da den frigis automatisk ved commit.
+        // MÃ¥ vÃ¦re runInTxNotSupported for Ã¥ beholde lÃ¥sen, da den frigis automatisk ved commit.
         server.runInTxNotSupported(new RunOnServerMethod() {
             @Inject
             private Store serverStore;
@@ -327,7 +327,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at objekter som er modifisert vil gi feil hvis blir forsøk låst. Presis hvilken feil man får
+     * Tester at objekter som er modifisert vil gi feil hvis blir forsÃ¸k lÃ¥st. Presis hvilken feil man fÃ¥r
      * avhenger av om update er kallt
      */
     public void testStoreSessionServerUnlockGirFeilForModifisertObjektVedUpdateIkkeKallt() {
@@ -353,7 +353,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at objekter som er modifisert vil gi feil hvis blir forsøk låst. Presis hvilken feil man får
+     * Tester at objekter som er modifisert vil gi feil hvis blir forsÃ¸k lÃ¥st. Presis hvilken feil man fÃ¥r
      * avhenger av om update er kallt
      */
     public void testStoreSessionServerUnlockGirFeilForModifisertObjektVedUpdateKallt() {
@@ -381,7 +381,7 @@ public class StoreLockingTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at hvis serveren inneholder et nyere object så blir dette brukt ved låsing selvom klienten har allerede
+     * Tester at hvis serveren inneholder et nyere object sÃ¥ blir dette brukt ved lÃ¥sing selvom klienten har allerede
      * har lastet en eldre kopi.
      */
     public void testLockRetrivesLatestObjectFromServer() {

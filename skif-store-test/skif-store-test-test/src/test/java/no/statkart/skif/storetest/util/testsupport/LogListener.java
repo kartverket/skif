@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 
 /**
- * Slå midlertidig på logging for en gitt klasse.
+ * SlÃ¥ midlertidig pÃ¥ logging for en gitt klasse.
  * All logging som fant sted mellom start() og stop() kan til enhver tid hentes via output().
  */
 public class LogListener {

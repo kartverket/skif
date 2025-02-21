@@ -9,10 +9,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Annotation som angir at parameteren skal ignoreres av algoritmen som bestemmer hvilken  {@code SnapshotVersion}
- * som skal brukes for kallet. Hvis annotasjonen legges på selve metoden så betyder det at metodekallet skal anvende
- * {@code SnapshotVersion} for kjørende tråd
+ * som skal brukes for kallet. Hvis annotasjonen legges pÃ¥ selve metoden sÃ¥ betyder det at metodekallet skal anvende
+ * {@code SnapshotVersion} for kjÃ¸rende trÃ¥d
  *
- * Hvordan SnapshotVersion bestemmes for kjørende tråd avhenger av implementasjonen til {@code D2WAdapterProxyHandler} og
+ * Hvordan SnapshotVersion bestemmes for kjÃ¸rende trÃ¥d avhenger av implementasjonen til {@code D2WAdapterProxyHandler} og
  * {@code W2DAdapterProxyHandler}
  *
  * @author Henrik Fredholm

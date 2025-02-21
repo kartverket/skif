@@ -18,7 +18,7 @@ public class PrivateModuleTest {
                 new AbstractModule() {
                     @Override
                     protected void configure() {
-                        // Disse trengs ikke. De kan være implisitt
+                        // Disse trengs ikke. De kan vÃ¦re implisitt
                         //bind(A1.class);
                         //bind(A2.class);
                         //bind(B1.class);

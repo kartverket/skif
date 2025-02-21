@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 /**
  * Felles exception for feil ved oppslag der datagrunnlag ikke er i henhold til kriterier.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 public class FinderException extends ApplicationException {

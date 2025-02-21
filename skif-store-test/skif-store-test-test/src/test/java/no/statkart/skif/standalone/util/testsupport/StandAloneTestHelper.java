@@ -185,7 +185,7 @@ public class StandAloneTestHelper {
     public static void assertNotFound(Store store, BubbleId<?> bubbleId) {
         try {
             store.get(bubbleId);
-            fail("Objekt skal ikke være i store");
+            fail("Objekt skal ikke vÃ¦re i store");
         } catch (ObjectNotFoundException ignored) {
         }
     }

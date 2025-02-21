@@ -7,10 +7,10 @@ import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import java.lang.reflect.Method;
 
 /**
- * ProxyHandler for caching av relasjoner. Denne proxyhandler legges i {@code CallServiceChain} på klient og server
+ * ProxyHandler for caching av relasjoner. Denne proxyhandler legges i {@code CallServiceChain} pÃ¥ klient og server
  * for de services som implementerer invers domene finders.
  * <p/>
- * Proxy-en har til oppgave å bruke cachet relasjoner der hvor de allerede finnes og hente opp og cache
+ * Proxy-en har til oppgave Ã¥ bruke cachet relasjoner der hvor de allerede finnes og hente opp og cache
  * etterspurte relasjoner som ikke finnes. Relasjonscaching  styres via {@link StoreRelationCache}
  *
  * @author Henrik Fredholm

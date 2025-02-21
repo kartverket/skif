@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  */
 public class TestNGSupport {
     public static Method getMethod(IHookCallBack callBack)  {
-        // Nødvendig med reflection her for å få ut metoden som callBack vil kalle.
+        // NÃ¸dvendig med reflection her for Ã¥ fÃ¥ ut metoden som callBack vil kalle.
         try {
             Field field = callBack.getClass().getDeclaredField("val$thisMethod");
             field.setAccessible(true);

@@ -13,29 +13,29 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Tester design pattern for håndtering av multiple moduler (subsystemer) som binner de samme klassene til
- * forskjellige instanser eller implementasjonsklasser. Her kan enten være snakk om at den samme modulen
+ * Tester design pattern for hÃ¥ndtering av multiple moduler (subsystemer) som binner de samme klassene til
+ * forskjellige instanser eller implementasjonsklasser. Her kan enten vÃ¦re snakk om at den samme modulen
  * brukes flere ganger i forskjelige konfigurasjon eller om forskjellige moduler som tilfeldigvis bruker
  * de samme klassene.
  * <p>
- * Standard løsningen for problemet er i utgangspunktet å bruke en {@code PrivateModule} for hvert subsystem og
+ * Standard lÃ¸sningen for problemet er i utgangspunktet Ã¥ bruke en {@code PrivateModule} for hvert subsystem og
  * eksponere utvalgte eller alle bindinger med forskjellig annotasjon slik at de ikke blir konflikt. F.eks kan subsystem
  * A eksponere alle sine bindinger som {@code @Named("A"}} og subsystem B som {@code @Named("B"}.
  * <p>
- * Problemet med ovenståenede teknikk er at det fort kan bli uklart hvor ting kommer fra og henger sammen når man
- * lager klasser som jobber på tvers av systemene. Hvis begge subsystemene har en tjenester som hedder {@code Store}
- * og {@code Service1} må man ved injection f.eks angi "{@code @Inject @Named("A") Store store; @Inject @Named("A") Service1 s;}"
- * for å kunne jobbe mot subsystem A. Skal man skrive kode som bare skal jobbe med et av subsystemene kan man fort ende
+ * Problemet med ovenstÃ¥enede teknikk er at det fort kan bli uklart hvor ting kommer fra og henger sammen nÃ¥r man
+ * lager klasser som jobber pÃ¥ tvers av systemene. Hvis begge subsystemene har en tjenester som hedder {@code Store}
+ * og {@code Service1} mÃ¥ man ved injection f.eks angi "{@code @Inject @Named("A") Store store; @Inject @Named("A") Service1 s;}"
+ * for Ã¥ kunne jobbe mot subsystem A. Skal man skrive kode som bare skal jobbe med et av subsystemene kan man fort ende
  * opp med dupliserte versjoner av koden som hhv. bruker {@code @Named("A")} {@code @Named("B")}. Det blir vanskelig
- * å skrive kode som kan ta som parameter det subsystemet som det skal jobbes med. Det må da angis indirekte
- * ved at man sender en annotasjon, f.eks ({@code @Named("A")}, som parameter og så må tjenestene plukkes
- * ut fra injectoren med annotasjonen som key. Dette kan fort bli kryptisk og fører til en rar programmeringsstil. Endvidere
- * kan det bli vanskelig å skjønne når man skal bruke {@code @Inject Store store;} og man bør bruke
+ * Ã¥ skrive kode som kan ta som parameter det subsystemet som det skal jobbes med. Det mÃ¥ da angis indirekte
+ * ved at man sender en annotasjon, f.eks ({@code @Named("A")}, som parameter og sÃ¥ mÃ¥ tjenestene plukkes
+ * ut fra injectoren med annotasjonen som key. Dette kan fort bli kryptisk og fÃ¸rer til en rar programmeringsstil. Endvidere
+ * kan det bli vanskelig Ã¥ skjÃ¸nne nÃ¥r man skal bruke {@code @Inject Store store;} og man bÃ¸r bruke
  * {@code @Inject @Named("A") Store store}.
  * <p>
- * Det kan i mange tilfelle være hensiktsmessig fra starten av å oppfatte hvert subsystemet som en instans som man gjerne
- * vil kunne sende rundt som en parameter til kode som jobber på et eller flere subsystemer. I {@code PrivateModule} bør man
- * eksponere et interface som representere submodulen og som har metoder for å hente ut intern komponenter. F.eks
+ * Det kan i mange tilfelle vÃ¦re hensiktsmessig fra starten av Ã¥ oppfatte hvert subsystemet som en instans som man gjerne
+ * vil kunne sende rundt som en parameter til kode som jobber pÃ¥ et eller flere subsystemer. I {@code PrivateModule} bÃ¸r man
+ * eksponere et interface som representere submodulen og som har metoder for Ã¥ hente ut intern komponenter. F.eks
  * {@code interface SystemA { Store getStore(); Service1 getSerivce1();}}. Da kan man injecte {@code SystemA} de steder
  * hvor man trenger og jobbe med det. Klassen {@code SystemA} blir da en facade til subsystemet, noe som er et velkjendt
  * design pattern.
@@ -47,8 +47,8 @@ import static org.testng.Assert.assertEquals;
  * <li>Subsystemet
  * <li>Andre tilleggsmoduler som bare skal forholde seg til subsystemet
  * <li>En export modul som exponerer et interface som gir adgang til alle relevante
- * typer i modulen. Dette kunne i prinsippet være en injector for den private modulen.
- * <li>Moduler som skal jobbe på tvers av subsystemene legge inn i injectoren parallelt med
+ * typer i modulen. Dette kunne i prinsippet vÃ¦re en injector for den private modulen.
+ * <li>Moduler som skal jobbe pÃ¥ tvers av subsystemene legge inn i injectoren parallelt med
  * {@code PrivateModule}ne - evt som egne {@code PrivateModule}s
  * </ul>
  * </ul> *
@@ -162,7 +162,7 @@ class TestService2Impl implements TestService {
 }
 
 /**
- * Klasse som bindes eksplisitt i modulen og som får injected element (message) fra modulen den opprettes i
+ * Klasse som bindes eksplisitt i modulen og som fÃ¥r injected element (message) fra modulen den opprettes i
  */
 class TestService3 {
     @Inject
@@ -219,7 +219,7 @@ class Subsystem {
 }
 
 /**
- * Klasse som jobber med flere instanser av SubsystemModule samtidig og som også har en metode som tar et subsystem som parameter
+ * Klasse som jobber med flere instanser av SubsystemModule samtidig og som ogsÃ¥ har en metode som tar et subsystem som parameter
  */
 class CombinedService {
     @Inject @Named("A") Subsystem a;
@@ -239,7 +239,7 @@ class CombinedService {
 
 /**
  * Klasse som kun kan jobbe innenfor en SubsystemModul. Subsystem modulen kjender ikke til denne klassen. Den bindes
- * opp dynamisk via autobinding. Vil ikke kunne brukes hvis modulen har autobinding slått av.
+ * opp dynamisk via autobinding. Vil ikke kunne brukes hvis modulen har autobinding slÃ¥tt av.
  */
 class Inner {
     @Inject TestService service;

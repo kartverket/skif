@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import java.util.Collections;
 
 /**
- * Angir at objekt med gitt id ikke finnes. Det kan f.eks være fordi det har blitt slettet.
+ * Angir at objekt med gitt id ikke finnes. Det kan f.eks vÃ¦re fordi det har blitt slettet.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand

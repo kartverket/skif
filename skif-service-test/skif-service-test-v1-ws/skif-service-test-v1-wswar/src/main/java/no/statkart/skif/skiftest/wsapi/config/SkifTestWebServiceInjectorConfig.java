@@ -20,7 +20,7 @@ import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestSimpleEx
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 
 /**
- * Konfigurasjon av injector for Web service API. Må kalles fra en ServletContextListener i web.xml.
+ * Konfigurasjon av injector for Web service API. MÃ¥ kalles fra en ServletContextListener i web.xml.
  *
  * @author Henrik Fredholm
  */

@@ -6,7 +6,7 @@ import no.statkart.skif.skiftest.wsapi.exception.impl.ServiceFaultInfo;
 /**
  * Se dokumentasjon i {@link ServiceFaultInfo}
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 @WebFault(name = "ServiceException", targetNamespace = "http://skif.statkart.no/storetest/wsapi/exception")

@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * <p>
- * Denne boblen må kun brukes av lavnivå tester som går direkte mot databasen uten å bruke StoreTestServer modulen og
+ * Denne boblen mÃ¥ kun brukes av lavnivÃ¥ tester som gÃ¥r direkte mot databasen uten Ã¥ bruke StoreTestServer modulen og
  * skal ikke bruke mockuprammeverket. Objekter med id <= 100 er readonly og skal ikke endres. Objekter med id >
  * 100 slettes automatisk mellom hver testmetode.
  *

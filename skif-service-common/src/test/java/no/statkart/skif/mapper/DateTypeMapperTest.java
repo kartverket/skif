@@ -23,8 +23,8 @@ public class DateTypeMapperTest {
         Date date = java.sql.Date.valueOf("0001-12-31");
 
         XMLGregorianCalendar xmlGregorianCalendar = dateTypeMapper.mapDomainObject(date);
-        Assert.assertEquals(xmlGregorianCalendar.getYear(), 1, "År " + xmlGregorianCalendar);
-        Assert.assertEquals(xmlGregorianCalendar.getMonth(), 12, "Måned " + xmlGregorianCalendar);
+        Assert.assertEquals(xmlGregorianCalendar.getYear(), 1, "Ã…r " + xmlGregorianCalendar);
+        Assert.assertEquals(xmlGregorianCalendar.getMonth(), 12, "MÃ¥ned " + xmlGregorianCalendar);
         Assert.assertEquals(xmlGregorianCalendar.getDay(), 31, "Dag " + xmlGregorianCalendar);
 
         assertThat(dateTypeMapper.mapWsapiObject(xmlGregorianCalendar))
@@ -38,8 +38,8 @@ public class DateTypeMapperTest {
         Date date = java.sql.Date.valueOf("2001-12-31");
 
         XMLGregorianCalendar xmlGregorianCalendar = dateTypeMapper.mapDomainObject(date);
-        Assert.assertEquals(xmlGregorianCalendar.getYear(), 2001, "År " + xmlGregorianCalendar);
-        Assert.assertEquals(xmlGregorianCalendar.getMonth(), 12, "Måned " + xmlGregorianCalendar);
+        Assert.assertEquals(xmlGregorianCalendar.getYear(), 2001, "Ã…r " + xmlGregorianCalendar);
+        Assert.assertEquals(xmlGregorianCalendar.getMonth(), 12, "MÃ¥ned " + xmlGregorianCalendar);
         Assert.assertEquals(xmlGregorianCalendar.getDay(), 31, "Dag " + xmlGregorianCalendar);
 
         assertThat(dateTypeMapper.mapWsapiObject(xmlGregorianCalendar))

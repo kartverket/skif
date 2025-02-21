@@ -67,7 +67,7 @@ public class DServiceWSBean extends SkifWebService<DServiceWSI> implements DServ
     }
 
     /**
-     * Denne klassen kaster exceptions uten å kalle rammeverket, skal at man kan teste hvordan rammeverket håndtere ukjendte exceptions
+     * Denne klassen kaster exceptions uten Ã¥ kalle rammeverket, skal at man kan teste hvordan rammeverket hÃ¥ndtere ukjendte exceptions
      */
     public String nonMappedWSCall(@WebParam(name = "exceptionClass") String exceptionClass, @WebParam(name = "message") String message) throws ServiceException, SimpleNonMappedException {
         if (exceptionClass.isEmpty()) {

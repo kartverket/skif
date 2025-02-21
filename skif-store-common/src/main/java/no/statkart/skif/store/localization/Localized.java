@@ -15,12 +15,12 @@ public interface Localized extends BubbleObject {
     /**
      * Henter ut alle lokaliseringer for boblen.
      *
-     * @return alle lokaliseringene (dette er det interne mappet, så oppdateringer er live)
+     * @return alle lokaliseringene (dette er det interne mappet, sÃ¥ oppdateringer er live)
      */
     Map<LocalizationMap.LocalizationKey, String> getLocalizationMap();
 
     /**
-     * Setter lokalisering for boblen. Dette gjøres enten av Hibernate (for databasekoder) eller av
+     * Setter lokalisering for boblen. Dette gjÃ¸res enten av Hibernate (for databasekoder) eller av
      * rammeverket (for enumkoder).
      *
      * @param map    alle lokaliseringer, det tas <i>ikke</i> kopi

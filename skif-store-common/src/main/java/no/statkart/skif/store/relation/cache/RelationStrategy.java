@@ -28,7 +28,7 @@ public abstract class RelationStrategy {
     }
 
     protected final Object invokeChained(ProxyHandler<?> chained, Object proxy, Method method, Object[] args) throws Throwable {
-        // Alle kall til underliggende metode går igjennom denne metode.
+        // Alle kall til underliggende metode gÃ¥r igjennom denne metode.
         return chained.invoke(proxy, method, args);
     }
 

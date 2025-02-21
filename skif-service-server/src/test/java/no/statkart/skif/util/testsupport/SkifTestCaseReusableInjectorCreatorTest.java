@@ -17,8 +17,8 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Tester ut at server injectoren i en SingleVm konfigurasjonen blir gjenbukt på tvers av testmetoder og testcases
- * når metoden {@link #createModuleBuilder()} returnerer null (default).
+ * Tester ut at server injectoren i en SingleVm konfigurasjonen blir gjenbukt pÃ¥ tvers av testmetoder og testcases
+ * nÃ¥r metoden {@link #createModuleBuilder()} returnerer null (default).
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -48,7 +48,7 @@ public class SkifTestCaseReusableInjectorCreatorTest extends SkifTestCase {
 
     @Override
     protected void resetLogin() {
-        // Støtter ikke login for denne test
+        // StÃ¸tter ikke login for denne test
     }
 
     public void firstTestMethod() {

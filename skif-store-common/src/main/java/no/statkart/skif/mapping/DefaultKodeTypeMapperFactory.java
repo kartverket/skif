@@ -12,8 +12,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Håndterer det at {@link no.statkart.skif.store.kodeliste.Kode} har kodelisteId i WS-API, men ikke i internmodell.
- * Dette gjøres ved å filtrere vekk getKodelisteId fra listen med gettere på WS-siden. Factory slår til på forespørsler
+ * HÃ¥ndterer det at {@link no.statkart.skif.store.kodeliste.Kode} har kodelisteId i WS-API, men ikke i internmodell.
+ * Dette gjÃ¸res ved Ã¥ filtrere vekk getKodelisteId fra listen med gettere pÃ¥ WS-siden. Factory slÃ¥r til pÃ¥ forespÃ¸rsler
  * hvor domenesiden arver fra {@link Kode}.
  *
  * @author Tor Egil R. Strand

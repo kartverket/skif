@@ -12,10 +12,10 @@ import org.hibernate.Session;
 import java.util.List;
 
 /**
- * Basisfunksjonalitet for å finne endringer.
+ * Basisfunksjonalitet for Ã¥ finne endringer.
  *
  * @param <T> Representerer rotendringsklassen i Hibernate-mappingen. Denne bindes opp i implementasjones
- *            <code>extends</code>-bit, og via klassen som sendes inn til konstruktøren.
+ *            <code>extends</code>-bit, og via klassen som sendes inn til konstruktÃ¸ren.
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
@@ -27,7 +27,7 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
 
     /**
      * @param endringsbaseklasse Den klassen som er roten i Hibernate-mappingen for endringer. Implementasjonens
-     *                           konstruktør angir denne i sin konstruktør (tar den ikke inn som parameter) tilsvarende
+     *                           konstruktÃ¸r angir denne i sin konstruktÃ¸r (tar den ikke inn som parameter) tilsvarende
      *                           som <code>T</code>.
      */
     public AbstractEndringFinder(Class<T> endringsbaseklasse) {
@@ -67,7 +67,7 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
     /**
      * Henter alle endringer etter gitt endringsnummer. Endringen med gitt endringsnummer er ikke inkludert.
      *
-     * @param endringsnummer endringsnummeret før første endring som skal hentes
+     * @param endringsnummer endringsnummeret fÃ¸r fÃ¸rste endring som skal hentes
      * @param maksAntall     maksimalt antall endringer som skal hentes
      * @return endringene, sortert etter stigende endringsnummer
      */
@@ -79,7 +79,7 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
      * Henter alle endringer av gitt endringsklasse, inkludert subklasser, etter gitt endringsnummer. Endringen med gitt
      * endringsnummer er ikke inkludert.
      *
-     * @param endringsnummer endringsnummeret før første endring som skal hentes
+     * @param endringsnummer endringsnummeret fÃ¸r fÃ¸rste endring som skal hentes
      * @param endringsklasse hent kun endringer av denne klassen
      * @param maksAntall     maksimalt antall endringer som skal hentes
      * @param <E>            tilsvarer <code>endringsklasse</code>

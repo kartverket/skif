@@ -58,13 +58,13 @@ public class TransferTypeMapperFactoryTest {
 
         TypeLiteral<Transfer<DomainResult>> domainTransferType = new TypeLiteral<Transfer<DomainResult>>() {};
 
-        // Må angi source type siden det ikke kan utledes grunnet type erasure
+        // MÃ¥ angi source type siden det ikke kan utledes grunnet type erasure
         ApiTransfer apiTransfer = (ApiTransfer) mapping.d2w(transfer, domainTransferType.getType(), ApiTransfer.class);
 
         Assertions.assertThat(apiTransfer.getIds().getItem()).containsExactly(new ApiObjectId("1"), new ApiObjectId("2"));
         Assertions.assertThat(apiTransfer.getBubbleObjects().getItem()).containsExactly(new ApiObject(new ApiObjectId("1"), "A"), new ApiObject(new ApiObjectId("2"), "B"));
 
-        // Source er her en ugenerisk klasse, så trenger ikke angi source type
+        // Source er her en ugenerisk klasse, sÃ¥ trenger ikke angi source type
         Transfer<DomainResult> domainTransfer = mapping.w2d(apiTransfer, domainTransferType);
 
         Assertions.assertThat(domainTransfer.getResult().getIds()).containsExactly(id1, id2);
@@ -491,7 +491,7 @@ public class TransferTypeMapperFactoryTest {
         private ApiObjectId id;
         private String text;
 
-        // Api-klasser har normal ikke kostruktører, men her har de det for å forenkle testing
+        // Api-klasser har normal ikke kostruktÃ¸rer, men her har de det for Ã¥ forenkle testing
 
         @SuppressWarnings("UnusedDeclaration")
         public ApiObject() {
@@ -518,7 +518,7 @@ public class TransferTypeMapperFactoryTest {
             this.text = text;
         }
 
-        // Api-klasser har normal ikke equals og hashCode, men her har de det for å forenkle testing
+        // Api-klasser har normal ikke equals og hashCode, men her har de det for Ã¥ forenkle testing
 
         @Override
         public boolean equals(Object o) {
@@ -541,7 +541,7 @@ public class TransferTypeMapperFactoryTest {
     public static class ApiObjectId {
         private String value;
 
-        // Api-klasser har normal ikke kostruktører, men her har de det for å forenkle testing
+        // Api-klasser har normal ikke kostruktÃ¸rer, men her har de det for Ã¥ forenkle testing
 
         @SuppressWarnings("UnusedDeclaration")
         public ApiObjectId() {
@@ -560,7 +560,7 @@ public class TransferTypeMapperFactoryTest {
             this.value = value;
         }
 
-        // Api-klasser har normal ikke equals og hashCode, men her har de det for å forenkle testing
+        // Api-klasser har normal ikke equals og hashCode, men her har de det for Ã¥ forenkle testing
 
         @Override
         public boolean equals(Object o) {
@@ -799,7 +799,7 @@ public class TransferTypeMapperFactoryTest {
     public static class ApiKodelisteId {
         private String value;
 
-        // Api-klasser har normal ikke kostruktører, men her har de det for å forenkle testing
+        // Api-klasser har normal ikke kostruktÃ¸rer, men her har de det for Ã¥ forenkle testing
 
         @SuppressWarnings("UnusedDeclaration")
         public ApiKodelisteId() {
@@ -818,7 +818,7 @@ public class TransferTypeMapperFactoryTest {
             this.value = value;
         }
 
-        // Api-klasser har normal ikke equals og hashCode, men her har de det for å forenkle testing
+        // Api-klasser har normal ikke equals og hashCode, men her har de det for Ã¥ forenkle testing
 
         @Override
         public boolean equals(Object o) {
@@ -840,7 +840,7 @@ public class TransferTypeMapperFactoryTest {
     public static class ApiKodeliste {
         private ApiKodelisteId id;
 
-        // Api-klasser har normal ikke kostruktører, men her har de det for å forenkle testing
+        // Api-klasser har normal ikke kostruktÃ¸rer, men her har de det for Ã¥ forenkle testing
 
         @SuppressWarnings("UnusedDeclaration")
         public ApiKodeliste() {
@@ -857,7 +857,7 @@ public class TransferTypeMapperFactoryTest {
         public void setId(ApiKodelisteId id) {
             this.id = id;
         }
-        // Api-klasser har normal ikke equals og hashCode, men her har de det for å forenkle testing
+        // Api-klasser har normal ikke equals og hashCode, men her har de det for Ã¥ forenkle testing
 
         @Override
         public boolean equals(Object o) {

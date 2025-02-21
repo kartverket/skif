@@ -6,7 +6,7 @@ import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import javax.annotation.Nullable;
 
 /**
- * Boble med composite componenter i nestede nivåer og hvor hver composite component inneholder en entity og et sett
+ * Boble med composite componenter i nestede nivÃ¥er og hvor hver composite component inneholder en entity og et sett
  * av entities
  *
  * @author Henrik Fredholm
@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 public class BubbleWithEntityInCompositeComponent extends AbstractStoreTestBubble {
     private static final long serialVersionUID = 1L;
 
-    /* Angir logisk nummer på boblen innen for et testset*/
+    /* Angir logisk nummer pÃ¥ boblen innen for et testset*/
     private int nr;
     /* En tekst som beskriver boblen */
     private String text;

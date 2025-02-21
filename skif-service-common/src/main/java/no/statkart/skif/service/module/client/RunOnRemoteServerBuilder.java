@@ -13,8 +13,8 @@ import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
 /**
- * Hjelpeklasse for å sette opp en SingleVm klient som bare skal kjøre tjenester i server mode. Som parameter tar klasse
- * hvilke ServerModule som skal brukes for å sette opp serveren.
+ * Hjelpeklasse for Ã¥ sette opp en SingleVm klient som bare skal kjÃ¸re tjenester i server mode. Som parameter tar klasse
+ * hvilke ServerModule som skal brukes for Ã¥ sette opp serveren.
  *
  * Gjentatte kall til build*() metodene vil produsere klient-Injectorere som alle deler samme underliggende server.
  *

@@ -87,7 +87,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
         if (!(object instanceof AbstractBubbleObject)) return false;
         final AbstractBubbleObject bubbleObject = (AbstractBubbleObject) object;
         // Det finnes en del kode i applikasjonene som avhenger av at bobler uten id ikke er equals.
-        // Enten dette var intensjonen med den opprinnelige implementasjonen eller ikke, så må det være sånn inntil videre.
+        // Enten dette var intensjonen med den opprinnelige implementasjonen eller ikke, sÃ¥ mÃ¥ det vÃ¦re sÃ¥nn inntil videre.
         if (this.getId() == null || bubbleObject.getId() == null) return false;
         return Objects.equals(getClass(), object.getClass())
             && Objects.equals(getId(), bubbleObject.getId())

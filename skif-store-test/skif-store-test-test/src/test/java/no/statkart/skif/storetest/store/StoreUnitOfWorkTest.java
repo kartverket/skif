@@ -41,7 +41,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 /**
- * Tester bruk av UnitOfWork på klient og server.
+ * Tester bruk av UnitOfWork pÃ¥ klient og server.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
@@ -521,7 +521,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     @Test(enabled = false, expectedExceptions = ImplementationException.class, expectedExceptionsMessageRegExp = "Lock on client must be done in a UnitOfWork.*")
-    // TODO: SKIF-610. Midlertidig disabling av denne i påvente av GBOK-9889. Gjør klienten feiler.
+    // TODO: SKIF-610. Midlertidig disabling av denne i pÃ¥vente av GBOK-9889. GjÃ¸r klienten feiler.
     public void testClientUpdateOutsideUnitOfWork() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
         Simple simple = clientStore.lock(mockupFacade.getSimpleMockupFactory().getSimpleId1());
@@ -548,13 +548,13 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             try (UnitOfWork nested = clientStore.beginUnitOfWork()) {
                 Simple simple = clientStore.get(mockupFacade.getSimpleMockupFactory().getSimpleId1());
                 clientStore.update(simple);
-                // NB: Tester her bare at oppdateringen kan utføres i UnitOfWork på klient. Hvis endringen skal lagres må den sendes som transfer til server.
+                // NB: Tester her bare at oppdateringen kan utfÃ¸res i UnitOfWork pÃ¥ klient. Hvis endringen skal lagres mÃ¥ den sendes som transfer til server.
             }
         }
     }
 
     /**
-     * Tester låsing i nøstet unit-of-work, committing av unit-of-work, låsing igjen i ny nøstet unit-of-work.
+     * Tester lÃ¥sing i nÃ¸stet unit-of-work, committing av unit-of-work, lÃ¥sing igjen i ny nÃ¸stet unit-of-work.
      */
     public void testSKIF_555() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -605,7 +605,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester låsing, oppdatering, ny låsing i nøstet unit-of-work, aborting av unit-of-work, låsing igjen i ny nøstet unit-of-work.
+     * Tester lÃ¥sing, oppdatering, ny lÃ¥sing i nÃ¸stet unit-of-work, aborting av unit-of-work, lÃ¥sing igjen i ny nÃ¸stet unit-of-work.
      */
     public void testSKIF_556() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -731,8 +731,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester bruk av getAllLoaded() til å hente ut original versjon av objekter som lastes og prosesseres på
-     * tjeneren og overfører disse til klienten.
+     * Tester bruk av getAllLoaded() til Ã¥ hente ut original versjon av objekter som lastes og prosesseres pÃ¥
+     * tjeneren og overfÃ¸rer disse til klienten.
      */
     public void testGetAllLoaded() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -788,8 +788,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
     /**
      * Tester at et objekt som lastes i en en unit of work og som ikke modifiseres er tilgjengelig via getAllLoaded
-     * både mens unit of work er aktiv og etter at unit of work er aborted. I alle tilfeller får man instansen som
-     * tilsvarer objektet som ble lastet. Tester både klient og server.
+     * bÃ¥de mens unit of work er aktiv og etter at unit of work er aborted. I alle tilfeller fÃ¥r man instansen som
+     * tilsvarer objektet som ble lastet. Tester bÃ¥de klient og server.
      */
     public void testGetAllLoadedWhenObjectIsLoadedInAUnitOfWorkThatIsAborted() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -817,21 +817,21 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             try (UnitOfWork ignore = store.beginUnitOfWork()) {
                 store.get(simpleId);
                 simple1 = (Simple) store.getAllLoaded().getObject(simpleId);
-                store.abortUnitOfWork(ignore); // Bare for å være tydelig
+                store.abortUnitOfWork(ignore); // Bare for Ã¥ vÃ¦re tydelig
             }
             simple2 = (Simple) store.getAllLoaded().getObject(simpleId);
-            store.abortUnitOfWork(outer); // Bare for å være tydelig
+            store.abortUnitOfWork(outer); // Bare for Ã¥ vÃ¦re tydelig
         }
         Simple simple3 = (Simple) store.getAllLoaded().getObject(simpleId);
-        assertSame(simple1, simple2, "Forventet samme instans. Objekt skal være tilgjengelig etter abortUnitOfWork");
-        assertSame(simple1, simple3, "Forventet samme instans. Objekt skal være tilgjengelig etter abortUnitOfWork");
+        assertSame(simple1, simple2, "Forventet samme instans. Objekt skal vÃ¦re tilgjengelig etter abortUnitOfWork");
+        assertSame(simple1, simple3, "Forventet samme instans. Objekt skal vÃ¦re tilgjengelig etter abortUnitOfWork");
     }
 
     /**
-     * Tester at et objekt som lastes og låses i en en unit of work er tilgjengelig via getAllLoaded
-     * både mens unit of work er aktiv og etter at unit of work er aborted. I alle tilfeller får man instansen som
-     * tilsvarer objektet som ble lastet. Objektet som store.lock() gir ut vil være en annen instans som representerer
-     * den versjon av objektet som kan modifiseres. Tester både klient og server.
+     * Tester at et objekt som lastes og lÃ¥ses i en en unit of work er tilgjengelig via getAllLoaded
+     * bÃ¥de mens unit of work er aktiv og etter at unit of work er aborted. I alle tilfeller fÃ¥r man instansen som
+     * tilsvarer objektet som ble lastet. Objektet som store.lock() gir ut vil vÃ¦re en annen instans som representerer
+     * den versjon av objektet som kan modifiseres. Tester bÃ¥de klient og server.
      */
     public void testGetAllLoadedWhenObjectIsLoadedAndLockedInAUnitOfWorkThatIsAborted() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -862,19 +862,19 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 simple1 = (Simple) store.getAllLoaded().getObject(simpleId);
             }
             simple2 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
-            store.abortUnitOfWork(outer); // Bare for å være tydelig
+            store.abortUnitOfWork(outer); // Bare for Ã¥ vÃ¦re tydelig
         }
         Simple simple3 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
         assertNotSame(simpleLocked, simple1, "Forventet at objektet som kan modifiseres ikke er samme instans");
-        assertSame(simple1, simple2, "Forventet samme instans. Objekt skal være tilgjengelig etter abortUnitOfWork");
-        assertSame(simple1, simple3, "Forventet samme instans. Objekt skal være tilgjengelig etter abortUnitOfWork");
+        assertSame(simple1, simple2, "Forventet samme instans. Objekt skal vÃ¦re tilgjengelig etter abortUnitOfWork");
+        assertSame(simple1, simple3, "Forventet samme instans. Objekt skal vÃ¦re tilgjengelig etter abortUnitOfWork");
     }
 
     /**
-     * Tester at et objekt som lastes, låses, og oppdateres i en en unit of work er  tilgjengelig via getAllLoaded både
-     * mens unit of work er aktiv og etter at unit of work er aborted. I alle tilfeller får man instansen som
-     * tilsvarer objektet som ble lastet. Objektet som store.lock() gir ut vil være en annen instans som representerer
-     * den versjon av objektet som kan modifiseres. Tester både klient og server.
+     * Tester at et objekt som lastes, lÃ¥ses, og oppdateres i en en unit of work er  tilgjengelig via getAllLoaded bÃ¥de
+     * mens unit of work er aktiv og etter at unit of work er aborted. I alle tilfeller fÃ¥r man instansen som
+     * tilsvarer objektet som ble lastet. Objektet som store.lock() gir ut vil vÃ¦re en annen instans som representerer
+     * den versjon av objektet som kan modifiseres. Tester bÃ¥de klient og server.
      */
     public void testGetAllLoadedWhenObjectIsModifiedInAUnitOfWorkThatIsAborted() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -901,24 +901,24 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         Simple simple2;
         try (UnitOfWork outer = store.beginUnitOfWork()) {
             try (UnitOfWork ignore = store.beginUnitOfWork()) {
-                simpleLocked = store.lock(simpleId); // Her får vi en ny kopi
+                simpleLocked = store.lock(simpleId); // Her fÃ¥r vi en ny kopi
                 store.update(simpleLocked);
                 simple1 = (Simple) store.getAllLoaded().getObject(simpleId);
-                store.abortUnitOfWork(ignore); // Bare for å være tydelig
+                store.abortUnitOfWork(ignore); // Bare for Ã¥ vÃ¦re tydelig
             }
             simple2 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
-            store.abortUnitOfWork(outer); // Bare for å være tydelig
+            store.abortUnitOfWork(outer); // Bare for Ã¥ vÃ¦re tydelig
         }
         Simple simple3 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
         assertNotSame(simpleLocked, simple1, "Forventet at objektet som kan modifiseres ikke er samme instans");
-        assertSame(simple1, simple2, "Forventet samme instans. Objekt skal være tilgjengelig etter abortUnitOfWork");
-        assertSame(simple1, simple3, "Forventet samme instans. Objekt skal være tilgjengelig etter abortUnitOfWork");
+        assertSame(simple1, simple2, "Forventet samme instans. Objekt skal vÃ¦re tilgjengelig etter abortUnitOfWork");
+        assertSame(simple1, simple3, "Forventet samme instans. Objekt skal vÃ¦re tilgjengelig etter abortUnitOfWork");
     }
 
     /**
-     * Tester at et objekt som lastes, låses, og slettes i en en unit of work er tilgjengelig via getAllLoaded både
-     * mens unit of work er aktiv og etter at unit of work er aborted. I alle tilfeller får man instansen som
-     * tilsvarer objektet som ble lastet. Tester både klient og server.
+     * Tester at et objekt som lastes, lÃ¥ses, og slettes i en en unit of work er tilgjengelig via getAllLoaded bÃ¥de
+     * mens unit of work er aktiv og etter at unit of work er aborted. I alle tilfeller fÃ¥r man instansen som
+     * tilsvarer objektet som ble lastet. Tester bÃ¥de klient og server.
      */
     public void testGetAllLoadedWhenObjectIsLoadedAndDeletedInUnitOfWorkThatIsAborted() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
@@ -945,23 +945,23 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         Simple simple2;
         try (UnitOfWork outer = store.beginUnitOfWork()) {
             try (UnitOfWork ignore = store.beginUnitOfWork()) {
-                simpleLocked = store.lock(simpleId); // Her får vi en ny kopi
+                simpleLocked = store.lock(simpleId); // Her fÃ¥r vi en ny kopi
                 store.delete(simpleLocked);
                 simple1 = (Simple) store.getAllLoaded().getObject(simpleId);
-                store.abortUnitOfWork(ignore); // Bare for å være tydelig
+                store.abortUnitOfWork(ignore); // Bare for Ã¥ vÃ¦re tydelig
             }
             simple2 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
-            store.abortUnitOfWork(outer); // Bare for å være tydelig
+            store.abortUnitOfWork(outer); // Bare for Ã¥ vÃ¦re tydelig
         }
         Simple simple3 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
         assertNotSame(simpleLocked, simple1, "Forventet at objektet som kan modifiseres ikke er samme instans");
-        assertSame(simple1, simple2, "Forventet samme instans. Objekt skal være tilgjengelig etter abortUnitOfWork");
-        assertSame(simple1, simple3, "Forventet samme instans. Objekt skal være tilgjengelig etter abortUnitOfWork");
+        assertSame(simple1, simple2, "Forventet samme instans. Objekt skal vÃ¦re tilgjengelig etter abortUnitOfWork");
+        assertSame(simple1, simple3, "Forventet samme instans. Objekt skal vÃ¦re tilgjengelig etter abortUnitOfWork");
     }
 
     /**
-     * Tester at et objekt som lastes, låses, og modifiseres i en en unit of work er tilgjengelig via getAllLoaded både
-     * mens unit of work er aktiv og etter at unit of work er committed. Tester både klient og server.
+     * Tester at et objekt som lastes, lÃ¥ses, og modifiseres i en en unit of work er tilgjengelig via getAllLoaded bÃ¥de
+     * mens unit of work er aktiv og etter at unit of work er committed. Tester bÃ¥de klient og server.
      */
     @SuppressWarnings("Duplicates")
     public void testGetAllLoadedWhenObjectIsLockedAndModifiedInUnitOfWorkThatIsCommitted() {
@@ -974,14 +974,14 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
         Simple simple2;
         try (UnitOfWork outer = clientStore.beginUnitOfWork()) {
             try (UnitOfWork ignore = clientStore.beginUnitOfWork()) {
-                simpleLocked = clientStore.lock(simpleId); // Her får vi en ny kopi som slettes i linjen under
+                simpleLocked = clientStore.lock(simpleId); // Her fÃ¥r vi en ny kopi som slettes i linjen under
                 clientStore.update(simpleLocked);
                 simple1 = (Simple) clientStore.getAllLoaded().getObject(simpleId); // Original versjon kan hentes ut via loaded
-                clientStore.commitUnitOfWork(ignore); // Bare for å være tydelig
+                clientStore.commitUnitOfWork(ignore); // Bare for Ã¥ vÃ¦re tydelig
             }
             simple2 = (Simple) clientStore.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
-            assertSame(simple1, simple2, "Forventet samme instans. Objekt skal være tilgjengelig etter abortUnitOfWork");
-            clientStore.abortUnitOfWork(outer); // Vi er på klienten. Det gir ingen mening å forsøke å committe til underliggende nivå
+            assertSame(simple1, simple2, "Forventet samme instans. Objekt skal vÃ¦re tilgjengelig etter abortUnitOfWork");
+            clientStore.abortUnitOfWork(outer); // Vi er pÃ¥ klienten. Det gir ingen mening Ã¥ forsÃ¸ke Ã¥ committe til underliggende nivÃ¥
         }
 
         // Test for Server
@@ -995,18 +995,18 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
                 Simple simple2;
                 try (UnitOfWork outer = store.beginUnitOfWork()) {
                     try (UnitOfWork ignore = store.beginUnitOfWork()) {
-                        simpleLocked = store.lock(simpleId); // Her får vi en ny kopi som slettes i linjen under
+                        simpleLocked = store.lock(simpleId); // Her fÃ¥r vi en ny kopi som slettes i linjen under
                         store.update(simpleLocked);
                         simple1 = (Simple) store.getAllLoaded().getObject(simpleId); // Original versjon kan hentes ut via loaded
-                        store.commitUnitOfWork(ignore); // Bare for å være tydelig
+                        store.commitUnitOfWork(ignore); // Bare for Ã¥ vÃ¦re tydelig
                     }
                     simple2 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
                     assertNotSame(simpleLocked, simple1, "Forventet at objektet som kan modifiseres ikke er samme instans");
-                    assertSame(simple1, simple2, "Objekt som låses og endres skal ikke måtte lastes på nytt etter abortUnitOfWork");
+                    assertSame(simple1, simple2, "Objekt som lÃ¥ses og endres skal ikke mÃ¥tte lastes pÃ¥ nytt etter abortUnitOfWork");
                     store.commitUnitOfWork(outer);
                 }
 
-                // Her går vi mot StoreSessionServer som ikke jobber med kopier. Så det er instansen som ble modifisert som vi får ut og ikke opprinnelig!
+                // Her gÃ¥r vi mot StoreSessionServer som ikke jobber med kopier. SÃ¥ det er instansen som ble modifisert som vi fÃ¥r ut og ikke opprinnelig!
                 Simple simple3 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
                 assertSame(simple3, simpleLocked, "Forventet at store.getAllLoaded() gir instansen som ble modifisert og ikke opprinnelig kopi");
                 return null;
@@ -1015,8 +1015,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at det er rekkefølgen objektene oppdateres som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
-     * rekkefølgen objektene låses i.
+     * Tester at det er rekkefÃ¸lgen objektene oppdateres som bestemmer rekkefÃ¸lgen i UnitOfWorkTransfer, ikke
+     * rekkefÃ¸lgen objektene lÃ¥ses i.
      */
     @SuppressWarnings("Duplicates")
     public void testLockUpdateSequence() {
@@ -1062,8 +1062,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at det er rekkefølgen objektene oppdateres som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
-     * rekkefølgen objektene låses i, men at påfølgende oppdateringer ikke endrer rekkefølgen.
+     * Tester at det er rekkefÃ¸lgen objektene oppdateres som bestemmer rekkefÃ¸lgen i UnitOfWorkTransfer, ikke
+     * rekkefÃ¸lgen objektene lÃ¥ses i, men at pÃ¥fÃ¸lgende oppdateringer ikke endrer rekkefÃ¸lgen.
      */
     @SuppressWarnings("Duplicates")
     public void testLockUpdateSequence_multipleUpdates() {
@@ -1111,8 +1111,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at det er rekkefølgen objektene oppdateres som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
-     * rekkefølgen objektene låses i.
+     * Tester at det er rekkefÃ¸lgen objektene oppdateres som bestemmer rekkefÃ¸lgen i UnitOfWorkTransfer, ikke
+     * rekkefÃ¸lgen objektene lÃ¥ses i.
      */
     @SuppressWarnings("Duplicates")
     public void testLockUpdateSequence_nestedUnitOfWork() {
@@ -1180,8 +1180,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at det er rekkefølgen objektene slettes som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
-     * rekkefølgen objektene låses i.
+     * Tester at det er rekkefÃ¸lgen objektene slettes som bestemmer rekkefÃ¸lgen i UnitOfWorkTransfer, ikke
+     * rekkefÃ¸lgen objektene lÃ¥ses i.
      */
     @SuppressWarnings("Duplicates")
     public void testLockDeketeSequence() {
@@ -1227,8 +1227,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at det er rekkefølgen objektene oppdateres som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
-     * rekkefølgen objektene ligger i BubbleTransfer.
+     * Tester at det er rekkefÃ¸lgen objektene oppdateres som bestemmer rekkefÃ¸lgen i UnitOfWorkTransfer, ikke
+     * rekkefÃ¸lgen objektene ligger i BubbleTransfer.
      */
     @SuppressWarnings("Duplicates")
     public void testRegisterUpdateSequence() {
@@ -1254,7 +1254,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
             Assertions.assertThat(transfer.getBubbleObjects().keySet())
                     .containsExactly(simple1Id, simple2Id);
-            // register gir ingen garantier for rekkefølge
+            // register gir ingen garantier for rekkefÃ¸lge
 
             clientStore.register(transfer);
 
@@ -1272,8 +1272,8 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
     }
 
     /**
-     * Tester at det er rekkefølgen objektene slettes som bestemmer rekkefølgen i UnitOfWorkTransfer, ikke
-     * rekkefølgen objektene ligger i BubbleTransfer.
+     * Tester at det er rekkefÃ¸lgen objektene slettes som bestemmer rekkefÃ¸lgen i UnitOfWorkTransfer, ikke
+     * rekkefÃ¸lgen objektene ligger i BubbleTransfer.
      */
     @SuppressWarnings("Duplicates")
     public void testRegisterDeleteSequence() {
@@ -1299,7 +1299,7 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
 
             Assertions.assertThat(transfer.getBubbleObjects().keySet())
                     .containsExactly(simple1Id, simple2Id);
-            // register gir ingen garantier for rekkefølge
+            // register gir ingen garantier for rekkefÃ¸lge
 
             clientStore.register(transfer);
 

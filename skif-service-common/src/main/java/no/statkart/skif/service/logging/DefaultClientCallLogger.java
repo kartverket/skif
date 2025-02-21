@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  * @author Tor Egil R. Strand
  * @since 2.2.0
  */
-@SuppressWarnings("WeakerAccess") // Det skal være mulig å override det meste
+@SuppressWarnings("WeakerAccess") // Det skal vÃ¦re mulig Ã¥ override det meste
 @Singleton
 public class DefaultClientCallLogger implements ClientCallLogger {
     /**
@@ -33,7 +33,7 @@ public class DefaultClientCallLogger implements ClientCallLogger {
 
     /**
      * Dels er dette det gamle navnet for {@link #getLogger()} som ligger igjen for kompatibilitet,
-     * dels er dette en måte å kunne få tak i {@link #logger} selv om {@code getLogger()} er overridden.
+     * dels er dette en mÃ¥te Ã¥ kunne fÃ¥ tak i {@link #logger} selv om {@code getLogger()} er overridden.
      */
     @SuppressWarnings({"UnusedDeclaration", "deprecation"})
     protected Logger getDefaultLogger() {
@@ -41,7 +41,7 @@ public class DefaultClientCallLogger implements ClientCallLogger {
     }
 
     /**
-     * @return Loggeren som blir brukt for logging. Override denne for å angi spesielle loggere.
+     * @return Loggeren som blir brukt for logging. Override denne for Ã¥ angi spesielle loggere.
      */
     @SuppressWarnings("deprecation")
     protected Logger getLogger() {
@@ -74,8 +74,8 @@ public class DefaultClientCallLogger implements ClientCallLogger {
     }
 
     /**
-     * Brukes av standardimplementasjonen av {@link #createCallMessage(Long, java.lang.reflect.Method, Object[])} for å
-     * skrive ut hvilken metode som er i ferd med å kalles. Standardimplementasjonen skriver ut
+     * Brukes av standardimplementasjonen av {@link #createCallMessage(Long, java.lang.reflect.Method, Object[])} for Ã¥
+     * skrive ut hvilken metode som er i ferd med Ã¥ kalles. Standardimplementasjonen skriver ut
      * &lt;interfacenavn&gt;.&lt;metodenavn&gt;(&lt;...&gt;), hvor
      *
      * @param buf    dit teksten skal appendes
@@ -93,8 +93,8 @@ public class DefaultClientCallLogger implements ClientCallLogger {
 
     /**
      * Benyttes av standardimplmentasjonen av {@link #appendMethod(StringBuilder, java.lang.reflect.Method, Object[])}
-     * for å legge på parameterlisten. Standardimplementasjonen returnerer bare en kommaseparert liste med typenavn,
-     * siden inneholdet i argumentene kan være uhensiksmessig stort.
+     * for Ã¥ legge pÃ¥ parameterlisten. Standardimplementasjonen returnerer bare en kommaseparert liste med typenavn,
+     * siden inneholdet i argumentene kan vÃ¦re uhensiksmessig stort.
      *
      * @param buf    dit teksten skal appendes
      * @param method metoden hvis kall skal logges
@@ -153,7 +153,7 @@ public class DefaultClientCallLogger implements ClientCallLogger {
      * @param callId call-id
      * @param method metoden hvis feiling skal logges
      * @param args   argumentene til metoden
-     * @param t      den exception metoden kastet (kan også være Error)
+     * @param t      den exception metoden kastet (kan ogsÃ¥ vÃ¦re Error)
      * @param time   tiden kallet tok
      * @return teksten som skal logges
      */
@@ -168,7 +168,7 @@ public class DefaultClientCallLogger implements ClientCallLogger {
      * @param callId call-id
      * @param method metoden hvis feiling skal logges
      * @param args   argumentene til metoden
-     * @param t      den exception metoden kastet (kan også være Error)
+     * @param t      den exception metoden kastet (kan ogsÃ¥ vÃ¦re Error)
      * @param time   tiden kallet tok
      * @return teksten som skal logges
      */

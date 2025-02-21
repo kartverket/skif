@@ -47,14 +47,14 @@ public class ValueObjectTest extends StoreTestTestCase {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final BubbleWithValueObjectMockupFactory valueObjectMockupFactory = mockupFacade.getBubbleWithValueObjectMockupFactory();
         final BubbleWithValueObject withSameBeloeb = store.get(valueObjectMockupFactory.getWithSameBeloepId());
-        // Test at instaner ikke længre deles når de innleses via Store
+        // Test at instaner ikke lÃ¦ngre deles nÃ¥r de innleses via Store
         Assert.assertEquals(withSameBeloeb.getA(), valueObjectMockupFactory.getBeloepNOK1WithText());
         Assert.assertEquals(withSameBeloeb.getB(), valueObjectMockupFactory.getBeloepNOK1WithText());
         Assert.assertNotSame(withSameBeloeb.getA(), withSameBeloeb.getB());
     }
 
     /**
-     * Tester oppdatering. Dette må skje ved å lage et nytt objekt da BeloepValueObject er immutable
+     * Tester oppdatering. Dette mÃ¥ skje ved Ã¥ lage et nytt objekt da BeloepValueObject er immutable
      */
     public void testUpdateBeloep() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
@@ -149,7 +149,7 @@ public class ValueObjectTest extends StoreTestTestCase {
         UnitOfWork unitOfWork = store.beginUnitOfWork();
         try {
             final BubbleWithValueObject bubbleWithBeloepSet = store.lock(valueObjectMockupFactory.getWithBeloepSetId());
-            bubbleWithBeloepSet.getBeloepSet().add(new BeloepValueObject("NOK", 100, "Ekstra beløp i NOK"));
+            bubbleWithBeloepSet.getBeloepSet().add(new BeloepValueObject("NOK", 100, "Ekstra belÃ¸p i NOK"));
             store.update(bubbleWithBeloepSet);
             storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
             Assert.fail("Expected exception due to database constraint");

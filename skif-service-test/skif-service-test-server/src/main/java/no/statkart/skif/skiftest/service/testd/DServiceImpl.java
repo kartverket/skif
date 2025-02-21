@@ -94,7 +94,7 @@ public class DServiceImpl implements DService {
         } else {
             try {
                 Throwable t = (Throwable) cl.getConstructor(String.class).newInstance(message);
-                t.fillInStackTrace(); // Må til for å stacktrace riktig
+                t.fillInStackTrace(); // MÃ¥ til for Ã¥ stacktrace riktig
                 if (t instanceof RuntimeException) {
                     return (RuntimeException) t;
                 } else {

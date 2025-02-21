@@ -1,7 +1,7 @@
 package no.statkart.skif.exception;
 
 /**
- * Rapporterer at ikke alle forsøk på å oppdatere rader i databasen lyktes.
+ * Rapporterer at ikke alle forsÃ¸k pÃ¥ Ã¥ oppdatere rader i databasen lyktes.
  *
  * @author Roar Ingebrigtsen
  * @since 2.0

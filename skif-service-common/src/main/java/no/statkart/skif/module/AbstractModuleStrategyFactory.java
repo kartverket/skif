@@ -9,14 +9,14 @@ import java.util.Map;
 
 /**
  * Abstract {@code ModuleStrategyFactory} implementasjon som legger alle prototyper i en map og som bruker
- * superklassen hvis  modulklassen som brukes som nøkkel ikke selv har en prototype.
+ * superklassen hvis  modulklassen som brukes som nÃ¸kkel ikke selv har en prototype.
  *
- * <p>For hver modulklasse angis en implementasjonsklassen, som må være av en gitt subtype, som skal brukes for
- * konfigurasjon av pågjeldende modul. Det er mulig å ha en egen implementasjonsklasser for hver
- * {@link no.statkart.skif.ServiceMode} systemet kan kjøres i. Den faktiske implementasjonsklassen som anvendes for en
- * {@code ServiceMode} avledes ved å legge til navnet på {@link ServiceMode} til implementasjonsklassens navn. Hvis
+ * <p>For hver modulklasse angis en implementasjonsklassen, som mÃ¥ vÃ¦re av en gitt subtype, som skal brukes for
+ * konfigurasjon av pÃ¥gjeldende modul. Det er mulig Ã¥ ha en egen implementasjonsklasser for hver
+ * {@link no.statkart.skif.ServiceMode} systemet kan kjÃ¸res i. Den faktiske implementasjonsklassen som anvendes for en
+ * {@code ServiceMode} avledes ved Ã¥ legge til navnet pÃ¥ {@link ServiceMode} til implementasjonsklassens navn. Hvis
  * denne klassen ikke finnes brukes implementasjonsklassen istedet.  Klassene lastes via reflection fordi
- * klasser som brukes for SingleVm ikke er tilgjengelig på classpath for klienter som kun kan kjøre i JEE mode.
+ * klasser som brukes for SingleVm ikke er tilgjengelig pÃ¥ classpath for klienter som kun kan kjÃ¸re i JEE mode.
  *
  * <p>For eksempel angir {@code RemoteServiceModuleStrategy.class} at klassen
  * {@code RemoteServiceModuleStrategyJEE.class} skal anvendes for {@link no.statkart.skif.ServiceMode#JEE} og at

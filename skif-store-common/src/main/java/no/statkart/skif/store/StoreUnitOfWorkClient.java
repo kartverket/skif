@@ -25,7 +25,7 @@ public class StoreUnitOfWorkClient extends StoreUnitOfWork {
         Stream.concat(modifiedMap.values().stream(), lockedMap.values().stream())
                 .forEach(storeEntry -> {
                     if (storeEntry.getLoadedByLevel() == level) {
-                        // Entry skal fjernes. Gjøres gjennom kall til evictEntry frem fra direkte remove fra storeCache slik at stale kopi i StoreClientReadCache også fjernes
+                        // Entry skal fjernes. GjÃ¸res gjennom kall til evictEntry frem fra direkte remove fra storeCache slik at stale kopi i StoreClientReadCache ogsÃ¥ fjernes
                         storeEntry.setState(level, StoreEntryState.UNCHANGED);
                         storeEntry.unlock(level);
                         wrappedStoreSession.evictEntry(level, storeEntry.getId());

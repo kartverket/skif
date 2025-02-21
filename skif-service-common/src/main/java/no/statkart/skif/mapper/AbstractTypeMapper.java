@@ -53,7 +53,7 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT, M extends Mapping> imp
     }
 
     /**
-     * Hjelpemetode for å opprette klasse av typen WsapiT. Dette virker bare dersom WsapiT er default constructable.
+     * Hjelpemetode for Ã¥ opprette klasse av typen WsapiT. Dette virker bare dersom WsapiT er default constructable.
      *
      * @return ny instans
      * @throws MappingException dersom ny instans ikke kan opprettes
@@ -69,7 +69,7 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT, M extends Mapping> imp
     }
 
     /**
-     * Hjelpemetode for å opprette klasse av typen DomainT. Dette virker bare dersom DomainT er default constructable.
+     * Hjelpemetode for Ã¥ opprette klasse av typen DomainT. Dette virker bare dersom DomainT er default constructable.
      *
      * @return ny instans
      * @throws MappingException dersom ny instans ikke kan opprettes
@@ -85,7 +85,7 @@ public abstract class AbstractTypeMapper<WsapiT, DomainT, M extends Mapping> imp
     }
 
     /**
-     * @return debug streng på formen <pre>&lt;TypeMapperklasse&gt;{&lt;domeneklasse&gt; &lt;-&gt; &lt;apiklasse&gt;}</pre>
+     * @return debug streng pÃ¥ formen <pre>&lt;TypeMapperklasse&gt;{&lt;domeneklasse&gt; &lt;-&gt; &lt;apiklasse&gt;}</pre>
      */
     public String toString() {
         return super.toString() + "{" + domainClass + " <-> " + wsapiClass + "}";

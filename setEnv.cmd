@@ -5,7 +5,7 @@
 @echo off
 @mode con codepage select=865
 
-rem Setter hovedkatalog for prosjektet. PROJECT_ROOT inneholder '\' til slutt derfor må det stå en '.' til slutt
+rem Setter hovedkatalog for prosjektet. PROJECT_ROOT inneholder '\' til slutt derfor mÃ¥ det stÃ¥ en '.' til slutt
 rem %~dp0 is name of current script under NT
 set PROJECT_ROOT=%~dp0.
 cd /d %PROJECT_ROOT%
@@ -32,7 +32,7 @@ title %TITLE%
 rem Java Setup:
 @echo JAVA_HOME=%JAVA_HOME%
 if not "%JAVA_HOME%"=="" goto CONFIGURE_JAVA_HOME
-  @echo   JAVA_HOME environment variable er ikke satt. Har du glem å sette den i setEnv_personal.cmd?
+  @echo   JAVA_HOME environment variable er ikke satt. Har du glem Ã¥ sette den i setEnv_personal.cmd?
   set ERROR=true
   goto END_JAVA_HOME
 :CONFIGURE_JAVA_HOME
@@ -43,7 +43,7 @@ if not "%JAVA_HOME%"=="" goto CONFIGURE_JAVA_HOME
 rem Gradle Setup:
 @echo GRADLE_HOME=%GRADLE_HOME%
 if not "%GRADLE_HOME%"=="" goto CONFIGURE_GRADLE_HOME
-  @echo   GRADLE_HOME environment variable er ikke satt. Har du glem å sette den i setEnv_personal.cmd?
+  @echo   GRADLE_HOME environment variable er ikke satt. Har du glem Ã¥ sette den i setEnv_personal.cmd?
   set ERROR=true
   goto END_GRADLE_HOME
 :CONFIGURE_GRADLE_HOME

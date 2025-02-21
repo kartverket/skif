@@ -90,7 +90,7 @@ public class ExceptionMappingTest {
 
         Assert.assertEquals(mappedException.getClass(), LockedException.class);
         LockedException lockedException = (LockedException) mappedException;
-        Assert.assertEquals(lockedException.getMessage(), domainException.getMessage()); // Blir teksten lik, så er nok det meste inni likt også, siden førstnevnte lages ut fra sistnevnte.
+        Assert.assertEquals(lockedException.getMessage(), domainException.getMessage()); // Blir teksten lik, sÃ¥ er nok det meste inni likt ogsÃ¥, siden fÃ¸rstnevnte lages ut fra sistnevnte.
     }
 
     public void testObjectNotFoundExceptionMapping() {

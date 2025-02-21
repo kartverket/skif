@@ -5,7 +5,7 @@ import no.statkart.skif.store.BubbleObject;
 /**
  * Deklarativ konfigurasjon for {@link AbstractEndringManager}.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand
  * @since 2.5.0

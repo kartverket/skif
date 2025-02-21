@@ -6,7 +6,7 @@ import no.statkart.skif.store.ConcatenatedFieldsSerialization;
 import java.io.Serializable;
 
 /**
- * Eksempel klasse som støtter feltserialisering som en String
+ * Eksempel klasse som stÃ¸tter feltserialisering som en String
  */
 public class SomeIdent implements ConcatenatedFieldsSerialization, Serializable {
     private long field1;

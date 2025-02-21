@@ -9,17 +9,17 @@ import java.lang.reflect.WildcardType;
 @SuppressWarnings({"UnstableApiUsage", "unchecked"})
 public class TypeUtils {
     /**
-     * Workaround for ting {@link TypeToken#getSubtype(Class)} ikke gjør.
+     * Workaround for ting {@link TypeToken#getSubtype(Class)} ikke gjÃ¸r.
      */
     public static <T> TypeToken<? extends T> getSubtype(final TypeToken<T> typeToken, Class<?> subClass) {
         if (typeToken.getRawType().isPrimitive()) {
             return typeToken;
         }
 
-        // Dersom subklassen, og eventuelle eiende klasser, ikke har noen typeparametre, så er det ikke mer å gjøre.
-        // Dersom den arver fra typeToken uten å angi typene på veien, så vil det feile senere i metoden hvis vi
-        // fortsetter, og det er ikke brukbart. Dette er laget for å håndtere klasser som implementerer Collections
-        // uten å angi typeparametrene til Collection (eller List, Set, Map).
+        // Dersom subklassen, og eventuelle eiende klasser, ikke har noen typeparametre, sÃ¥ er det ikke mer Ã¥ gjÃ¸re.
+        // Dersom den arver fra typeToken uten Ã¥ angi typene pÃ¥ veien, sÃ¥ vil det feile senere i metoden hvis vi
+        // fortsetter, og det er ikke brukbart. Dette er laget for Ã¥ hÃ¥ndtere klasser som implementerer Collections
+        // uten Ã¥ angi typeparametrene til Collection (eller List, Set, Map).
         if (isFullyTyped(subClass) && typeToken.getRawType().isAssignableFrom(subClass)) {
             return (TypeToken<? extends T>) TypeToken.of(subClass);
         }
@@ -28,11 +28,11 @@ public class TypeUtils {
 
         while (tempToken.getType() instanceof TypeVariable || tempToken.getType() instanceof WildcardType) {
             if (tempToken.getType() instanceof TypeVariable) {
-                // Gjør om T extends Foo til Foo (og T til Object)
+                // GjÃ¸r om T extends Foo til Foo (og T til Object)
                 TypeVariable typeVariable = (TypeVariable) tempToken.getType();
                 tempToken = (TypeToken<? super T>) TypeToken.of(typeVariable.getBounds()[0]);
             } else {
-                // Gjør om ? extends Foo til Foo (og ? til Object). ? super Foo blir vel Object?
+                // GjÃ¸r om ? extends Foo til Foo (og ? til Object). ? super Foo blir vel Object?
                 WildcardType wildcardType = (WildcardType) tempToken.getType();
                 tempToken = (TypeToken<? super T>) TypeToken.of(wildcardType.getUpperBounds()[0]);
             }

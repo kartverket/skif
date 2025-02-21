@@ -5,7 +5,7 @@ import no.statkart.skif.generics.domain.AbstractStrut;
 /**
  * Ikke dokumentert
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 1.0 - sprint 28
  */
 public abstract class BaseStrut<I extends BaseStrutId<?>> extends AbstractStrut<I> {

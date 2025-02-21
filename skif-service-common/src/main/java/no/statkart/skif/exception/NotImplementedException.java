@@ -3,7 +3,7 @@ package no.statkart.skif.exception;
 /**
  * Exception som kan kastes der funksjonalitet ikke er implementert.
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 2.0
  */
 public class NotImplementedException extends ImplementationException {

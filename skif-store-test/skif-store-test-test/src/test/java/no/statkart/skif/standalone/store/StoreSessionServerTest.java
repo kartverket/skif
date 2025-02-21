@@ -123,10 +123,10 @@ import static org.testng.FileAssert.fail;
 /**
  * Tester basal StoreSessionServer funksjonalitet. Testen anvender kun standalone domeneklassene {@code TestBubble,
  * TestBubbleWithHistory, TestBubbleFilter, SelfBubble, Parent og Child}. Disse klasser er veldig enkle og inneholder
- * bl.a ikke Koder. Mer avansert testing utføres i tester basert på StoreTestServer modulen og ved bruk av mockup-rammeverket.
+ * bl.a ikke Koder. Mer avansert testing utfÃ¸res i tester basert pÃ¥ StoreTestServer modulen og ved bruk av mockup-rammeverket.
  * <p>
- * Dette er en stand-alone-test som går direkte mot databasen uten å bruke StoreTestServer modulen. Mest naturlig at testene
- * kjøres i singleVM mode.
+ * Dette er en stand-alone-test som gÃ¥r direkte mot databasen uten Ã¥ bruke StoreTestServer modulen. Mest naturlig at testene
+ * kjÃ¸res i singleVM mode.
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -258,7 +258,7 @@ public class StoreSessionServerTest {
                 );
                 List<StoreSessionFinishListener> finishListeners = ImmutableList.of(
                         testBubbleFinishFilter,
-                        new UpdatingFinishListener() /* StoreListener som endre på boble som bruker empty collection flag */
+                        new UpdatingFinishListener() /* StoreListener som endre pÃ¥ boble som bruker empty collection flag */
                 );
 
                 StoreSessionServer storeSessionServer = new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), Providers.of(SnapshotVersion.CURRENT), lockerStrategy, dependencyComparator, readListeners, writeListeners, finishListeners);
@@ -447,21 +447,21 @@ public class StoreSessionServerTest {
     public void testLesFilteredKlasseGetObjectPermissionDenied() {
         assertThatThrownBy(()->storeServer.get(filteredBubbleWithPermissionDeniedId_3))
                 .isInstanceOf(PermissionDeniedException.class)
-                .hasMessage("Ikke lov å laste objektet: FilteredBubbleId{value=3, snapshotVersion=SnapshotVersion{timestamp=CURRENT}}");
+                .hasMessage("Ikke lov Ã¥ laste objektet: FilteredBubbleId{value=3, snapshotVersion=SnapshotVersion{timestamp=CURRENT}}");
     }
 
     public void testLesFilteredKlasseGetListPermissionDenied() {
         List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(filteredBubbleId_1, filteredBubbleWithPermissionDeniedId_3, filteredBubbleId_4, filteredBubbleWithPermissionDeniedId_5);
         assertThatThrownBy(()->storeServer.get(filteredBubbleWithPermissionDeniedId_3))
                 .isInstanceOf(PermissionDeniedException.class)
-                .hasMessageStartingWith("Ikke lov å laste objektet: FilteredBubbleId");
-        assertThat(storeServer.get(filteredBubbleId_1)).as("Forventet å kunne laste boble").isNotNull();
-        assertThat(storeServer.get(filteredBubbleId_4)).as("Forventet å kunne laste boble").isNotNull();
+                .hasMessageStartingWith("Ikke lov Ã¥ laste objektet: FilteredBubbleId");
+        assertThat(storeServer.get(filteredBubbleId_1)).as("Forventet Ã¥ kunne laste boble").isNotNull();
+        assertThat(storeServer.get(filteredBubbleId_4)).as("Forventet Ã¥ kunne laste boble").isNotNull();
     }
 
     /**
-     * Fordi man henter ut objekter med vanlig Store.get(list) istedet for Store.getIgnoreMissing(list) så får man
-     * kunne tilbake feil om de som ikke finnes, da dette sjekkes først.
+     * Fordi man henter ut objekter med vanlig Store.get(list) istedet for Store.getIgnoreMissing(list) sÃ¥ fÃ¥r man
+     * kunne tilbake feil om de som ikke finnes, da dette sjekkes fÃ¸rst.
      */
     public void testLesFilteredKlasseGetListPermissionDeniedAndObjectNotFound() {
         List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(
@@ -515,13 +515,13 @@ public class StoreSessionServerTest {
     }
 
     public void testInsertFilteredKlasse_aktivt_filter() {
-        String ftekst = "Skal overskrives på vei ned i basen 101";
+        String ftekst = "Skal overskrives pÃ¥ vei ned i basen 101";
         FilteredBubble filteredBubble = new FilteredBubble(filteredBubbleId_101, "Insert ufiltrert 101", true, ftekst);
         try {
             storeServer.beginTransaction();
             storeServer.insert(filteredBubble);
             storeServer.commitTransaction();
-            fail("insert på filtrert objekt feilet ikke");
+            fail("insert pÃ¥ filtrert objekt feilet ikke");
         } catch (Exception e) {
             //skal feile
         }
@@ -536,7 +536,7 @@ public class StoreSessionServerTest {
         try {
             storeServer.update(filteredBubble);
             storeServer.commitTransaction();
-            fail("skal ikke klare å lagre objekt som har filtering!");
+            fail("skal ikke klare Ã¥ lagre objekt som har filtering!");
         } catch (Exception e) {
             //skal feile
         }
@@ -743,7 +743,7 @@ public class StoreSessionServerTest {
 
     /**
      * Test finder som laster inn objekt i hibernate via query. Finderen returnerer id og ikke selve objektet slik at store har mulighet
-     * for å returnere en filtrert eller oppdatert instans.
+     * for Ã¥ returnere en filtrert eller oppdatert instans.
      */
     @SuppressWarnings("JpaQlInspection")
     private TestBubbleId testBubbleIdFinder() {
@@ -761,7 +761,7 @@ public class StoreSessionServerTest {
 
     public void testLoadObjectViaFinder() {
         TestBubbleId<?> id = testBubbleIdFinder();
-        // Dette kallet skal ikke gjøre select kall mot databasen da objekt allerede er lastet via finder
+        // Dette kallet skal ikke gjÃ¸re select kall mot databasen da objekt allerede er lastet via finder
         BubbleObject bubbleObject = storeServer.get(id);
         assertNotNull(bubbleObject);
     }
@@ -778,7 +778,7 @@ public class StoreSessionServerTest {
 
         try {
             storeServer.get(TestBubbleId_101);
-            fail("Objekt skal ikke være igjen i store etter rollback");
+            fail("Objekt skal ikke vÃ¦re igjen i store etter rollback");
         } catch (ObjectNotFoundException e) {
             assertEquals(e.getNotFoundId(), TestBubbleId_101);
         }
@@ -1057,9 +1057,9 @@ public class StoreSessionServerTest {
 
         TestBubble testBubble = new TestBubble(TestBubbleId_101);
 
-        // b_102 refererer b_101 og man bør derfor få referanse feil. Men dersom b_101 og b_102 er med i samme batch går det
-        // greit likevel. Har derfor langt inn testBubble for å bryte batchen. For det skal virke må Store ikke
-        // stokke om på rekkefølgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
+        // b_102 refererer b_101 og man bÃ¸r derfor fÃ¥ referanse feil. Men dersom b_101 og b_102 er med i samme batch gÃ¥r det
+        // greit likevel. Har derfor langt inn testBubble for Ã¥ bryte batchen. For det skal virke mÃ¥ Store ikke
+        // stokke om pÃ¥ rekkefÃ¸lgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
         UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
         storeServer.insert(b_102);
         storeServer.insert(testBubble);
@@ -1085,9 +1085,9 @@ public class StoreSessionServerTest {
 
             TestBubble testBubble = new TestBubble(TestBubbleId_101);
 
-            // b_102 refererer b_101 og man bør derfor få referanse feil. Men dersom b_101 og b_102 er med i samme batch går det
-            // greit likevel. Har derfor langt inn testBubble for å bryte batchen. For det skal virke må Store ikke
-            // stokke om på rekkefølgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
+            // b_102 refererer b_101 og man bÃ¸r derfor fÃ¥ referanse feil. Men dersom b_101 og b_102 er med i samme batch gÃ¥r det
+            // greit likevel. Har derfor langt inn testBubble for Ã¥ bryte batchen. For det skal virke mÃ¥ Store ikke
+            // stokke om pÃ¥ rekkefÃ¸lgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
             storeServer.insert(b_102);
             storeServer.insert(testBubble);
             storeServer.insert(b_101);
@@ -1116,21 +1116,21 @@ public class StoreSessionServerTest {
 
             TestBubble testBubble = new TestBubble(TestBubbleId_101);
 
-            // b_102 refererer b_101 og man bør derfor få referanse feil. Men dersom b_101 og b_102 er med i samme batch går det
-            // greit likevel. Har derfor langt inn testBubble for å bryte batchen. For det skal virke må Store ikke
-            // stokke om på rekkefølgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
+            // b_102 refererer b_101 og man bÃ¸r derfor fÃ¥ referanse feil. Men dersom b_101 og b_102 er med i samme batch gÃ¥r det
+            // greit likevel. Har derfor langt inn testBubble for Ã¥ bryte batchen. For det skal virke mÃ¥ Store ikke
+            // stokke om pÃ¥ rekkefÃ¸lgen. Derfor har SelfBubble og TestBubble samme sorteringsindex.
             UnitOfWork unitOfWork = storeServer.beginUnitOfWork();
             storeServer.insert(b_102);
             storeServer.insert(testBubble);
             storeServer.insert(b_101);
             storeServer.insert(b_103);
 
-            logger.warn("Denne test forsøker å bryte integritetsskranke 'SELF_FK'. Hibernate (org.hibernate.util.JDBCExceptionReporter) logger en ERROR om dette, hvilket er ok.");
-            // Uten denne går det ikke bra:
+            logger.warn("Denne test forsÃ¸ker Ã¥ bryte integritetsskranke 'SELF_FK'. Hibernate (org.hibernate.util.JDBCExceptionReporter) logger en ERROR om dette, hvilket er ok.");
+            // Uten denne gÃ¥r det ikke bra:
             // storeServer.rescheduleModification(b_102.getId());
             storeServer.commitUnitOfWork(unitOfWork);
             storeServer.flush();
-            fail("Skulle ha fått feil på flush: 'integritetsskranken (FREHEN_GB.SELF_FK) er overtrådt - hovednøkkel ikke funnet'");
+            fail("Skulle ha fÃ¥tt feil pÃ¥ flush: 'integritetsskranken (FREHEN_GB.SELF_FK) er overtrÃ¥dt - hovednÃ¸kkel ikke funnet'");
         } catch (ConstraintViolationException e) {
             // Tidligere versjoner av oracle enn 11.2.0.3.0 gir ikke constraintfeil hvis objekter er i samme batch
         } finally {
@@ -1140,7 +1140,7 @@ public class StoreSessionServerTest {
 
 
     /**
-     * Denne test er lagt til rette for å kunne bruker JProfiler.
+     * Denne test er lagt til rette for Ã¥ kunne bruker JProfiler.
      */
     public void testEvictAllAfterCommitRemovesAllObjectsReadOnly() {
         MemoryProfileUtil.setEnabled(false);
@@ -1159,7 +1159,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Denne test er lagt til rette for å kunne bruker JProfiler.
+     * Denne test er lagt til rette for Ã¥ kunne bruker JProfiler.
      */
     public void testEvictAllAfterCommitRemovesAllObjectsAfterCommit() {
         MemoryProfileUtil.setEnabled(false);
@@ -1179,7 +1179,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Forventer at cachet data tømmes helt, dvs at ny instans må leses inn etter clear()
+     * Forventer at cachet data tÃ¸mmes helt, dvs at ny instans mÃ¥ leses inn etter clear()
      */
     public void testClearForReadOnly() {
         ParentBubble Parent_1 = storeServer.get(parentBubbleId_1);
@@ -1194,8 +1194,8 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Forventer at cachet data tømmes helt, dvs at ny instans må leses inn etter clear().
-     * Dette skal også gjelde objekter som nettopp har blitt opprettet
+     * Forventer at cachet data tÃ¸mmes helt, dvs at ny instans mÃ¥ leses inn etter clear().
+     * Dette skal ogsÃ¥ gjelde objekter som nettopp har blitt opprettet
      */
     public void testClearAfterCommit() {
         ParentBubble parent_1 = storeServer.get(parentBubbleId_1);
@@ -1216,7 +1216,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Forventer at cachet data tømmes helt og at endret data er uendret og alt leses på nytt etter clear()
+     * Forventer at cachet data tÃ¸mmes helt og at endret data er uendret og alt leses pÃ¥ nytt etter clear()
      */
     public void testIsClearedAfterRollback() {
         ParentBubble parent_1 = storeServer.get(parentBubbleId_1);
@@ -1241,7 +1241,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Forventer at cachet readonly data tømmes helt og at låst data forblir uendret ved kall til clear()
+     * Forventer at cachet readonly data tÃ¸mmes helt og at lÃ¥st data forblir uendret ved kall til clear()
      */
     public void testClearedWhileInTransaction() {
         ParentBubble parent_1 = storeServer.get(parentBubbleId_1);
@@ -1264,8 +1264,8 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Tester forsøksvis sletting av boble som gir constraint feil ved sletting. Tester at endringer
-     * gjort før og etter attemptDelete kommer med når transaksjonen committes.
+     * Tester forsÃ¸ksvis sletting av boble som gir constraint feil ved sletting. Tester at endringer
+     * gjort fÃ¸r og etter attemptDelete kommer med nÃ¥r transaksjonen committes.
      */
     public void testAttemptDelete() {
         //Opprett 1 parent bubble og 2 child bubbles
@@ -1292,7 +1292,7 @@ public class StoreSessionServerTest {
         storeServer.commitTransaction();
         storeServer.clear();
 
-        // Opprett parent 202 og legg inn child 202, set text() i parent 201 og 202 samt forsøk å endre text i child 201 og deretter slett child 201
+        // Opprett parent 202 og legg inn child 202, set text() i parent 201 og 202 samt forsÃ¸k Ã¥ endre text i child 201 og deretter slett child 201
         storeServer.beginTransaction();
         ParentBubble parentBubble_202 = new ParentBubble(parentBubbleId_202);
         parentBubble_202.setText("Insert parent 2");
@@ -1307,14 +1307,14 @@ public class StoreSessionServerTest {
             storeServer.update(childBubble_201);
             storeServer.update(parentBubble_201);
 
-            // Har nå endret noe i parent 201 og child 201
-            logger.warn("Denne test forsøker å bryte integritetsskranke 'FK_CHILDFORPARENT_CHILD'. Hibernate (org.hibernate.util.JDBCExceptionReporter) logger en ERROR om dette, hvilket er ok.");
+            // Har nÃ¥ endret noe i parent 201 og child 201
+            logger.warn("Denne test forsÃ¸ker Ã¥ bryte integritetsskranke 'FK_CHILDFORPARENT_CHILD'. Hibernate (org.hibernate.util.JDBCExceptionReporter) logger en ERROR om dette, hvilket er ok.");
             storeServer.attemptDelete(childBubble_201.getBubbleId());
             Assert.fail("forventet exception");
         } catch (AttemptDeleteException e) {
             assertEquals(e.getBubbleId(), childBubble_201.getId());
         }
-        // Check at child 201 fortsatt er låst og ikke er markert som slettet i Store
+        // Check at child 201 fortsatt er lÃ¥st og ikke er markert som slettet i Store
         assertTrue(storeServer.isLocked(childBubble_201.getId()));
         assertTrue(storeServer.getUpdatedIds().contains(childBubble_201.getId()));
         assertThat(storeServer.getDeletedIds()).doesNotContain(childBubble_201.getId());
@@ -1353,7 +1353,7 @@ public class StoreSessionServerTest {
 
         storeServer.beginTransaction();
         storeServer.lock(childBubble_201.getBubbleId());
-        logger.warn("Denne test forsøker å bryte integritetsskranke 'FK_CHILDFORPARENT_CHILD'. Hibernate (org.hibernate.util.JDBCExceptionReporter) logger en ERROR om dette, hvilket er ok.");
+        logger.warn("Denne test forsÃ¸ker Ã¥ bryte integritetsskranke 'FK_CHILDFORPARENT_CHILD'. Hibernate (org.hibernate.util.JDBCExceptionReporter) logger en ERROR om dette, hvilket er ok.");
         for (long i = 1000; i < 1000+MAX_SAVEPOINTS; i++) {
             ParentBubble parentBubble = new ParentBubble(new ParentBubbleId<>(i));
             parentBubble.setText("Insert parent" + i);
@@ -1546,7 +1546,7 @@ public class StoreSessionServerTest {
         Mockito.verifyNoMoreInteractions(persistenceSessionManager, lockerStrategy, idService);
     }
 
-    // At refresh blir kalt enkeltvis er en implementasjonsdetalj, ikke slik det skal være
+    // At refresh blir kalt enkeltvis er en implementasjonsdetalj, ikke slik det skal vÃ¦re
     public void testLockMultipleUngotten() {
         SimpleId<?> id1 = new SimpleId<>(1L);
         SimpleId<?> id2 = new SimpleId<>(2L);
@@ -1982,35 +1982,35 @@ public class StoreSessionServerTest {
         assertThat(parent1.getChildren1Ids()).isEmpty();
         assertThat(parent1.getChildren2Ids()).isEmpty();
         assertThat(parent1.getChildren3Ids()).isEmpty();
-        assertThat(parent1.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal være satt, da children1 og children2 er tomme").isEqualTo(3);
+        assertThat(parent1.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal vÃ¦re satt, da children1 og children2 er tomme").isEqualTo(3);
 
         ParentBubbleEmptyColOptimizer parent2 = storeServer.get(parentBubbleEmptyColOptimizerId_2);
         assertNotNull(parent2);
         assertThat(parent2.getChildren1Ids()).isEmpty();
         assertThat(parent2.getChildren2Ids()).containsOnly(childBubbleEmptyColOptimizerId_21);
         assertThat(parent2.getChildren3Ids()).isEmpty();
-        assertThat(parent2.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal ikke være satt").isEqualTo(1);
+        assertThat(parent2.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal ikke vÃ¦re satt").isEqualTo(1);
 
         ParentBubbleEmptyColOptimizer parent3 = storeServer.get(parentBubbleEmptyColOptimizerId_3);
         assertNotNull(parent3);
         assertThat(parent3.getChildren1Ids()).containsOnly(childBubbleEmptyColOptimizerId_31);
         assertThat(parent3.getChildren2Ids()).containsOnly(childBubbleEmptyColOptimizerId_31);
         assertThat(parent3.getChildren3Ids()).isEmpty();
-        assertThat(parent3.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke være satt").isEqualTo(0);
+        assertThat(parent3.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke vÃ¦re satt").isEqualTo(0);
 
         ParentBubbleEmptyColOptimizer parent4 = storeServer.get(parentBubbleEmptyColOptimizerId_4);
         assertNotNull(parent4);
         assertThat(parent4.getChildren1Ids()).containsOnly(childBubbleEmptyColOptimizerId_41);
         assertThat(parent4.getChildren2Ids()).isEmpty();
         assertThat(parent4.getChildren3Ids()).isEmpty();
-        assertThat(parent4.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal være satt").isEqualTo(2);
+        assertThat(parent4.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal vÃ¦re satt").isEqualTo(2);
 
         ParentBubbleEmptyColOptimizer parent5 = storeServer.get(parentBubbleEmptyColOptimizerId_5);
         assertNotNull(parent5);
         assertThat(parent5.getChildren1Ids()).isEmpty();
         assertThat(parent5.getChildren2Ids()).isEmpty();
         assertThat(parent5.getChildren3Ids()).isEmpty();
-        assertThat(parent5.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke være satt, da flagget er nullstilt for denne boblen").isEqualTo(0);
+        assertThat(parent5.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke vÃ¦re satt, da flagget er nullstilt for denne boblen").isEqualTo(0);
 
         ParentBubbleEmptyColOptimizerSub1 parent6 = storeServer.get(parentBubbleEmptyColOptimizerId_6);
         assertNotNull(parent6);
@@ -2019,41 +2019,41 @@ public class StoreSessionServerTest {
         assertThat(parent6.getChildren2Ids()).isEmpty();
         assertThat(parent6.getChildren3Ids()).isEmpty();
         assertThat(parent6.getChildren4Ids()).isEmpty();
-        assertThat(parent6.getEmptyCollectionsFlag()).describedAs("Bitt 1 og 2 skal ikke være satt, da flagget er nullstilt for denne boblen").isEqualTo(6);
+        assertThat(parent6.getEmptyCollectionsFlag()).describedAs("Bitt 1 og 2 skal ikke vÃ¦re satt, da flagget er nullstilt for denne boblen").isEqualTo(6);
     }
 
     /**
-     * Tester effekten av EmptyCollectionsOptimizer ved å sjekke hvilke collections som har blitt initialisert.
-     * Tomme collections som er styrt av EmptyCollectionsOptimizer vil være alltid være initialisert, mens collections
-     * som ikke er tomme eller ikke er styrt av flagget ikke vil være initialisert når boblen lastes. Det er vanskelig
-     * å sjekke automatisk hvilke slq-er som hibernate utfører ved lasting av bobler som har tom collection, men dette
-     * kan kontrolleres manuelt ved å slå på Hibernate sql logging. Denne testen skal utføre i alt 3 sql-er for å lese
-     * ParentBubbleEmptyColOptimizer boblene en og en - og ingen andre sql-er, da lazy loading er slått på for
+     * Tester effekten av EmptyCollectionsOptimizer ved Ã¥ sjekke hvilke collections som har blitt initialisert.
+     * Tomme collections som er styrt av EmptyCollectionsOptimizer vil vÃ¦re alltid vÃ¦re initialisert, mens collections
+     * som ikke er tomme eller ikke er styrt av flagget ikke vil vÃ¦re initialisert nÃ¥r boblen lastes. Det er vanskelig
+     * Ã¥ sjekke automatisk hvilke slq-er som hibernate utfÃ¸rer ved lasting av bobler som har tom collection, men dette
+     * kan kontrolleres manuelt ved Ã¥ slÃ¥ pÃ¥ Hibernate sql logging. Denne testen skal utfÃ¸re i alt 3 sql-er for Ã¥ lese
+     * ParentBubbleEmptyColOptimizer boblene en og en - og ingen andre sql-er, da lazy loading er slÃ¥tt pÃ¥ for
      * collections. Testen vil feile hvis flagget ikke virker som det skal eller hvis Hibernate eager initialisere
-     * alle collections uansett. Kun de tomme collections som bruker flagget skal være initialisert.
+     * alle collections uansett. Kun de tomme collections som bruker flagget skal vÃ¦re initialisert.
      */
     public void testEmptyCollectionsOptimizer_InitialisererEmptyCollections() {
-        enableLazyLoading(); // Ønsker ikke at tvinge initialisering av collections.
+        enableLazyLoading(); // Ã˜nsker ikke at tvinge initialisering av collections.
         ParentBubbleEmptyColOptimizer parent1 = storeServer.get(parentBubbleEmptyColOptimizerId_1);
-        assertThat(parent1.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal være satt, da children1 og children2 er tomme").isEqualTo(3);
+        assertThat(parent1.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal vÃ¦re satt, da children1 og children2 er tomme").isEqualTo(3);
         assertThat(Hibernate.isInitialized(parent1.getChildren1Ids())).isTrue();
         assertThat(Hibernate.isInitialized(parent1.getChildren2Ids())).isTrue();
         assertThat(Hibernate.isInitialized(parent1.getChildren3Ids())).isFalse();
 
         ParentBubbleEmptyColOptimizer parent2 = storeServer.get(parentBubbleEmptyColOptimizerId_2);
-        assertThat(parent2.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal ikke være satt").isEqualTo(1);
+        assertThat(parent2.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal ikke vÃ¦re satt").isEqualTo(1);
         assertThat(Hibernate.isInitialized(parent2.getChildren1Ids())).isTrue();
         assertThat(Hibernate.isInitialized(parent2.getChildren2Ids())).isFalse();
         assertThat(Hibernate.isInitialized(parent2.getChildren3Ids())).isFalse();
 
         ParentBubbleEmptyColOptimizer parent3 = storeServer.get(parentBubbleEmptyColOptimizerId_3);
-        assertThat(parent3.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke være satt").isEqualTo(0);
+        assertThat(parent3.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke vÃ¦re satt").isEqualTo(0);
         assertThat(Hibernate.isInitialized(parent3.getChildren1Ids())).isFalse();
         assertThat(Hibernate.isInitialized(parent3.getChildren2Ids())).isFalse();
         assertThat(Hibernate.isInitialized(parent3.getChildren3Ids())).isFalse();
 
         ParentBubbleEmptyColOptimizer parent4 = storeServer.get(parentBubbleEmptyColOptimizerId_4);
-        assertThat(parent4.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke være satt").isEqualTo(2);
+        assertThat(parent4.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke vÃ¦re satt").isEqualTo(2);
         assertThat(Hibernate.isInitialized(parent4.getChildren1Ids())).isFalse();
         assertThat(Hibernate.isInitialized(parent4.getChildren2Ids())).isTrue();
         assertThat(Hibernate.isInitialized(parent4.getChildren3Ids())).isFalse();
@@ -2061,11 +2061,11 @@ public class StoreSessionServerTest {
 
     /**
      * Boblen som leses har en tom collection for children1. Empty collections flagget har bitt 0 satt for denne
-     * collection. Når det legges til elementer i children1 så skal bitt 0 fjernes når det utføres en flush. Collections
-     * som ikke var lastet før flush skal ikke bli lastet av flush. Finish skal heller ikke laste disse collections.
+     * collection. NÃ¥r det legges til elementer i children1 sÃ¥ skal bitt 0 fjernes nÃ¥r det utfÃ¸res en flush. Collections
+     * som ikke var lastet fÃ¸r flush skal ikke bli lastet av flush. Finish skal heller ikke laste disse collections.
      * <p>
-     * Forventer 3 sql, en for lese boble, en for å oppdatere children1 collection og en for oppdatering av flagget.
-     * Det skal ikke være noen sql-er for å laste children1 collection. Disse sql-er må sjekkes manuelt i log output.
+     * Forventer 3 sql, en for lese boble, en for Ã¥ oppdatere children1 collection og en for oppdatering av flagget.
+     * Det skal ikke vÃ¦re noen sql-er for Ã¥ laste children1 collection. Disse sql-er mÃ¥ sjekkes manuelt i log output.
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
      */
@@ -2074,13 +2074,13 @@ public class StoreSessionServerTest {
         storeServer.beginTransaction();
         try {
             ParentBubbleEmptyColOptimizer parent = storeServer.lock(parentBubbleEmptyColOptimizerId_2);
-            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 0 skal være satt").isEqualTo(1);
+            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 0 skal vÃ¦re satt").isEqualTo(1);
             assertThat(parent.getChildren1Ids()).isEmpty();
             parent.getChildren1Ids().add(childBubbleEmptyColOptimizerId_11);
             assertThat(Hibernate.isInitialized(parent.getChildren2Ids())).isFalse();
             assertThat(Hibernate.isInitialized(parent.getChildren3Ids())).isFalse();
             storeServer.flush();
-            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 0 ikke være satt").isEqualTo(0);
+            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 0 ikke vÃ¦re satt").isEqualTo(0);
             assertThat(Hibernate.isInitialized(parent.getChildren2Ids())).isFalse();
             assertThat(Hibernate.isInitialized(parent.getChildren3Ids())).isFalse();
         } finally {
@@ -2089,8 +2089,8 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Tester at bitt blir satt når en collection blir tom. I denne test så oppdateres children2 til å være tom. Collections
-     * som ikke er lastet skal ikke påvirkes.
+     * Tester at bitt blir satt nÃ¥r en collection blir tom. I denne test sÃ¥ oppdateres children2 til Ã¥ vÃ¦re tom. Collections
+     * som ikke er lastet skal ikke pÃ¥virkes.
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
      */
@@ -2099,13 +2099,13 @@ public class StoreSessionServerTest {
         storeServer.beginTransaction();
         try {
             ParentBubbleEmptyColOptimizer parent = storeServer.lock(parentBubbleEmptyColOptimizerId_3);
-            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke være satt").isEqualTo(0);
+            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 0 og 1 skal ikke vÃ¦re satt").isEqualTo(0);
             assertThat(Hibernate.isInitialized(parent.getChildren1Ids())).isFalse();
             assertThat(Hibernate.isInitialized(parent.getChildren2Ids())).isFalse();
             assertThat(Hibernate.isInitialized(parent.getChildren3Ids())).isFalse();
             parent.getChildren2Ids().clear();
-            storeServer.flush(); // Fører til at flagget beregnes for children2Ids
-            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal være satt").isEqualTo(2);
+            storeServer.flush(); // FÃ¸rer til at flagget beregnes for children2Ids
+            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal vÃ¦re satt").isEqualTo(2);
             assertThat(Hibernate.isInitialized(parent.getChildren1Ids())).isFalse();
             assertThat(Hibernate.isInitialized(parent.getChildren3Ids())).isFalse();
         } finally {
@@ -2114,7 +2114,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Automatisk beregning av flagg ved oppdatering påvirker ikke umaterialiserte collections
+     * Automatisk beregning av flagg ved oppdatering pÃ¥virker ikke umaterialiserte collections
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
      */
@@ -2148,8 +2148,8 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * En bobler som får endret en collection under kall til finish vil få oppdatert flagget sitt. Umaterialiserte
-     * collections berøres ikke. I denne test endres children1 for boble med idvalue 4.
+     * En bobler som fÃ¥r endret en collection under kall til finish vil fÃ¥ oppdatert flagget sitt. Umaterialiserte
+     * collections berÃ¸res ikke. I denne test endres children1 for boble med idvalue 4.
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
      */
@@ -2160,12 +2160,12 @@ public class StoreSessionServerTest {
             ParentBubbleEmptyColOptimizer parent = storeServer.lock(parentBubbleEmptyColOptimizerId_4);
             parent.setText("Jeg er endret");
             storeServer.update(parent);
-            assertThat(Hibernate.isInitialized(parent.getChildren1Ids())).isFalse();// Denne er ikke tom og derfor ennå ikke lastet
+            assertThat(Hibernate.isInitialized(parent.getChildren1Ids())).isFalse();// Denne er ikke tom og derfor ennÃ¥ ikke lastet
             assertThat(Hibernate.isInitialized(parent.getChildren2Ids())).isTrue(); // Denne er tom og derfor lastet allerede
             storeServer.update(parent);
-            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal være satt").isEqualTo(2);
+            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal vÃ¦re satt").isEqualTo(2);
             storeServer.finish(); // UpdatingFinishListener endre collection children1 for boble med idvalue 4
-            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 1 og 2 skal være satt").isEqualTo(3);
+            assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 1 og 2 skal vÃ¦re satt").isEqualTo(3);
             assertThat(Hibernate.isInitialized(parent.getChildren1Ids())).isTrue();
             assertThat(parent.getChildren1Ids()).isEmpty();
             assertThat(parent.getText()).isEqualTo("UpdatingFinishListener changed collection children1Ids");
@@ -2176,8 +2176,8 @@ public class StoreSessionServerTest {
 
     /**
      * Leser en boble hvor flagget ikke har satt bitt-en for en collection som faktisk er tom og derfor med fordel
-     * kunne ha bitten satt. Testen viser at kall til flush ikke vil endre på flagget. Flagget skal kun endres hvis
-     * boblen oppdateres via {@code Store.update} eller en collection endres før kall flush og det skjer ikke i denne testen.
+     * kunne ha bitten satt. Testen viser at kall til flush ikke vil endre pÃ¥ flagget. Flagget skal kun endres hvis
+     * boblen oppdateres via {@code Store.update} eller en collection endres fÃ¸r kall flush og det skjer ikke i denne testen.
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
      */
@@ -2188,7 +2188,7 @@ public class StoreSessionServerTest {
             ParentBubbleEmptyColOptimizer parent = storeServer.get(parentBubbleEmptyColOptimizerId_5);
             storeServer.ensureFullyLoaded(parent);
             assertThat(parent.getEmptyCollectionsFlag()).isEqualTo(0);
-            assertThat(parent.getChildren1Ids()).isEmpty(); // Flagg bør ha bitt 1 satt, men det skal ikke skje ved les
+            assertThat(parent.getChildren1Ids()).isEmpty(); // Flagg bÃ¸r ha bitt 1 satt, men det skal ikke skje ved les
             storeServer.flush();
             assertThat(parent.getEmptyCollectionsFlag()).describedAs("Flag skal ikke oppdateres ved les").isEqualTo(0);
         } finally {
@@ -2197,9 +2197,9 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
-     * children1 collection er tom. Flush beregner ikke flagget på nytt da alle collections er uendret, men update
-     * gjør det.
+     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne vÃ¦re satt siden
+     * children1 collection er tom. Flush beregner ikke flagget pÃ¥ nytt da alle collections er uendret, men update
+     * gjÃ¸r det.
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
      */
@@ -2209,8 +2209,8 @@ public class StoreSessionServerTest {
         try {
             ParentBubbleEmptyColOptimizer parent = storeServer.lock(parentBubbleEmptyColOptimizerId_5);
             assertThat(parent.getEmptyCollectionsFlag()).isEqualTo(0);
-            assertThat(parent.getChildren1Ids()).isEmpty(); // denne collection er tom, så bitt 0 i flagget kan settes
-            parent.setText("Dette felt på objektet er oppdatert, men ingen collections er endret");
+            assertThat(parent.getChildren1Ids()).isEmpty(); // denne collection er tom, sÃ¥ bitt 0 i flagget kan settes
+            parent.setText("Dette felt pÃ¥ objektet er oppdatert, men ingen collections er endret");
             storeServer.flush();
             assertThat(parent.getEmptyCollectionsFlag()).describedAs("Flush endrer ikke flagget siden alle collections er uendret").isEqualTo(0);
             storeServer.update(parent);
@@ -2221,8 +2221,8 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
-     * children1 collection er tom. Flush beregner flagget på nytt for alle lastede collections (inkl. children1)
+     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne vÃ¦re satt siden
+     * children1 collection er tom. Flush beregner flagget pÃ¥ nytt for alle lastede collections (inkl. children1)
      * siden minst en collection (children2) oppdateres.
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
@@ -2233,7 +2233,7 @@ public class StoreSessionServerTest {
         try {
             ParentBubbleEmptyColOptimizer parent = storeServer.lock(parentBubbleEmptyColOptimizerId_5);
             assertThat(parent.getEmptyCollectionsFlag()).isEqualTo(0);
-            assertThat(parent.getChildren1Ids()).isEmpty(); // denne collection er tom, så bitt 0 i flagget kan settes
+            assertThat(parent.getChildren1Ids()).isEmpty(); // denne collection er tom, sÃ¥ bitt 0 i flagget kan settes
             assertThat(parent.getChildren2Ids()).doesNotContain(childBubbleEmptyColOptimizerId_21);
             parent.getChildren2Ids().add(childBubbleEmptyColOptimizerId_21);
             storeServer.flush();
@@ -2244,9 +2244,9 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
-     * children1Ids collection er tom. Flush beregner ikke flagget på nytt da collections ikke er materialisert
-     * når flush kalles. Etterfølgende materialisering av collection påvirker ikke dette..
+     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne vÃ¦re satt siden
+     * children1Ids collection er tom. Flush beregner ikke flagget pÃ¥ nytt da collections ikke er materialisert
+     * nÃ¥r flush kalles. EtterfÃ¸lgende materialisering av collection pÃ¥virker ikke dette..
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
      */
@@ -2261,7 +2261,7 @@ public class StoreSessionServerTest {
             storeServer.update(parent);
             storeServer.flush();
             assertThat(parent.getEmptyCollectionsFlag()).isEqualTo(0);
-            assertThat(parent.getChildren1Ids()).isEmpty(); // Collection children1Ids materialiseres først nå
+            assertThat(parent.getChildren1Ids()).isEmpty(); // Collection children1Ids materialiseres fÃ¸rst nÃ¥
             storeServer.flush();
             assertThat(parent.getEmptyCollectionsFlag()).describedAs("Flush skal ikke endre flagget siden collections er uendret siden forrige kall til flush").isEqualTo(0);
         } finally {
@@ -2288,11 +2288,11 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Tester at empty collections flagg blir satt riktig ved endring av subtype. I dette testcase så hadde
-     * opprinnelig objekt en collection som bevarer innholdet (children1). Når det opprettes en ny subtype så opprettes
-     * en ny collection instans for children1 som genererer en PreUpdateCollectionsEvent, hvilket igjen fører til at
+     * Tester at empty collections flagg blir satt riktig ved endring av subtype. I dette testcase sÃ¥ hadde
+     * opprinnelig objekt en collection som bevarer innholdet (children1). NÃ¥r det opprettes en ny subtype sÃ¥ opprettes
+     * en ny collection instans for children1 som genererer en PreUpdateCollectionsEvent, hvilket igjen fÃ¸rer til at
      * flagget beregnes for alle collections. Flagget har dog allerede blitt oppdatert ved kall til {@code Store.update},
-     * men eventen gjør ingen skade.
+     * men eventen gjÃ¸r ingen skade.
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
      */
@@ -2303,7 +2303,7 @@ public class StoreSessionServerTest {
             ParentBubbleEmptyColOptimizerSub1 parent = storeServer.lock(parentBubbleEmptyColOptimizerId_6);
             assertThat(parent.getEmptyCollectionsFlag()).isEqualTo(6); // Collections children2 og 4 er tomme. Disse bruker bitt 1 og 2. Derfor 2+4=6
             assertThat(parent.getChildren1Ids()).isNotEmpty();
-            // Må lage et nytt objekt for å skifte subtype. Flagget skal ikke aldri kopieres mellom objekter.
+            // MÃ¥ lage et nytt objekt for Ã¥ skifte subtype. Flagget skal ikke aldri kopieres mellom objekter.
             ParentBubbleEmptyColOptimizer withChangedSubtype = new ParentBubbleEmptyColOptimizer();
             assertThat(withChangedSubtype.getEmptyCollectionsFlag()).isEqualTo(0);
             withChangedSubtype.setId(new ParentBubbleEmptyColOptimizerId<>(parent.getId().getValue()));
@@ -2312,7 +2312,7 @@ public class StoreSessionServerTest {
             withChangedSubtype.setChildren2Ids(parent.getChildren2Ids());
             storeServer.update(withChangedSubtype);
             assertThat(withChangedSubtype.getEmptyCollectionsFlag()).describedAs("Forventet at flagget oppdateres automatisk ved kall til update").isEqualTo(2);
-            // Hibernate generere en PreUpdateCollectionEvent, da en collection children1 får satt innhold fra opprinnelig collection.
+            // Hibernate generere en PreUpdateCollectionEvent, da en collection children1 fÃ¥r satt innhold fra opprinnelig collection.
             // Flagget er dog allerede beregnet
             storeServer.flush();
             assertThat(withChangedSubtype.getEmptyCollectionsFlag()).isEqualTo(2); // Collection children2 bruker bitt 2 og er tom
@@ -2322,7 +2322,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Tester at empty collections flagg blir satt riktig ved endring av subtype. I dette testcase så er alle collections
+     * Tester at empty collections flagg blir satt riktig ved endring av subtype. I dette testcase sÃ¥ er alle collections
      * som bevares ved sub-typeskifte tomme og Hibernate genererer derfor ikke noen PreUpdateCollectionsEvent men siden
      * flagget beregnes eksplisitt ved kall til update er dette ikke noe problem.
      */
@@ -2332,7 +2332,7 @@ public class StoreSessionServerTest {
         try {
             ParentBubbleEmptyColOptimizerSub1 parent = storeServer.lock(parentBubbleEmptyColOptimizerId_7);
             assertThat(parent.getEmptyCollectionsFlag()).isEqualTo(7);
-            // Må lage et nytt objekt for å skifte subtype. Flagget skal ikke aldri kopieres mellom objekter.
+            // MÃ¥ lage et nytt objekt for Ã¥ skifte subtype. Flagget skal ikke aldri kopieres mellom objekter.
             ParentBubbleEmptyColOptimizer withChangedSubtype = new ParentBubbleEmptyColOptimizer();
             assertThat(withChangedSubtype.getEmptyCollectionsFlag()).isEqualTo(0);
             withChangedSubtype.setId(new ParentBubbleEmptyColOptimizerId<>(parent.getId().getValue()));

@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.domain.standalone;
 import java.util.Objects;
 
 /**
- * Brukes kun for lavnivå session factory testing. Det finnes ett slik objekt i database og ingen tester lager
+ * Brukes kun for lavnivÃ¥ session factory testing. Det finnes ett slik objekt i database og ingen tester lager
  * nye.
  * @author Henrik Fredholm
  */

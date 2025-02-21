@@ -77,7 +77,7 @@ public class Test2And3ServiceTestJEE {
 
     /**
      * Java klient over JAX-WS  mot remote server hvor Guice bindinger for servicene er delt over flere moduler
-     * og hvor hver module bruker egen mapping2 instans og ServiceContext klasse. Den ene modulen bruker også
+     * og hvor hver module bruker egen mapping2 instans og ServiceContext klasse. Den ene modulen bruker ogsÃ¥
      * en egen CallServiceChainFactory.
      */
     public void testServicesInDifferentModules() {

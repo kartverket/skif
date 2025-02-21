@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Lite program som dytter masse ting gjennom mapping slik at ytelsen kan måles.
+ * Lite program som dytter masse ting gjennom mapping slik at ytelsen kan mÃ¥les.
  *
  * @author Tor Egil R. Strand
  * @since 2.3.0

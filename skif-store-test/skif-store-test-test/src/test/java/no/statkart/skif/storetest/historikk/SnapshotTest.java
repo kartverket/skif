@@ -132,7 +132,7 @@ public class SnapshotTest extends StoreTestMixedTestCase {
                 });
 
                 HistSimple histSimple = store.lock(id);
-                histSimple.setText("Høst");
+                histSimple.setText("HÃ¸st");
                 store.update(histSimple);
 
                 return null;

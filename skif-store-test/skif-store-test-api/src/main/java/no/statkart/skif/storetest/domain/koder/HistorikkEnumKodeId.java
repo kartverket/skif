@@ -25,8 +25,8 @@ public class HistorikkEnumKodeId extends StoreTestEnumKodeId<HistorikkEnumKode> 
     /**
      * @param idValue    Kodens idverdi
      * @param navn       Kodens tekniske navn
-     * @param innfort    Når denne kodeverdien oppstod
-     * @param utgatt     Når denne kodeverdien ble tatt ut av bruk (ingen sanntidsobjekter refererer til den lenger)
+     * @param innfort    NÃ¥r denne kodeverdien oppstod
+     * @param utgatt     NÃ¥r denne kodeverdien ble tatt ut av bruk (ingen sanntidsobjekter refererer til den lenger)
      * @return id for den nye koden
      */
     private static HistorikkEnumKodeId define(long idValue, String navn, SnapshotVersion innfort, SnapshotVersion utgatt) {

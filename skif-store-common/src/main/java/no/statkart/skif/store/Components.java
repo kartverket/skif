@@ -15,8 +15,8 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Hjelpeklasser for standardisert implementasjon av Component funksjonalitet for owner håndtering. Components bør delegere til disse metoder fremfor
- * å implementere tilsvarende logikk selv.
+ * Hjelpeklasser for standardisert implementasjon av Component funksjonalitet for owner hÃ¥ndtering. Components bÃ¸r delegere til disse metoder fremfor
+ * Ã¥ implementere tilsvarende logikk selv.
  *
  * @author Henrik Fredholm
  * @since 2.4
@@ -24,9 +24,9 @@ import static java.util.Objects.requireNonNull;
 @SuppressWarnings("WeakerAccess")
 public class Components {
     /**
-     * Hjelpemetode som sikre at komponent blir sjekket og satt riktig påeiende objekt.
+     * Hjelpemetode som sikre at komponent blir sjekket og satt riktig pÃ¥eiende objekt.
      * <p>
-     * <P>Eksempel på implementasjon i eiende objekt:
+     * <P>Eksempel pÃ¥ implementasjon i eiende objekt:
      * <pre>
      *    public void setLevel1Component(Level1CompositeComponent level1Component) {
      *        this.level1Component = Components.checkSetComponentWithOwner(this.level1Component, level1Component);
@@ -43,7 +43,7 @@ public class Components {
             if (thisComponent != null) {
                 // TODO: SKIF-565. Midlertidig endret. Uklart hvorfor EntityComponent kan byttes ut, men ikke ComposisteBubbleComponent.
                 // Burde egentlig litt motsatt. Hvis id-ene er forskjellige kan det bli orphan objekter
-                // (med mindre det håndteres våres hibernate forbedringer)
+                // (med mindre det hÃ¥ndteres vÃ¥res hibernate forbedringer)
                 thisComponent.setOwner(null);
 //                if (isNullComponent(thisComponent) || thisComponent instanceof EntityComponent) {
 //                    thisComponent.setOwner(null);
@@ -51,7 +51,7 @@ public class Components {
 //                    throw new IllegalStateException(String.format("Owner already has a component: owner=%s component=%s", thisComponent.getOwner(), component));
 //                }
             }
-            // Owner får en ny component (som ikke kan ha owner satt, men kan gjerne ha id fra før)
+            // Owner fÃ¥r en ny component (som ikke kan ha owner satt, men kan gjerne ha id fra fÃ¸r)
             if (component.getOwner() != null) {
                 throw new IllegalStateException("Attempt to assign component to a new owner: component=" + component);
             }
@@ -65,14 +65,14 @@ public class Components {
             if (component.getOwner() != owner) {
                 // Component kan ikke bytte eier, men kan settes til null ved sletting
                 if (component instanceof InverseRelationParticipation) {
-                    // originalOwningBubble vil være null ved 'add' og være satt ved 'remove'
+                    // originalOwningBubble vil vÃ¦re null ved 'add' og vÃ¦re satt ved 'remove'
                     BubbleObject originalOwningBubble = getOwningBubble(component);
                     StoreRelationCache relationCacheOriginalBubble = Bubbles.getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(originalOwningBubble);
                     if (relationCacheOriginalBubble != null) {
                         relationCacheOriginalBubble.updateRemoved(originalOwningBubble.getBubbleId(), (InverseRelationParticipation) component);
                     }
                     component.setOwner(owner);
-                    // originalOwningBubble vil være satt ved 'add' og være null ved 'remove'
+                    // originalOwningBubble vil vÃ¦re satt ved 'add' og vÃ¦re null ved 'remove'
                     BubbleObject owningBubble = getOwningBubble(component);
                     StoreRelationCache relationCacheNewBubble = Bubbles.getRelationCacheIfBubbleAttachedToStoreAndCacheEnabledOtherwiseNull(owningBubble);
                     if (relationCacheNewBubble != null) {
@@ -88,7 +88,7 @@ public class Components {
     /**
      * Hjelpemetode som sikre at tilbakepeker til owner blir sjekket og satt riktig for komponenter
      * <p>
-     * <P>Eksempel på bruk:
+     * <P>Eksempel pÃ¥ bruk:
      * <pre>
      *    public void setOwner(BubbleWithCompositeComponent owner) {
      *       this.owner = Components.checkSetOwner(this, this.owner, owner);
@@ -150,7 +150,7 @@ public class Components {
     }
 
     static public <E extends Component> void setFrom(Collection<E> collection, Collection<E> newElements) {
-        // Må ta en kopi av newElements, i tilfelle newElements er den samme som collection eller en form for wrapper for den.
+        // MÃ¥ ta en kopi av newElements, i tilfelle newElements er den samme som collection eller en form for wrapper for den.
         ImmutableList<E> copy = ImmutableList.copyOf(newElements);
         collection.clear();
         collection.addAll(copy);

@@ -7,7 +7,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.Test;
 
 /**
- * Tester at mockup ramemverktet virker på tjenersiden også.
+ * Tester at mockup ramemverktet virker pÃ¥ tjenersiden ogsÃ¥.
  * <p>
  * Denne testen bruker en helt egen lille MockupFacadeFactory som inneholder begrenset antall klasser og
  * som ikke brukes for annen testing.

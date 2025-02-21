@@ -3,7 +3,7 @@ package no.statkart.skif.mockup;
 import com.google.inject.ImplementedBy;
 
 /**
- * Factory for å generere TestNumber objekter. Factory-implementasjon bør være et singleton objekt
+ * Factory for Ã¥ generere TestNumber objekter. Factory-implementasjon bÃ¸r vÃ¦re et singleton objekt
  * @author Henrik Fredholm
  * @since 2.1
  */

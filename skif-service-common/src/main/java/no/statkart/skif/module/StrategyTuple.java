@@ -16,12 +16,12 @@ import static no.statkart.skif.SkifConstants.SINGLE_VM_XML_POSTFIX;
 
 /**
  * En tuple som kan definere en {@link ModuleStrategy}-instans av type {@code T} for hver {@link ServiceMode}-verdi.
- * Hver {@code ModuleStrategy}-instans kan enten være definert direkte via en instans eller indirekte via en klasse av
+ * Hver {@code ModuleStrategy}-instans kan enten vÃ¦re definert direkte via en instans eller indirekte via en klasse av
  * type {@code Class&lt;? extends T&gt;} eller via et klassenavn. Dersom hverken instansen eller klasse er definert for
  * en gitt {@code ServiceMode}-verdi returneres {@code null}.
  * <p>
- * Det er mulig å lage en kopi av en {@code StrategyTuple}-instans via kall til {@link #clone()}. Endringer gjort
- * på den klonede instansen vil ikke påvirke den opprindelige instansen.
+ * Det er mulig Ã¥ lage en kopi av en {@code StrategyTuple}-instans via kall til {@link #clone()}. Endringer gjort
+ * pÃ¥ den klonede instansen vil ikke pÃ¥virke den opprindelige instansen.
  *
  * @author Henrik Fredholm
  * @author Tor Egil R. Strand (flere enn to ServiceMode)

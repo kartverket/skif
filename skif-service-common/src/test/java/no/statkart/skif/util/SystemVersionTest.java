@@ -23,7 +23,7 @@ public class SystemVersionTest {
         } catch (IllegalArgumentException | ImplementationException e) {
             return;
         }
-        fail("Skulle fått IllegalArgumentException");
+        fail("Skulle fÃ¥tt IllegalArgumentException");
     }
 
     public void testFeilSystemVersion() {
@@ -47,13 +47,13 @@ public class SystemVersionTest {
         SystemVersion versjon3 = new SystemVersion("trunk");
         SystemVersion versjon4 = new SystemVersion("dev1.11");
 
-        assertEquals(versjon1, versjon2, "Skulle vært like");
-        assertEquals(versjon1.hashCode(), versjon2.hashCode(), "Skulle vært like");
-        assertNotEquals(versjon1, versjon3, "Skulle ikke vært like");
-        assertNotEquals(versjon1.hashCode(), versjon3.hashCode(), "Skulle vært like");
-        assertNotSame(versjon1, versjon3, "Skulle ikke vært like");
-        assertEquals(versjon3, versjon4, "Skulle vært like");
-        assertEquals(versjon3.hashCode(), versjon4.hashCode(), "Skulle vært like");
+        assertEquals(versjon1, versjon2, "Skulle vÃ¦rt like");
+        assertEquals(versjon1.hashCode(), versjon2.hashCode(), "Skulle vÃ¦rt like");
+        assertNotEquals(versjon1, versjon3, "Skulle ikke vÃ¦rt like");
+        assertNotEquals(versjon1.hashCode(), versjon3.hashCode(), "Skulle vÃ¦rt like");
+        assertNotSame(versjon1, versjon3, "Skulle ikke vÃ¦rt like");
+        assertEquals(versjon3, versjon4, "Skulle vÃ¦rt like");
+        assertEquals(versjon3.hashCode(), versjon4.hashCode(), "Skulle vÃ¦rt like");
     }
 
     public void testSystemVersionCompare() {
@@ -74,7 +74,7 @@ public class SystemVersionTest {
         int i = 0;
         for (SystemVersion SystemVersion : versjoner) {
             SystemVersion versjon = versjonerSortert.get(i);
-            assertEquals(versjon, SystemVersion, "Skulle vært like");
+            assertEquals(versjon, SystemVersion, "Skulle vÃ¦rt like");
             i++;
         }
     }

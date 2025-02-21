@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
- * Pekt på av {@link X2EntityComponentOne}
+ * Pekt pÃ¥ av {@link X2EntityComponentOne}
  *
  * @author Henrik Fredholm
  * @since 2.4

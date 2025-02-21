@@ -378,7 +378,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                     StoreEntry entry = loadEntry(level, missingBubbleIds.iterator().next(), false);
                     bubbleObjects.add(getDerivedBubbleObjectCopyIfLocked(entry));
                 } catch (ObjectNotFoundException| PermissionDeniedException ignore) {
-                    // OK, så fantes den ikke, da. Eller har ikke adgang
+                    // OK, sÃ¥ fantes den ikke, da. Eller har ikke adgang
                 }
             } else {
                 Collection<StoreEntry> entries = loadEntriesIgnoreMissing(level, missingBubbleIds, false);
@@ -414,14 +414,14 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             }
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
         }
-        // Dette kan være en re-insert av et objekt som tidligere har blitt slettet, men dette krever ingen
-        // ingen ekstra håndtering fordi:
-        // 1) Hvis RelationCache er enabled så vil relations i oldInstance ha blitt fjerne da oldInstance ble slettet fra
+        // Dette kan vÃ¦re en re-insert av et objekt som tidligere har blitt slettet, men dette krever ingen
+        // ingen ekstra hÃ¥ndtering fordi:
+        // 1) Hvis RelationCache er enabled sÃ¥ vil relations i oldInstance ha blitt fjerne da oldInstance ble slettet fra
         //    Store
-        // 2) Hvis bubbleObject allerede er knyttet til Store, så skader det ikke at bubbleObject registreres i Store
-        // og at RelationCache oppdaters på nytt
+        // 2) Hvis bubbleObject allerede er knyttet til Store, sÃ¥ skader det ikke at bubbleObject registreres i Store
+        // og at RelationCache oppdaters pÃ¥ nytt
         onInsertEntry(level, storeEntry, bubbleObject);
-        storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked når den må hente status via lockerStrategy?
+        storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked nÃ¥r den mÃ¥ hente status via lockerStrategy?
         bubbleObject.register(store);
         StoreRelationCache relationCache = store.getRelationCache();
         if (relationCache.isEnabled()) {
@@ -468,12 +468,12 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
 
         }
-        // Må her sjekkes om bubbleObject er en helt ny instans. Dersom det er tilfellet må relasjoner
-        // som lå i oldInstance fjernes fra RelationCache. I tillegg fjernes også relasjoner som ligger i bubbleObject
+        // MÃ¥ her sjekkes om bubbleObject er en helt ny instans. Dersom det er tilfellet mÃ¥ relasjoner
+        // som lÃ¥ i oldInstance fjernes fra RelationCache. I tillegg fjernes ogsÃ¥ relasjoner som ligger i bubbleObject
         // siden den knyttes til Store.
         BubbleObject oldInstance = storeEntry.getDerivedBubbleObject(level);
         onUpdateEntry(level, storeEntry, bubbleObject);
-        storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked når den må hente status via lockerStrategy?
+        storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked nÃ¥r den mÃ¥ hente status via lockerStrategy?
 
         if (oldInstance != bubbleObject) {
             bubbleObject.register(store);
@@ -530,12 +530,12 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
             storeEntry.checkNotDerivedInstance(level, bubbleObject);
         }
 
-        // Må her sjekkes om bubbleObject er en helt ny instans. Dersom det er tilfellet må relasjoner
-        // som lå i oldInstance også fjernes fra relasjonscachen og videre må bubbleObject registres
+        // MÃ¥ her sjekkes om bubbleObject er en helt ny instans. Dersom det er tilfellet mÃ¥ relasjoner
+        // som lÃ¥ i oldInstance ogsÃ¥ fjernes fra relasjonscachen og videre mÃ¥ bubbleObject registres
         // og knyttes til store.
         BubbleObject oldInstance = storeEntry.getDerivedBubbleObject(level);
         onDeleteEntry(level, storeEntry, bubbleObject);
-        storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked når den må hente status via lockerStrategy?
+        storeEntry.setLocked(level);       // TODO: Kunne denne bli satt av ensureLocked nÃ¥r den mÃ¥ hente status via lockerStrategy?
 
         StoreRelationCache relationCache = store.getRelationCache();
         if (oldInstance != bubbleObject) {
@@ -584,7 +584,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 storeCache.remove(storeEntry.getId());
                 return false;
             } else {
-                // Blank bare ut entry for dette nivået.
+                // Blank bare ut entry for dette nivÃ¥et.
                 storeEntry.setState(level, StoreEntryState.NULL);
                 storeEntry.setBubbleObject(level, null);
                 return true;
@@ -856,7 +856,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                 break;
             case DELETED:
             case INSERTED_DELETED:
-                throw new ImplementationException("Forsøk på å kalle update for objekt hvor delete har blitt kaldt: " + entry.getId());
+                throw new ImplementationException("ForsÃ¸k pÃ¥ Ã¥ kalle update for objekt hvor delete har blitt kaldt: " + entry.getId());
         }
         BubbleObject oldInstance = entry.getBubbleObject(level);
         BubbleObject newInstance = entry.getBubbleObject(level + 1);
@@ -923,21 +923,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     }
 
     /**
-     * Ved enabling av RelationCaching må cachen oppdateres med endringer i alle modifiserte objekter, herunder også de som bare er
-     * låste fordi de også kan inneholde endringer. Deretter vil trackingen skje synkront når et objekt endres eller
-     * registreres i Store. For hvert endret objekt må de gamle relasjonsverdier fjernes og de nye legges inn. Siden
-     * objektene ikke selv ved hva deres gamle relasjonsverdier var, må Store hjelpe til her. Dette er løst ved å sikre
-     * at Store tar vare på de opprinnelige umodifiserte bobleobjektene der hvor det er behov for det (dvs. alle andre
+     * Ved enabling av RelationCaching mÃ¥ cachen oppdateres med endringer i alle modifiserte objekter, herunder ogsÃ¥ de som bare er
+     * lÃ¥ste fordi de ogsÃ¥ kan inneholde endringer. Deretter vil trackingen skje synkront nÃ¥r et objekt endres eller
+     * registreres i Store. For hvert endret objekt mÃ¥ de gamle relasjonsverdier fjernes og de nye legges inn. Siden
+     * objektene ikke selv ved hva deres gamle relasjonsverdier var, mÃ¥ Store hjelpe til her. Dette er lÃ¸st ved Ã¥ sikre
+     * at Store tar vare pÃ¥ de opprinnelige umodifiserte bobleobjektene der hvor det er behov for det (dvs. alle andre
      * steder enn for StoreServerSession hvor hibernate holder objektene i synk med databasen via autoflushing). Store
-     * tar vare på en kopi når objektet låses eller også hentes en kopi fra databasen eller serveren første gang ett
+     * tar vare pÃ¥ en kopi nÃ¥r objektet lÃ¥ses eller ogsÃ¥ hentes en kopi fra databasen eller serveren fÃ¸rste gang ett
      * detached bobleobjekt oppdateres eller slettes.
      */
     public void onEnableRelationCache(int level) {
         StoreRelationCache relationCache = store.getRelationCache();
         checkState(relationCache.isEnabled());
-        // Må her itererer på kopi av storeCache fordi nye objekter kan bli lastet inn i denne ifm RelationCache
-        // beregningen. For eksempel ved caching av identer som bygges utfra flere bobler som da må lastes. Mengden
-        // av objekter som er aktuelle for cacheberegningen er dog uforandret så det er uproblematisk at cachen vokser.
+        // MÃ¥ her itererer pÃ¥ kopi av storeCache fordi nye objekter kan bli lastet inn i denne ifm RelationCache
+        // beregningen. For eksempel ved caching av identer som bygges utfra flere bobler som da mÃ¥ lastes. Mengden
+        // av objekter som er aktuelle for cacheberegningen er dog uforandret sÃ¥ det er uproblematisk at cachen vokser.
         Collection<StoreEntry> values = Lists.newArrayList(storeCache.values());
         for (StoreEntry storeEntry : values) {
             if (storeEntry.isLocked()) {
@@ -957,7 +957,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
                     case DELETED_INSERTED:
                     case UPDATED:
-                    case UNCHANGED: /* UNCHANGED representerer objekter er låst hvor Store.update() ikke har blitt kallt ennå. Objektet kan likevel være endret */
+                    case UNCHANGED: /* UNCHANGED representerer objekter er lÃ¥st hvor Store.update() ikke har blitt kallt ennÃ¥. Objektet kan likevel vÃ¦re endret */
                         persistedBubbleObject = getPersistedBubbleObjectForLocked(storeEntry);
                         bubbleObject = storeEntry.getDerivedBubbleObject(level);
                         if (persistedBubbleObject != bubbleObject) {
@@ -968,10 +968,10 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                                 relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
                             }
                             if (bubbleObject instanceof BubbleObjectWithIdent) {
-                                // For composite identer vil 'oldIdent' slik den beregnes her kun være forskjellig fra 'ident'
-                                // for den delen som tilhører denne boblen. Hvis kun den avledede delen er endret vil dette bli
-                                // plukket opp når den avledede boblen behandles. På det tidspunkt vil da 'onIdentChanged'
-                                // bli kallt automatisk på boblen som behandles her. Derfor er det greit at 'onIdentChanged'
+                                // For composite identer vil 'oldIdent' slik den beregnes her kun vÃ¦re forskjellig fra 'ident'
+                                // for den delen som tilhÃ¸rer denne boblen. Hvis kun den avledede delen er endret vil dette bli
+                                // plukket opp nÃ¥r den avledede boblen behandles. PÃ¥ det tidspunkt vil da 'onIdentChanged'
+                                // bli kallt automatisk pÃ¥ boblen som behandles her. Derfor er det greit at 'onIdentChanged'
                                 // kun blir kallt her hvis boblens egen del av identen er endret.
                                 Object oldIdent = (persistedBubbleObject == null) ? null : ((BubbleObjectWithIdent<?>) persistedBubbleObject).getIdent();
                                 BubbleObjectWithIdent<?> bubbleBubbleObjectWithIdent = (BubbleObjectWithIdent<?>) bubbleObject;
@@ -981,21 +981,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                                 }
                             }
                         } else {
-                            // Kan komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
-                            // databasen og det er derfor ikke nødvendig å gjøre noen ting.
+                            // Kan komme her hvis vi er pÃ¥ serveren og nÃ¥r derived level er 0. Da vil objektet vÃ¦re i synk
+                            // databasen og det er derfor ikke nÃ¸dvendig Ã¥ gjÃ¸re noen ting.
 
-                            // Kan også kommer her hvis objektet er låst i StoreSessionClient (dvs før UnitOfWork ble startet).
-                            // Slik objekter må under ingen omstendigheter endres hvis beregningen av cachingen skal bli
+                            // Kan ogsÃ¥ kommer her hvis objektet er lÃ¥st i StoreSessionClient (dvs fÃ¸r UnitOfWork ble startet).
+                            // Slik objekter mÃ¥ under ingen omstendigheter endres hvis beregningen av cachingen skal bli
                             // riktig, men systemet hindre ikke dette direkte bortsett fra at man ikke vil kunne kalle
-                            // Store.update(object) med objektet. Dvs man må trikse det til ved å kalle
-                            // Store.update(CopyHelper.copy(object)) og det skal man jo egentlig ikke gøre.
-                            // UnitOfWork.undo() vil jo heller ikke virker hvis man holder på slikt. Caching algoritmen
-                            // vil jo også feile hvis men holder på å endre objekter som ikke er låst.
+                            // Store.update(object) med objektet. Dvs man mÃ¥ trikse det til ved Ã¥ kalle
+                            // Store.update(CopyHelper.copy(object)) og det skal man jo egentlig ikke gÃ¸re.
+                            // UnitOfWork.undo() vil jo heller ikke virker hvis man holder pÃ¥ slikt. Caching algoritmen
+                            // vil jo ogsÃ¥ feile hvis men holder pÃ¥ Ã¥ endre objekter som ikke er lÃ¥st.
                             //
-                            // Hvis man gjør endringer riktik, dvs. starter UnitOfWork og sier Store.get() på objektet
+                            // Hvis man gjÃ¸r endringer riktik, dvs. starter UnitOfWork og sier Store.get() pÃ¥ objektet
                             // man vil endre blir cachingen riktig. Man vil dog uansett kommer her for de objekter som
-                            // er låste men ennå ikke hentet ut for endring i UnitOfWork. Det er riktig at systemet ikke
-                            // trenger å gjøre noe for disse objektene.
+                            // er lÃ¥ste men ennÃ¥ ikke hentet ut for endring i UnitOfWork. Det er riktig at systemet ikke
+                            // trenger Ã¥ gjÃ¸re noe for disse objektene.
                             Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level) == 0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
                         }
                         break;
@@ -1015,21 +1015,21 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                                 relationCache.onIdentRemoved((BubbleObjectWithIdent<?>)bubbleObject);
                             }
                         } else {
-                            // Kan komme her hvis vi er på serveren og når derived level er 0. Da vil objektet være i synk
-                            // databasen og det er derfor ikke nødvendig å gjøre noen ting.
+                            // Kan komme her hvis vi er pÃ¥ serveren og nÃ¥r derived level er 0. Da vil objektet vÃ¦re i synk
+                            // databasen og det er derfor ikke nÃ¸dvendig Ã¥ gjÃ¸re noen ting.
 
-                            // Kan også kommer her hvis objektet er låst i StoreSessionClient (dvs før UnitOfWork ble startet).
-                            // Slik objekter må under ingen omstendigheter endres hvis beregningen av cachingen skal bli
+                            // Kan ogsÃ¥ kommer her hvis objektet er lÃ¥st i StoreSessionClient (dvs fÃ¸r UnitOfWork ble startet).
+                            // Slik objekter mÃ¥ under ingen omstendigheter endres hvis beregningen av cachingen skal bli
                             // riktig, men systemet hindre ikke dette direkte bortsett fra at man ikke vil kunne kalle
-                            // Store.update(object) med objektet. Dvs man må trikse det til ved å kalle
-                            // Store.update(CopyHelper.copy(object)) og det skal man jo egentlig ikke gøre.
-                            // UnitOfWork.undo() vil jo heller ikke virker hvis man holder på slikt. Caching algoritmen
-                            // vil jo også feile hvis men holder på å endre objekter som ikke er låst.
+                            // Store.update(object) med objektet. Dvs man mÃ¥ trikse det til ved Ã¥ kalle
+                            // Store.update(CopyHelper.copy(object)) og det skal man jo egentlig ikke gÃ¸re.
+                            // UnitOfWork.undo() vil jo heller ikke virker hvis man holder pÃ¥ slikt. Caching algoritmen
+                            // vil jo ogsÃ¥ feile hvis men holder pÃ¥ Ã¥ endre objekter som ikke er lÃ¥st.
                             //
-                            // Hvis man gjør endringer riktig, dvs. starter UnitOfWork og sier Store.get() på objektet
+                            // Hvis man gjÃ¸r endringer riktig, dvs. starter UnitOfWork og sier Store.get() pÃ¥ objektet
                             // man vil endre blir cachingen riktig. Man vil dog uansett kommer her for de objekter som
-                            // er låste men ennå ikke hentet ut for endring i UnitOfWork. Det er riktig at systemet ikke
-                            // trenger å gjøre noe for disse objektene.
+                            // er lÃ¥ste men ennÃ¥ ikke hentet ut for endring i UnitOfWork. Det er riktig at systemet ikke
+                            // trenger Ã¥ gjÃ¸re noe for disse objektene.
                             Preconditions.checkState(storeEntry.getLevelForDerivedBubbleObject(level) == 0, "storeEntry.getLevelForDerivedBubbleObject(level)==0. StoreSessionClass=%s, level=%d, storeEntry=%s", this.getClass().getName(), storeEntry);
                         }
                         break;
@@ -1078,7 +1078,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
     private class WithoutUnitOfWorkExecutor implements Executor {
         @Override
         public void execute(@Nonnull Runnable command) {
-            // Må midlertidig poppe av alle unit-of-works, slik at navigering gjennom de forskjellige get() går på nivå 0.
+            // MÃ¥ midlertidig poppe av alle unit-of-works, slik at navigering gjennom de forskjellige get() gÃ¥r pÃ¥ nivÃ¥ 0.
             WrappableStoreSession originalSession = store.storeSession;
             try {
                 while (store.storeSession instanceof StoreUnitOfWork) {

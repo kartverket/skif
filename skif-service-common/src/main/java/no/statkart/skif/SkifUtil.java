@@ -59,13 +59,13 @@ public class SkifUtil {
     }
 
     /**
-     * Hjelpemetode for å hente ut Class for unbounded typer.
+     * Hjelpemetode for Ã¥ hente ut Class for unbounded typer.
      *
-     * <p>Eksempel på bruk:
+     * <p>Eksempel pÃ¥ bruk:
      * <pre>
      *   SkifUtil.getType(new TypeToken&lt;Simple&lt;?&gt;&gt;(){})
      * </pre>
-     * Ovenstående vil returnere Class&lt;Simple&lt;?&gt;&gt;.
+     * OvenstÃ¥ende vil returnere Class&lt;Simple&lt;?&gt;&gt;.
      *
      * @since 2.4
      */

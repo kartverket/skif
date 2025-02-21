@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 /**
  * ConnectionManager som oppretter connections via en tilknyttet {@link PersistenceSessionManager} og underliggende
  * {@link HibernatePersistenceSessionMaster}. Alle meoder for {@link no.statkart.skif.persistence.TransactionalResource}
- * på denne klasse metoder er tomme da de håndteres den tilknyttede {@code PersistenceSessionManager}. For å for dette
- * til settes {@code PersistenceSessionManager} til aktiv når connections hennes ut via denne klasse.
+ * pÃ¥ denne klasse metoder er tomme da de hÃ¥ndteres den tilknyttede {@code PersistenceSessionManager}. For Ã¥ for dette
+ * til settes {@code PersistenceSessionManager} til aktiv nÃ¥r connections hennes ut via denne klasse.
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -51,31 +51,31 @@ public class ConnectionManagerUsingHibernate implements ConnectionManager {
 
     @Override
     public void setActive() {
-        // Ikke nødvendig å gjøre noe her, denne er alltid passiv
+        // Ikke nÃ¸dvendig Ã¥ gjÃ¸re noe her, denne er alltid passiv
     }
 
     @Override
     public void close() {
-        // Ikke nødvendig å gjøre noe her, håndteres av PersistenceSessionManager
+        // Ikke nÃ¸dvendig Ã¥ gjÃ¸re noe her, hÃ¥ndteres av PersistenceSessionManager
     }
 
     @Override
     public void beginTransaction() {
-        // Ikke nødvendig å gjøre noe her, håndteres av PersistenceSessionManager
+        // Ikke nÃ¸dvendig Ã¥ gjÃ¸re noe her, hÃ¥ndteres av PersistenceSessionManager
     }
 
     @Override
     public void flush() {
-        // Ikke nødvendig å gjøre noe her, håndteres av PersistenceSessionManager
+        // Ikke nÃ¸dvendig Ã¥ gjÃ¸re noe her, hÃ¥ndteres av PersistenceSessionManager
     }
 
     @Override
     public void commit() {
-        // Ikke nødvendig å gjøre noe her, håndteres av PersistenceSessionManager
+        // Ikke nÃ¸dvendig Ã¥ gjÃ¸re noe her, hÃ¥ndteres av PersistenceSessionManager
     }
 
     @Override
     public void rollback() {
-        // Ikke nødvendig å gjøre noe her, håndteres av PersistenceSessionManager
+        // Ikke nÃ¸dvendig Ã¥ gjÃ¸re noe her, hÃ¥ndteres av PersistenceSessionManager
     }
 }

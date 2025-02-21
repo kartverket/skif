@@ -16,8 +16,8 @@ import org.testng.annotations.Test;
 import java.security.Principal;
 
 /**
- * Tester både {@link EjbLoggingProxyHandler} og {@link DefaultServerCallLogger}. Mest den siste, men kun de delene av
- * den som blir kalt fra førstnevnte.
+ * Tester bÃ¥de {@link EjbLoggingProxyHandler} og {@link DefaultServerCallLogger}. Mest den siste, men kun de delene av
+ * den som blir kalt fra fÃ¸rstnevnte.
  */
 @Test
 public class EjbLoggingProxyHandlerTest {

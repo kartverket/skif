@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Tester muligheten til å kjøre klient direkte mot webservice. Dette skal virke både i single-VM og client-server.
+ * Tester muligheten til Ã¥ kjÃ¸re klient direkte mot webservice. Dette skal virke bÃ¥de i single-VM og client-server.
  *
  * @author Tor Egil R. Strand
  * @since 2.1

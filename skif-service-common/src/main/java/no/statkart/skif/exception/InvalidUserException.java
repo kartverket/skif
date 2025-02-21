@@ -3,7 +3,7 @@ package no.statkart.skif.exception;
 import org.slf4j.Logger;
 
 /**
- * Rapporterer at brukernavn og/eller passord ikke er gyldig for pålogging mot SKIF-tjener.
+ * Rapporterer at brukernavn og/eller passord ikke er gyldig for pÃ¥logging mot SKIF-tjener.
  *
  * @author Tor Egil R. Strand
  * @since 2.2.0

@@ -131,7 +131,7 @@ public class StoreTest extends StoreTestTestCase {
 //    }
 //
 //    /**
-//     * Tester uthenting av objekter basert på id'er i forskjellig rekkefølge.
+//     * Tester uthenting av objekter basert pÃ¥ id'er i forskjellig rekkefÃ¸lge.
 //     */
 //    @Test
 //    public void testStoreGetManyFoos() {
@@ -205,7 +205,7 @@ public class StoreTest extends StoreTestTestCase {
 //    }
 //
 //    public void testStoreGetBarFoos() {
-//        Store store = injector.getInstance(Store.class); //Må bruke Store her istedenfor StoreService da man bruker intern store på objekter i testen
+//        Store store = injector.getInstance(Store.class); //MÃ¥ bruke Store her istedenfor StoreService da man bruker intern store pÃ¥ objekter i testen
 //        BarFoos barFoos = store.get(new BarFoosId<BarFoos>(2001L));
 //        Assert.assertEquals(barFoos.getId().getSnapshotVersion(), SnapshotVersion.CURRENT);
 //        Assert.assertEquals(barFoos.getBarId(), new BarId<Bar>(1001L));
@@ -287,14 +287,14 @@ public class StoreTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester forsøk på henting av ikke-eksisterende objekt.
+     * Tester forsÃ¸k pÃ¥ henting av ikke-eksisterende objekt.
      */
     @Test
     public void testObjectNotFoundException() {
         final SimpleId<?> id = new SimpleId(-1L);
         try {
             store.get(id);
-            fail("Skulle fått exception");
+            fail("Skulle fÃ¥tt exception");
         } catch (Throwable t) {
             assertThat(t).describedAs("forventet exception").isInstanceOf(FinderException.class);
         }
@@ -306,7 +306,7 @@ public class StoreTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester forsøk på henting av ikke-eksisterende objekt.
+     * Tester forsÃ¸k pÃ¥ henting av ikke-eksisterende objekt.
      */
     @Test
     public void testObjectsNotFoundException() {
@@ -315,7 +315,7 @@ public class StoreTest extends StoreTestTestCase {
         final List<SimpleId<?>> ids = Arrays.asList(simple1Id, new SimpleId<>(-1L));
         try {
             store.get(ids);
-            fail("Skulle fått exception");
+            fail("Skulle fÃ¥tt exception");
         } catch (Throwable t) {
             assertThat(t).describedAs("forventet exception").isInstanceOf(FinderException.class);
         }
@@ -327,7 +327,7 @@ public class StoreTest extends StoreTestTestCase {
     }
 
     /**
-     * Tester forsøk på ignorering av ikke-eksisterende objekt.
+     * Tester forsÃ¸k pÃ¥ ignorering av ikke-eksisterende objekt.
      */
 
     private StoreTestMockupFacade getWriteMockupFacadeAndSaveDataForTestSet1() {
@@ -421,7 +421,7 @@ public class StoreTest extends StoreTestTestCase {
             Simple simpleCopy = CopyHelper.copy(simpleLocked);
             store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy)) {
             });
-            assertThat((Simple) store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
+            assertThat((Simple) store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er lÃ¥st").isSameAs(simpleLocked);
         }
     }
 
@@ -433,7 +433,7 @@ public class StoreTest extends StoreTestTestCase {
             Simple simpleCopy = CopyHelper.copy(simpleLocked);
             store.register(new BubbleTransfer<Void>(null, Collections.singletonList(simpleCopy), ImmutableList.of(simple1Id)) {
             });
-            assertThat((Simple) store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er låst").isSameAs(simpleLocked);
+            assertThat((Simple) store.get(simple1Id)).describedAs("Forventer Store bruker instans som allerede er lÃ¥st").isSameAs(simpleLocked);
         }
     }
 
@@ -449,7 +449,7 @@ public class StoreTest extends StoreTestTestCase {
 
             try {
                 store.get(simpleId);
-                fail("Skulle fått exception");
+                fail("Skulle fÃ¥tt exception");
             } catch (ObjectNotFoundException e) {
                 assertThat(e.getNotFoundId()).describedAs("Forventer id til slettet objekt").isEqualTo(simpleId);
             }
@@ -470,7 +470,7 @@ public class StoreTest extends StoreTestTestCase {
 
             try {
                 store.get(ImmutableSet.of(simple1Id, simple2Id));
-                fail("Skulle fått exception");
+                fail("Skulle fÃ¥tt exception");
             } catch (ObjectsNotFoundException e) {
                 assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt").contains(simple1Id);
             }
@@ -491,7 +491,7 @@ public class StoreTest extends StoreTestTestCase {
 
             try {
                 store.getOrdered(ImmutableList.of(simple1Id, simple2Id));
-                fail("Skulle fått exception");
+                fail("Skulle fÃ¥tt exception");
             } catch (ObjectsNotFoundException e) {
                 assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt").contains(simple1Id);
             }
@@ -511,7 +511,7 @@ public class StoreTest extends StoreTestTestCase {
             store.delete(simple1);
 
             Set<Simple> simples = store.getIgnoreMissing(ImmutableSet.of(simple1Id, simple2Id));
-            assertThat(simples).describedAs("Skulle bare fått ikke-slettet objekt").containsOnly(simple2);
+            assertThat(simples).describedAs("Skulle bare fÃ¥tt ikke-slettet objekt").containsOnly(simple2);
         }
     }
 
@@ -525,7 +525,7 @@ public class StoreTest extends StoreTestTestCase {
 
             try {
                 store.get(simple1Id);
-                fail("Skulle fått exception");
+                fail("Skulle fÃ¥tt exception");
             } catch (ObjectNotFoundException e) {
                 assertThat(e.getNotFoundId()).describedAs("Forventer id til slettet objekt").isEqualTo(simple1Id);
             }
@@ -543,7 +543,7 @@ public class StoreTest extends StoreTestTestCase {
 
             try {
                 store.get(ImmutableSet.of(simple1Id, simple2Id));
-                fail("Skulle fått exception");
+                fail("Skulle fÃ¥tt exception");
             } catch (ObjectsNotFoundException e) {
                 assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt og ikke-eksisterende objekt").contains(simple1Id, simple2Id);
             }
@@ -561,7 +561,7 @@ public class StoreTest extends StoreTestTestCase {
 
             try {
                 store.get(ImmutableSet.of(simple1Id, simple2Id));
-                fail("Skulle fått exception");
+                fail("Skulle fÃ¥tt exception");
             } catch (ObjectsNotFoundException e) {
                 assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt").contains(simple1Id);
             }
@@ -579,7 +579,7 @@ public class StoreTest extends StoreTestTestCase {
 
             try {
                 store.getOrdered(ImmutableList.of(simple1Id, simple2Id));
-                fail("Skulle fått exception");
+                fail("Skulle fÃ¥tt exception");
             } catch (ObjectsNotFoundException e) {
                 assertThat(e.getIdsNotFound()).describedAs("Forventer id til slettet objekt").contains(simple1Id);
             }
@@ -597,7 +597,7 @@ public class StoreTest extends StoreTestTestCase {
             store.delete(simple1);
 
             Set<Simple> simples = store.getIgnoreMissing(ImmutableSet.of(simple1Id, simple2Id));
-            assertThat(simples).describedAs("Skulle bare fått ikke-slettet objekt").containsOnly(simple2);
+            assertThat(simples).describedAs("Skulle bare fÃ¥tt ikke-slettet objekt").containsOnly(simple2);
         }
     }
 

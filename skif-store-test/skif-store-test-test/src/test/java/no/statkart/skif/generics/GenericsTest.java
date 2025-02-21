@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * Demonstrasjon av generics
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 1.0 - sprint 28
  */
 public class GenericsTest {

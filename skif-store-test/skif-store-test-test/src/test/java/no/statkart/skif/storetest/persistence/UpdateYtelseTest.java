@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tester ytelse på massive oppdateringsoperasjoner.
+ * Tester ytelse pÃ¥ massive oppdateringsoperasjoner.
  */
 @Test(enabled = false)
 public class UpdateYtelseTest extends StoreTestMixedTestCase {

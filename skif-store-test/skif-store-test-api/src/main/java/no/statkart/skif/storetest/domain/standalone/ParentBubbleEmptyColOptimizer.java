@@ -9,19 +9,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Boble som bruker {@code EmptyCollectionsOptimizer} til å laste tomme collections uten å gjøre spørringer mot databasen.
+ * Boble som bruker {@code EmptyCollectionsOptimizer} til Ã¥ laste tomme collections uten Ã¥ gjÃ¸re spÃ¸rringer mot databasen.
  * Boblen har 2 collections, children1 og  children2 som bruker EmptyCollectionsOptimizer og en collection, children3,
  * som ikke bruker EmptyCollectionsOptimizer.
  * <p>
- * Denne boblen må kun brukes av lavnivå tester som går direkte mot databasen uten å bruke StoreTestServer modulen og
+ * Denne boblen mÃ¥ kun brukes av lavnivÃ¥ tester som gÃ¥r direkte mot databasen uten Ã¥ bruke StoreTestServer modulen og
  * skal ikke bruke mockuprammeverket. Objekter med id <= 100 er readonly og skal ikke endres. Objekter med id >
  * 100 slettes automatisk mellom hver testmetode.
  */
 public class ParentBubbleEmptyColOptimizer extends AbstractBubbleObject implements StoreTestBubble {
     /**
      * Intern flag som Hibernate bruker og vedlikeholder ifm effektiv lasting av tomme collections i boblen.
-     * Feltet er transient fordi verdien kun brukes internt på serveren når objektet er knyttet til Hibernate sessionen.
-     * Feltet ikke skal kunne settes for kopierte objekter som kommer fra klient eller kommer fra unit of work på server
+     * Feltet er transient fordi verdien kun brukes internt pÃ¥ serveren nÃ¥r objektet er knyttet til Hibernate sessionen.
+     * Feltet ikke skal kunne settes for kopierte objekter som kommer fra klient eller kommer fra unit of work pÃ¥ server
      */
     @SuppressWarnings("unused") //brukes av hibernate
     private transient long emptyCollectionsFlag;

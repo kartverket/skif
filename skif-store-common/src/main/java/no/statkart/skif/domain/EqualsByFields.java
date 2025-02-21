@@ -13,7 +13,7 @@ import java.util.Set;
 public class EqualsByFields {
     private final List<HandlerEntry> handlers = new ArrayList<>();
 
-    // For å unngå rekursivitet
+    // For Ã¥ unngÃ¥ rekursivitet
     private final Set<Pair> processed = new HashSet<>();
 
     public EqualsByFields() {
@@ -31,8 +31,8 @@ public class EqualsByFields {
     public boolean isEqualByFields(@Nullable Object o1, @Nullable Object o2) {
         Pair pair = new Pair(o1, o2);
         if (!processed.add(pair)) {
-            // Det kan hende koden som la paret inn ikke har kjørt sammenligningen enda, men den kommer til å gjøre det,
-            // med mindre noe annet feiler først.
+            // Det kan hende koden som la paret inn ikke har kjÃ¸rt sammenligningen enda, men den kommer til Ã¥ gjÃ¸re det,
+            // med mindre noe annet feiler fÃ¸rst.
             return true;
         }
 
@@ -51,13 +51,13 @@ public class EqualsByFields {
 
             return Objects.equals(o1, o2);
         } finally {
-            // Må fjerne denne igjen slik at vi ikke returnerer true senere selv om det vi fant ut var false
+            // MÃ¥ fjerne denne igjen slik at vi ikke returnerer true senere selv om det vi fant ut var false
             processed.remove(pair);
         }
     }
 
     /**
-     * Trukket ut kun for å begrense hva som blir dekket av suppress-annotasjonen.
+     * Trukket ut kun for Ã¥ begrense hva som blir dekket av suppress-annotasjonen.
      */
     @SuppressWarnings("unchecked")
     private boolean useHandler(EqualityHandler handler, Object o1, Object o2) {
@@ -83,7 +83,7 @@ public class EqualsByFields {
     }
 
     /**
-     * Klasse som representerer et par med objekter. Likhet er på identiten til de to objektene.
+     * Klasse som representerer et par med objekter. Likhet er pÃ¥ identiten til de to objektene.
      */
     private static class Pair {
         @Nullable private final Object o1;
@@ -101,7 +101,7 @@ public class EqualsByFields {
 
             Pair pair = (Pair) o;
 
-            // Det er med vilje at denne sjekker på identitet
+            // Det er med vilje at denne sjekker pÃ¥ identitet
             return o1 == pair.o1 && o2 == pair.o2;
         }
 

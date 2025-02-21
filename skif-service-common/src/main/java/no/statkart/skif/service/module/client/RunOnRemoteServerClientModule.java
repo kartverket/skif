@@ -6,8 +6,8 @@ import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RunOnServerRemoteServiceModule;
 
 /**
- * Klientmodul som brukes av {@code RunOnRemoteServerBuilder} til å sette opp en tom klient modul som kun
- * understøtter tjenestene {@code ContainerManagedTransactionRunOnServerService} og
+ * Klientmodul som brukes av {@code RunOnRemoteServerBuilder} til Ã¥ sette opp en tom klient modul som kun
+ * understÃ¸tter tjenestene {@code ContainerManagedTransactionRunOnServerService} og
  * {@code BeanManagedTransactionRunOnServerService}.
  * @author Henrik Fredholm
  * @since 2.1

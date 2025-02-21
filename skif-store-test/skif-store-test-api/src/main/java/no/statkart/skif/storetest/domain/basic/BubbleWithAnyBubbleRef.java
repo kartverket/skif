@@ -4,7 +4,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 
 /**
- * Boble uten historikk og som kan ha relasjon til en vilkårlig annen bobleId
+ * Boble uten historikk og som kan ha relasjon til en vilkÃ¥rlig annen bobleId
  *
  * @author Henrik Fredholm
  * @since 2.3

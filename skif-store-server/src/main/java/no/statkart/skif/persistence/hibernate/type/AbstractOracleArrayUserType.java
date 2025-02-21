@@ -15,24 +15,24 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * Hjelpeklasse for å bruke Oracle ARRAY i Hibernate
+ * Hjelpeklasse for Ã¥ bruke Oracle ARRAY i Hibernate
  *
- * <p>For å kunne bruke henholdsvis Number, Date og String arrays i spørringer må Oracle skjemaet inneholde følgende definisjoner:
+ * <p>For Ã¥ kunne bruke henholdsvis Number, Date og String arrays i spÃ¸rringer mÃ¥ Oracle skjemaet inneholde fÃ¸lgende definisjoner:
  * <pre>
  *    CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER;
  *    CREATE TYPE DATE_LIST_TYPE AS TABLE OF DATE;
  *    CREATE TYPE STRING_LIST_TYPE AS TABLE OF STRING;
  * </pre>
  *
- * <p>Alternativ kan man bruke følgende format som også generaliserer til sammensatte typer:
+ * <p>Alternativ kan man bruke fÃ¸lgende format som ogsÃ¥ generaliserer til sammensatte typer:
  * <pre>
  *    CREATE TYPE NUMBER_TYPE AS OBJECT (id NUMBER);
  *    CREATE TYPE NUMBER_LIST_TYPE AS TABLE OF NUMBER_TYPE;
  * </pre>
- * Om du får ORA-01031 "insufficient privileges" så må du gi brukeren "CREATE TYPE" system privilegiet på Oracle-skjemaet du bruker
+ * Om du fÃ¥r ORA-01031 "insufficient privileges" sÃ¥ mÃ¥ du gi brukeren "CREATE TYPE" system privilegiet pÃ¥ Oracle-skjemaet du bruker
  * Ref. http://docs.oracle.com/cd/B19306_01/server.102/b14200/statements_8001.htm.
  *
- * <p>Videre så må Hibernate SessionFactory configureres til å kunne bruke {@code oracle.sql.ARRAY}:
+ * <p>Videre sÃ¥ mÃ¥ Hibernate SessionFactory configureres til Ã¥ kunne bruke {@code oracle.sql.ARRAY}:
  * <pre>
  *    final Configuration cfg = new Configuration();
  *    cfg.registerTypeOverride(new OracleArrayUserType(), new String[]{"oracle.sql.ARRAY"});
@@ -41,7 +41,7 @@ import java.sql.Types;
  *
  * @since 2.3
  * @author Henrik Fredholm
- * @author Oddbjørn Kvalsund
+ * @author OddbjÃ¸rn Kvalsund
  * @author Maciej Zalewski <maciej.zalewski.mz@gmail.com>
  * @deprecated
  */
@@ -91,7 +91,7 @@ public abstract class AbstractOracleArrayUserType implements UserType {
             if(value.getClass() == ARRAY.class){
                 st.setArray(index,(Array) value);
             }else{
-                //String[] values = ((Collection<String>)value).toArray(new String[0]); // TODO: Kan dette gjøres mer effektiv?
+                //String[] values = ((Collection<String>)value).toArray(new String[0]); // TODO: Kan dette gjÃ¸res mer effektiv?
                 st.setArray(index, new ARRAY(ad, con, value));
             }
         }

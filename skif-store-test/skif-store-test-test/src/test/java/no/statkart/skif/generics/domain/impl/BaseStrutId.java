@@ -7,7 +7,7 @@ import no.statkart.skif.generics.service.StrutService;
 /**
  * Ikke dokumentert
  *
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @since 1.0 - sprint 28
  */
 public abstract class BaseStrutId<O extends AbstractStrut> extends AbstractStrutId<Long, O> {

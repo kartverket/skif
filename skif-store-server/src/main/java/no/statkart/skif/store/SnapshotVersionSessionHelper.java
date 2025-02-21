@@ -21,7 +21,7 @@ public class SnapshotVersionSessionHelper {
     private static final TimestampType TIMESTAMP = new TimestampType();
 
     /**
-     * Henter SnapshotVersion satt på databasen
+     * Henter SnapshotVersion satt pÃ¥ databasen
      */
     public static SnapshotVersion getSnapshotVersion(Session session) {
         try {

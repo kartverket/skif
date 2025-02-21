@@ -40,17 +40,17 @@ public class BubbleWithEntityInMultikoblingTest extends StoreTestTestCase {
         EntityInMultikobling entity3 = new EntityInMultikobling("Tekst A").withId(11);
         EntityInMultikobling entity4 = new EntityInMultikobling("Tekst A");
         EntityInMultikobling entity5 = new EntityInMultikobling("Tekst B").withId(10);
-        Assert.assertEquals(entity1,entity2, "Entiteter med samme id skal være like");
-        Assert.assertNotEquals(entity1, entity3, "Entiteter med forskjellig id skal være forskjellige");
-        Assert.assertNotEquals(entity1, entity4, "Entiteter med forskjellig id skal være forskjellige, også når den ene id er null");
-        Assert.assertEquals(entity1, entity5, "Entiteter med samme id skal være like");
+        Assert.assertEquals(entity1,entity2, "Entiteter med samme id skal vÃ¦re like");
+        Assert.assertNotEquals(entity1, entity3, "Entiteter med forskjellig id skal vÃ¦re forskjellige");
+        Assert.assertNotEquals(entity1, entity4, "Entiteter med forskjellig id skal vÃ¦re forskjellige, ogsÃ¥ nÃ¥r den ene id er null");
+        Assert.assertEquals(entity1, entity5, "Entiteter med samme id skal vÃ¦re like");
 
         EntityInMultikobling entityWithPsudoId1 = new EntityInMultikobling("Tekst A");
         EntityInMultikobling entityWithPsudoId2 = new EntityInMultikobling("Tekst A");
-        Assert.assertNotEquals(entityWithPsudoId1,entityWithPsudoId2, "Entities som ikke har fått tildelt pesudoId skal være like");
+        Assert.assertNotEquals(entityWithPsudoId1,entityWithPsudoId2, "Entities som ikke har fÃ¥tt tildelt pesudoId skal vÃ¦re like");
 
         Set<EntityInMultikobling> entitesWithPseudoIds = new HashSet<>(ImmutableSet.of(entityWithPsudoId1, entityWithPsudoId2));
-        Assert.assertNotEquals(entityWithPsudoId1, entityWithPsudoId2, "Entities med id=null som har fått tildelt pesuodoId skal være forskjellige");
+        Assert.assertNotEquals(entityWithPsudoId1, entityWithPsudoId2, "Entities med id=null som har fÃ¥tt tildelt pesuodoId skal vÃ¦re forskjellige");
         Assert.assertNotEquals(entity1,entityWithPsudoId1);
         Assert.assertEquals(entitesWithPseudoIds.size(), 2);
         entitesWithPseudoIds.remove(entityWithPsudoId2);
@@ -73,11 +73,11 @@ public class BubbleWithEntityInMultikoblingTest extends StoreTestTestCase {
         EntityInMultikoblingKobling kobling5a = new EntityInMultikoblingKobling("A", entity5);
         EntityInMultikoblingKobling kobling1b = new EntityInMultikoblingKobling("B", entity1);
 
-        Assert.assertEquals(kobling1a, kobling2a, "Koblinger for entiteter med samme id skal være like");
-        Assert.assertNotEquals(kobling1a, kobling3a, "Koblinger for entiteter med forskjellig id skal være forskjellige");
-        Assert.assertNotEquals(kobling1a, kobling4a, "Koblinger for entiteter med forskjellig id eller null-id skal være forskjellige");
-        Assert.assertEquals(kobling1a, kobling5a, "Koblinger for entiteter med samme id skal være like uavhengig av andre felter");
-        Assert.assertEquals(kobling1a, kobling1b, "Koblinger for entiteter med samme id skal være like uavhengig av rolle");
+        Assert.assertEquals(kobling1a, kobling2a, "Koblinger for entiteter med samme id skal vÃ¦re like");
+        Assert.assertNotEquals(kobling1a, kobling3a, "Koblinger for entiteter med forskjellig id skal vÃ¦re forskjellige");
+        Assert.assertNotEquals(kobling1a, kobling4a, "Koblinger for entiteter med forskjellig id eller null-id skal vÃ¦re forskjellige");
+        Assert.assertEquals(kobling1a, kobling5a, "Koblinger for entiteter med samme id skal vÃ¦re like uavhengig av andre felter");
+        Assert.assertEquals(kobling1a, kobling1b, "Koblinger for entiteter med samme id skal vÃ¦re like uavhengig av rolle");
 
         EntityInMultikobling entityWithPsudoId1 = new EntityInMultikobling("Tekst A");
         EntityInMultikobling entityWithPsudoId2 = new EntityInMultikobling("Tekst A");
@@ -85,11 +85,11 @@ public class BubbleWithEntityInMultikoblingTest extends StoreTestTestCase {
         EntityInMultikoblingKobling koblingPsudo1b = new EntityInMultikoblingKobling("B", entityWithPsudoId1);
         EntityInMultikoblingKobling koblingPsudo2a = new EntityInMultikoblingKobling("A", entityWithPsudoId2);
 
-        // Legg inn entites i Set så de får tildelt pesudoId
+        // Legg inn entites i Set sÃ¥ de fÃ¥r tildelt pesudoId
         ImmutableSet.of(entityWithPsudoId1, entityWithPsudoId2);
-        Assert.assertNotEquals(kobling1a, koblingPsudo1a, "Koblinger for entiteter med id=null som har fått tildelt pesuodoId skal være forskjellige");
-        Assert.assertEquals(koblingPsudo1a, koblingPsudo1b, "Koblinger for samme entitet med id=null som har fått tildelt pesuodoId skal være like uavhengig av rolle");
-        Assert.assertNotEquals(koblingPsudo1a, koblingPsudo2a, "Koblinger for entiteter med id=null som har fått tildelt pesuodoId skal være forskjellige");
+        Assert.assertNotEquals(kobling1a, koblingPsudo1a, "Koblinger for entiteter med id=null som har fÃ¥tt tildelt pesuodoId skal vÃ¦re forskjellige");
+        Assert.assertEquals(koblingPsudo1a, koblingPsudo1b, "Koblinger for samme entitet med id=null som har fÃ¥tt tildelt pesuodoId skal vÃ¦re like uavhengig av rolle");
+        Assert.assertNotEquals(koblingPsudo1a, koblingPsudo2a, "Koblinger for entiteter med id=null som har fÃ¥tt tildelt pesuodoId skal vÃ¦re forskjellige");
     }
 
 
@@ -132,8 +132,8 @@ public class BubbleWithEntityInMultikoblingTest extends StoreTestTestCase {
                 Assert.assertEquals(bubble.getEntities("Over").size(), 2, "Feil antall 'over'");
                 for (Iterator<EntityInMultikobling> iterator = bubble.getEntities("Over").iterator(); iterator.hasNext(); ) {
                     EntityInMultikobling next = iterator.next();
-                    Assert.assertNotNull(next.getId(), "Entitet har ikke fått bubbleId");
-                    Assert.assertTrue(uniqueIds.add(next.getId()), "Entitet har ikke fått unique bubbleId");
+                    Assert.assertNotNull(next.getId(), "Entitet har ikke fÃ¥tt bubbleId");
+                    Assert.assertTrue(uniqueIds.add(next.getId()), "Entitet har ikke fÃ¥tt unique bubbleId");
                 }
 
                 return null;
@@ -178,7 +178,7 @@ public class BubbleWithEntityInMultikoblingTest extends StoreTestTestCase {
                 EntityInMultikobling entity = bubble.getEntities("Under").iterator().next();
                 Assert.assertEquals(entity.getId(), movedEntityId);
                 bubble.getEntities("Under").remove(entity);
-                // En flush her vil føre til Hibernate exception, så ikke utfør flush mellom remove- og add operasjoner
+                // En flush her vil fÃ¸re til Hibernate exception, sÃ¥ ikke utfÃ¸r flush mellom remove- og add operasjoner
                 //store.flush();
                 bubble.getEntities("Over").add(entity);
                 store.update(bubble);

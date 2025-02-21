@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * EJBServiceChainFactoryFactorySpecification som gir mulighet for å angi en ordnet liste av
+ * EJBServiceChainFactoryFactorySpecification som gir mulighet for Ã¥ angi en ordnet liste av
  * {@code ChainedProxyHandler}-klasser som EJBServiceChainFactory'en skal sette opp.
  *
  * @author Henrik Fredholm
@@ -71,7 +71,7 @@ public class EJBServiceChainFactorySpecification extends FactorySpecification<EJ
 
     /**
      * Oppretter en avhengighet fra modulen definert av {@code binder} til {@code type}.
-     * Når injectoren opprettes så vil Guide rapportere en feil hvis {@code type} ikke
+     * NÃ¥r injectoren opprettes sÃ¥ vil Guide rapportere en feil hvis {@code type} ikke
      * kan injectes.
      *
      * @since 2.0

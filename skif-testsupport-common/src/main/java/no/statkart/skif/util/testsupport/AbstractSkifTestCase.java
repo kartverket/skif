@@ -38,7 +38,7 @@ public abstract class AbstractSkifTestCase {
     }
 
     /**
-     * Angir om testcasen skal kjøres i SingleVm mode. Følgende verdier kan returneres
+     * Angir om testcasen skal kjÃ¸res i SingleVm mode. FÃ¸lgende verdier kan returneres
      * av metoden:
      * <ul>
      * <li>true: Testen avvikles alltid i SingleVm mode.
@@ -46,7 +46,7 @@ public abstract class AbstractSkifTestCase {
      * <li>null (default): Verdien styres fra konfigurasjonsfil eller system properties. Hvis ikke satt brukes false.
      * </ul>
      * Dersom SingleVm mode er satt men ingen SingleVmServerModule er spesifisert har SingleVm settingen
-     * ingen betydning. Dvs moduler som ikke bruker SingelVm berøres ikke av hva verdien er satt til.
+     * ingen betydning. Dvs moduler som ikke bruker SingelVm berÃ¸res ikke av hva verdien er satt til.
      */
     protected Boolean isSingleVm() {
         return singleVm;
@@ -94,7 +94,7 @@ public abstract class AbstractSkifTestCase {
 
 
     /**
-     * Angir SingleVm ServerConfigurasjonsklasse. Denne må være satt, enten direkte eller indirekte, for at
+     * Angir SingleVm ServerConfigurasjonsklasse. Denne mÃ¥ vÃ¦re satt, enten direkte eller indirekte, for at
      * en SingleVm server skal kunne opprettes
      */
     protected String[] getSingleVmServerConfigurationFilenames() {
@@ -109,7 +109,7 @@ public abstract class AbstractSkifTestCase {
 
 
     /**
-     * Angir om injector skal gjenanvendes på tvers av testmetoder innenfor samme testcase.
+     * Angir om injector skal gjenanvendes pÃ¥ tvers av testmetoder innenfor samme testcase.
      * Default er true.
      */
     protected boolean reuseInjector = true;
@@ -128,7 +128,7 @@ public abstract class AbstractSkifTestCase {
     }
 
     /**
-     * Angir om en custom ModuleBuilder skal brukes. Custom ModuleBuilders ikke gjenbrukes på tvers av testcaser.
+     * Angir om en custom ModuleBuilder skal brukes. Custom ModuleBuilders ikke gjenbrukes pÃ¥ tvers av testcaser.
      * Default implementatsjonen returnerer null, hvilket angir at testcasen skal bruke en reusable ModuleBuilder
      *
      * @return SkifConfigurationBuilder dersom non reusable configuration skal brukes
@@ -141,7 +141,7 @@ public abstract class AbstractSkifTestCase {
     protected abstract ModuleBuilder createReusableModuleBuilder();
 
     /**
-     * Utfører initialisering av Skif konfigurasjon. TestNG krever at den ikke er private.
+     * UtfÃ¸rer initialisering av Skif konfigurasjon. TestNG krever at den ikke er private.
      *
      * @param context
      */
@@ -152,7 +152,7 @@ public abstract class AbstractSkifTestCase {
     }
 
     /**
-     * Blanker ut alle felter slik at testklassen ikke holder på mye tilstand etter at testene er kjørt.
+     * Blanker ut alle felter slik at testklassen ikke holder pÃ¥ mye tilstand etter at testene er kjÃ¸rt.
      */
     @AfterClass
     protected void afterClass() throws IllegalAccessException {
@@ -190,7 +190,7 @@ public abstract class AbstractSkifTestCase {
     private ModuleBuilder getModuleBuilder(ITestContext context) {
         ModuleBuilder moduleBuilder = createModuleBuilder();
         if (moduleBuilder == null) {
-            // Bruk builder hvis den finnes fra før, eller opprett en
+            // Bruk builder hvis den finnes fra fÃ¸r, eller opprett en
             String key = calcConfigurationKey();
             String keyCreatingClass = key + ":creatingClass";
             moduleBuilder = (ModuleBuilder) context.getAttribute(key);
@@ -212,14 +212,14 @@ public abstract class AbstractSkifTestCase {
     }
 
     /**
-     * Beregner konfigurasjonsnøkkel for testcase på basis av hvilke konfigurasjonsklasser testcasen bruker.
+     * Beregner konfigurasjonsnÃ¸kkel for testcase pÃ¥ basis av hvilke konfigurasjonsklasser testcasen bruker.
      */
     protected String calcConfigurationKey() {
         return getModuleClassname() + ":" + Arrays.toString(getConfigurationFilenames()) + ":" + getSingleVmServerModuleClassname() + ":" + Arrays.toString(getSingleVmServerConfigurationFilenames()) + ":" + isSingleVm();
     }
 
     /**
-     * Sammenligner to objekter ved å bryte ned deres komponenter til primitive og comparable objekter.
+     * Sammenligner to objekter ved Ã¥ bryte ned deres komponenter til primitive og comparable objekter.
      *
      * @param o   fasit-objekt
      * @param o2  objekt vi vil sammenligne mot o
@@ -241,11 +241,11 @@ public abstract class AbstractSkifTestCase {
                     } else if (sub2 == null) {
                         Assert.fail("Mappet objekt er null, mens originalt objekter ikke null! Objekttype: " + sub1.getClass().getName() + " metode som ble testet: " + method.getName());
                     } else if (sub1.getClass().isPrimitive() || sub1 instanceof Comparable) {
-                        Assert.assertEquals(sub1, sub2, "Objekter som ikke er like: " + sub1.getClass().getSimpleName() + " navn på funksjon: " + method.getName());
+                        Assert.assertEquals(sub1, sub2, "Objekter som ikke er like: " + sub1.getClass().getSimpleName() + " navn pÃ¥ funksjon: " + method.getName());
                     } else if (sub1 instanceof Collection) {
                         Collection subColl1 = (Collection) sub1;
                         Collection subColl2 = (Collection) sub2;
-                        Assert.assertEquals(subColl1.size(), subColl2.size(), "Collections er av ulik størrelse! Navn på funksjon: " + method.getName());
+                        Assert.assertEquals(subColl1.size(), subColl2.size(), "Collections er av ulik stÃ¸rrelse! Navn pÃ¥ funksjon: " + method.getName());
 
                         Object[] objects1 = subColl1.toArray();
                         Object[] objects2 = subColl2.toArray();
@@ -257,9 +257,9 @@ public abstract class AbstractSkifTestCase {
                         compareWithAsserts(sub1, sub2);
                     }
                 } catch (IllegalAccessException e) {
-                    Assert.fail("IllegalAccessException ved kall til funksjon " + method.getName() + " på objekt av typen " + o.getClass());
+                    Assert.fail("IllegalAccessException ved kall til funksjon " + method.getName() + " pÃ¥ objekt av typen " + o.getClass());
                 } catch (InvocationTargetException e) {
-                    Assert.fail("InvocationTargetException ved kall til funksjon " + method.getName() + " på objekt av typen " + o.getClass());
+                    Assert.fail("InvocationTargetException ved kall til funksjon " + method.getName() + " pÃ¥ objekt av typen " + o.getClass());
                 }
             }
         }

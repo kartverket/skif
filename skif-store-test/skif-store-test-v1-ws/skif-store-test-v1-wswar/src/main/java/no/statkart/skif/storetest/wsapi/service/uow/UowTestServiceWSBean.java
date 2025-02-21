@@ -16,7 +16,7 @@ import no.statkart.skif.storetest.wsapi.domain.basic.SimpleId;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 /**
- * Service for å støtte UnitOfWork testing
+ * Service for Ã¥ stÃ¸tte UnitOfWork testing
  *
  * @author Henrik Fredholm
  * @since 2.9

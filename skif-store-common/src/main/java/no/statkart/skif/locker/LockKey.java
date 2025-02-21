@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Interface for LockKey. Brukes for låsing mot database
+ * Interface for LockKey. Brukes for lÃ¥sing mot database
  *
  * @author Roar Ingebrigtsen
  * @since 2.0

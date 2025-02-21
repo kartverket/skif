@@ -120,7 +120,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             AEnumKode aEnumKodeA = persistenceSessionManager.get(AEnumKodeId.KodeAId);
             assertThat(aEnumKodeA.getId()).isEqualTo(AEnumKodeId.KodeAId);
             assertThat(aEnumKodeA.getKodelisteId()).isEqualTo(AEnumKodeId.KODELISTE_ID);
-            assertThat(aEnumKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kode A er den første av AKodene");
+            assertThat(aEnumKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kode A er den fÃ¸rste av AKodene");
 
             AEnumKode aEnumKodeB = persistenceSessionManager.get(AEnumKodeId.KodeBId);
             assertThat(aEnumKodeB.getId()).isEqualTo(AEnumKodeId.KodeBId);
@@ -138,7 +138,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             BEnumKode bEnumKodeA = persistenceSessionManager.get(BEnumKodeId.KodeAId);
             assertThat(bEnumKodeA.getId()).isEqualTo(BEnumKodeId.KodeAId);
             assertThat(bEnumKodeA.getKodelisteId()).isEqualTo(BEnumKodeId.KODELISTE_ID);
-            assertThat(bEnumKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kode A er den første av BKodene");
+            assertThat(bEnumKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kode A er den fÃ¸rste av BKodene");
 
             BEnumKode bEnumKodeB = persistenceSessionManager.get(BEnumKodeId.KodeBId);
             assertThat(bEnumKodeB.getId()).isEqualTo(BEnumKodeId.KodeBId);
@@ -156,7 +156,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             SEnumKode sEnumKodeA = persistenceSessionManager.get(SEnumKodeId.KodeAId);
             assertThat(sEnumKodeA.getId()).isEqualTo(SEnumKodeId.KodeAId);
             assertThat(sEnumKodeA.getKodelisteId()).isEqualTo(SEnumKodeId.KODELISTE_ID);
-            assertThat(sEnumKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kode A er den første av SKodene");
+            assertThat(sEnumKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kode A er den fÃ¸rste av SKodene");
 
             SEnumKode sEnumKodeB = persistenceSessionManager.get(SEnumKodeId.KodeBId);
             assertThat(sEnumKodeB.getId()).isEqualTo(SEnumKodeId.KodeBId);
@@ -174,7 +174,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             AEnumKode aEnumKodeA = persistenceSessionManager.get((AEnumKodeId) AEnumKodeId.KodeAId.asSnapshotVersionOld());
             assertThat(aEnumKodeA.getId()).isEqualTo(AEnumKodeId.KodeAId.asSnapshotVersionOld());
             assertThat(aEnumKodeA.getKodelisteId()).isEqualTo(AEnumKodeId.KODELISTE_ID.asSnapshotVersionOld());
-            assertThat(aEnumKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kode A er den første av AKodene");
+            assertThat(aEnumKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kode A er den fÃ¸rste av AKodene");
         } finally {
             persistenceSessionManager.close();
         }
@@ -253,13 +253,13 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             ADbKode aDbKodeA1 = persistenceSessionManager.get(ADbKodeId.A1Id);
             assertThat(aDbKodeA1.getId()).isEqualTo(ADbKodeId.A1Id);
             assertThat(aDbKodeA1.getKodelisteId()).isEqualTo(ADbKodeId.KODELISTE_ID);
-            assertThat(aDbKodeA1.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for A1 bokmål");
+            assertThat(aDbKodeA1.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for A1 bokmÃ¥l");
 
             ADbKode aDbKodeA2 = persistenceSessionManager.get(ADbKodeId.A2Id);
             assertThat(aDbKodeA2.getId()).isEqualTo(ADbKodeId.A2Id);
             assertThat(aDbKodeA2.getKodelisteId()).isEqualTo(ADbKodeId.KODELISTE_ID);
-            assertThat(aDbKodeA2.getNavn().getText(norsk)).isEqualTo("A2-navn bokmål");
-            assertThat(aDbKodeA2.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for A2 bokmål");
+            assertThat(aDbKodeA2.getNavn().getText(norsk)).isEqualTo("A2-navn bokmÃ¥l");
+            assertThat(aDbKodeA2.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for A2 bokmÃ¥l");
         } finally {
             persistenceSessionManager.close();
         }
@@ -272,12 +272,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             BDbKode bDbKodeB1 = persistenceSessionManager.get(BDbKodeId.B1Id);
             assertThat(bDbKodeB1.getId()).isEqualTo(BDbKodeId.B1Id);
             assertThat(bDbKodeB1.getKodelisteId()).isEqualTo(BDbKodeId.KODELISTE_ID);
-            assertThat(bDbKodeB1.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for B1 bokmål");
+            assertThat(bDbKodeB1.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for B1 bokmÃ¥l");
 
             BDbKode bDbKodeB2 = persistenceSessionManager.get(BDbKodeId.B2Id);
             assertThat(bDbKodeB2.getId()).isEqualTo(BDbKodeId.B2Id);
             assertThat(bDbKodeB2.getKodelisteId()).isEqualTo(BDbKodeId.KODELISTE_ID);
-            assertThat(bDbKodeB2.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for B2 bokmål");
+            assertThat(bDbKodeB2.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for B2 bokmÃ¥l");
         } finally {
             persistenceSessionManager.close();
         }
@@ -290,12 +290,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             C1DbKode c1DbKodeC1A = persistenceSessionManager.get(C1DbKodeId.C1AId);
             assertThat(c1DbKodeC1A.getId()).isEqualTo(C1DbKodeId.C1AId);
             assertThat(c1DbKodeC1A.getKodelisteId()).isEqualTo(C1DbKodeId.KODELISTE_ID);
-            assertThat(c1DbKodeC1A.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for C1A bokmål");
+            assertThat(c1DbKodeC1A.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for C1A bokmÃ¥l");
 
             C1DbKode c1DbKodeC1B = persistenceSessionManager.get(C1DbKodeId.C1BId);
             assertThat(c1DbKodeC1B.getId()).isEqualTo(C1DbKodeId.C1BId);
             assertThat(c1DbKodeC1B.getKodelisteId()).isEqualTo(C1DbKodeId.KODELISTE_ID);
-            assertThat(c1DbKodeC1B.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for C1B bokmål");
+            assertThat(c1DbKodeC1B.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for C1B bokmÃ¥l");
         } finally {
             persistenceSessionManager.close();
         }
@@ -309,12 +309,12 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             XStrDbKode xStrDbKodeA = persistenceSessionManager.get(XStrDbKodeId.AId);
             assertThat(xStrDbKodeA.getId()).isEqualTo(XStrDbKodeId.AId);
             assertThat(xStrDbKodeA.getKodelisteId()).isEqualTo(XStrDbKodeId.KODELISTE_ID);
-            assertThat(xStrDbKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for X1 bokmål");
+            assertThat(xStrDbKodeA.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for X1 bokmÃ¥l");
 
             XStrDbKode xStrDbKodeB = persistenceSessionManager.get(XStrDbKodeId.BId);
             assertThat(xStrDbKodeB.getId()).isEqualTo(XStrDbKodeId.BId);
             assertThat(xStrDbKodeB.getKodelisteId()).isEqualTo(XStrDbKodeId.KODELISTE_ID);
-            assertThat(xStrDbKodeB.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for X2 bokmål");
+            assertThat(xStrDbKodeB.getBeskrivelse().getText(norsk)).isEqualTo("Kodebeskrivelse for X2 bokmÃ¥l");
         } finally {
             persistenceSessionManager.close();
         }
@@ -355,8 +355,8 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
             bDbKodeNy.setId(new BDbKodeId(1234L, SnapshotVersion.CURRENT));
             bDbKodeNy.setKodeverdi("AAD12");
             Locale bokmaal = norsk;
-            bDbKodeNy.getBeskrivelse().setText(bokmaal, "Kodebeskrivelse ting for ny kode som er inserted. bokmål");
-            bDbKodeNy.getNavn().setText(bokmaal, "1234-bokmål");
+            bDbKodeNy.getBeskrivelse().setText(bokmaal, "Kodebeskrivelse ting for ny kode som er inserted. bokmÃ¥l");
+            bDbKodeNy.getNavn().setText(bokmaal, "1234-bokmÃ¥l");
             persistenceSessionManager.beginTransaction();
             persistenceSessionManager.insert(bDbKodeNy);
             persistenceSessionManager.commit();
@@ -441,7 +441,7 @@ public class DefaultKodelistePersistenceSessionSubtypeHandlerTest {
 //        try {
 //            ADbKode aDbKode1 = persistenceSessionManager.get(new ADbKodeId(1L, SnapshotVersion.OLD));
 //            Assert.assertThat(aDbKode1.getId().getSnapshotVersion()).isEqualTo(SnapshotVersion.OLD);
-//            Assert.assertThat(aDbKode1.getBeskrivelse()).isEqualTo("Kodebeskrivelse for A1 bokmål");
+//            Assert.assertThat(aDbKode1.getBeskrivelse()).isEqualTo("Kodebeskrivelse for A1 bokmÃ¥l");
 //        } finally {
 //            persistenceSessionManager.close();
 //        }

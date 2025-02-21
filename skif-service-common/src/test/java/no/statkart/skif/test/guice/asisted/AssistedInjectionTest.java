@@ -11,9 +11,9 @@ import static org.testng.Assert.assertTrue;
 
 /**
  *
- * Testen demostrerer bruk av Singleton scope sammen med provider basert konstruksjon hvor provideren får injected parametre.
- * Siden objektet som provides kun blir opprettet en gang (siden det er en singleton) vil en etterfølgende endring av
- * parameter objektet ikke ha noen effekt på det provided objektet.
+ * Testen demostrerer bruk av Singleton scope sammen med provider basert konstruksjon hvor provideren fÃ¥r injected parametre.
+ * Siden objektet som provides kun blir opprettet en gang (siden det er en singleton) vil en etterfÃ¸lgende endring av
+ * parameter objektet ikke ha noen effekt pÃ¥ det provided objektet.
  *
  * @author Henrik Fredholm
  * @since 2.1
@@ -65,7 +65,7 @@ public class AssistedInjectionTest {
         assertTrue(result.value);
         s.setStrategy(false);
         result = injector.getInstance(Result.class);
-        assertTrue(result.value); // Bemerk at vi ikke får false her siden Result er singleton
+        assertTrue(result.value); // Bemerk at vi ikke fÃ¥r false her siden Result er singleton
     }
 
 }

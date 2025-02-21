@@ -12,11 +12,11 @@ import java.util.Map;
  */
 public class IdentityMappingTest {
     /**
-     * I dette tilfellet har vi en {@link Integer} på source-siden, men vet ikke noe mer enn at det er {@link Object}
-     * på andre siden. Det er en {@link IdentityTypeMapperFactory} installert som skal sørge for at {@code Integer}
+     * I dette tilfellet har vi en {@link Integer} pÃ¥ source-siden, men vet ikke noe mer enn at det er {@link Object}
+     * pÃ¥ andre siden. Det er en {@link IdentityTypeMapperFactory} installert som skal sÃ¸rge for at {@code Integer}
      * kommer rett over.
      * <p>
-     * Dette er noe som ikke virker så minimalt som det er gjort her.
+     * Dette er noe som ikke virker sÃ¥ minimalt som det er gjort her.
      */
     @Test(enabled = false)
     public void testIntegerToObject() {
@@ -38,9 +38,9 @@ public class IdentityMappingTest {
     }
 
     /**
-     * I dette tilfellet har vi en {@link Integer} på source-siden, men vet ikke noe mer enn at det er {@link Object}
-     * på andre siden. Det er en {@link IdentityTypeMapperFactory} installert som skal sørge for at {@code Integer}
-     * kommer rett over. For å få dette til å virke er det brukt noen overrides, som {@code IdentityTypeMapperFactory}
+     * I dette tilfellet har vi en {@link Integer} pÃ¥ source-siden, men vet ikke noe mer enn at det er {@link Object}
+     * pÃ¥ andre siden. Det er en {@link IdentityTypeMapperFactory} installert som skal sÃ¸rge for at {@code Integer}
+     * kommer rett over. For Ã¥ fÃ¥ dette til Ã¥ virke er det brukt noen overrides, som {@code IdentityTypeMapperFactory}
      * lager for oss.
      */
     @Test
@@ -94,7 +94,7 @@ public class IdentityMappingTest {
     }
 
     /**
-     * I dette tilfellet har vi også {@link Integer} som source og {@code int} som target, men ingen override.
+     * I dette tilfellet har vi ogsÃ¥ {@link Integer} som source og {@code int} som target, men ingen override.
      */
     @Test
     public void testIntToIntWithoutIntegerOverride() {

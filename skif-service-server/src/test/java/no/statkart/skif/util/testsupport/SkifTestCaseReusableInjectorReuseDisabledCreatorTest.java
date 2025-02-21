@@ -17,8 +17,8 @@ import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Tester ut at server injectoren i en SingleVm konfigurasjonen ikke blir gjenbukt på tvers av testmetoder og testcases
- * når no-reuse er satt i property fil.
+ * Tester ut at server injectoren i en SingleVm konfigurasjonen ikke blir gjenbukt pÃ¥ tvers av testmetoder og testcases
+ * nÃ¥r no-reuse er satt i property fil.
  *
  * @author Henrik Fredholm
  * @since 2.0
@@ -49,7 +49,7 @@ public class SkifTestCaseReusableInjectorReuseDisabledCreatorTest extends SkifTe
 
     @Override
     protected void resetLogin() {
-        // Støtter ikke login for denne test
+        // StÃ¸tter ikke login for denne test
     }
 
     public void firstTestMethod() {

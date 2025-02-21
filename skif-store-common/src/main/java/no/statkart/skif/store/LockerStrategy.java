@@ -11,109 +11,109 @@ import java.util.Set;
 public interface LockerStrategy {
 
     /**
-     * Låser id for owner dersom dette er mulig.
+     * LÃ¥ser id for owner dersom dette er mulig.
      *
-     * @param id    Id som skal låses
-     * @return true Dersom lås er tatt og er ny, false dersom lås er tatt men er gammel
+     * @param id    Id som skal lÃ¥ses
+     * @return true Dersom lÃ¥s er tatt og er ny, false dersom lÃ¥s er tatt men er gammel
      * @throws no.statkart.skif.exception.LockedException
-     *          Dersom element er låst av annen bruker
+     *          Dersom element er lÃ¥st av annen bruker
      */
     boolean lock(BubbleId id) throws LockedException;
 
     /**
-     * Låser id-er for owner dersom dette er mulig.
+     * LÃ¥ser id-er for owner dersom dette er mulig.
      *
-     * @param ids    Id-er som skal låses
-     * @return id-er hvor det ble tatt nye låser
+     * @param ids    Id-er som skal lÃ¥ses
+     * @return id-er hvor det ble tatt nye lÃ¥ser
      * @throws no.statkart.skif.exception.LockedException
-     *          Dersom element er låst av annen bruker
+     *          Dersom element er lÃ¥st av annen bruker
      */
     Set<BubbleId> lock(Set<BubbleId> ids) throws LockedException;
 
     /**
-     * Låser opp gjeldende id dersom denne kan låses opp. Nye elementer og endrede/slettede elementer kan ikke låses opp.
-     * Elementer som er låst i nåværende transaksjon vil bli forsøkt låst opp direkte, mens elementer som har blitt låst
-     * tidligere vil bli lagt i en liste som skal låses opp ved commit av denne transaksjonen. (Låses opp ved kall til
+     * LÃ¥ser opp gjeldende id dersom denne kan lÃ¥ses opp. Nye elementer og endrede/slettede elementer kan ikke lÃ¥ses opp.
+     * Elementer som er lÃ¥st i nÃ¥vÃ¦rende transaksjon vil bli forsÃ¸kt lÃ¥st opp direkte, mens elementer som har blitt lÃ¥st
+     * tidligere vil bli lagt i en liste som skal lÃ¥ses opp ved commit av denne transaksjonen. (LÃ¥ses opp ved kall til
      * {@link #consumeAllLocks()} eller {@link #releaseLocksOnNonTransactionalScopeCompletion()}.)
      *
-     * @param id    Id som skal låses opp
+     * @param id    Id som skal lÃ¥ses opp
      */
     void unlock(BubbleId id);
 
     /**
-     * Låser opp gjeldende id-er dersom disse kan låses opp. Nye elementer og endrede/slettede elementer kan ikke låses opp.
-     * Elementer som er låst i nåværende transaksjon vil bli forsøkt låst opp direkte, mens elementer som har blitt låst
-     * tidligere vil bli lagt i en liste som skal låses opp ved commit av denne transaksjonen. (Låses opp ved kall til
+     * LÃ¥ser opp gjeldende id-er dersom disse kan lÃ¥ses opp. Nye elementer og endrede/slettede elementer kan ikke lÃ¥ses opp.
+     * Elementer som er lÃ¥st i nÃ¥vÃ¦rende transaksjon vil bli forsÃ¸kt lÃ¥st opp direkte, mens elementer som har blitt lÃ¥st
+     * tidligere vil bli lagt i en liste som skal lÃ¥ses opp ved commit av denne transaksjonen. (LÃ¥ses opp ved kall til
      * {@link #consumeAllLocks()} eller {@link #releaseLocksOnNonTransactionalScopeCompletion()}.)
      *
-     * @param ids    Id-er som skal låses opp
+     * @param ids    Id-er som skal lÃ¥ses opp
      */
     void unlock(Set<BubbleId> ids);
 
     /**
-     * Sjekker om id er låst av owner.
+     * Sjekker om id er lÃ¥st av owner.
      *
      * @param id    Id som skal sjekkes
-     * @return true dersom owner har en lås på id
+     * @return true dersom owner har en lÃ¥s pÃ¥ id
      */
     boolean isLockedByCaller(BubbleId id);
 
     /**
-     * Sjekker om id er låst av en annen bruker enn owner.
+     * Sjekker om id er lÃ¥st av en annen bruker enn owner.
      *
      * @param id    Id som skal sjekkes
-     * @return true dersom det finnes en lås på id, og eier av låsen ikke er owner
+     * @return true dersom det finnes en lÃ¥s pÃ¥ id, og eier av lÃ¥sen ikke er owner
      */
     boolean isLockedByOther(BubbleId id);
 
     /**
-     * Slipper alle låser for owner der objekter ikke er modifisert.
+     * Slipper alle lÃ¥ser for owner der objekter ikke er modifisert.
      */
     void releaseAllLocks();
 
     /**
-     * Slipper alle låser for owner som er tatt i denne transaksjonen. Rører ikke låser som owner eier fra andre transaksjoner.
+     * Slipper alle lÃ¥ser for owner som er tatt i denne transaksjonen. RÃ¸rer ikke lÃ¥ser som owner eier fra andre transaksjoner.
      */
     void releaseLocksOnRollback();
 
     /**
-     * Tømmer innhold i strategy-klassen
+     * TÃ¸mmer innhold i strategy-klassen
      */
     void clear();
 
     /**
-     * Registrer en insert i transaksjonen. Brukes for å bestemme om elementet kan tas låser på/kan låses opp.
+     * Registrer en insert i transaksjonen. Brukes for Ã¥ bestemme om elementet kan tas lÃ¥ser pÃ¥/kan lÃ¥ses opp.
      *
      * @param id Id som skal registreres
      */
     void registerInserted(BubbleId id);
 
     /**
-     * Registrer en update i transaksjonen. Brukes for å holde rede på elementer som ikke kan låses opp. Vil feile dersom
-     * owner ikke holder en lås på id.
+     * Registrer en update i transaksjonen. Brukes for Ã¥ holde rede pÃ¥ elementer som ikke kan lÃ¥ses opp. Vil feile dersom
+     * owner ikke holder en lÃ¥s pÃ¥ id.
      *
      * @param id    Id som skal registreres
      */
     void registerUpdated(BubbleId id);
 
     /**
-     * Registrer en remove i transaksjonen. Brukes for å holde rede på elementer som ikke kan låses opp. Vil feile dersom
-     * owner ikke holder en lås på id.
+     * Registrer en remove i transaksjonen. Brukes for Ã¥ holde rede pÃ¥ elementer som ikke kan lÃ¥ses opp. Vil feile dersom
+     * owner ikke holder en lÃ¥s pÃ¥ id.
      *
      * @param id    Id som skal registreres
      */
     void registerRemoved(BubbleId id);
 
     /**
-     * Låser opp alle brukerens låser i transaksjonen og sjekker at antallet stemmer.
+     * LÃ¥ser opp alle brukerens lÃ¥ser i transaksjonen og sjekker at antallet stemmer.
      *
      * @throws no.statkart.skif.exception.OperationalException
-     *          dersom antall låser som ble låst opp avviker fra det som er forventet
+     *          dersom antall lÃ¥ser som ble lÃ¥st opp avviker fra det som er forventet
      */
     void consumeAllLocks();
 
     /**
-     * Låser opp de låsene brukeren har kalt unlock på i løpet av et scope, men som var låst fra før.
+     * LÃ¥ser opp de lÃ¥sene brukeren har kalt unlock pÃ¥ i lÃ¸pet av et scope, men som var lÃ¥st fra fÃ¸r.
      */
     void releaseLocksOnNonTransactionalScopeCompletion();
 

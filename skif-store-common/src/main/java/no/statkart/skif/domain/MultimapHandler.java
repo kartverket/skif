@@ -5,11 +5,11 @@ import com.google.common.collect.Multimap;
 import javax.annotation.Nullable;
 
 /**
- * {@link Multimap#equals(Object)} kaller {@link Object#equals(Object)} på innholdet. Vi ønsker vanligvis ikke dette,
- * men heller bruke {@link EqualsByFields} for å sammenligne.
+ * {@link Multimap#equals(Object)} kaller {@link Object#equals(Object)} pÃ¥ innholdet. Vi Ã¸nsker vanligvis ikke dette,
+ * men heller bruke {@link EqualsByFields} for Ã¥ sammenligne.
  * <p/>
- * Denne oppfyller kontrakten for {@link Multimap#equals(Object)} ved å delegere til bruk av {@link MapHandler}
- * på {@link Multimap#asMap()} pluss {@link MapHandler}.
+ * Denne oppfyller kontrakten for {@link Multimap#equals(Object)} ved Ã¥ delegere til bruk av {@link MapHandler}
+ * pÃ¥ {@link Multimap#asMap()} pluss {@link MapHandler}.
  */
 public class MultimapHandler implements EqualityHandler<Multimap<?, ?>> {
     @Override

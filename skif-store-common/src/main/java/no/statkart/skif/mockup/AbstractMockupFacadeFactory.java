@@ -24,13 +24,13 @@ import java.util.SortedMap;
 
 /**
  * Baseklasse for opprettelse av mockupfacade-instanser. En faktisk implementasjon trenger bare implementere
- * konstruktøren. MockupFacadeBuilder-instanser må instansieres fra klientmodulen, mens MockupFacade-objektene
- * som builderen oppretter blir instansiert via en egen fritstående modul som forsyner MockupFacaden med
+ * konstruktÃ¸ren. MockupFacadeBuilder-instanser mÃ¥ instansieres fra klientmodulen, mens MockupFacade-objektene
+ * som builderen oppretter blir instansiert via en egen fritstÃ¥ende modul som forsyner MockupFacaden med
  * en egen {@link MockupStore}-instans, {@link TestNumber}-instans og {@link IdService}-instans for generering
  * av test id'er.
  * <p>
- * Klassen er annotert med @Singleton slik at readTestSet gjenbrukes på tvers av tester. Tilsvarende må subklasser
- * annoteres med @Singleton side Guice ikke tar hensyn til annotasjoner på superklasser.
+ * Klassen er annotert med @Singleton slik at readTestSet gjenbrukes pÃ¥ tvers av tester. Tilsvarende mÃ¥ subklasser
+ * annoteres med @Singleton side Guice ikke tar hensyn til annotasjoner pÃ¥ superklasser.
  *
  * @author Tor Egil R. Strand
  * @since 2.1
@@ -56,7 +56,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     protected final Set<Class<? extends BubbleId>> ignoredIdClasses = new HashSet<>();
 
     /**
-     * Angir den snapshotversion som er default i {@link MockupStore}. For mockup-sett uten historikk bør dette være
+     * Angir den snapshotversion som er default i {@link MockupStore}. For mockup-sett uten historikk bÃ¸r dette vÃ¦re
      * {@link SnapshotVersion#CURRENT}. For historikk kan man bruke {@link SnapshotVersion#START} eller et mer spesifikt
      * tidspunkt.
      *
@@ -75,8 +75,8 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
         this.snapshotVersionContext = snapshotVersionContext;
         this.extraModules = extraModules;
 
-        // Bruker her en Provider som oppretter readFacade første gang man ber om den. Må være lazy fordi testdataService ikke bør kalles
-        // i forbindelse med opprettelse MockupFacadeFactory'en. TestdataService gjør et kall til serveren og krever bl.a
+        // Bruker her en Provider som oppretter readFacade fÃ¸rste gang man ber om den. MÃ¥ vÃ¦re lazy fordi testdataService ikke bÃ¸r kalles
+        // i forbindelse med opprettelse MockupFacadeFactory'en. TestdataService gjÃ¸r et kall til serveren og krever bl.a
         // at bruker login er satt opp.
         readFacadeProvider = new Provider<T>() {
             @Override
@@ -89,8 +89,8 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     }
 
     /**
-     * Returnerer mockupfacade med testsett for tester som ikke endre på data i databasen. Gjenntatte kall til denne
-     * metoden gir samme mockupfacade. Objekter i denne mockupfacade bør ikke endres siden de gjenbrukes på tvers av alle tester.
+     * Returnerer mockupfacade med testsett for tester som ikke endre pÃ¥ data i databasen. Gjenntatte kall til denne
+     * metoden gir samme mockupfacade. Objekter i denne mockupfacade bÃ¸r ikke endres siden de gjenbrukes pÃ¥ tvers av alle tester.
      *
      * @return mockupfacade
      */
@@ -104,7 +104,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     }
 
     /**
-     * Returnerer mockupfacade med testsett for tester som ikke endre på data i databasen og lagre testsettet
+     * Returnerer mockupfacade med testsett for tester som ikke endre pÃ¥ data i databasen og lagre testsettet
      * i databasen hvis det ikke allerede finnes.
      *
      * @return mockupfacade
@@ -119,7 +119,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     }
 
     /**
-     * Spør tjeneren om det ser ut som om readtestsettet allerede er lagret.
+     * SpÃ¸r tjeneren om det ser ut som om readtestsettet allerede er lagret.
      *
      * @param snapshotTransfers    transfer for settet
      * @return om settet finnes i databasen
@@ -166,7 +166,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
 
 
     /**
-     * Returnerer mockupfacade med testsett for tester som endrer på data og lagrer testsettet til database.
+     * Returnerer mockupfacade med testsett for tester som endrer pÃ¥ data og lagrer testsettet til database.
      * Hvert kall vil returnere en ny facade med et eget unikt datasett.
      *
      * @return mockupfacade
@@ -186,10 +186,10 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     }
 
     /**
-     * Returnerer mockupfacade med testsett for tester som endrer på data. Kun mockupbobler med valgte id-er, og de
+     * Returnerer mockupfacade med testsett for tester som endrer pÃ¥ data. Kun mockupbobler med valgte id-er, og de
      * bobler disse referer til rekursivt, lagres ned i databasen.
      *
-     * @param selector    funksjonelt interface for angivelse av id-er for ønskede bobler
+     * @param selector    funksjonelt interface for angivelse av id-er for Ã¸nskede bobler
      * @return mockupfacade
      */
     public T getWriteMockupFacadeAndSaveDateForIds(IdSelector<T> selector) {
@@ -201,7 +201,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
 
 
     /**
-     * Returnerer en tom mockupfacade for tester som ikke vil ha forhåndsgenererte data.
+     * Returnerer en tom mockupfacade for tester som ikke vil ha forhÃ¥ndsgenererte data.
      *
      * @return mockupfacade
      * @since 2.3.0
@@ -251,7 +251,7 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     }
 
     /**
-     * @return den {@link SnapshotVersion} som skal være standard i {@link MockupStore}
+     * @return den {@link SnapshotVersion} som skal vÃ¦re standard i {@link MockupStore}
      * @see #defaultSnapshotVersion
      * @since 2.3.0
      */
@@ -260,10 +260,10 @@ public abstract class AbstractMockupFacadeFactory<T extends AbstractMockupFacade
     }
 
     /**
-     * Setter standard {@link SnapshotVersion} for {@link MockupStore}. Denne metoden bør kalles fra konstruktøren og
-     * aldri mer. Det er kun en egen setter for ikke å overlesse konstruktøren med parametre.
+     * Setter standard {@link SnapshotVersion} for {@link MockupStore}. Denne metoden bÃ¸r kalles fra konstruktÃ¸ren og
+     * aldri mer. Det er kun en egen setter for ikke Ã¥ overlesse konstruktÃ¸ren med parametre.
      *
-     * @param defaultSnapshotVersion den {@link SnapshotVersion} som skal være standard i {@link MockupStore}
+     * @param defaultSnapshotVersion den {@link SnapshotVersion} som skal vÃ¦re standard i {@link MockupStore}
      * @see #defaultSnapshotVersion
      * @since 2.3.0
      */

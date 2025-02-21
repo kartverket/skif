@@ -79,7 +79,7 @@ public class SkifTestMappingDefaultTypeMapperW2DTest {
     }
 
     /**
-     * tester for å belyse 	SKIF-160
+     * tester for Ã¥ belyse 	SKIF-160
      */
     public void testMapTestC() {
         no.statkart.skif.skiftest.wsapi.domain.C source = new no.statkart.skif.skiftest.wsapi.domain.C();

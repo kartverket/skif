@@ -8,13 +8,13 @@ import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import org.testng.annotations.Test;
 
 /**
- * En baseklasse for SingleVm tester hvor noen testmetoder kjører på klienten og andre tester kjører på serveren.
+ * En baseklasse for SingleVm tester hvor noen testmetoder kjÃ¸rer pÃ¥ klienten og andre tester kjÃ¸rer pÃ¥ serveren.
  *
  * Alle testmetoder starter i klient-mode og eksekverer som normale klienttester, men i tillegg kan testmetoder
- * implementere en egene testservermetoder som avvikles på serveren. Dette gjøres ved å implementere en anonym
+ * implementere en egene testservermetoder som avvikles pÃ¥ serveren. Dette gjÃ¸res ved Ã¥ implementere en anonym
  * klasse av typen {@code RunOnServerMethod}.
  *
- * Tester som extender denne klasse er hardkodet til å kjøre i SingleVm, da rammeverket ikke støtter å sende dynamisk
+ * Tester som extender denne klasse er hardkodet til Ã¥ kjÃ¸re i SingleVm, da rammeverket ikke stÃ¸tter Ã¥ sende dynamisk
  * opprettet klasser til serveren i JEE mode via Web Service kommunikasjon.
  *
  * @author Henrik Fredholm
@@ -40,8 +40,8 @@ public class SkifMixedTestCase extends SkifTestCase {
 
         /**
          *
-         * @deprecated Bruk {@link #runInTxRequired}. Oppførslen til runInTxRequiresNew kommer muligvis til å endre seg
-         * i fremtiden mht frigivelse av låser ved commit.
+         * @deprecated Bruk {@link #runInTxRequired}. OppfÃ¸rslen til runInTxRequiresNew kommer muligvis til Ã¥ endre seg
+         * i fremtiden mht frigivelse av lÃ¥ser ved commit.
          */
         public Object runInTxRequiresNew(RunOnServerMethod method) {
             RunOnServerWithTxRequiresNewService runOnServerService = injector.getInstance(RunOnServerWithTxRequiresNewService.class);

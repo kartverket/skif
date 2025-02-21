@@ -118,10 +118,10 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
                 ImmutableSet.of(
                         new SetAaEntityComponent(
                                 getNextIdent(),
-                                "Entity som tilhører Obj " + i,
+                                "Entity som tilhÃ¸rer Obj " + i,
                                 new SetAaLevel1EntityComponent(
-                                        "Entity som tilhører Obj " + i,
-                                        new SetAaLevel2EntityComponent("Entity som tilhører Obj " + i)
+                                        "Entity som tilhÃ¸rer Obj " + i,
+                                        new SetAaLevel2EntityComponent("Entity som tilhÃ¸rer Obj " + i)
                                 )
                         )
                 )));
@@ -129,13 +129,13 @@ public class BubbleWithEntityComponentMockupFactory extends AbstractMockupFactor
 
     private SetAaEntityComponent createAaComponent(int i) {
         return new SetAaEntityComponent(
-                getNextIdent(), "Entity som tilhører Obj " + i
+                getNextIdent(), "Entity som tilhÃ¸rer Obj " + i
         );
     }
 
     private SetAaEntityComponent createAaComponent(int i, NestedEntityComponent nestedComponent) {
         SetAaEntityComponent obj = new SetAaEntityComponent(
-                getNextIdent(), "Entity som tilhører Obj " + i
+                getNextIdent(), "Entity som tilhÃ¸rer Obj " + i
         );
         obj.setNestedComponent(nestedComponent);
         return obj;

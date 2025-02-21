@@ -6,7 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Factory som brukes til å lage koblinger av type {@code K}. Factoryen bruker refelection til å finne frem til
+ * Factory som brukes til Ã¥ lage koblinger av type {@code K}. Factoryen bruker refelection til Ã¥ finne frem til
  * hvilken constructor som skal brukes. Implementasjonen antar at Koblingklassen som angis har nettopp en konstructor
  * med 2 argumenter og at den er den som skal brukes.
  *
@@ -18,7 +18,7 @@ public class DefaultKoblingFactory<R,V, K extends Kobling<R,V>> implements Kobli
 
     private Class<K> koblingClass;
 
-    /** Konstruktør som brukes for opprettelse av Kobling objekter. Må være transient siden konstruktører ikke kan serialiseres */
+    /** KonstruktÃ¸r som brukes for opprettelse av Kobling objekter. MÃ¥ vÃ¦re transient siden konstruktÃ¸rer ikke kan serialiseres */
     private transient Constructor<K> constructor;
 
     @SuppressWarnings("unchecked")
@@ -54,7 +54,7 @@ public class DefaultKoblingFactory<R,V, K extends Kobling<R,V>> implements Kobli
     }
 
     /**
-     *  Setter konstruktør ved deserialisering
+     *  Setter konstruktÃ¸r ved deserialisering
      */
     private Object readResolve() {
         constructor = findConstructor(koblingClass);

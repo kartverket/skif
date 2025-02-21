@@ -35,8 +35,8 @@ import static org.testng.Assert.assertNotSame;
 /**
  * Tester for {@link no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl}
  * <p>
- * Dette er en stand-alone-test som går direkte mot databasen uten å bruke StoreTestServer modulen. Mest naturlig at testene
- * kjøres i singleVM mode.
+ * Dette er en stand-alone-test som gÃ¥r direkte mot databasen uten Ã¥ bruke StoreTestServer modulen. Mest naturlig at testene
+ * kjÃ¸res i singleVM mode.
  *
  * @author Henrik Fredholm
  */
@@ -105,7 +105,7 @@ public class HibernatePersistenceSessionTest {
     public void testLoadObjectsForHistoric() {
         HibernatePersistenceSessionMasterImpl persistenceSession = new HibernatePersistenceSessionMasterImpl(sessionFactoryManagerBundle.getBundle().get(1));
         try {
-            // Må endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
+            // MÃ¥ endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
             persistenceSession.setSnapshot(S3);
             TestBubbleWithHistory testBubbleWithHistory_10_S3 = persistenceSession.get(TestBubbleWithHistoryId_10_S3);
             assertEquals(testBubbleWithHistory_10_S3.getId().getSnapshotVersion(), S3);
@@ -123,12 +123,12 @@ public class HibernatePersistenceSessionTest {
             TestBubbleWithHistory testBubbleWithHistory_10_OLD = persistenceSession.get(TestBubbleWithHistoryId_10_OLD);
             assertEquals(testBubbleWithHistory_10_OLD.getId().getSnapshotVersion(), StandAloneTestHelper.OLD);
 
-            // Må endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
+            // MÃ¥ endre snapshot version fra OLD til S3 siden OLD er default for valgt persistence session
             persistenceSession.setSnapshot(S3);
             TestBubbleWithHistory testBubbleWithHistory_10_S3 = persistenceSession.get(TestBubbleWithHistoryId_10_S3);
             assertEquals(testBubbleWithHistory_10_S3.getId().getSnapshotVersion(), S3);
 
-            // Må endre snapshot version tilbake fra S3 til OLD
+            // MÃ¥ endre snapshot version tilbake fra S3 til OLD
             persistenceSession.setSnapshot(StandAloneTestHelper.OLD);
             TestBubbleWithHistory testBubbleWithHistory_11_OLD = persistenceSession.get(TestBubbleWithHistoryId_11_OLD);
             assertEquals(testBubbleWithHistory_11_OLD.getId().getSnapshotVersion(), StandAloneTestHelper.OLD);
@@ -288,7 +288,7 @@ public class HibernatePersistenceSessionTest {
     }
 
     /**
-     * Tester at buildCriterias oppretter Criteria i samme iterasjonsrekkefølge som objektklassene forekommer første
+     * Tester at buildCriterias oppretter Criteria i samme iterasjonsrekkefÃ¸lge som objektklassene forekommer fÃ¸rste
      * gang i {@code ids}.
      */
     public void testDeterministiskLoadOrderForBuildCriterias() {

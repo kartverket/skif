@@ -11,7 +11,7 @@ import java.util.ListIterator;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Test av basisfunksjonalitet på {@link ComponentList}. Dette er ikke brukseksempler.
+ * Test av basisfunksjonalitet pÃ¥ {@link ComponentList}. Dette er ikke brukseksempler.
  *
  * @author Tor Egil R. Strand
  * @since 2.4.0
@@ -234,7 +234,7 @@ public class ComponentListTest {
 
         Assert.assertNull(a.getOwner(), "a.owner");
         Assert.assertNull(b.getOwner(), "b.owner");
-        // IntelliJ antar at collections oppfører seg riktig, men siden dette er vår implementasjon, så er det det vi vil sjekke
+        // IntelliJ antar at collections oppfÃ¸rer seg riktig, men siden dette er vÃ¥r implementasjon, sÃ¥ er det det vi vil sjekke
         //noinspection ConstantValue
         Assert.assertEquals(bubble.getComponents().size(), 0, "aaComponents.size");
     }

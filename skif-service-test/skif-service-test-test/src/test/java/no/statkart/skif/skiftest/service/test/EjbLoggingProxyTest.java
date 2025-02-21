@@ -60,35 +60,35 @@ public class EjbLoggingProxyTest extends SkifTestCase {
     }
 
     public void testLoggingSuccess() {
-        Assert.assertEquals(globalCallLogger.getCalls(), 0, "Kall før");
-        Assert.assertEquals(globalCallLogger.getReturns(), 0, "Returer før");
-        Assert.assertEquals(globalCallLogger.getErrors(), 0, "Feil før");
+        Assert.assertEquals(globalCallLogger.getCalls(), 0, "Kall fÃ¸r");
+        Assert.assertEquals(globalCallLogger.getReturns(), 0, "Returer fÃ¸r");
+        Assert.assertEquals(globalCallLogger.getErrors(), 0, "Feil fÃ¸r");
 
         test1Service.helloWorld("world");
 
-        Assert.assertEquals(globalCallLogger.getCalls(), 1, "Kall før");
-        Assert.assertEquals(globalCallLogger.getReturns(), 1, "Returer før");
-        Assert.assertEquals(globalCallLogger.getErrors(), 0, "Feil før");
+        Assert.assertEquals(globalCallLogger.getCalls(), 1, "Kall fÃ¸r");
+        Assert.assertEquals(globalCallLogger.getReturns(), 1, "Returer fÃ¸r");
+        Assert.assertEquals(globalCallLogger.getErrors(), 0, "Feil fÃ¸r");
     }
 
     @Test
     public void testLoggingException() {
-        Assert.assertEquals(globalCallLogger.getCalls(), 0, "Kall før");
-        Assert.assertEquals(globalCallLogger.getReturns(), 0, "Returer før");
-        Assert.assertEquals(globalCallLogger.getErrors(), 0, "Feil før");
+        Assert.assertEquals(globalCallLogger.getCalls(), 0, "Kall fÃ¸r");
+        Assert.assertEquals(globalCallLogger.getReturns(), 0, "Returer fÃ¸r");
+        Assert.assertEquals(globalCallLogger.getErrors(), 0, "Feil fÃ¸r");
 
         try {
             testExService.noTx(SimpleException.class.getName(), "abc");
-            Assert.fail("Skulle fått en exception");
+            Assert.fail("Skulle fÃ¥tt en exception");
         } catch (SimpleNonMappedException e) {
-            Assert.fail("Skulle ikke fått denne exception");
+            Assert.fail("Skulle ikke fÃ¥tt denne exception");
         } catch (Throwable t) {
             assertThat(t).describedAs("forventet exception").isInstanceOf(SimpleException.class);
         }
 
-        Assert.assertEquals(globalCallLogger.getCalls(), 1, "Kall før");
-        Assert.assertEquals(globalCallLogger.getReturns(), 0, "Returer før");
-        Assert.assertEquals(globalCallLogger.getErrors(), 1, "Feil før");
+        Assert.assertEquals(globalCallLogger.getCalls(), 1, "Kall fÃ¸r");
+        Assert.assertEquals(globalCallLogger.getReturns(), 0, "Returer fÃ¸r");
+        Assert.assertEquals(globalCallLogger.getErrors(), 1, "Feil fÃ¸r");
     }
 
     public static class TestServerCallLogger implements ServerCallLogger {
@@ -129,17 +129,17 @@ public class EjbLoggingProxyTest extends SkifTestCase {
 
         @Override
         public void logWsCall(Method method, Object[] args) {
-            Assert.fail("Testen skulle ikke ført til kall hit");
+            Assert.fail("Testen skulle ikke fÃ¸rt til kall hit");
         }
 
         @Override
         public void logWsReturn(Method method, Object[] args, Object returnValue, long time) {
-            Assert.fail("Testen skulle ikke ført til kall hit");
+            Assert.fail("Testen skulle ikke fÃ¸rt til kall hit");
         }
 
         @Override
         public void logWsError(Method method, Object[] args, Throwable t, long time) {
-            Assert.fail("Testen skulle ikke ført til kall hit");
+            Assert.fail("Testen skulle ikke fÃ¸rt til kall hit");
         }
     }
 

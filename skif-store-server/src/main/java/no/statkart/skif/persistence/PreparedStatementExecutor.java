@@ -20,15 +20,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Hjelpeklasse for kjøring av prepared statements.
+ * Hjelpeklasse for kjÃ¸ring av prepared statements.
  * <p>
- * Inndata kan typisk være en sql (med parametere) etterfulgt av en valgfri 'in elelemts clause'
+ * Inndata kan typisk vÃ¦re en sql (med parametere) etterfulgt av en valgfri 'in elelemts clause'
  * som beskriver en collection med {@link BubbleId}-er.
  * <p>
- * Ved store collections av id-er, vil denne bli brutt ned i mindre batcher slik at statementet vil bli kjørt flere ganger mot databasen.
+ * Ved store collections av id-er, vil denne bli brutt ned i mindre batcher slik at statementet vil bli kjÃ¸rt flere ganger mot databasen.
  *
  * @author Christian A. Rektorli
- * @author Leif Lislegård
+ * @author Leif LislegÃ¥rd
  * @author Tor Egil R. Strand
  * @since 2.1
  */
@@ -50,10 +50,10 @@ public abstract class PreparedStatementExecutor {
 
         int size = parameters.size();
 
-        // Ved collection størrelse på 128, 256 eller mer sliter oracle. Deler derfor query opp i biter på 64 eller mindre.
-        // For å reduserer antall prepared statements brukes størrelse på 64,32,16,15,...
+        // Ved collection stÃ¸rrelse pÃ¥ 128, 256 eller mer sliter oracle. Deler derfor query opp i biter pÃ¥ 64 eller mindre.
+        // For Ã¥ reduserer antall prepared statements brukes stÃ¸rrelse pÃ¥ 64,32,16,15,...
         for (int i = 6; i >= 0; i--) {
-            // Hvis collection har mindre enn 16 elementer tilbake hentes ut alle ved en spørring istedet for å dele opp i mindre biter
+            // Hvis collection har mindre enn 16 elementer tilbake hentes ut alle ved en spÃ¸rring istedet for Ã¥ dele opp i mindre biter
             final int length = (size > 0 && size < 16) ? size : (1 << i); //length blir aldri 0 . (1 << 0) == 1
 
             while (size >= length) {
@@ -100,10 +100,10 @@ public abstract class PreparedStatementExecutor {
 
         int size = parameters.size();
 
-        // Ved collection størrelse på 128, 256 eller mer sliter oracle. Deler derfor query opp i biter på 64 eller mindre.
-        // For å reduserer antall prepared statements brukes størrelse på 64,32,16,15,...
+        // Ved collection stÃ¸rrelse pÃ¥ 128, 256 eller mer sliter oracle. Deler derfor query opp i biter pÃ¥ 64 eller mindre.
+        // For Ã¥ reduserer antall prepared statements brukes stÃ¸rrelse pÃ¥ 64,32,16,15,...
         for (int i = 6; i >= 0; i--) {
-            // Hvis collection har mindre enn 16 elementer tilbake hentes ut alle ved en spørring istedet for å dele opp i mindre biter
+            // Hvis collection har mindre enn 16 elementer tilbake hentes ut alle ved en spÃ¸rring istedet for Ã¥ dele opp i mindre biter
             final int length = (size > 0 && size < 16) ? size : (1 << i);
 
             while (size >= length) {
@@ -198,7 +198,7 @@ public abstract class PreparedStatementExecutor {
     }
 
     /**
-     * Setter <tt><b>int</b></tt>-verdi på statement
+     * Setter <tt><b>int</b></tt>-verdi pÃ¥ statement
      *
      * @see java.sql.PreparedStatement#setInt(int, int)
      */
@@ -213,7 +213,7 @@ public abstract class PreparedStatementExecutor {
     }
 
     /**
-     * Setter <tt><b>boolean</b></tt>-verdi på statement
+     * Setter <tt><b>boolean</b></tt>-verdi pÃ¥ statement
      *
      * @see java.sql.PreparedStatement#setBoolean(int, boolean)
      */
@@ -228,7 +228,7 @@ public abstract class PreparedStatementExecutor {
     }
 
     /**
-     * Setter <tt><b>double</b></tt>-verdi på statement
+     * Setter <tt><b>double</b></tt>-verdi pÃ¥ statement
      *
      * @see java.sql.PreparedStatement#setDouble(int, double)
      */
@@ -243,7 +243,7 @@ public abstract class PreparedStatementExecutor {
     }
 
     /**
-     * Setter <tt><b>float</b></tt>-verdi på statement
+     * Setter <tt><b>float</b></tt>-verdi pÃ¥ statement
      *
      * @see java.sql.PreparedStatement#setFloat(int, float)
      */
@@ -258,7 +258,7 @@ public abstract class PreparedStatementExecutor {
     }
 
     /**
-     * Setter <tt><b>Object</b></tt>-verdi på statement
+     * Setter <tt><b>Object</b></tt>-verdi pÃ¥ statement
      *
      * @see java.sql.PreparedStatement#setObject(int, Object)
      */
@@ -273,7 +273,7 @@ public abstract class PreparedStatementExecutor {
     }
 
     /**
-     * Setter <tt><b>Date</b></tt>-verdi på statement
+     * Setter <tt><b>Date</b></tt>-verdi pÃ¥ statement
      *
      * @see java.sql.PreparedStatement#setDate(int, java.sql.Date)
      */
@@ -295,7 +295,7 @@ public abstract class PreparedStatementExecutor {
     }
 
     /**
-     * Alternativ måte å sette <tt><b>Object</b></tt>-verdi på statement
+     * Alternativ mÃ¥te Ã¥ sette <tt><b>Object</b></tt>-verdi pÃ¥ statement
      *
      * @see java.sql.PreparedStatement#setObject(int, Object, int)
      */
@@ -313,7 +313,7 @@ public abstract class PreparedStatementExecutor {
     }
 
     /**
-     * Setter <tt><b>String</b></tt>-verdi på statement
+     * Setter <tt><b>String</b></tt>-verdi pÃ¥ statement
      *
      * @see java.sql.PreparedStatement#setString(int, String)
      */

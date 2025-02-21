@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Denne factory setter opp {@code CallServiceChain} på serveren. {@code SINGLE_VM}- og {@code JEE}-mode bruker
+ * Denne factory setter opp {@code CallServiceChain} pÃ¥ serveren. {@code SINGLE_VM}- og {@code JEE}-mode bruker
  * samme {@code ServiceCallChain}.
  * @author Henrik Fredholm
  * @since 2.0

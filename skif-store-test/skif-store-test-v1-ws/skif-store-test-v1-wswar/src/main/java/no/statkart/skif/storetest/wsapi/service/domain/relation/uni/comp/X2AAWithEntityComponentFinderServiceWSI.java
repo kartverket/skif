@@ -10,7 +10,7 @@ import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2C
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 /**
- * TODO: Denne service bruker feiler parameter typer. Legg inn riktige når de er modellert i basic.xsd
+ * TODO: Denne service bruker feiler parameter typer. Legg inn riktige nÃ¥r de er modellert i basic.xsd
  *
  * @author Henrik Fredholm
  * @since 2.4
