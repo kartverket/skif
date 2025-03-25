@@ -25,7 +25,7 @@ dependencies {
 
 customizeWsdls {
     dependsOn genWsdls
-    generatedWsdlAndSchemaFiles files(tasks.genWsdls.destinationDir).asFileTree.matching {
+    generatedWsdlAndSchemaFiles files(tasks.genWsdls).asFileTree.matching {
         include '**/*.wsdl', '**/*.xsd'
         exclude '**/*Internal*ServiceWS*'
     }
