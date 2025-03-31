@@ -1,5 +1,5 @@
-version: 3.0
 organization: Eiendom
 product: Matrikkel Grunnbok og Stedsnavn
+visibility: [internal]
 repo_types: [Library]
 platforms: []
