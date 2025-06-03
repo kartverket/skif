@@ -4,6 +4,8 @@ String schemaNumber() {
     NODE_NAME.split('-')[2].toInteger() % SKIF_19C_TOTAL_SCHEMAS.toInteger()
 }
 
+def normalizedBranchName = script.BRANCH_NAME.replaceAll('/', '-')
+
 pipeline {
     agent {
         node {
@@ -11,7 +13,7 @@ pipeline {
         }
     }
     environment {
-        GRADLE_ARGS = "-Pbase_version=${env.BRANCH_NAME} -Psub_version=-build${env.BUILD_NUMBER} -Pdb_jdbc_url=$SKIF_19C_JDBC_URL -Pdb_username=JENKINS_SKIF_${schemaNumber()}"
+        GRADLE_ARGS = "-Pbase_version=${normalizedBranchName} -Psub_version=-build${env.BUILD_NUMBER} -Pdb_jdbc_url=$SKIF_19C_JDBC_URL -Pdb_username=JENKINS_SKIF_${schemaNumber()}"
 
         //for publisering til sentralt maven repo bines opp via jenkins credential (secret text)
         MAVEN_PUBLISH = credentials('MAVEN_DEPLOY_RELEASE_CANDIDATE')
