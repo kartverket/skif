@@ -10,14 +10,8 @@
 
         <property name="text"/>
 
-        <many-to-one
-                name="testBubble"
-                column="testBubbleId"
-                class="no.statkart.skif.storetest.domain.standalone.TestBubble"
-                foreign-key="fk_child_test">
-            <meta attribute="bubble-ref"/>
-        </many-to-one>
-
+        <property name="testBubbleId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.TestBubbleIdType"/>
 
     </class>
 

@@ -10,12 +10,8 @@
 
       <property name="text"/>
 
-       <many-to-one
-          name="ref"
-          column="refId"
-          class="no.statkart.skif.storetest.domain.standalone.SelfBubble">
-          <meta attribute="bubble-ref"/>
-       </many-to-one>
+       <property name="refId"
+                 type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.SelfBubbleIdType"/>
 
    </class>
 

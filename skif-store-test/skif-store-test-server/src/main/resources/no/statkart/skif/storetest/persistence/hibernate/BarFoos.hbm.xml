@@ -9,12 +9,8 @@
         </id>
 
         <property name="text"/>
-        <many-to-one
-                name="bar"
-                column="barId"
-                class="no.statkart.skif.storetest.domain.mockup.Bar">
-            <meta attribute="bubble-ref"/>
-        </many-to-one>
+        <property name="barId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.mockup.BarIdType"/>
 
         <set name="foo" table="FooForBarFoos" lazy="true" batch-size="4" access="field">
             <meta attribute="bubble-ref"/>

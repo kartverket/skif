@@ -17,12 +17,8 @@
         <property name="nr"/>
         <property name="text"/>
 
-        <many-to-one
-                name="someBB"
-                column="someBBId"
-                class="no.statkart.skif.storetest.domain.relation.uni.direct.X1BBOne">
-            <meta attribute="bubble-ref"/>
-        </many-to-one>
+        <property name="someBBId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.direct.X1BBOneIdType"/>
 
         <set name="someCCs" lazy="true" batch-size="256">
             <meta attribute="bubble-ref"/>

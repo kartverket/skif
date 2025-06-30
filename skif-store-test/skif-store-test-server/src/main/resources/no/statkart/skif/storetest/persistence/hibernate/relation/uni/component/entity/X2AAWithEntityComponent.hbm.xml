@@ -45,12 +45,8 @@
 
         <property name="text"/>
 
-        <many-to-one
-                name="someBB"
-                column="someBBId"
-                class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2BBOne">
-            <meta attribute="bubble-ref"/>
-        </many-to-one>
+        <property name="someBBId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.component.entity.X2BBOneIdType"/>
 
         <!--suppress HibernateMappingDomInspection -->
         <set name="someCCs" lazy="true" batch-size="256">
@@ -80,12 +76,8 @@
 
         <property name="text"/>
 
-        <many-to-one
-                name="role1BBOne"
-                column="role1BBOneId"
-                class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2BBOne">
-            <meta attribute="bubble-ref"/>
-        </many-to-one>
+        <property name="role1BBOneId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.component.entity.X2BBOneIdType"/>
 
     </class>
 

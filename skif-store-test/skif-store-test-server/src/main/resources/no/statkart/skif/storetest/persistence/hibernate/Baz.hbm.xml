@@ -9,12 +9,8 @@
       </id>
 
       <property name="text"/>
-      <many-to-one
-          name="foo"
-          column="fooId"
-          class="no.statkart.skif.storetest.domain.mockup.Foo">
-          <meta attribute="bubble-ref"/>
-       </many-to-one>
+       <property name="fooId"
+                 type="no.statkart.skif.storetest.persistence.hibernate.type.mockup.FooIdType"/>
 
        <property name="testAEnumKodeId" type="Demo_AEnumKodeIdType" not-null="true"/>
 
