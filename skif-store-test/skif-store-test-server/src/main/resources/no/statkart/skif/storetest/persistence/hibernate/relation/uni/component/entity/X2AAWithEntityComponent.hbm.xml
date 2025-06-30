@@ -48,11 +48,9 @@
         <property name="someBBId"
                   type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.component.entity.X2BBOneIdType"/>
 
-        <!--suppress HibernateMappingDomInspection -->
-        <set name="someCCs" lazy="true" batch-size="256">
-            <meta attribute="bubble-ref"/>
+        <set name="someCCsIdsSet" lazy="true" batch-size="256">
             <key column="ownerId"/>
-            <one-to-many class="no.statkart.skif.storetest.domain.relation.uni.component.entity.X2CCMany"/>
+            <element type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.component.entity.X2CCManyIdType"/>
         </set>
 
     </class>

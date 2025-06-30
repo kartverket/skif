@@ -23,29 +23,25 @@
                 </param>
             </type>
         </property>
-        <set name="children1" access="field" lazy="true" batch-size="256">
-            <meta attribute="bubble-ref"/>
+        <set name="children1Ids" access="field" lazy="true" batch-size="256">
             <key column="parent1Id"/>
-            <one-to-many  class="no.statkart.skif.storetest.domain.standalone.ChildBubbleEmptyColOptimizer"/>
+            <element type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ChildBubbleEmptyColOptimizerIdType"/>
         </set>
-        <set name="children2" access="field" lazy="true" batch-size="256">
-            <meta attribute="bubble-ref"/>
+        <set name="children2Ids" access="field" lazy="true" batch-size="256">
             <key column="parent2Id"/>
-            <one-to-many  class="no.statkart.skif.storetest.domain.standalone.ChildBubbleEmptyColOptimizer"/>
+            <element type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ChildBubbleEmptyColOptimizerIdType"/>
         </set>
-        <set name="children3" access="field" lazy="true" batch-size="256">
-            <meta attribute="bubble-ref"/>
+        <set name="children3Ids" access="field" lazy="true" batch-size="256">
             <key column="parent3Id"/>
-            <one-to-many  class="no.statkart.skif.storetest.domain.standalone.ChildBubbleEmptyColOptimizer"/>
+            <element type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ChildBubbleEmptyColOptimizerIdType"/>
         </set>
         <property name="text"/>
 
 
         <subclass name="no.statkart.skif.storetest.domain.standalone.ParentBubbleEmptyColOptimizerSub1" discriminator-value="ParentBubbleEmptyColOptimizerSub1" lazy="true">
-            <set name="children4" access="field" lazy="true" batch-size="256">
-                <meta attribute="bubble-ref"/>
+            <set name="children4Ids" access="field" lazy="true" batch-size="256">
                 <key column="parent4Id"/>
-                <one-to-many  class="no.statkart.skif.storetest.domain.standalone.ChildBubbleEmptyColOptimizer"/>
+                <element type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ChildBubbleEmptyColOptimizerIdType"/>
             </set>
         </subclass>
     </class>
