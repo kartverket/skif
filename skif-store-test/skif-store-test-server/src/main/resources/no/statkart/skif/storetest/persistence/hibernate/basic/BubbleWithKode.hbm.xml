@@ -13,7 +13,7 @@
         <property name="testAEnumKodeId" type="Demo_AEnumKodeIdType" not-null="true"/>
 
         <property name="testC2DbKodeId"
-                  type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.CDbKodeIdType"/>
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.C2DbKodeIdType"/>
 
     </class>
 </hibernate-mapping>
