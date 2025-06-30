@@ -10,18 +10,10 @@
 
         <property name="husnr"/>
         <property name="bokstav"/>
-        <many-to-one
-           name="foo"
-           column="fooId"
-           class="no.statkart.skif.storetest.domain.mockup.Foo">
-           <meta attribute="bubble-ref"/>
-        </many-to-one>
-        <many-to-one
-           name="baz"
-           column="bazId"
-           class="no.statkart.skif.storetest.domain.demo.Baz">
-           <meta attribute="bubble-ref"/>
-        </many-to-one>
+        <property name="fooId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.mockup.FooIdType"/>
+        <property name="bazId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.BazIdType"/>
 
     </class>
 

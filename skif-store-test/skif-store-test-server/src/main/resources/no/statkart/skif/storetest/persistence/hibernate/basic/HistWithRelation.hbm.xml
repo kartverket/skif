@@ -18,12 +18,8 @@
         <property name="text"/>
         <property name="testSetNumber"/>
 
-        <many-to-one
-                name="histSimple"
-                column="histSimpleId"
-                class="no.statkart.skif.storetest.domain.basic.HistSimple">
-            <meta attribute="bubble-ref"/>
-        </many-to-one>
+        <property name="histSimpleId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.basic.HistSimpleIdType"/>
 
     </class>
 </hibernate-mapping>

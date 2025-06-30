@@ -22,13 +22,8 @@
        </id>
        <many-to-one  name="parentBubble" class="no.statkart.skif.storetest.domain.standalone.ParentBubble"
                     column="parentBubbleId"/>
-       <many-to-one
-             name="childBubble"
-             column="childBubbleId"
-             class="no.statkart.skif.storetest.domain.standalone.ChildBubble"
-             foreign-key="FK_CHILDFORPARENT_CHILD">
-          <meta attribute="bubble-ref"/>
-       </many-to-one>
+        <property name="childBubbleId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ChildBubbleIdType"/>
     </class>
 
 
