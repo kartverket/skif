@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping default-cascade="none" default-lazy="false">
 
@@ -12,12 +13,10 @@
         <property name="barId"
                   type="no.statkart.skif.storetest.persistence.hibernate.type.mockup.BarIdType"/>
 
-        <set name="foo" table="FooForBarFoos" lazy="true" batch-size="4" access="field">
-            <meta attribute="bubble-ref"/>
+        <set name="fooIds" table="FooForBarFoos" lazy="true" batch-size="4" access="field">
             <key column="barFoosId"/>
-            <many-to-many
-                    class="no.statkart.skif.storetest.domain.mockup.Foo"
-                    column="fooId"/>
+            <element column="fooId"
+                     type="no.statkart.skif.storetest.persistence.hibernate.type.mockup.FooIdType"/>
         </set>
     </class>
 

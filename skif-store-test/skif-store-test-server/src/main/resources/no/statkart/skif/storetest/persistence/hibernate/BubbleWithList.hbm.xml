@@ -10,13 +10,10 @@
 
         <property name="text"/>
 
-        <set name="otherBWL" table="BWLForBWL" lazy="true" batch-size="256" access="field">
-            <meta attribute="bubble-ref"/>
+        <set name="otherBWLIds" table="BWLForBWL" lazy="true" batch-size="256" access="field">
             <key column="underBWLId"/>
-            <many-to-many
-                    class="no.statkart.skif.storetest.domain.demo.BubbleWithList"
-                    column="bwlId">
-            </many-to-many>
+            <element column="bwlId"
+                     type="no.statkart.skif.storetest.persistence.hibernate.type.BubbleWithListIdType"/>
         </set>
 
 
