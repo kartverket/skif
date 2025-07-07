@@ -920,7 +920,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
             Session session;
 
             public Object run() {
-                Long count = (Long) session.createQuery(String.format("select count(*) from %s where id=:id", className))
+                Long count = session.createQuery(String.format("select count(*) from %s where id=:id", className), Long.class)
                         .setParameter("id", id)
                         .uniqueResult();
                 return count > 0;
