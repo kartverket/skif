@@ -1,26 +1,26 @@
 package no.statkart.skif.standalone.hibernate;
 
+import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
-import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.standalone.TestEntity;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.internal.SessionImpl;
+import org.hibernate.query.Query;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.Properties;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Tester opprettelse og frigivelse av Hibernate SessionFactory og Session via HibernateSessionFactoryBuilder.
@@ -79,11 +79,10 @@ public class HibernateSessionFactoryBuilderTest {
         Properties hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm() ;
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null);
         assertNotNull(sf);
-        Session s = sf.openSession();
-        Query query = s.createQuery("from TestEntity");
-        List list = query.list();
-        assertNotNull(list);
-        s.close();
+        try (Session s = sf.openSession()) {
+            Query<?> query = s.createQuery("from TestEntity");
+            assertNotNull(query.list());
+        }
         sf.close();
     }
 
