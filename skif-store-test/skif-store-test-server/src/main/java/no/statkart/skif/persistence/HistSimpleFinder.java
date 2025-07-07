@@ -1,8 +1,7 @@
 package no.statkart.skif.persistence;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import jakarta.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.jdbc.ConnectionSelector;
 import no.statkart.skif.store.SnapshotVersion;
@@ -11,15 +10,14 @@ import no.statkart.skif.store.persistence.SessionSelector;
 import no.statkart.skif.storetest.domain.basic.HistSimple;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
-import jakarta.inject.Provider;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +32,7 @@ public class HistSimpleFinder {
     private Provider<SessionSelector> sessionSelectorProvider;
 
     public Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingJDBC(String text, int testsetNummer, SnapshotVersion snapshotVersion) {
-        Set<HistSimpleId<?>> histSimpleIds = Sets.newHashSet();
+        Set<HistSimpleId<?>> histSimpleIds = new HashSet<>();
 
         try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
             Connection connection = connectionSelector.get(snapshotVersion);
@@ -54,10 +52,11 @@ public class HistSimpleFinder {
 
     public Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingHibernate(String text, int testsetNummer, SnapshotVersion snapshotVersion) {
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
-            Session session = sessionSelector.get(snapshotVersion);
-            Query query = session.createQuery("from HistSimple where text = :text and testsetNumber = :testsetNumber");
-            List<HistSimple> histSimples = query.setString("text", text).setInteger("testsetNumber", testsetNummer).list();
-            Set<HistSimpleId<?>> histSimpleIds = Sets.newHashSetWithExpectedSize(histSimples.size());
+            List<HistSimple> histSimples = sessionSelector.get(snapshotVersion)
+                .createQuery("from HistSimple where text = :text and testsetNumber = :testsetNumber", HistSimple.class)
+                .setParameter("text", text).setParameter("testsetNumber", testsetNummer)
+                .list();
+            Set<HistSimpleId<?>> histSimpleIds = new HashSet<>(histSimples.size());
             for (HistSimple histSimple : histSimples) {
                 histSimpleIds.add(histSimple.getId());
             }
@@ -68,7 +67,7 @@ public class HistSimpleFinder {
     }
 
     public List<HistSimpleId<?>> findHistSimpleIdsAliveAtSnapshotUsingOracleArray(Collection<HistSimpleId<?>> histSimpleIds, SnapshotVersion snapshotVersion) {
-        List<HistSimpleId<?>> result = Lists.newArrayListWithExpectedSize(histSimpleIds.size());
+        List<HistSimpleId<?>> result = new ArrayList<>(histSimpleIds.size());
 
         try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
             final Connection connection = connectionSelector.get(snapshotVersion);

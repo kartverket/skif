@@ -160,7 +160,10 @@ public class StandAloneTestHelper {
     public static int countInDatabase(PersistenceSessionForSnapshot persistenceSessionForSnapshot, TestBubbleId<TestBubble> bubbleId) {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
-            return hibernateSession.createQuery("select id from TestBubble where id=:id").setLong("id", bubbleId.getValue()).list().size();
+            return hibernateSession.createQuery("select id from TestBubble where id=:id")
+                .setParameter("id", bubbleId.getValue())
+                .list()
+                .size();
         } finally {
             persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
         }
@@ -170,7 +173,10 @@ public class StandAloneTestHelper {
     public static int countInDatabase(PersistenceSessionForSnapshot persistenceSessionForSnapshot, SimpleId<?> bubbleId) {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
-            return hibernateSession.createQuery("select id from Simple where id=:id").setLong("id", bubbleId.getValue()).list().size();
+            return hibernateSession.createQuery("select id from Simple where id=:id")
+                .setParameter("id", bubbleId.getValue())
+                .list()
+                .size();
         } finally {
             persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
         }

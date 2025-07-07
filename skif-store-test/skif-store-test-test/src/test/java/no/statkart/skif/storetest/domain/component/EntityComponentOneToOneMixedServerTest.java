@@ -27,7 +27,11 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.failBecauseExceptionWasNotThrown;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tester bruk av EntityComponent på Serveren for attached og detached state for one-to-one mappings
@@ -917,7 +921,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
 
             public Object run() {
                 Long count = (Long) session.createQuery(String.format("select count(*) from %s where id=:id", className))
-                        .setLong("id", id)
+                        .setParameter("id", id)
                         .uniqueResult();
                 return count > 0;
             }
