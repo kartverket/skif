@@ -17,8 +17,6 @@ import org.hibernate.type.CustomType;
 import org.hibernate.type.StandardBasicTypes;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -120,7 +118,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
     public Map<String, Set<X1AAId<?>>> findX1AAIdsForNonUniqueOnX1AA(Collection<String> textValues) {
         if (textValues.isEmpty()) return emptyMap();
 
-        Map<String, Set<X1AAId<?>>> result = SkifUtil.newHashMapWithNullValues(textValues);
+        Map<String, Set<X1AAId<?>>> result = SkifUtil.newHashMapWithEmptySetValues(textValues);
 
         SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
