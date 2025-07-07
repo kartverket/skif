@@ -64,7 +64,7 @@ public class StoreTest1ServiceImpl implements StoreTest1Service {
     @Override
     public void clear() {
         Session session = getSession();
-        session.createSQLQuery("delete from TestMap").executeUpdate();
+        session.createNativeQuery("delete from TestMap").executeUpdate();
     }
 
     @Override

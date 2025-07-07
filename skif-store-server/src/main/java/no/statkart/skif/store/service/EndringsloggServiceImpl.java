@@ -25,9 +25,9 @@ import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.store.persistence.SessionSelector;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.query.NativeQuery;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -218,7 +218,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
 
             String sql = "select count(id) from (select * from (select t.id from " + tableName + " t where t.id>:id" + discriminatorSql + ") where rownum <=:antall)";
 
-            Query query = session.createSQLQuery(sql)
+            NativeQuery<?> query = session.createNativeQuery(sql)
                     .setParameter("id", 0L)
                     .setParameter("antall", antall);
 
@@ -242,7 +242,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
 
             String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))" + discriminatorSql;
 
-            Query query = session.createSQLQuery(sql)
+            NativeQuery<?> query = session.createNativeQuery(sql)
                     .setParameter("ids", ids, new OracleLongBubbleIdArrayCustomType());
 
             Kontroll result = new Kontroll();

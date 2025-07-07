@@ -21,7 +21,7 @@ public class SnapshotVersionSessionHelper {
      */
     public static SnapshotVersion getSnapshotVersion(Session session) {
         try {
-            final NativeQuery<?> sqlQuery = session.createSQLQuery("select snapshot_time.get_t() as t from dual");
+            final NativeQuery<?> sqlQuery = session.createNativeQuery("select snapshot_time.get_t() as t from dual");
             sqlQuery.addScalar("t", TIMESTAMP);
             return SnapshotVersion.createInstance((Timestamp) sqlQuery.uniqueResult());
         } catch (SQLGrammarException e) {
