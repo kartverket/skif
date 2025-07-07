@@ -218,12 +218,12 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
 
             String sql = "select count(id) from (select * from (select t.id from " + tableName + " t where t.id>:id" + discriminatorSql + ") where rownum <=:antall)";
 
-            NativeQuery<Long> query = session.createNativeQuery(sql, Long.class)
-                    .setParameter("id", 0L)
-                    .setParameter("antall", antall);
+            NativeQuery<?> query = session.createNativeQuery(sql)
+                .setParameter("id", 0L)
+                .setParameter("antall", antall);
 
             Kontroll result = new Kontroll();
-            result.setAntall(query.uniqueResult());
+            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
