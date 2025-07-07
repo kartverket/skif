@@ -161,7 +161,7 @@ public class StandAloneTestHelper {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
             return hibernateSession.createQuery("select id from TestBubble where id=:id")
-                .setParameter("id", bubbleId.getValue())
+                .setParameter("id", bubbleId)
                 .list()
                 .size();
         } finally {
@@ -174,7 +174,7 @@ public class StandAloneTestHelper {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
             return hibernateSession.createQuery("select id from Simple where id=:id")
-                .setParameter("id", bubbleId.getValue())
+                .setParameter("id", bubbleId)
                 .list()
                 .size();
         } finally {

@@ -750,7 +750,7 @@ public class StoreSessionServerTest {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
             TestBubble testBubble = hibernateSession.createQuery("from TestBubble where id=:id", TestBubble.class)
-                .setParameter("id", TestBubbleId_1.getValue())
+                .setParameter("id", TestBubbleId_1)
                 .uniqueResult();
             return testBubble.getId();
 
