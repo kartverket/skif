@@ -54,7 +54,8 @@ public class HistSimpleFinder {
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             List<HistSimple> histSimples = sessionSelector.get(snapshotVersion)
                 .createQuery("from HistSimple where text = :text and testsetNumber = :testsetNumber", HistSimple.class)
-                .setParameter("text", text).setParameter("testsetNumber", testsetNummer)
+                .setParameter("text", text)
+                .setParameter("testsetNumber", testsetNummer)
                 .list();
             Set<HistSimpleId<?>> histSimpleIds = new HashSet<>(histSimples.size());
             for (HistSimple histSimple : histSimples) {
