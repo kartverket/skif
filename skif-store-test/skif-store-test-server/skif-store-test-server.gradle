@@ -20,11 +20,5 @@ dependencies {
     testImplementation libs.c3p0
     // internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
-    if (System.getenv('ORA-DEBUG') == 'true') {
-        compileOnly libs.ojdbcg
-        testImplementation(libs.ojdbcg)
-    } else {
-        compileOnly libs.ojdbc
-        testImplementation(libs.ojdbc)
-    }
+    testImplementation libs.ojdbc
 }

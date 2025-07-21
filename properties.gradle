@@ -6,7 +6,6 @@ def defaultProperties = [
 
         LOCALHOSTNAME         : java.net.InetAddress.localHost.canonicalHostName,
         MAVEN_LOCAL_FOR_PROJECT : Boolean.parseBoolean(System.getenv('MAVEN_LOCAL')) || Boolean.parseBoolean(System.getenv('MAVEN_LOCAL_FOR_PROJECT')),
-        ORA_DEBUG             : System.getenv('ORA_DEBUG') == 'true',
 
         'skif.server_username': '<not set>',
         'skif.server_password': '<not set>',
