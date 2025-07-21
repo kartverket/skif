@@ -13,17 +13,13 @@ dependencies {
 
     implementation libs.jodatime
     implementation libs.bundles.hibernate
+    implementation libs.ojdbc //provided
 
     compileOnly libs.openejb.core
 
     testImplementation libs.bundles.jee
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
-    if (System.getenv('ORA-DEBUG') == 'true') {
-        implementation libs.ojdbcg //provided
-    } else {
-        implementation libs.ojdbc //provided
-    }
 }
 
 publishing {
