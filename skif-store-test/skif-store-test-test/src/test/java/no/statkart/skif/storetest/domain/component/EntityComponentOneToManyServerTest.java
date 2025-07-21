@@ -9,7 +9,18 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.UnitOfWork;
-import no.statkart.skif.storetest.domain.component.entity.*;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponentId;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.Level1CompositeComponentWithEntity;
+import no.statkart.skif.storetest.domain.component.entity.Level1EntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.Level2CompositeComponentWithEntity;
+import no.statkart.skif.storetest.domain.component.entity.Level2EntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.Level2SetEntityInCompositeComponent;
+import no.statkart.skif.storetest.domain.component.entity.NestedEntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.SetAaEntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.SetAaLevel1EntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.SetAaLevel2EntityComponent;
 import no.statkart.skif.storetest.mockup.BubbleWithEntityComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
@@ -23,7 +34,11 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.extractProperty;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tester bruk av EntityComponent på Serveren for attached og detached state for one-to-many mappings
@@ -496,8 +511,8 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
             Session session;
 
             public Object run() {
-                Long count = (Long) session.createQuery(String.format("select count(*) from %s where id=:id", className))
-                        .setLong("id", id)
+                Long count = session.createQuery(String.format("select count(*) from %s where id=:id", className), Long.class)
+                        .setParameter("id", id)
                         .uniqueResult();
                 return count > 0;
             }

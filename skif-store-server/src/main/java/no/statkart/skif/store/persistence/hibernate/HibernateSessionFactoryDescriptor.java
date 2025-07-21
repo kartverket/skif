@@ -62,7 +62,7 @@ public class HibernateSessionFactoryDescriptor {
                                           " (database session will NOT be updated as this has been disabled for this descriptor)" ) );
         }
         if (setSnapshotOnSession) {
-            session.createSQLQuery("select snapshot_time.set_t(:timestamp) as result from dual")
+            session.createNativeQuery("select snapshot_time.set_t(:timestamp) as result from dual")
                     .addScalar("result", new CustomType(new OracleLocalTimestamp()))
                     .setParameter("timestamp", snapshotVersion.getTimestamp(), new CustomType(new OracleLocalTimestamp()))
                     .uniqueResult();

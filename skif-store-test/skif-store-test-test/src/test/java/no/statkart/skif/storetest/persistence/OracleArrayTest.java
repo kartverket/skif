@@ -16,6 +16,7 @@ import no.statkart.skif.util.OracleUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
+import org.hibernate.query.NativeQuery;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,12 +54,11 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 
     public void testOracleLongBubbleIdArrayCustomType() {
         Collection<SimpleId<?>> eierIds = getSimpleIds();
-        SQLQuery query = session.
-                createSQLQuery("select {s.*} from Simple {s} where s.id in (select * from table(:idValues))");
-        query.addEntity("s", Simple.class);
-        query.setParameter("idValues", eierIds, new OracleLongBubbleIdArrayCustomType());
-        List<Simple> eiers = query.list();
-        assertThat(eiers).hasSize(1);
+        NativeQuery<Simple> query = session
+            .createNativeQuery("select s.* from Simple s where s.id in (select * from table(:idValues))", Simple.class)
+            .setParameter("idValues", eierIds, new OracleLongBubbleIdArrayCustomType());
+
+        assertThat(query.list()).hasSize(1);
     }
 
 

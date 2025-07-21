@@ -326,7 +326,7 @@ public class StoreUpdateComponentTest extends StoreTestMixedTestCase {
 //                store.flush();
 //
 //                final Session session = store.getInstance(Session.class);
-//                final BigDecimal count = (BigDecimal) session.createSQLQuery("select count(*) from childforparrent where parrentbubbleId=:parentId").setParameter("parentId", parentBubble.getId()).uniqueResult();
+//                final BigDecimal count = (BigDecimal) session.createNativeQuery("select count(*) from childforparrent where parrentbubbleId=:parentId").setParameter("parentId", parentBubble.getId()).uniqueResult();
 //                assertEquals(count.intValue(), 0, "relasjon ble ikke slettet");
 //                return null;
 //            }

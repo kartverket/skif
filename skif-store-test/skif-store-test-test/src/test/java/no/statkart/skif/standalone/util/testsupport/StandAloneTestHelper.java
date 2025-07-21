@@ -142,15 +142,15 @@ public class StandAloneTestHelper {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
             Transaction transaction = hibernateSession.beginTransaction();
 
-            hibernateSession.createSQLQuery("delete from TestBubble where id>100").executeUpdate();
-            hibernateSession.createSQLQuery("delete from TestBubbleWithHistory_H where id>100").executeUpdate();
-            hibernateSession.createSQLQuery("delete from SelfBubble where id>100").executeUpdate();
-            hibernateSession.createSQLQuery("delete from FilteredBubble where id>100").executeUpdate();
-            hibernateSession.createSQLQuery("delete from ChildForParent where id>100").executeUpdate();
-            hibernateSession.createSQLQuery("delete from ParentBubble where id>100").executeUpdate();
-            hibernateSession.createSQLQuery("delete from ChildBubble where id>100").executeUpdate();
-            hibernateSession.createSQLQuery("delete from ParentBubbleEmptyColOptimizer where id>100").executeUpdate();
-            hibernateSession.createSQLQuery("delete from ChildBubbleEmptyColOptimizer where id>100").executeUpdate();
+            hibernateSession.createNativeQuery("delete from TestBubble where id>100").executeUpdate();
+            hibernateSession.createNativeQuery("delete from TestBubbleWithHistory_H where id>100").executeUpdate();
+            hibernateSession.createNativeQuery("delete from SelfBubble where id>100").executeUpdate();
+            hibernateSession.createNativeQuery("delete from FilteredBubble where id>100").executeUpdate();
+            hibernateSession.createNativeQuery("delete from ChildForParent where id>100").executeUpdate();
+            hibernateSession.createNativeQuery("delete from ParentBubble where id>100").executeUpdate();
+            hibernateSession.createNativeQuery("delete from ChildBubble where id>100").executeUpdate();
+            hibernateSession.createNativeQuery("delete from ParentBubbleEmptyColOptimizer where id>100").executeUpdate();
+            hibernateSession.createNativeQuery("delete from ChildBubbleEmptyColOptimizer where id>100").executeUpdate();
             transaction.commit();
         } finally {
             persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
@@ -160,7 +160,10 @@ public class StandAloneTestHelper {
     public static int countInDatabase(PersistenceSessionForSnapshot persistenceSessionForSnapshot, TestBubbleId<TestBubble> bubbleId) {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
-            return hibernateSession.createQuery("select id from TestBubble where id=:id").setLong("id", bubbleId.getValue()).list().size();
+            return hibernateSession.createQuery("select id from TestBubble where id=:id")
+                .setParameter("id", bubbleId)
+                .list()
+                .size();
         } finally {
             persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
         }
@@ -170,7 +173,10 @@ public class StandAloneTestHelper {
     public static int countInDatabase(PersistenceSessionForSnapshot persistenceSessionForSnapshot, SimpleId<?> bubbleId) {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
-            return hibernateSession.createQuery("select id from Simple where id=:id").setLong("id", bubbleId.getValue()).list().size();
+            return hibernateSession.createQuery("select id from Simple where id=:id")
+                .setParameter("id", bubbleId)
+                .list()
+                .size();
         } finally {
             persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).releaseSession();
         }
