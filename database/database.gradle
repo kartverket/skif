@@ -12,10 +12,8 @@ def filterProperties = [
         db_tablespace: db_username,
         db_dataroot_dir: db_dataroot_dir,
 ]
-
 configureDatabasePlugin {
-    useDrivers libraries.ojdbc
-
+    useDrivers(libs.ojdbc.get().toString())
     toolset(name: '', type: 'oracle', prefix: '') {
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
         sqlTask('createSchema', sqlFile: 'src/main/sql/oracle/schema/CreateSchema.sql') { mustRunAfter 'purge', 'historikkUpdatePackageSnapshotTime', 'saCreateTablespace' }

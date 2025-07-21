@@ -44,7 +44,15 @@ allprojects {
     }
 }
 
-apply from: file('libraries.gradle')
+allprojects {
+    configurations.configureEach {
+        resolutionStrategy {
+            dependencySubstitution {
+                substitute(module('commons-logging:commons-logging')).because('SKIF bruker SLF4J').using(module(libs.jcl.to.slf4j.get().toString()))
+            }
+        }
+    }
+}
 
 subprojects { Project project ->
     apply plugin: 'project-report'
@@ -85,11 +93,13 @@ subprojects { Project project ->
     plugins.withType(JavaPlugin) {
         // Avhengigheter som trengs for testing (riktignok ikke alle overalt)
         project.dependencies {
-            testImplementation libraries.testng
-            testImplementation libraries.mockito
-            testImplementation libraries.assertj
+            testImplementation (libs.testng){
+                exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
+            }
+            testImplementation libs.mockito
+            testImplementation libs.assertj
 
-            compileOnly libraries.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
+            compileOnly libs.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
         }
 
         project.java {

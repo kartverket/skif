@@ -9,7 +9,7 @@ dependencies {
     implementation project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wscompat')
     implementation project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wswar')
     implementation project(':skif-wsversioning:skif-wsversioning-server')
-    implementation libraries.jee
+    implementation libs.bundles.jee
 
     testImplementation project(':skif-testsupport-common')
     testRuntimeOnly project(':skif-config')

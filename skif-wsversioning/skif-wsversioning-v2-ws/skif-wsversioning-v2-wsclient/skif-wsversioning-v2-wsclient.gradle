@@ -9,9 +9,9 @@ configurations {
 
 dependencies {
     wsdls project(path: ':skif-wsversioning:skif-wsversioning-v2-ws:skif-wsversioning-v2-wswar', configuration: 'wsdls')
-    jaxws libraries.jaxws_tools
+    jaxws libs.jaxws.tools
 
-    implementation libraries.jaxws_rt
+    implementation libs.bundles.jaxws.rt
 }
 
 // https://discuss.gradle.org/t/right-way-to-copy-contents-from-dependency-archives/7449/13

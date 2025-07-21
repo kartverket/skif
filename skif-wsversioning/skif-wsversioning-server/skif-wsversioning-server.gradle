@@ -10,11 +10,11 @@ dependencies {
     api project(':skif-wsversioning:skif-wsversioning-api')
     api project(':skif-store-server')
 
-    compileOnly libraries.jee
+    compileOnly libs.bundles.jee
 
     testImplementation project(':skif-testsupport-common')
 
     // internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
-    testImplementation libraries.jee
+    testImplementation libs.bundles.jee
 }
