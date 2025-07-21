@@ -4,6 +4,6 @@ plugins {
 
 dependencies {
     implementation project(':skif-wsversioning:skif-wsversioning-server')
-    compileOnly libraries.jee
-    testImplementation libraries.jee
+    compileOnly libs.bundles.jee
+    testImplementation libs.bundles.jee
 }

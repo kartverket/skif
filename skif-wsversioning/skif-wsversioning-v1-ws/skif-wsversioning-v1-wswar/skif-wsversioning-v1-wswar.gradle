@@ -14,10 +14,10 @@ dependencies {
     implementation project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsmapping')
 
     implementation project(':skif-wsversioning:skif-wsversioning-server')
-    compileOnly libraries.jee
-    compileOnly libraries.jaxws_api
+    compileOnly libs.bundles.jee
+    compileOnly libs.jaxws.api
 
-    jaxws libraries.jaxws_tools
+    jaxws libs.jaxws.tools
 }
 
 war {

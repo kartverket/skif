@@ -7,9 +7,8 @@ dependencies {
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsmapping')
     implementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsclient')
 
-    implementation libraries.jee
-    implementation libraries.c3p0
-    implementation libraries.jdbc
+    implementation libs.bundles.jee
+    implementation libs.c3p0
 
     testImplementation project(':skif-testsupport-common')
     testImplementation project(':skif-service-test:skif-service-test-server') //trenger denne avhengighet for testing av servicer
@@ -18,5 +17,11 @@ dependencies {
     //internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
 
-    testImplementation libraries.jaxws_rt
+    testImplementation libs.bundles.jaxws.rt
+    if (System.getenv('ORA-DEBUG') == 'true') {
+        implementation libs.ojdbcg
+    } else {
+        implementation libs.ojdbc
+    }
+
 }

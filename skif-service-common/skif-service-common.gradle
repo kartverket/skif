@@ -10,20 +10,20 @@ configurations {
 }
 
 dependencies {
-    api libraries.slf4j_api
-    api libraries.jsr305
-    api libraries.guice
-    api libraries.guava //pga TypeToken
+    api libs.slf4j.api
+    api libs.jsr305
+    api libs.guice
+    api libs.guava //pga TypeToken
 
-    implementation libraries.guava
-    implementation libraries.jodatime
-    implementation libraries.commons_pool
-    compileOnly libraries.jaxws_api
-    compileOnly libraries.jws_api
+    implementation libs.guava
+    implementation libs.jodatime
+    implementation libs.commons.pool
+    compileOnly libs.jaxws.api
+    compileOnly libs.jws.api
 
-    testImplementation libraries.jaxws_rt
-    testImplementation libraries.reflections
-    testImplementation libraries.logback_classic
+    testImplementation libs.bundles.jaxws.rt
+    testImplementation libs.reflections
+    testImplementation libs.logback.classic
 }
 
 task testJar(type: Jar) {
@@ -65,4 +65,3 @@ def assertDependencies = tasks.register("assertDependencies") {
     }
 }
 test.dependsOn assertDependencies //kjøres som en test
-

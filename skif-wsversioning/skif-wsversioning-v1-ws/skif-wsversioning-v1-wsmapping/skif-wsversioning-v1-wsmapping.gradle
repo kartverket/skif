@@ -6,7 +6,7 @@ dependencies {
     api project(':skif-wsversioning:skif-wsversioning-api')
     compileOnly project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsschema')
     // Trengs for Java 11 får å unngå 'warning: unknown enum constant XmlAccessType.FIELD'
-    api libraries.jaxb_api
+    api libs.jaxb.api
 
     testImplementation project(':skif-testsupport-common')
     testImplementation project(':skif-wsversioning:skif-wsversioning-v1-ws:skif-wsversioning-v1-wsschema')

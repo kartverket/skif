@@ -7,11 +7,11 @@ dependencies {
     compileOnly project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
 
     // Trengs for Java 11 får å unngå 'warning: unknown enum constant XmlAccessType.FIELD'
-    api libraries.jaxb_api
+    api libs.jaxb.api
 
     testImplementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
     testImplementation project(':skif-testsupport-common')
-    testImplementation libraries.unitils //optional library for testing
+    testImplementation libs.unitils //optional library for testing
 
     //internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')

@@ -6,15 +6,20 @@ dependencies {
     api project(':skif-service-server')
     api project(':skif-service-test:skif-service-test-api')
 
-    compileOnly libraries.jee
-    compileOnly libraries.c3p0
-    compileOnly libraries.jdbc
-
+    compileOnly libs.bundles.jee
+    compileOnly libs.c3p0
     testImplementation project(':skif-testsupport-common')
 
     //internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
-    testImplementation libraries.jee
-    testImplementation libraries.c3p0
-    testImplementation libraries.jdbc
+    testImplementation libs.bundles.jee
+    testImplementation libs.c3p0
+    if (System.getenv('ORA-DEBUG') == 'true') {
+        compileOnly libs.ojdbcg
+        testImplementation(libs.ojdbcg)
+
+    } else {
+        compileOnly libs.ojdbc
+        testImplementation(libs.ojdbc)
+    }
 }

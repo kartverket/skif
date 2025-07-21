@@ -15,12 +15,12 @@ dependencies {
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsmapping')
     implementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema')
 
-    compileOnly libraries.jee
-    compileOnly libraries.jaxws_api
+    compileOnly libs.bundles.jee
+    compileOnly libs.jaxws.api
 
     originalSchemas project(path: ':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsschema', configuration: 'schemas')
 
-    jaxws libraries.jaxws_tools
+    jaxws libs.jaxws.tools
 }
 
 customizeWsdls {
