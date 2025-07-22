@@ -1,9 +1,8 @@
 package no.statkart.skif.skiftest.wsapi.service.txbmt;
 
+import jakarta.jws.WebParam;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
-
-import jakarta.jws.WebParam;
 
 /**
  * @author Henrik Fredholm

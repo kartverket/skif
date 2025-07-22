@@ -1,12 +1,15 @@
 package no.statkart.skif.storetest.wsapi.service.endringslogg;
 
+import jakarta.jws.WebParam;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.endringslogg.*;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.Bobleklasse;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.EndringId;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.Endringer;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.Kontroll;
+import no.statkart.skif.storetest.wsapi.domain.endringslogg.ReturnerBobler;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-
-import jakarta.jws.WebParam;
 
 /**
  * @author Thomas Berg

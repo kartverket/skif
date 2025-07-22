@@ -7,7 +7,6 @@ import no.statkart.skif.domain.EqualsByFields;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.service.test.TestdataService;
-import no.statkart.skif.store.AbstractEntityComponent;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.UnitOfWork;
@@ -30,7 +29,11 @@ import java.util.SortedMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.failBecauseExceptionWasNotThrown;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  *  Tester EntityCompontent i UnitOfWork på Klient for SingleVm og JEE mode

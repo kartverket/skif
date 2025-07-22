@@ -1,17 +1,10 @@
 package no.statkart.skif.store.relation.cache;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
-import no.statkart.skif.store.BubbleId;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * ProxyHandler for caching av relasjoner. Denne proxyhandler legges i {@code CallServiceChain} på klient og server

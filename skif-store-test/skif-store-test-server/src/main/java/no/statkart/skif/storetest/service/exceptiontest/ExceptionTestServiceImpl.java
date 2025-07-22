@@ -2,7 +2,11 @@ package no.statkart.skif.storetest.service.exceptiontest;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.statkart.skif.exception.*;
+import no.statkart.skif.exception.AttemptDeleteException;
+import no.statkart.skif.exception.FinderException;
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.LockedException;
+import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.service.ServiceRequestContext;

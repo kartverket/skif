@@ -1,18 +1,19 @@
 package no.statkart.skif.wsversioning.wsapi.v1.service;
 
 import com.google.inject.Injector;
-import no.statkart.skif.service.ws.SkifWebService;
-import no.statkart.skif.wsversioning.wsapi.v1.config.WSVersioningWebServiceInjectorConfig;
-import no.statkart.skif.wsversioning.wsapi.v1.context.WSVersioningContext;
-import no.statkart.skif.wsversioning.wsapi.v1.domain.*;
-import no.statkart.skif.wsversioning.wsapi.v1.exception.ServiceException;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
-import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.WebServiceContext;
+import no.statkart.skif.service.ws.SkifWebService;
+import no.statkart.skif.wsversioning.wsapi.v1.config.WSVersioningWebServiceInjectorConfig;
+import no.statkart.skif.wsversioning.wsapi.v1.context.WSVersioningContext;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.WSVersioningBubble;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.WSVersioningBubbleId;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.WSVersioningBubbleIdList;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.WSVersioningBubbleList;
+import no.statkart.skif.wsversioning.wsapi.v1.exception.ServiceException;
 
 /**
  * Implementasjon av {@link StoreServiceWSI}.

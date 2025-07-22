@@ -4,9 +4,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.service.ServiceContextMapper;
-import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.mapper.ExceptionMapping;
+import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.service.ServiceContextMapper;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;

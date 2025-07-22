@@ -1,8 +1,13 @@
 package no.statkart.skif.service.module;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifConfigConstants;
@@ -20,13 +25,19 @@ import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
 import no.statkart.skif.service.module.client.ClientModuleStrategyFactory;
 import no.statkart.skif.service.module.common.RemoteServerModule;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
-import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
+import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategySingleVm;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.scope.ServiceRequestScope;
-import no.statkart.skif.service.test.service.*;
+import no.statkart.skif.service.test.service.AService;
+import no.statkart.skif.service.test.service.BService;
+import no.statkart.skif.service.test.service.CService;
+import no.statkart.skif.service.test.service.Test1Service;
+import no.statkart.skif.service.test.service.Test1ServiceImpl2;
+import no.statkart.skif.service.test.service.Test2Service;
+import no.statkart.skif.service.test.service.Test2ServiceImpl2;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -38,7 +49,10 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertSame;
 
 
 /**

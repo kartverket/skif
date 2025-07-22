@@ -5,7 +5,9 @@ import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestNumber;
-import no.statkart.skif.storetest.domain.basic.*;
+import no.statkart.skif.storetest.domain.basic.HistSimpleId;
+import no.statkart.skif.storetest.domain.basic.HistWithRelation;
+import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
 /**
  * @author Henrik Fredholm

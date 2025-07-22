@@ -2,7 +2,13 @@ package no.statkart.skif.wsversioning.wsapi.v2.mapping;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapper.AbstractMapper;
+import no.statkart.skif.mapper.CollectionMapperFactory;
+import no.statkart.skif.mapper.DefaultTypeMapperFactory;
+import no.statkart.skif.mapper.IdentityTypeMapperFactory;
+import no.statkart.skif.mapper.MappingResolver;
+import no.statkart.skif.mapper.SnapshotVersionTypeMapper;
+import no.statkart.skif.mapper.TimestampTypeMapper;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.wsversioning.domain.VegId;
 import no.statkart.skif.wsversioning.wsapi.v2.domain.Timestamp;

@@ -1,13 +1,12 @@
 package no.statkart.skif.wsversioning.wsapi.v1.config;
 
 import com.google.inject.Injector;
-import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.service.module.server.WSServerModule;
-import no.statkart.skif.wsversioning.config.WSVersioningServerV1Injector;
-
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
+import no.statkart.skif.module.ModuleConfiguration;
+import no.statkart.skif.service.module.server.WSServerModule;
+import no.statkart.skif.wsversioning.config.WSVersioningServerV1Injector;
 
 /**
  * Konfigurasjon av injector for Web service API. Må kalles fra en ServletContextListener i web.xml.

@@ -6,11 +6,10 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.Session;
 import org.hibernate.type.CustomType;
-
-import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Properties;
 
 /**
  * @author Henrik Fredholm

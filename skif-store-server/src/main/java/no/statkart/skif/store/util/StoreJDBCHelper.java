@@ -6,7 +6,11 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.util.JDBCHelper;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Objects;
 
 

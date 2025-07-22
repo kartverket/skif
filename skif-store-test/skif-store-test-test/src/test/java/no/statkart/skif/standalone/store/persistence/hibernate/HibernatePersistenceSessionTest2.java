@@ -1,6 +1,9 @@
 package no.statkart.skif.standalone.store.persistence.hibernate;
 
 import com.google.inject.Inject;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import no.statkart.skif.persistence.ResourceManager;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
@@ -16,9 +19,6 @@ import org.hibernate.proxy.HibernateProxy;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import java.util.List;
 
 /**

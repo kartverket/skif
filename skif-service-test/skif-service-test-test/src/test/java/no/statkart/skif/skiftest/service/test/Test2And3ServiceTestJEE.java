@@ -1,11 +1,15 @@
 package no.statkart.skif.skiftest.service.test;
 
-import com.google.inject.*;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifClientConfiguration;
-import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.module.DefaultModuleConfiguration;
 import no.statkart.skif.mapper.IdentityMapper;
+import no.statkart.skif.module.DefaultModuleConfiguration;
+import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;
 import no.statkart.skif.service.ServerUrlHolder;

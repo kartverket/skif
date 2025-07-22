@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.OptionalBinder;
+import jakarta.xml.ws.handler.Handler;
 import no.statkart.skif.service.HttpRequestAuthenticationOverride;
 import no.statkart.skif.service.ws.DefaultWebServiceExceptionMapper;
 import no.statkart.skif.service.ws.JaxWsAuthenticationHandler;
@@ -12,7 +13,6 @@ import no.statkart.skif.service.ws.WebServiceExceptionMapper;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;
-import jakarta.xml.ws.handler.Handler;
 import java.util.List;
 import java.util.function.Function;
 

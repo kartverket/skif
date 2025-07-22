@@ -5,11 +5,11 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
+import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
 import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
 import no.statkart.skif.service.RunOnServerWithTxRequiredService;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
-import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
 /**

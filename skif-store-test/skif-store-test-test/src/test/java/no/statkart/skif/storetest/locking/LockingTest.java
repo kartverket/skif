@@ -7,7 +7,10 @@ import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.service.locking.LockingTestService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tester at låsing oppheves når man kaller transaksjonelle metoder, men ikke når man ikke gjøre det.

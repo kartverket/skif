@@ -1,6 +1,7 @@
 package no.statkart.skif.skiftest.service.test;
 
 import com.google.inject.Inject;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ServerException;
 import no.statkart.skif.exception.SkifException;
@@ -12,9 +13,9 @@ import no.statkart.skif.skiftest.service.testd.DService;
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
-import jakarta.xml.ws.soap.SOAPFaultException;
-
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 /**
  * Tester mapping av skifs standard exception hierarki. Et viktig aspekt av exception mappingen er at det i stor

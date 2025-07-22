@@ -1,14 +1,13 @@
 package no.statkart.skif.storetest.service.locker;
 
 import com.google.inject.Inject;
-import no.statkart.skif.service.annotation.EJBServiceChain;
-import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.interceptor.Interceptors;
+import no.statkart.skif.service.annotation.EJBServiceChain;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 /**
  * @author Tor Egil R. Strand

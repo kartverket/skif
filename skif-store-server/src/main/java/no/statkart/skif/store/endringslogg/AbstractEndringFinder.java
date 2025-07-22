@@ -2,13 +2,13 @@ package no.statkart.skif.store.endringslogg;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Session;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import java.util.List;
 
 /**

@@ -1,17 +1,17 @@
 package no.statkart.skif.skiftest.service.testex;
 
 import com.google.inject.Inject;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.Interceptors;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
 import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.exception.SimpleNonMappedException;
 
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
-import jakarta.interceptor.Interceptors;
 import java.util.List;
 
 /**

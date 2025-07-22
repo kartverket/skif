@@ -1,7 +1,12 @@
 package no.statkart.skif.util.testsupport;
 
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.config.*;
+import no.statkart.skif.config.Configuration;
+import no.statkart.skif.config.SkifClientConfiguration;
+import no.statkart.skif.config.SkifConfigConstants;
+import no.statkart.skif.config.SkifConfiguration;
+import no.statkart.skif.config.SkifServerConfiguration;
+import no.statkart.skif.config.SystemConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
 import no.statkart.skif.service.LoginUser;
 import no.statkart.skif.service.LoginUserHolder;

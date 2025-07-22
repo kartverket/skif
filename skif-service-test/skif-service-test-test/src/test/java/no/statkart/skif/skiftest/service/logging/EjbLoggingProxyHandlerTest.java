@@ -1,6 +1,7 @@
 package no.statkart.skif.skiftest.service.logging;
 
 import com.google.inject.util.Providers;
+import jakarta.ejb.TransactionAttributeType;
 import no.statkart.skif.service.PrincipalImpl;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.TxMode;
@@ -12,7 +13,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
-import jakarta.ejb.TransactionAttributeType;
 import java.security.Principal;
 
 /**

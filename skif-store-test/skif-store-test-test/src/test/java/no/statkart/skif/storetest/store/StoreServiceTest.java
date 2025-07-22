@@ -12,7 +12,9 @@ import no.statkart.skif.storetest.service.store.StoreService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;

@@ -19,14 +19,30 @@ import no.statkart.skif.service.module.server.RunOnServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleDependencyComparator;
+import no.statkart.skif.store.BubbleDependencyComparatorNoReordering;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.LockerStrategy;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.StoreSessionFinishListener;
+import no.statkart.skif.store.StoreSessionReadListener;
+import no.statkart.skif.store.StoreSessionServer;
+import no.statkart.skif.store.StoreSessionWriteListener;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.wsversioning.domain.Veg;
 import no.statkart.skif.wsversioning.domain.VegId;
 
 import java.sql.Connection;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Server-modul for WSVersioning-prosjektet. Den underbygger Store med et statisk map og støtter hverken id-generering

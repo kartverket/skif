@@ -1,11 +1,11 @@
 package no.statkart.skif.store.persistence.hibernate;
 
+import jakarta.inject.Provider;
 import no.statkart.skif.service.sequence.IdService;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import jakarta.inject.Provider;
 import java.util.Properties;
 
 /**

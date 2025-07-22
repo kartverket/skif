@@ -7,15 +7,15 @@ import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.LinkedKeyBinding;
-import no.statkart.skif.ServiceMode;
-import no.statkart.skif.SkifUtil;
-import no.statkart.skif.service.annotation.Implementation;
-
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.ejb.TransactionManagement;
 import jakarta.ejb.TransactionManagementType;
+import no.statkart.skif.ServiceMode;
+import no.statkart.skif.SkifUtil;
+import no.statkart.skif.service.annotation.Implementation;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;

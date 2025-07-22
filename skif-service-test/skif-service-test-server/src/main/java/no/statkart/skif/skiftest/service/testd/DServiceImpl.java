@@ -5,11 +5,10 @@ import com.google.inject.Provider;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.SkifException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
-import no.statkart.skif.exception.SkifException;
 
 /**
  * @author Henrik Fredholm

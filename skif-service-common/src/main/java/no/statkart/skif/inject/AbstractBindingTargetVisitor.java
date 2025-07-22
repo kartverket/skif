@@ -1,6 +1,15 @@
 package no.statkart.skif.inject;
 
-import com.google.inject.spi.*;
+import com.google.inject.spi.BindingTargetVisitor;
+import com.google.inject.spi.ConstructorBinding;
+import com.google.inject.spi.ConvertedConstantBinding;
+import com.google.inject.spi.ExposedBinding;
+import com.google.inject.spi.InstanceBinding;
+import com.google.inject.spi.LinkedKeyBinding;
+import com.google.inject.spi.ProviderBinding;
+import com.google.inject.spi.ProviderInstanceBinding;
+import com.google.inject.spi.ProviderKeyBinding;
+import com.google.inject.spi.UntargettedBinding;
 
 /**
  * @author Henrik Fredholm

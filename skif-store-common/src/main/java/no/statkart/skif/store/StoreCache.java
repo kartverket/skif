@@ -3,7 +3,10 @@ package no.statkart.skif.store;
 
 import no.statkart.skif.exception.ImplementationException;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm

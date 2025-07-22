@@ -3,7 +3,12 @@ package no.statkart.skif.store;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class BubbleModelConfiguration implements BubbleDependencyComparator, Serializable {
     private static final long serialVersionUID = 1;

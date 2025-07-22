@@ -14,7 +14,6 @@ import no.statkart.skif.service.ejb.EJBCallProxyHandlerJEE;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
 

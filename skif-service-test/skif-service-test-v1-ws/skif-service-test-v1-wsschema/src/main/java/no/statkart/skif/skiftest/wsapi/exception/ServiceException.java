@@ -1,7 +1,7 @@
 package no.statkart.skif.skiftest.wsapi.exception;
 
 import jakarta.xml.ws.WebFault;
-import no.statkart.skif.skiftest.wsapi.exception.impl.*;
+import no.statkart.skif.skiftest.wsapi.exception.impl.ServiceFaultInfo;
 
 /**
  * Se dokumentasjon i {@link ServiceFaultInfo}

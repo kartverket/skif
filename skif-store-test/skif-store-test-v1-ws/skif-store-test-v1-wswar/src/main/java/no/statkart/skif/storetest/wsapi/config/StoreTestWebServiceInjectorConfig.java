@@ -1,20 +1,26 @@
 package no.statkart.skif.storetest.wsapi.config;
 
 import com.google.inject.Injector;
+import jakarta.ejb.EJB;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
 import no.statkart.skif.service.proxy.W2DAdapterWithServiceContextSVMapperProxyHandler;
-import no.statkart.skif.storetest.config.*;
+import no.statkart.skif.storetest.config.StoreTestDomainFinderServices;
+import no.statkart.skif.storetest.config.StoreTestGroup1Services;
+import no.statkart.skif.storetest.config.StoreTestSequenceBlockAllocatorServices;
+import no.statkart.skif.storetest.config.StoreTestServerInjector;
+import no.statkart.skif.storetest.config.StoreTestStoreServices;
+import no.statkart.skif.storetest.config.StoreTestStoreUpdateServices;
+import no.statkart.skif.storetest.config.StoreTestTestServices;
+import no.statkart.skif.storetest.config.StoreTestTxManagementServices;
 import no.statkart.skif.storetest.wsapi.StoreTestServiceContextMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapper;
 import no.statkart.skif.storetest.wsapi.exception.mapping.StoreTestExceptionMapping;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapper;
 import no.statkart.skif.storetest.wsapi.mapping.StoreTestMapping;
-
-import jakarta.ejb.EJB;
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
 
 /**
  * Konfigurasjon av injector for Web service API. Må kalles fra en ServletContextListener i web.xml.

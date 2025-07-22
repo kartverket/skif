@@ -4,15 +4,15 @@ import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
+import jakarta.inject.Singleton;
+import jakarta.xml.ws.handler.Handler;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.ServerUrlHolder;
-import no.statkart.skif.service.ws.WebServiceExceptionMapper;
 import no.statkart.skif.service.ws.JaxWsServiceProvider;
+import no.statkart.skif.service.ws.WebServiceExceptionMapper;
 
-import jakarta.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;
-import jakarta.xml.ws.handler.Handler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

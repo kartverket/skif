@@ -15,7 +15,10 @@ import no.statkart.skif.service.ServiceContext;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Generell funksjonalitet for å mappe mellom WS-API-ets FaultInfo-klasser og SkifException-hierarkiet.

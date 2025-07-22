@@ -2,8 +2,8 @@ package no.statkart.skif.storetest.filter;
 
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.PermissionDeniedException;
-import no.statkart.skif.store.StoreSessionReadListener;
 import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.StoreSessionReadListener;
 import no.statkart.skif.store.StoreSessionWriteListener;
 import no.statkart.skif.storetest.domain.standalone.FilteredBubble;
 import no.statkart.skif.storetest.domain.standalone.FilteredBubbleId;

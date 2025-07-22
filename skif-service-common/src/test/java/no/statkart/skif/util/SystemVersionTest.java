@@ -3,9 +3,17 @@ package no.statkart.skif.util;
 import no.statkart.skif.exception.ImplementationException;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 @Test
 public class SystemVersionTest {

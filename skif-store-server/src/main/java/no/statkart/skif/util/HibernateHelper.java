@@ -7,7 +7,8 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.Queryable;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.Collections;
 
 /**

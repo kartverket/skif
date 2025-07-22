@@ -4,7 +4,11 @@ package no.statkart.skif.storetest.domain.component;
 import com.google.inject.Inject;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.ComponentWithOwnerReference;
+import no.statkart.skif.store.Store;
+import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponentId;
 import no.statkart.skif.storetest.domain.component.entity.Level1SetEntityInCompositeComponent;
@@ -19,7 +23,12 @@ import org.testng.annotations.Test;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Test av boble med composite component som inneholder entity component

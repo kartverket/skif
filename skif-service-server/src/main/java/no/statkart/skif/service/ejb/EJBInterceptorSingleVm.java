@@ -2,14 +2,19 @@ package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import jakarta.ejb.TransactionAttributeType;
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.service.*;
+import no.statkart.skif.service.LoginUser;
+import no.statkart.skif.service.PrincipalImpl;
+import no.statkart.skif.service.ServiceContext;
+import no.statkart.skif.service.ServiceRequestContext;
+import no.statkart.skif.service.SingleVmRemoteCallContext;
+import no.statkart.skif.service.TxMode;
 import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.util.CopyHelper;
 
-import jakarta.ejb.TransactionAttributeType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;

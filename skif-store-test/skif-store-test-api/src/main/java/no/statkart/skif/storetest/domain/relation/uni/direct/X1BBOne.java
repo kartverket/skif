@@ -1,8 +1,8 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
+import no.statkart.skif.store.BubbleObjectWithIdent;
 import no.statkart.skif.store.Bubbles;
 import no.statkart.skif.store.InverseRelation;
-import no.statkart.skif.store.BubbleObjectWithIdent;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
 import java.util.Collection;

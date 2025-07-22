@@ -1,18 +1,17 @@
 package no.statkart.skif.storetest.wsapi.service.kodeliste;
 
 import com.google.inject.Injector;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceContext;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.domain.kodeliste.KodelisteTransfer;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
-import jakarta.jws.WebParam;
-import jakarta.jws.WebService;
-import jakarta.xml.ws.WebServiceContext;
 
 /**
  * @author Henrik Fredholm

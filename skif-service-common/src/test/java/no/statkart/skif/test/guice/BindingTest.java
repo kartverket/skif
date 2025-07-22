@@ -1,6 +1,10 @@
 package no.statkart.skif.test.guice;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Provider;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

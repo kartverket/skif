@@ -1,14 +1,26 @@
 package no.statkart.skif.util.testsupport;
 
-import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlSchema;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.ws.WebFault;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 

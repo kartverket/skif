@@ -3,11 +3,11 @@ package no.statkart.skif.service.module.common;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.mapper.IdentityMapper;
 import no.statkart.skif.module.ModuleConfiguration;
+import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
 import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
 import no.statkart.skif.service.RunOnServerWithTxRequiredService;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
-import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 
 import java.util.ArrayList;
 import java.util.Collection;

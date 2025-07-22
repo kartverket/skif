@@ -8,7 +8,14 @@ import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
-import no.statkart.skif.storetest.domain.component.entity.*;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponentId;
+import no.statkart.skif.storetest.domain.component.entity.Level1EntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.Level2EntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.NestedEntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.SetAaEntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.SetAaLevel1EntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.SetAaLevel2EntityComponent;
 
 import java.util.Set;
 

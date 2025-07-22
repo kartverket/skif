@@ -1,15 +1,15 @@
 package no.statkart.skif.skiftest.service.testc;
 
 import com.google.inject.Inject;
-import no.statkart.skif.service.annotation.EJBServiceChain;
-import no.statkart.skif.service.ejb.EJBTimedService;
-import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
-
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.interceptor.Interceptors;
+import no.statkart.skif.service.annotation.EJBServiceChain;
+import no.statkart.skif.service.ejb.EJBTimedService;
+import no.statkart.skif.skiftest.config.SkifTestEJBInterceptorJEE;
+
 import java.util.List;
 
 /**

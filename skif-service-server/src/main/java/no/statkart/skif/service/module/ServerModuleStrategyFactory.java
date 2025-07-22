@@ -5,7 +5,12 @@ import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.module.StrategyTuples;
 import no.statkart.skif.service.module.common.RemoteServiceModule;
 import no.statkart.skif.service.module.common.RemoteServiceModuleStrategy;
-import no.statkart.skif.service.module.server.*;
+import no.statkart.skif.service.module.server.ServerModule;
+import no.statkart.skif.service.module.server.ServerModuleStrategy;
+import no.statkart.skif.service.module.server.ServerServiceModule;
+import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
+import no.statkart.skif.service.module.server.WSServerServiceModule;
+import no.statkart.skif.service.module.server.WSServerServiceModuleStrategy;
 
 /**
  * En ModuleStrategyFactory for server. Definerer strategier for :

@@ -1,6 +1,7 @@
 package no.statkart.skif.service.sequence;
 
 import com.google.common.base.Preconditions;
+import jakarta.inject.Provider;
 import no.statkart.skif.store.BubbleId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -12,7 +13,6 @@ import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 
-import jakarta.inject.Provider;
 import java.io.Serializable;
 import java.util.Properties;
 

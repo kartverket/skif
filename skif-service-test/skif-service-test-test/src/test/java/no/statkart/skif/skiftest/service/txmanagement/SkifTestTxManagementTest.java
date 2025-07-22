@@ -2,7 +2,6 @@ package no.statkart.skif.skiftest.service.txmanagement;
 
 import no.statkart.skif.exception.ValidationException;
 import no.statkart.skif.skiftest.config.SkifTestTxManagementServerModule;
-import no.statkart.skif.skiftest.exception.SimpleException;
 import no.statkart.skif.skiftest.service.txbmt.BeanManagedTxAService;
 import no.statkart.skif.skiftest.service.txcascade.ContainerManagedTxCMTCascadeService;
 import no.statkart.skif.skiftest.service.txcmt.ContainerManagedTxAService;

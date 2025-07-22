@@ -1,19 +1,29 @@
 package no.statkart.skif.store.persistence.kodeliste;
 
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.metamodel.EntityType;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.kodeliste.*;
+import no.statkart.skif.store.kodeliste.AbstractKodeliste;
+import no.statkart.skif.store.kodeliste.Kode;
+import no.statkart.skif.store.kodeliste.KodeId;
+import no.statkart.skif.store.kodeliste.Kodeliste;
+import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import org.hibernate.Session;
 
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.metamodel.EntityType;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * En PersistendeSessionSubtypeHandler for Kodeliste og Kode som henter enum baserte koder fra en {@code EnumKodelisteManager}

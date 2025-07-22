@@ -3,7 +3,8 @@ package no.statkart.skif.store.kodeliste;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.store.AbstractBubbleObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstrakt implementasjon av kodeliste. Klasse holder på en liste av {@code KodeId}s og implementere

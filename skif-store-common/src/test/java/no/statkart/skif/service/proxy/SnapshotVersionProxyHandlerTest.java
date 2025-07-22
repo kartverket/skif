@@ -4,7 +4,8 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 public class SnapshotVersionProxyHandlerTest {
     @Test

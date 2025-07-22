@@ -1,6 +1,10 @@
 package no.statkart.skif.util.testsupport;
 
-import no.statkart.skif.service.*;
+import no.statkart.skif.service.RunOnServerMethod;
+import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
+import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
+import no.statkart.skif.service.RunOnServerWithTxRequiredService;
+import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import org.testng.annotations.Test;
 
 /**

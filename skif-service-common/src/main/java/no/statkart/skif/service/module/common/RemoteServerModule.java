@@ -3,12 +3,16 @@ package no.statkart.skif.service.module.common;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.OptionalBinder;
-import com.google.inject.util.Providers;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleWithStrategy;
-import no.statkart.skif.service.*;
+import no.statkart.skif.service.DefaultServiceContext;
+import no.statkart.skif.service.LoginUserHolder;
+import no.statkart.skif.service.LoginUserHolderImpl;
+import no.statkart.skif.service.ServerUrlHolder;
+import no.statkart.skif.service.ServerUrlHolderImpl;
+import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 

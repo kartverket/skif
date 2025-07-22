@@ -2,12 +2,12 @@ package no.statkart.skif.service.ws;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import jakarta.xml.ws.WebServiceContext;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 
-import jakarta.xml.ws.WebServiceContext;
 import java.lang.reflect.Method;
 
 /**

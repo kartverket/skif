@@ -2,9 +2,9 @@ package no.statkart.skif.module;
 
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.MapConfiguration;
+import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ImplementationException;
 
 /**

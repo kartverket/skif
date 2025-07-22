@@ -1,6 +1,7 @@
 package no.statkart.skif.service.module.server;
 
 import com.google.inject.Provides;
+import jakarta.transaction.TransactionManager;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.module.ModuleConfiguration;
@@ -14,8 +15,6 @@ import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
-
-import jakarta.transaction.TransactionManager;
 
 /**
  * @since 2.0

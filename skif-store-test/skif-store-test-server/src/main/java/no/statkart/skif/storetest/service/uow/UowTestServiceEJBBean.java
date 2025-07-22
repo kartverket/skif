@@ -1,18 +1,17 @@
 package no.statkart.skif.storetest.service.uow;
 
 import com.google.inject.Inject;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.Interceptors;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.StoreBubbleTransfer;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
-import jakarta.interceptor.Interceptors;
 
 /**
  * Service for å støtte UnitOfWork testing

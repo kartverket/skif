@@ -15,7 +15,13 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * A utility class to convert the configuration configuration into any type.

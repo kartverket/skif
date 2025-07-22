@@ -9,8 +9,8 @@ import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
 import no.statkart.skif.service.ejb.EJBCounterProxyHandler;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandlerForConnection;
 import no.statkart.skif.service.module.ServerModuleStrategyFactory;
-import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerModule;
+import no.statkart.skif.service.module.server.ServerServiceModule;
 import no.statkart.skif.service.module.server.ServerServiceModuleStrategy;
 
 /**

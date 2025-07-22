@@ -7,7 +7,12 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.TransactionTimeService;
 import no.statkart.skif.service.sequence.DefaultSequenceBlockAllocatorServiceImpl;
 import no.statkart.skif.service.sequence.SequenceBlockAllocatorService;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleIds;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.StoreServer;
+import no.statkart.skif.store.StoreSessionFinishListener;
 
 import java.sql.Connection;
 import java.sql.SQLException;

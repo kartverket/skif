@@ -14,7 +14,6 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
-import no.statkart.skif.util.JDBCHelper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

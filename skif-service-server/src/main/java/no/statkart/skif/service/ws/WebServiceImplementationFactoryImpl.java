@@ -2,9 +2,8 @@ package no.statkart.skif.service.ws;
 
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
-import no.statkart.skif.service.chain.WSServiceChainFactory;
-
 import jakarta.xml.ws.WebServiceContext;
+import no.statkart.skif.service.chain.WSServiceChainFactory;
 
 /**
  * Factory for å få tak i {@code WSServiceChain} for Web Service av type {@code <W>}.

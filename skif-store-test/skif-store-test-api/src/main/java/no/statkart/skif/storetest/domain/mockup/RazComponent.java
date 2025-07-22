@@ -2,7 +2,6 @@ package no.statkart.skif.storetest.domain.mockup;
 
 import com.google.inject.Inject;
 import no.statkart.skif.store.Store;
-import no.statkart.skif.storetest.domain.mockup.FooId;
 
 import java.io.Serializable;
 

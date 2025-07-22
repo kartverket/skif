@@ -1,10 +1,10 @@
 package no.statkart.skif.util.testsupport;
 
+import no.statkart.skif.service.RunOnServerService;
 import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
 import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
 import no.statkart.skif.service.RunOnServerWithTxRequiredService;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
-import no.statkart.skif.service.RunOnServerService;
 
 /**
  * Enumerasjon som angir hvilken transaksjonsstøtte som en server-test-metode skal avvikles under på serveren. Hver
@@ -18,7 +18,6 @@ import no.statkart.skif.service.RunOnServerService;
  *
  * @since 2.1
  */
-
 public enum TestTransactionAttributeType {
     TX_NOT_SUPPORTED (RunOnServerWithTxNotSupportedService.class),
     TX_REQUIRED(RunOnServerWithTxRequiredService.class),

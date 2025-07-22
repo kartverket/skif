@@ -1,14 +1,14 @@
 package no.statkart.skif.mapper;
 
-import org.assertj.core.api.Assertions;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlRootElement;
+import org.assertj.core.api.Assertions;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.ByteArrayInputStream;

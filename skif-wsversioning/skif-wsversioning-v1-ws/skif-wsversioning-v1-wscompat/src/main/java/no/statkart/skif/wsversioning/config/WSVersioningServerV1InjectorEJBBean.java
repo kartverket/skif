@@ -1,12 +1,11 @@
 package no.statkart.skif.wsversioning.config;
 
 import com.google.inject.Injector;
-import no.statkart.skif.module.ModuleConfiguration;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
+import no.statkart.skif.module.ModuleConfiguration;
 
 /**
  * Definere hvilken injector som skal brukes internt i V1-api-et og hvordan denne konfigureres opp.

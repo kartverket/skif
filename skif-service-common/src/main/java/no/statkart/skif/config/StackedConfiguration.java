@@ -1,6 +1,10 @@
 package no.statkart.skif.config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * En stack av konfigurasjoner. På toppen ligger alltid en MapConfiguration, som er den som mottar alle set-kall.

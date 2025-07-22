@@ -5,6 +5,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.sun.xml.ws.developer.JAXWSProperties;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.WebServiceClient;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.config.SkifClientConfiguration;
 import no.statkart.skif.exception.ConfigurationException;
@@ -19,7 +21,6 @@ import no.statkart.skif.skiftest.wsapi.domain.B;
 import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
 import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
 import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
-import no.statkart.skif.skiftest.wsapi.service.test1.Test1ServiceWS;
 import no.statkart.skif.skiftest.wsapi.service.test3.Test3Service;
 import no.statkart.skif.skiftest.wsapi.service.test3.Test3ServiceWS;
 import no.statkart.skif.util.NullHostnameVerifier;
@@ -30,8 +31,6 @@ import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
-import jakarta.xml.ws.BindingProvider;
-import jakarta.xml.ws.WebServiceClient;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

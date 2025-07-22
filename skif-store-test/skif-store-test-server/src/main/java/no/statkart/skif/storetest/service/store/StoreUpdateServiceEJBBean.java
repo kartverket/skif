@@ -1,6 +1,10 @@
 package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.Interceptors;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
@@ -10,10 +14,6 @@ import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 import javax.annotation.Nullable;
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
-import jakarta.interceptor.Interceptors;
 import java.util.Collection;
 
 /**

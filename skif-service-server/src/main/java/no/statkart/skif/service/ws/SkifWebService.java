@@ -5,11 +5,10 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
+import jakarta.xml.ws.WebServiceContext;
 import no.statkart.skif.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.xml.ws.WebServiceContext;
 
 /**
  * @author Henrik Fredholm

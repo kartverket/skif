@@ -11,7 +11,8 @@ import no.statkart.skif.storetest.domain.standalone.TestBubble;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 /**
  * Tester mixed kjørsel på klient og tjener.

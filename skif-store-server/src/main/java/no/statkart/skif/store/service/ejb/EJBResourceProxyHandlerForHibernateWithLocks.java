@@ -3,6 +3,11 @@ package no.statkart.skif.store.service.ejb;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionManager;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.ResourceManager;
@@ -12,8 +17,6 @@ import no.statkart.skif.store.LockerStrategy;
 import no.statkart.skif.store.StoreServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.transaction.*;
 
 /**
  * @since 2.1

@@ -7,8 +7,6 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.basic.SimpleId;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
-import jakarta.jws.WebParam;
-
 /**
  * Service for å støtte UnitOfWork testing
  *

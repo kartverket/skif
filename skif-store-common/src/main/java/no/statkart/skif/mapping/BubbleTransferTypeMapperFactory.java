@@ -3,7 +3,12 @@ package no.statkart.skif.mapping;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
-import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapper.AbstractTypeMapper;
+import no.statkart.skif.mapper.DefaultTypeMapper;
+import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.mapper.MappingException;
+import no.statkart.skif.mapper.TypeMapper;
+import no.statkart.skif.mapper.TypeMapperFactory;
 import no.statkart.skif.service.ServiceContext;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleTransfer;
@@ -12,8 +17,18 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * TypeMapperFactory for {@link BubbleTransfer}.

@@ -1,8 +1,8 @@
 package no.statkart.skif.mapper;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.testng.annotations.Test;
 
-import jakarta.xml.bind.annotation.XmlRootElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;

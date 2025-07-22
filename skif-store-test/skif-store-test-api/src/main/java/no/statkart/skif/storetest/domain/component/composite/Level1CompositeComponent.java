@@ -2,7 +2,10 @@ package no.statkart.skif.storetest.domain.component.composite;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.AbstractCompositeBubbleComponent;
+import no.statkart.skif.store.Components;
+import no.statkart.skif.store.CompositeComponentWithCollections;
+import no.statkart.skif.store.ValueObjects;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
 import javax.annotation.Nullable;

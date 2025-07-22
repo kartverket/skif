@@ -1,11 +1,10 @@
 package no.statkart.skif.service.ejb;
 
+import jakarta.ejb.TimedObject;
+import jakarta.ejb.Timer;
 import no.statkart.skif.service.StopRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.ejb.TimedObject;
-import jakarta.ejb.Timer;
 
 
 /**

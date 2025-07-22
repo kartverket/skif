@@ -2,7 +2,11 @@ package no.statkart.skif.wsversioning.wsapi.v2.service;
 
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.wsversioning.wsapi.v2.context.WSVersioningContext;
-import no.statkart.skif.wsversioning.wsapi.v2.domain.*;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.WSVersioningBubble;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.WSVersioningBubbleId;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.WSVersioningBubbleIdList;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.WSVersioningBubbleIdListForWSVersioningBubbleIdsMap;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.WSVersioningBubbleList;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceException;
 
 import javax.xml.datatype.XMLGregorianCalendar;

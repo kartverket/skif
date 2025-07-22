@@ -3,7 +3,8 @@ package no.statkart.skif.store.relation.cache.annotation;
 import com.google.inject.BindingAnnotation;
 
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.*;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Annotasjon som brukes til å knytte relasjoner og invers relasjoner sammen.

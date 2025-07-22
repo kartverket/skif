@@ -2,7 +2,9 @@ package no.statkart.skif.store;
 
 import com.google.common.collect.Iterables;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Et data transfer objekt for å overføre et sett med {@code BubbleObject} objekter fra

@@ -1,19 +1,19 @@
 package no.statkart.skif.wsversioning.wsapi.v2.service;
 
 import com.google.inject.Injector;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceContext;
 import no.statkart.skif.service.ws.SkifWebService;
 import no.statkart.skif.wsversioning.wsapi.v2.config.WSVersioningWebServiceInjectorConfig;
 import no.statkart.skif.wsversioning.wsapi.v2.context.WSVersioningContext;
-import no.statkart.skif.wsversioning.wsapi.v2.domain.*;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.WSVersioningBubble;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.WSVersioningBubbleId;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.WSVersioningBubbleIdList;
+import no.statkart.skif.wsversioning.wsapi.v2.domain.WSVersioningBubbleList;
 import no.statkart.skif.wsversioning.wsapi.v2.exception.ServiceException;
-
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
-import jakarta.jws.WebMethod;
-import jakarta.jws.WebParam;
-import jakarta.jws.WebService;
-import javax.xml.datatype.XMLGregorianCalendar;
-import jakarta.xml.ws.WebServiceContext;
 
 /**
  * Implementasjon av {@link LockServiceWSI}.

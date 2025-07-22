@@ -7,7 +7,11 @@ import no.statkart.skif.mockup.TestNumber;
 import no.statkart.skif.storetest.domain.mockup.Foo;
 import no.statkart.skif.storetest.domain.mockup.FooId;
 
-import static no.statkart.skif.storetest.mockup.MockupSnapshots.*;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.S0;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.S1;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.S2;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.S3;
+import static no.statkart.skif.storetest.mockup.MockupSnapshots.S4;
 
 /**
  * MockupFactory for Foo-objekter med historikk. Denne MockupFactory brukes kun for isolert testing

@@ -1,20 +1,23 @@
 package no.statkart.skif.skiftest.wsapi.config;
 
 import com.google.inject.Injector;
+import jakarta.ejb.EJB;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
-import no.statkart.skif.skiftest.config.*;
+import no.statkart.skif.skiftest.config.SkifTestGroup1Services;
+import no.statkart.skif.skiftest.config.SkifTestGroup2Services;
+import no.statkart.skif.skiftest.config.SkifTestGroupABCDServices;
+import no.statkart.skif.skiftest.config.SkifTestGroupExServices;
+import no.statkart.skif.skiftest.config.SkifTestServerInjector;
 import no.statkart.skif.skiftest.wsapi.SkifTestServiceContextMapper;
 import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestSimpleExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
-
-import jakarta.ejb.EJB;
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
 
 /**
  * Konfigurasjon av injector for Web service API. Må kalles fra en ServletContextListener i web.xml.

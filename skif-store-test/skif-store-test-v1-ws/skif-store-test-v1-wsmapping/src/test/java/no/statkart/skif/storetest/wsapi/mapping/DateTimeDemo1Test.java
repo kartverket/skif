@@ -1,6 +1,8 @@
 package no.statkart.skif.storetest.wsapi.mapping;
 
-import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapper.AbstractMapper;
+import no.statkart.skif.mapper.AbstractTypeMapper;
+import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.wsapi.mapping.testmapping.DateTimeDemoImpl1;
 import no.statkart.skif.storetest.wsapi.mapping.testutils.DateTestContext;

@@ -3,8 +3,8 @@ package no.statkart.skif.storetest.domain.multikobling_old.kobling;
 import no.statkart.skif.store.multikobling.DefaultKoblingFactory;
 import no.statkart.skif.store.multikobling.Kobling;
 import no.statkart.skif.store.multikobling.KoblingFactory;
-import no.statkart.skif.storetest.domain.multikobling_old.PersonId;
 import no.statkart.skif.store.multikobling.Multikobling;
+import no.statkart.skif.storetest.domain.multikobling_old.PersonId;
 
 /**
  * @author Henrik Fredholm

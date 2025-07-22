@@ -14,7 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * En Hibernate {@code UserType} for persistering av collections med elementer av type {@code <E>} via Oracle

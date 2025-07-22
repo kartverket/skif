@@ -1,19 +1,20 @@
 package no.statkart.skif.storetest.wsapi.service.domain.relation.uni.comp;
 
 import com.google.inject.Injector;
-import no.statkart.skif.service.ws.SkifWebService;
-import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.*;
-import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.WebServiceContext;
+import no.statkart.skif.service.ws.SkifWebService;
+import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
+import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2AAWithEntityComponentIdForX2CCManyIdMap;
+import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2AAWithEntityComponentIdListForX2BBOneIdMap;
+import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2BBOneIdList;
+import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2CCManyIdList;
+import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 /**
  * @author Thomas Berg
