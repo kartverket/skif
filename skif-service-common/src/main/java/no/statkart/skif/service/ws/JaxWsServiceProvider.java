@@ -1,5 +1,12 @@
 package no.statkart.skif.service.ws;
 
+import jakarta.inject.Provider;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceClient;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.HandlerResolver;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ServerUrlHolder;
 import org.apache.commons.pool2.BasePooledObjectFactory;
@@ -8,15 +15,8 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
-import jakarta.inject.Provider;
-import jakarta.jws.WebService;
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;
-import jakarta.xml.ws.BindingProvider;
-import jakarta.xml.ws.Service;
-import jakarta.xml.ws.WebServiceClient;
-import jakarta.xml.ws.handler.Handler;
-import jakarta.xml.ws.handler.HandlerResolver;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;

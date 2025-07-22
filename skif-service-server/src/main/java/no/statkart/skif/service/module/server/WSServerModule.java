@@ -1,9 +1,9 @@
 package no.statkart.skif.service.module.server;
 
+import com.google.common.base.Preconditions;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.config.Configuration;
-import com.google.common.base.Preconditions;
 import no.statkart.skif.module.ModuleConfiguration;
 
 /**

@@ -2,10 +2,10 @@ package no.statkart.skif.service.ejb;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import jakarta.ejb.EJBException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.annotation.EJBBean;
 
-import jakarta.ejb.EJBException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

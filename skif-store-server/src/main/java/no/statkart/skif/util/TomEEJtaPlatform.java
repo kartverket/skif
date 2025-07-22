@@ -1,13 +1,13 @@
 package no.statkart.skif.util;
 
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.hibernate.engine.transaction.jta.platform.internal.AbstractJtaPlatform;
 
 import javax.naming.NamingException;
-import jakarta.transaction.TransactionManager;
-import jakarta.transaction.UserTransaction;
 
 /**
  * Det følger med en OpenEJBJtaPlatform2 i TomEE, men siden den arver fra AbstractJtaPlatform, som ikke følger med, så

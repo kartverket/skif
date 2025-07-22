@@ -1,7 +1,11 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.AbstractBubbleObject;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.ComponentWithOwnerReference;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.module.common.BubbleIdFactory;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;

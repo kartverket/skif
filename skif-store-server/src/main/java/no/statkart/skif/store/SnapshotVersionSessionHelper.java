@@ -7,7 +7,11 @@ import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.TimestampType;
 
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 
 /**
  * @since 2.1

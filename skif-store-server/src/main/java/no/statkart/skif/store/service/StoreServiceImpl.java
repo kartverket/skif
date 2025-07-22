@@ -1,7 +1,6 @@
 package no.statkart.skif.store.service;
 
 import com.google.inject.Inject;
-import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;

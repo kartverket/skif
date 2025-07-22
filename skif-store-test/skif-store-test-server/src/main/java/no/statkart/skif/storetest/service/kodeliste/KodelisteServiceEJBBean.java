@@ -1,15 +1,14 @@
 package no.statkart.skif.storetest.service.kodeliste;
 
 import com.google.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.KodelisteTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.KodelisteId;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-
-import jakarta.ejb.Stateless;
-import jakarta.interceptor.Interceptors;
 
 /**
  * @author Henrik Fredholm

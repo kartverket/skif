@@ -1,7 +1,5 @@
 package no.statkart.skif.mapper;
 
-import com.google.common.base.Joiner;
-
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.LocalDate;

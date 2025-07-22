@@ -1,14 +1,14 @@
 package no.statkart.skif.service.ws;
 
-import no.statkart.skif.service.HttpRequestAuthenticationOverride;
-import no.statkart.skif.service.LoginUser;
-import no.statkart.skif.service.LoginUserHolder;
-
 import jakarta.inject.Inject;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.LogicalHandler;
 import jakarta.xml.ws.handler.LogicalMessageContext;
 import jakarta.xml.ws.handler.MessageContext;
+import no.statkart.skif.service.HttpRequestAuthenticationOverride;
+import no.statkart.skif.service.LoginUser;
+import no.statkart.skif.service.LoginUserHolder;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

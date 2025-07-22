@@ -1,6 +1,10 @@
 package no.statkart.skif.skiftest.wsapi.mapping;
 
-import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapper.AbstractMapper;
+import no.statkart.skif.mapper.CollectionMapperFactory;
+import no.statkart.skif.mapper.DefaultTypeMapperFactory;
+import no.statkart.skif.mapper.IdentityTypeMapperFactory;
+import no.statkart.skif.mapper.MappingResolver;
 
 /**
  * @author Henrik Fredholm

@@ -7,7 +7,13 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.module.ModuleStrategy;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.annotation.Implementation;
-import no.statkart.skif.service.chain.*;
+import no.statkart.skif.service.chain.CallServiceChainFactory;
+import no.statkart.skif.service.chain.CallServiceChainFactorySpecification;
+import no.statkart.skif.service.chain.EJBServiceChainFactory;
+import no.statkart.skif.service.chain.EJBServiceChainFactorySpecification;
+import no.statkart.skif.service.chain.ImplementationServiceChainFactory;
+import no.statkart.skif.service.chain.ImplementationServiceChainFactorySpecification;
+import no.statkart.skif.service.chain.ServiceChainFactories;
 import no.statkart.skif.service.provider.EJBServiceChainProvider;
 import no.statkart.skif.service.provider.ServiceProvider;
 

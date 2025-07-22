@@ -1,6 +1,12 @@
 package no.statkart.skif.skiftest.wsapi.mapping;
 
-import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapper.AbstractMapper;
+import no.statkart.skif.mapper.DefaultTypeMapper;
+import no.statkart.skif.mapper.LocalDateTimeTypeMapper;
+import no.statkart.skif.mapper.LocalDateTypeMapper;
+import no.statkart.skif.mapper.LocalTimeTypeMapper;
+import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.mapper.TimestampTypeMapper;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;

@@ -7,7 +7,9 @@ import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestNumber;
-import no.statkart.skif.storetest.domain.basic.*;
+import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
+import no.statkart.skif.storetest.domain.basic.BubbleWithValueObject;
+import no.statkart.skif.storetest.domain.basic.BubbleWithValueObjectId;
 import no.statkart.skif.util.CopyHelper;
 
 import javax.annotation.Nullable;

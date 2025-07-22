@@ -1,18 +1,20 @@
 package no.statkart.skif.storetest.wsapi.service.domain.relation.uni.direct;
 
 import com.google.inject.Injector;
-import no.statkart.skif.service.ws.SkifWebService;
-import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
-import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
-import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.*;
-import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.WebServiceContext;
+import no.statkart.skif.service.ws.SkifWebService;
+import no.statkart.skif.storetest.wsapi.config.StoreTestWebServiceInjectorConfig;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
+import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1AAIdForX1CCManyIdMap;
+import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1AAIdListForX1BBOneIdMap;
+import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1BBOneIdList;
+import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1CCManyIdList;
+import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 
 /**
  * @author Thomas Berg

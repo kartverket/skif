@@ -1,6 +1,10 @@
 package no.statkart.skif.wsversioning.service;
 
 import com.google.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.Interceptors;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.BubbleId;
@@ -8,10 +12,6 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.wsversioning.config.WSVersioningEJBInterceptorJEE;
 
-import jakarta.ejb.Stateless;
-import jakarta.ejb.TransactionAttribute;
-import jakarta.ejb.TransactionAttributeType;
-import jakarta.interceptor.Interceptors;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

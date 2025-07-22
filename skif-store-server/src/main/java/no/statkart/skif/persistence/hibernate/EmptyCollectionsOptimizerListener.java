@@ -3,7 +3,6 @@ package no.statkart.skif.persistence.hibernate;
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.ComponentWithOwnerReference;
-import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.event.spi.PreCollectionUpdateEvent;

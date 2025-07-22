@@ -2,8 +2,8 @@ package no.statkart.skif.skiftest.config;
 
 import no.statkart.skif.service.ServicesListing;
 import no.statkart.skif.skiftest.service.txbmt.BeanManagedTxAService;
-import no.statkart.skif.skiftest.service.txcmt.ContainerManagedTxAService;
 import no.statkart.skif.skiftest.service.txcascade.ContainerManagedTxCMTCascadeService;
+import no.statkart.skif.skiftest.service.txcmt.ContainerManagedTxAService;
 
 import java.util.ArrayList;
 import java.util.Collections;

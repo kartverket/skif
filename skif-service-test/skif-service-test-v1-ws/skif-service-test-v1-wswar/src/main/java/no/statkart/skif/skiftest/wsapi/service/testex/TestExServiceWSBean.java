@@ -1,20 +1,21 @@
 package no.statkart.skif.skiftest.wsapi.service.testex;
 
 import com.google.inject.Injector;
-import no.statkart.skif.SkifUtil;
-import no.statkart.skif.exception.ImplementationException;
-import no.statkart.skif.service.ws.SkifWebService;
-import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
-import no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException;
-import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
-import no.statkart.skif.skiftest.wsapi.domain.StringList;
-import no.statkart.skif.skiftest.wsapi.exception.simple.*;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.WebServiceContext;
+import no.statkart.skif.SkifUtil;
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.service.ws.SkifWebService;
+import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
+import no.statkart.skif.skiftest.wsapi.domain.StringList;
+import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
+import no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException;
+import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleFaultInfo;
+import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleNonMappedFaultInfo;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**

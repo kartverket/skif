@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.wsapi.service.nedlastning;
 
+import jakarta.jws.WebParam;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
@@ -8,8 +9,6 @@ import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.endringslogg.Bobleklasse;
 import no.statkart.skif.storetest.wsapi.domain.endringslogg.Kontroll;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-
-import jakarta.jws.WebParam;
 
 /**
  * @author Henrik Fredholm

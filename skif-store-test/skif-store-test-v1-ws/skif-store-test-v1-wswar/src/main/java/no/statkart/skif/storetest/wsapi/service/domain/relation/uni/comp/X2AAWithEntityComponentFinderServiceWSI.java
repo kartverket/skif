@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.wsapi.service.domain.relation.uni.comp;
 
+import jakarta.jws.WebParam;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2AAWithEntityComponentIdForX2CCManyIdMap;
@@ -7,8 +8,6 @@ import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2A
 import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2BBOneIdList;
 import no.statkart.skif.storetest.wsapi.domain.relation.uni.component.entity.X2CCManyIdList;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-
-import jakarta.jws.WebParam;
 
 /**
  * TODO: Denne service bruker feiler parameter typer. Legg inn riktige når de er modellert i basic.xsd

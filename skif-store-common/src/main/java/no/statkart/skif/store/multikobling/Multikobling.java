@@ -1,12 +1,21 @@
 package no.statkart.skif.store.multikobling;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ForwardingIterator;
+import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.ForwardingSetMultimap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
 import no.statkart.skif.domain.EqualityByFields;
 import no.statkart.skif.domain.EqualsByFields;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * En datastruktur som inneholder et sett av koblinger til objekter av type {@code V} sortert på roller av type {@code R},

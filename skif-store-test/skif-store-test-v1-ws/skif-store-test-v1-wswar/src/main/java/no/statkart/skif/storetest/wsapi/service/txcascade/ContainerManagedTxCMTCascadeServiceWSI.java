@@ -1,9 +1,8 @@
 package no.statkart.skif.storetest.wsapi.service.txcascade;
 
+import jakarta.jws.WebParam;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-
-import jakarta.jws.WebParam;
 
 /**
  * @author Henrik Fredholm

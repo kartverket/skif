@@ -1,7 +1,13 @@
 package no.statkart.skif.storetest.wsapi.service.store;
 
 import no.statkart.skif.service.ws.ServiceWSI;
-import no.statkart.skif.storetest.wsapi.domain.*;
+import no.statkart.skif.storetest.wsapi.domain.SnapshotVersionToStoreTestBubbleIdMap;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubble;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleId;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdList;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleIdToSnapshotBubbleIdsMap;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestBubbleList;
+import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.basetyper.Timestamp;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
 

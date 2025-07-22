@@ -1,6 +1,11 @@
 package no.statkart.skif.service.chain;
 
-import com.google.inject.*;
+import com.google.inject.Binder;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.service.ejb.EJBResourceProxyHandler;

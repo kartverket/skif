@@ -5,17 +5,34 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
-import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapper.AbstractMapper;
+import no.statkart.skif.mapper.CollectionMapperFactory;
+import no.statkart.skif.mapper.DefaultTypeMapperFactory;
+import no.statkart.skif.mapper.IdentityTypeMapperFactory;
+import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.mapper.MappingOverrideBuilder;
+import no.statkart.skif.mapper.MappingResolver;
 import no.statkart.skif.service.DefaultServiceContext;
 import no.statkart.skif.service.ServiceContext;
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.AbstractBubbleId;
+import no.statkart.skif.store.AbstractBubbleObject;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.BubbleObject;
+import no.statkart.skif.store.BubbleTransfer;
+import no.statkart.skif.store.KodelisteTransfer;
+import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.Transfer;
 import no.statkart.skif.store.kodeliste.KodelisteLong;
 import no.statkart.skif.store.kodeliste.KodelisteLongId;
 import no.statkart.skif.util.Since;
 import org.assertj.core.api.Assertions;
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Tor Egil R. Strand

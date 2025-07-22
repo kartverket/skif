@@ -12,7 +12,10 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tester ut at server injectoren i en SingleVm konfigurasjonen ikke blir gjenbukt på tvers av testmetoder og testcases

@@ -1,6 +1,8 @@
 package no.statkart.skif.storetest.service.histtest;
 
 import com.google.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.store.SnapshotVersion;
@@ -8,8 +10,6 @@ import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
-import jakarta.ejb.Stateless;
-import jakarta.interceptor.Interceptors;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

@@ -1,6 +1,9 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import com.google.common.base.Preconditions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import no.statkart.skif.bubbleref.persistence.hibernate.HibernateDetachedSupport;
 import no.statkart.skif.bubbleref.persistence.hibernate.HibernateLazySupport;
 import no.statkart.skif.exception.ConfigurationException;
@@ -26,9 +29,6 @@ import org.hibernate.persister.entity.EntityPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;

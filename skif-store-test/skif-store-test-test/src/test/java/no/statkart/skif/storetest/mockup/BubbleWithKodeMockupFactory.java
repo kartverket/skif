@@ -5,7 +5,8 @@ import com.google.inject.Singleton;
 import no.statkart.skif.mockup.AbstractMockupFactory;
 import no.statkart.skif.mockup.MockupStore;
 import no.statkart.skif.mockup.TestNumber;
-import no.statkart.skif.storetest.domain.basic.*;
+import no.statkart.skif.storetest.domain.basic.BubbleWithKode;
+import no.statkart.skif.storetest.domain.basic.BubbleWithKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.C2DbKodeId;
 

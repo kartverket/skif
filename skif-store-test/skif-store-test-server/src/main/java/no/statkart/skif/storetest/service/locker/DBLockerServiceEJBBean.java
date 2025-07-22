@@ -1,6 +1,11 @@
 package no.statkart.skif.storetest.service.locker;
 
 import com.google.inject.Inject;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionManagement;
+import jakarta.ejb.TransactionManagementType;
+import jakarta.interceptor.Interceptors;
 import no.statkart.skif.exception.LockedException;
 import no.statkart.skif.locker.LockInfo;
 import no.statkart.skif.locker.LockKey;
@@ -8,9 +13,6 @@ import no.statkart.skif.service.annotation.EJBServiceChain;
 import no.statkart.skif.service.ejb.EJBTimedService;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.ejb.*;
-import jakarta.interceptor.Interceptors;
 import java.util.Collection;
 import java.util.Set;
 

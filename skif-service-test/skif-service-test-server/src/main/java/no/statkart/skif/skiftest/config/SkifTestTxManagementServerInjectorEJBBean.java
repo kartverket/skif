@@ -2,13 +2,12 @@ package no.statkart.skif.skiftest.config;
 
 
 import com.google.inject.Injector;
-import no.statkart.skif.ServiceMode;
-import no.statkart.skif.config.SkifServerConfiguration;
-import no.statkart.skif.module.ModuleBuilder;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
+import no.statkart.skif.ServiceMode;
+import no.statkart.skif.config.SkifServerConfiguration;
+import no.statkart.skif.module.ModuleBuilder;
 
 
 /**

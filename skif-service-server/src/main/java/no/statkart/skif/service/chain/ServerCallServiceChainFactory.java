@@ -1,6 +1,8 @@
 package no.statkart.skif.service.chain;
 
-import com.google.inject.*;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.service.annotation.Call;
 import no.statkart.skif.service.ejb.EJBAttributesLookup;

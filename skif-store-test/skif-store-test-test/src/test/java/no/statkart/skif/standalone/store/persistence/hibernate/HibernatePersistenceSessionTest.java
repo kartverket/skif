@@ -1,5 +1,6 @@
 package no.statkart.skif.standalone.store.persistence.hibernate;
 
+import jakarta.persistence.criteria.CriteriaQuery;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.standalone.util.testsupport.StandAloneTestHelper;
 import no.statkart.skif.store.BubbleId;
@@ -18,7 +19,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import jakarta.persistence.criteria.CriteriaQuery;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;

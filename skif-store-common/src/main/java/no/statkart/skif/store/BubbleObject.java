@@ -2,8 +2,6 @@ package no.statkart.skif.store;
 
 import no.statkart.skif.bubble.spi.SkifBubbleObject;
 
-import java.io.Serializable;
-
 /**
  * @author Henrik Fredholm
  * @since 2.0

@@ -3,7 +3,6 @@ package no.statkart.skif;
 import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.util.CopyHelper;
 import org.testng.annotations.Test;
 

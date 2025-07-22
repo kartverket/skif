@@ -1,12 +1,12 @@
 package no.statkart.skif.util.testsupport;
 
 import com.google.common.reflect.TypeToken;
+import jakarta.xml.bind.annotation.XmlSchemaType;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.MappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;

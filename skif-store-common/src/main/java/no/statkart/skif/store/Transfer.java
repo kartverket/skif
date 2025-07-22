@@ -1,7 +1,10 @@
 package no.statkart.skif.store;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Transfer-wrapperklasse.

@@ -2,9 +2,12 @@ package no.statkart.skif.config;
 
 import no.statkart.skif.exception.ConfigurationException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
 import java.net.URL;
-import java.util.*;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * This is the "classic" Properties loader which loads the values from

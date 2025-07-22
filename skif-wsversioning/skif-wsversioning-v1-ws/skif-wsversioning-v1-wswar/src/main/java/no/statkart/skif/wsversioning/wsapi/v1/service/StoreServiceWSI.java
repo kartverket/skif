@@ -2,7 +2,12 @@ package no.statkart.skif.wsversioning.wsapi.v1.service;
 
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.wsversioning.wsapi.v1.context.WSVersioningContext;
-import no.statkart.skif.wsversioning.wsapi.v1.domain.*;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.SnapshotVersion;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.WSVersioningBubble;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.WSVersioningBubbleId;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.WSVersioningBubbleIdList;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.WSVersioningBubbleIdListForWSVersioningBubbleIdsMap;
+import no.statkart.skif.wsversioning.wsapi.v1.domain.WSVersioningBubbleList;
 import no.statkart.skif.wsversioning.wsapi.v1.exception.ServiceException;
 
 /**

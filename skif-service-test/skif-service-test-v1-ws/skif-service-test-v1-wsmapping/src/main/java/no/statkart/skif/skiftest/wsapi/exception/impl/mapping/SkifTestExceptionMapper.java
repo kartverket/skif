@@ -1,9 +1,12 @@
 package no.statkart.skif.skiftest.wsapi.exception.impl.mapping;
 
 import no.statkart.skif.exception.SkifException;
-import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapper.AbstractExceptionMapper;
+import no.statkart.skif.mapper.IdentityExceptionTypeMapper;
+import no.statkart.skif.mapper.IdentityTypeMapperFactory;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Mapper for JAX-WS exception classes in API

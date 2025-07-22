@@ -1,19 +1,18 @@
 package no.statkart.skif.skiftest.wsapi.service.test3;
 
 import com.google.inject.Injector;
-import no.statkart.skif.service.ws.SkifWebService;
-import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
-import no.statkart.skif.skiftest.wsapi.domain.A;
-import no.statkart.skif.skiftest.wsapi.domain.B;
-import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
-import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.WebServiceContext;
+import no.statkart.skif.service.ws.SkifWebService;
+import no.statkart.skif.skiftest.wsapi.config.SkifTestWebServiceInjectorConfig;
+import no.statkart.skif.skiftest.wsapi.domain.A;
+import no.statkart.skif.skiftest.wsapi.domain.B;
+import no.statkart.skif.skiftest.wsapi.domain.SkifTestContext;
+import no.statkart.skif.skiftest.wsapi.exception.SimpleException;
 
 /**
  * @author Henrik Fredholm

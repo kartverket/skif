@@ -1,6 +1,7 @@
 package no.statkart.skif.skiftest.service.test;
 
 import com.google.inject.Inject;
+import jakarta.xml.ws.soap.SOAPFaultException;
 import no.statkart.skif.mapper.MappingException;
 import no.statkart.skif.skiftest.config.SkifTestServerModule;
 import no.statkart.skif.skiftest.exception.SimpleException;
@@ -10,7 +11,6 @@ import no.statkart.skif.skiftest.wsapi.exception.simple.mapping.SkifTestSimpleEx
 import no.statkart.skif.util.testsupport.SkifTestCase;
 import org.testng.annotations.Test;
 
-import jakarta.xml.ws.soap.SOAPFaultException;
 import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;

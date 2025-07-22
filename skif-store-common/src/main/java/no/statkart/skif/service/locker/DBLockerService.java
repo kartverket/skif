@@ -1,8 +1,8 @@
 package no.statkart.skif.service.locker;
 
 import no.statkart.skif.exception.LockedException;
-import no.statkart.skif.locker.LockKey;
 import no.statkart.skif.locker.LockInfo;
+import no.statkart.skif.locker.LockKey;
 
 import java.util.Collection;
 import java.util.Set;

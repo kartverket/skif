@@ -1,10 +1,27 @@
 package no.statkart.skif.service.proxy;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.mapper.*;
-import no.statkart.skif.service.*;
+import no.statkart.skif.mapper.AbstractExceptionMapper;
+import no.statkart.skif.mapper.AbstractMapper;
+import no.statkart.skif.mapper.ExceptionMapping;
+import no.statkart.skif.mapper.IdentityExceptionTypeMapper;
+import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.service.AbstractServiceContextMapper;
+import no.statkart.skif.service.DefaultServiceContext;
+import no.statkart.skif.service.LoginUserHolder;
+import no.statkart.skif.service.LoginUserHolderImpl;
+import no.statkart.skif.service.ServiceContext;
+import no.statkart.skif.service.ServiceContextMapper;
+import no.statkart.skif.service.SingleVmServer;
 import no.statkart.skif.service.ejb.EJBCallProxyHandler;
 import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
@@ -15,7 +32,7 @@ import org.testng.annotations.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 public class SingleVmViaWSWithServiceContextSVMapperRemoteCallProxyHandlerTest {
 

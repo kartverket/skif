@@ -1,19 +1,17 @@
 package no.statkart.skif.service.ws;
 
+import jakarta.inject.Provider;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.WebServiceException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.inject.Provider;
-import jakarta.xml.ws.BindingProvider;
-import jakarta.xml.ws.WebServiceException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 

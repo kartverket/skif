@@ -1,6 +1,10 @@
 package no.statkart.skif.config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * An IteratorChain is an Iterator that wraps a number of Iterators.

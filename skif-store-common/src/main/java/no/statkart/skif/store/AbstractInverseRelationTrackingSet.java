@@ -4,7 +4,11 @@ import com.google.common.collect.ForwardingIterator;
 import com.google.common.collect.ForwardingSet;
 import no.statkart.skif.store.relation.cache.RelationName;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Wrapper klasse for {@link Set} som inneholder objekter med boblereferanser som inngår i invers relasjoner. Slike

@@ -1,9 +1,8 @@
 package no.statkart.skif.wsversioning.config;
 
 import com.google.inject.Injector;
-import no.statkart.skif.service.ejb.EJBInterceptorJEE;
-
 import jakarta.ejb.EJB;
+import no.statkart.skif.service.ejb.EJBInterceptorJEE;
 
 /**
  * EJB interceptor for WSVersioning-prosjektet.

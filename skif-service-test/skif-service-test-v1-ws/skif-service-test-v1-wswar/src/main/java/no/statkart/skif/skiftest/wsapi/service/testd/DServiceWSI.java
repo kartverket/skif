@@ -1,11 +1,10 @@
 package no.statkart.skif.skiftest.wsapi.service.testd;
 
+import jakarta.jws.WebParam;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.skiftest.wsapi.domain.StringList;
 import no.statkart.skif.skiftest.wsapi.exception.ServiceException;
 import no.statkart.skif.skiftest.wsapi.exception.SimpleNonMappedException;
-
-import jakarta.jws.WebParam;
 
 /**
  * @author Henrik Fredholm

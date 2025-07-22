@@ -1,6 +1,12 @@
 package no.statkart.skif.storetest.wsapi.mapping.testutils;
 
-import no.statkart.skif.mapper.*;
+import no.statkart.skif.mapper.AbstractMapper;
+import no.statkart.skif.mapper.DateTypeMapper;
+import no.statkart.skif.mapper.Mapping;
+import no.statkart.skif.mapper.SQLDateTypeMapper;
+import no.statkart.skif.mapper.SQLTimeTypeMapper;
+import no.statkart.skif.mapper.SQLTimestampTypeMapper;
+import no.statkart.skif.mapper.TypeMapper;
 import org.testng.annotations.BeforeMethod;
 
 /**

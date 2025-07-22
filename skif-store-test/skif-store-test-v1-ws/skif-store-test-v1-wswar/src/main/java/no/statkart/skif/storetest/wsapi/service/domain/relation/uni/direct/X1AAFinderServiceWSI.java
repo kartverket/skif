@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.wsapi.service.domain.relation.uni.direct;
 
+import jakarta.jws.WebParam;
 import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.storetest.wsapi.domain.StoreTestContext;
 import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1AAIdForX1CCManyIdMap;
@@ -7,8 +8,6 @@ import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1AAIdListFor
 import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1BBOneIdList;
 import no.statkart.skif.storetest.wsapi.domain.relation.uni.direct.X1CCManyIdList;
 import no.statkart.skif.storetest.wsapi.exception.ServiceException;
-
-import jakarta.jws.WebParam;
 
 /**
  * @author Thomas Berg

@@ -1,6 +1,7 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.ConcatenatedFields;
+import no.statkart.skif.store.ConcatenatedFieldsSerialization;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.internal.util.StringHelper;

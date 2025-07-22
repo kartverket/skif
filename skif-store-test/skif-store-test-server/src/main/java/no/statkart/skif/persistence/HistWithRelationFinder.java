@@ -3,6 +3,7 @@ package no.statkart.skif.persistence;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+import jakarta.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.jdbc.ConnectionSelector;
 import no.statkart.skif.store.SnapshotVersion;
@@ -11,7 +12,6 @@ import no.statkart.skif.storetest.domain.basic.HistSimple;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
-import jakarta.inject.Provider;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

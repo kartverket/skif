@@ -8,7 +8,11 @@ import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.service.module.common.RemoteServiceModuleStrategy;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.fail;
 
 /**
  * @author Henrik Fredholm

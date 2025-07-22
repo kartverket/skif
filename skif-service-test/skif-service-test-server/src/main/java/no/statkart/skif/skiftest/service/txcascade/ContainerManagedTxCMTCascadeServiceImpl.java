@@ -7,7 +7,10 @@ import no.statkart.skif.exception.ValidationException;
 import no.statkart.skif.skiftest.service.txbmt.BeanManagedTxAService;
 import no.statkart.skif.skiftest.service.txcmt.ContainerManagedTxAService;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author Henrik Fredholm

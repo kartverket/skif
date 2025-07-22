@@ -7,6 +7,7 @@ import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.GregorianCalendar;
+
 import static no.statkart.skif.mapper.SQLTimestampTypeMapper.createPureGregorianCalendar;
 
 /**

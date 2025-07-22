@@ -1,6 +1,8 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
-import no.statkart.skif.store.*;
+import no.statkart.skif.store.AbstractCompositeComponent;
+import no.statkart.skif.store.Components;
+import no.statkart.skif.store.CompositeComponentWithCollections;
 
 import java.util.Set;
 

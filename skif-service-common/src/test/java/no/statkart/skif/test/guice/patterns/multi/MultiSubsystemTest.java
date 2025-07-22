@@ -1,6 +1,11 @@
 package no.statkart.skif.test.guice.patterns.multi;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.PrivateModule;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import org.testng.annotations.Test;

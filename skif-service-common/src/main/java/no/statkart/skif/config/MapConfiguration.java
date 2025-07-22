@@ -2,7 +2,11 @@ package no.statkart.skif.config;
 
 import no.statkart.skif.internal.util.InternalConfigurationUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>A Map based Configuration.</p>

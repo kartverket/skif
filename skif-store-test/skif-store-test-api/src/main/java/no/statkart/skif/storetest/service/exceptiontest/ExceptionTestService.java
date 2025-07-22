@@ -1,6 +1,10 @@
 package no.statkart.skif.storetest.service.exceptiontest;
 
-import no.statkart.skif.exception.*;
+import no.statkart.skif.exception.AttemptDeleteException;
+import no.statkart.skif.exception.FinderException;
+import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.LockedException;
+import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.storetest.domain.StoreTestBubbleId;
 
 import java.sql.Timestamp;

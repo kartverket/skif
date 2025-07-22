@@ -3,6 +3,14 @@ package no.statkart.skif.service.ejb;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import jakarta.annotation.Resource;
+import jakarta.ejb.NoSuchObjectLocalException;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
+import jakarta.transaction.TransactionManager;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
@@ -15,15 +23,6 @@ import no.statkart.skif.service.scope.ServiceRequestScope;
 import no.statkart.skif.util.CopyHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.annotation.Resource;
-import jakarta.ejb.NoSuchObjectLocalException;
-import jakarta.ejb.SessionContext;
-import jakarta.ejb.Timer;
-import jakarta.ejb.TransactionAttributeType;
-import jakarta.interceptor.AroundInvoke;
-import jakarta.interceptor.InvocationContext;
-import jakarta.transaction.TransactionManager;
 
 /**
  * Baseklasse for integrasjon mellom JEE og Guice, samt SKIFs custom scopes.

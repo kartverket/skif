@@ -1,16 +1,15 @@
 package no.statkart.skif.storetest.service.locking;
 
 import com.google.inject.Inject;
-import no.statkart.skif.service.annotation.EJBServiceChain;
-import no.statkart.skif.service.ejb.EJBTimedService;
-import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
-
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.interceptor.Interceptors;
+import no.statkart.skif.service.annotation.EJBServiceChain;
+import no.statkart.skif.service.ejb.EJBTimedService;
+import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
 /**
  * EBJ for LockingTestService.

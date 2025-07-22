@@ -16,7 +16,10 @@ import no.statkart.skif.service.proxy.W2DAdapterWithServiceContextMapperProxyHan
 import no.statkart.skif.service.ws.ServiceWSI;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Henrik Fredholm

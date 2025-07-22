@@ -3,7 +3,11 @@ package no.statkart.skif.store.relation.cache;
 import com.google.common.collect.Lists;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
 

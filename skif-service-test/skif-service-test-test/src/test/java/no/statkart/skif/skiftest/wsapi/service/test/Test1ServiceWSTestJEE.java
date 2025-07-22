@@ -1,7 +1,15 @@
 package no.statkart.skif.skiftest.wsapi.service.test;
 
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.sun.xml.ws.developer.JAXWSProperties;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.WebServiceClient;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifClientConfiguration;
@@ -24,14 +32,11 @@ import no.statkart.skif.skiftest.wsapi.service.test1.Test1ServiceWS;
 import no.statkart.skif.skiftest.wsapi.service.test2.Test2Service;
 import no.statkart.skif.util.NullHostnameVerifier;
 import no.statkart.skif.util.testsupport.SkifTestConfigurationAccessor;
-import org.checkerframework.checker.units.qual.K;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
-import jakarta.xml.ws.BindingProvider;
-import jakarta.xml.ws.WebServiceClient;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

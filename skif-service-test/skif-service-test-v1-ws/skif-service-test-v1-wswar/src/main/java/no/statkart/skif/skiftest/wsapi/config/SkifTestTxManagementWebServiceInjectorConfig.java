@@ -1,19 +1,20 @@
 package no.statkart.skif.skiftest.wsapi.config;
 
 import com.google.inject.Injector;
+import jakarta.ejb.EJB;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.service.module.server.WSServerModule;
 import no.statkart.skif.service.module.server.WSServerServiceModule;
-import no.statkart.skif.skiftest.config.*;
+import no.statkart.skif.skiftest.config.SkifTestTxManagementServerInjector;
+import no.statkart.skif.skiftest.config.SkifTestTxManagementServices;
 import no.statkart.skif.skiftest.wsapi.exception.impl.mapping.SkifTestExceptionMapper;
 import no.statkart.skif.skiftest.wsapi.mapping.SkifTestMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.ejb.EJB;
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
 import java.util.ArrayList;
 import java.util.List;
 

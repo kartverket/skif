@@ -6,7 +6,6 @@ import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.StoreServer;
-import no.statkart.skif.storetest.domain.multikobling.MultirefererendeKobling;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;

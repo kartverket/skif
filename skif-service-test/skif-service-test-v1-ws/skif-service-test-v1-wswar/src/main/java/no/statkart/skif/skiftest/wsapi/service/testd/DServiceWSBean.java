@@ -1,6 +1,11 @@
 package no.statkart.skif.skiftest.wsapi.service.testd;
 
 import com.google.inject.Injector;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceContext;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.service.ws.SkifWebService;
@@ -13,11 +18,6 @@ import no.statkart.skif.skiftest.wsapi.exception.impl.ServiceFaultInfo;
 import no.statkart.skif.skiftest.wsapi.exception.impl.StackTraceElementList;
 import no.statkart.skif.skiftest.wsapi.exception.simple.SimpleNonMappedFaultInfo;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
-import jakarta.jws.WebParam;
-import jakarta.jws.WebService;
-import jakarta.xml.ws.WebServiceContext;
 import java.lang.reflect.InvocationTargetException;
 
 /**
