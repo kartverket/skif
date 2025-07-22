@@ -1,7 +1,7 @@
 #Alfabetisk rekkefølge
 [versions]
 annotation-api = '2.1.1'
-assertj = '3.26.3'
+assertj = '3.27.3'
 c3p0 = '0.9.5.5'
 commons-pool = '2.11.1'
 ejb-api = '4.0.1'
