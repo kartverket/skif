@@ -1,6 +1,6 @@
 #Alfabetisk rekkefølge
 [versions]
-annotation-api = '2.1.1'
+annotation-api = '3.0.0'
 assertj = '3.27.3'
 c3p0 = '0.9.5.5'
 commons-pool = '2.11.1'
