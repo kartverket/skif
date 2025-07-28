@@ -2,7 +2,7 @@
 [versions]
 annotation-api = '2.1.1'
 assertj = '3.27.3'
-c3p0 = '0.9.5.5'
+c3p0 = '0.11.2'
 commons-pool = '2.12.1'
 ejb-api = '4.0.1'
 guava = '33.4.8-jre'
