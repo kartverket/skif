@@ -436,6 +436,24 @@ ALTER TABLE ENT_IN_MULTIKOB_KOBLING ADD (
 );
 
 
+-- Tabeller for subtyped entity component testing
+
+create table BubbleWithSubtypedEntityComponent (
+   id number(19,0) not null,
+   subtypedComponentId number(19,0),
+   primary key (id)
+);
+
+create table SubtypedEntityComponent (
+   id number(19,0) not null,
+   ownerId number(19,0) constraint SubtypedEComponent_ownerId_null not null initially deferred,
+   class varchar2(255) not null,
+   nr number(10,0),
+   primary key (id)
+);
+alter table BubbleWithSubtypedEntityComponent add constraint FK_BWithSubEntity_SubCompId foreign key (subtypedComponentId) references SubtypedEntityComponent;
+
+
 
 -- Tabeller for relasjonstesting
 
