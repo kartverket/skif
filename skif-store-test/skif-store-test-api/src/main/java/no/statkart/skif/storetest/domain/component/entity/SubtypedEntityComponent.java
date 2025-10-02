@@ -8,7 +8,7 @@ import no.statkart.skif.store.InverseRelationParticipation;
 public abstract class SubtypedEntityComponent extends AbstractEntityBubbleComponentWithOwner<BubbleWithSubtypedEntityComponent> implements InverseRelationParticipation {
     private Long id;
     private BubbleWithSubtypedEntityComponent owner;
-    private Long nr;
+    private long nr;
 
     @SuppressWarnings("UnusedDeclaration") // Hibernate
     public void setId(Long id) {
@@ -30,6 +30,6 @@ public abstract class SubtypedEntityComponent extends AbstractEntityBubbleCompon
     public void collectInverseRelationValues(InverseRelationCollector collector) {
     }
 
-    public Long getNr() {return nr;}
-    public void setNr(Long nr) {this.nr = nr;}
+    public long getNr() {return nr;}
+    public void setNr(long nr) {this.nr = nr;}
 }
