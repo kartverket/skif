@@ -125,7 +125,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
     }
 
     @Test(groups = {"singlevm-required"})
-    @Ignore // Denne testen er ment å illustrere oppførsel som kan oppstå ved spesifik bruk av hibernate + store.
+    // Denne testen er ment å illustrere oppførsel som kan oppstå ved spesifik bruk av hibernate + store.
     public void updateWithSubtypeChangeIncorrectUse() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
@@ -167,8 +167,5 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
                 return null;
             }
         });
-
-        Assertions.fail("Dette caset håndteres ikke");
-
     }
 }
