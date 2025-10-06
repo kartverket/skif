@@ -100,6 +100,7 @@ import no.statkart.skif.storetest.domain.component.composite.BubbleWithComposite
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithSubtypedEntityComponent;
+import no.statkart.skif.storetest.domain.component.entity.BubbleWithSubtypedEntityComponentSet;
 import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithEntityComponents;
 import no.statkart.skif.storetest.domain.component.historikk.HistorikkBubbleWithListEntityComponents;
 import no.statkart.skif.storetest.domain.demo.AggregertObjekt;
@@ -300,6 +301,7 @@ public class StoreTestServerModule extends SkifModule {
                 .addBubble(BubbleWithEntityComponent.class)
                 .addBubble(BubbleWithEntityInCompositeComponent.class)
                 .addBubble(BubbleWithSubtypedEntityComponent.class)
+                .addBubble(BubbleWithSubtypedEntityComponentSet.class)
 
                 .addBubble(HistorikkBubbleWithEntityComponents.class)
                 .addBubble(HistorikkBubbleWithListEntityComponents.class)
