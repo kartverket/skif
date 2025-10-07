@@ -12,9 +12,6 @@ import no.statkart.skif.storetest.domain.component.entity.SubtypedEntityComponen
 
 import java.util.Collections;
 
-/**
- * @since 4.6
- */
 @Singleton
 public class BubbleWithSubtypedEntityComponentSetMockupFactory extends AbstractMockupFactory {
     private final BubbleWithSubtypedEntityComponentSetId<?> withNonNullSubtypedComponentsId;

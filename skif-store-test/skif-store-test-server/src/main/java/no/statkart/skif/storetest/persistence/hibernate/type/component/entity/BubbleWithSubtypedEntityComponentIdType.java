@@ -4,10 +4,6 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithSubtypedEntityComponentId;
 
-/**
- * @author Martin Halleland
- * @since 4.6
- */
 public class BubbleWithSubtypedEntityComponentIdType extends BubbleIdType {
     @Override
     public Class returnedClass() {

@@ -24,8 +24,6 @@ import org.testng.annotations.Test;
 
 /**
  * Tester endring av subtype på entitycomponent på tjenersiden.
- *
- * @author Martin Halleland
  */
 public class SubtypedEntityComponentTest extends StoreTestTestCase {
     private final long NON_DEFAULT_NR = 1;

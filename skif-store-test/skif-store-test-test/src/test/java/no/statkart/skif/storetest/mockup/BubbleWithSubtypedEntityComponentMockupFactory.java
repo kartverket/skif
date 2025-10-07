@@ -10,10 +10,6 @@ import no.statkart.skif.storetest.domain.component.entity.BubbleWithSubtypedEnti
 import no.statkart.skif.storetest.domain.component.entity.Subtype1EntityComponent;
 import no.statkart.skif.storetest.domain.component.entity.SubtypedEntityComponent;
 
-/**
- * @author Martin Halleland
- * @since 4.6
- */
 @Singleton
 public class BubbleWithSubtypedEntityComponentMockupFactory extends AbstractMockupFactory {
     private final BubbleWithSubtypedEntityComponentId<?> withNonNullSubtypedComponentsId;
