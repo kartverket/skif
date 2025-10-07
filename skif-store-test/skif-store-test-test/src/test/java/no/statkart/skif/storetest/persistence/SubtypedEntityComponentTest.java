@@ -71,11 +71,11 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
                     BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
 
                     Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubble.getSubtypedEntityComponent();
-                    Subtype2EntityComponent newComponent = new Subtype2EntityComponent();
-                    newComponent.setId(oldComponent.getId());
-                    newComponent.setNr(NON_DEFAULT_NR);
+                    Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
+                    newComponentWithOldId.setId(oldComponent.getId());
+                    newComponentWithOldId.setNr(NON_DEFAULT_NR);
 
-                    bubble.setSubtypedEntityComponent(newComponent);
+                    bubble.setSubtypedEntityComponent(newComponentWithOldId);
                     store.update(bubble);
 
                     Assertions.assertThatThrownBy(() -> store.commitUnitOfWork(uow))
@@ -91,7 +91,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
     }
 
     @Test(groups = {"singlevm-required"})
-    public void updateWithSubtypeChangeShouldThrowWithCopyHelper() {
+    public void updateWithSubtypeChangeShouldThrowWithCopy() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
         server.run(new RunOnServerMethod() {
@@ -102,17 +102,17 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
             public Object run() {
                 BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
-                BubbleWithSubtypedEntityComponent newBubble = CopyHelper.copy(bubble);
+                BubbleWithSubtypedEntityComponent bubbleCopy = CopyHelper.copy(bubble);
 
-                Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) newBubble.getSubtypedEntityComponent();
-                Subtype2EntityComponent newComponent = new Subtype2EntityComponent();
-                newComponent.setId(oldComponent.getId());
-                newComponent.setNr(NON_DEFAULT_NR);
+                Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubbleCopy.getSubtypedEntityComponent();
+                Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
+                newComponentWithOldId.setId(oldComponent.getId());
+                newComponentWithOldId.setNr(NON_DEFAULT_NR);
 
-                newBubble.setSubtypedEntityComponent(newComponent);
+                bubbleCopy.setSubtypedEntityComponent(newComponentWithOldId);
 
                 Assertions.assertThatThrownBy(() ->
-                                store.update(newBubble))
+                                store.update(bubbleCopy))
                         .isInstanceOf(ImplementationException.class)
                         .hasMessageContaining("Attempted to change class");
 
@@ -139,14 +139,14 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
                 Assertions.assertThat(bubble.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue();
 
                 Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubble.getSubtypedEntityComponent();
-                Subtype2EntityComponent newComponent = new Subtype2EntityComponent();
-                newComponent.setId(oldComponent.getId());
-                newComponent.setNr(NON_DEFAULT_NR);
+                Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
+                newComponentWithOldId.setId(oldComponent.getId());
+                newComponentWithOldId.setNr(NON_DEFAULT_NR);
 
                 Session session = store.getInstance(SessionSelector.class).get(SnapshotVersion.CURRENT);
                 session.evict(oldComponent); //Uten evict klarer hibernate å plukke opp feilen med: org.hibernate.NonUniqueObjectException
 
-                bubble.setSubtypedEntityComponent(newComponent);
+                bubble.setSubtypedEntityComponent(newComponentWithOldId);
                 store.update(bubble);
                 return null;
             }

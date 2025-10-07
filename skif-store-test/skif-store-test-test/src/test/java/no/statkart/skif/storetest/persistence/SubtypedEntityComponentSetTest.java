@@ -70,11 +70,11 @@ public class SubtypedEntityComponentSetTest extends StoreTestTestCase {
                     BubbleWithSubtypedEntityComponentSet bubble = store.lock(bubbleId);
 
                     Subtype1EntityComponentForSet oldComponent = (Subtype1EntityComponentForSet) bubble.getSubtypedEntityComponentSet().iterator().next();
-                    Subtype2EntityComponentForSet newComponent = new Subtype2EntityComponentForSet();
-                    newComponent.setId(oldComponent.getId());
-                    newComponent.setNr(NON_DEFAULT_NR);
+                    Subtype2EntityComponentForSet newComponentWithOldId = new Subtype2EntityComponentForSet();
+                    newComponentWithOldId.setId(oldComponent.getId());
+                    newComponentWithOldId.setNr(NON_DEFAULT_NR);
 
-                    bubble.setSubtypedEntityComponentSet(Collections.singletonList(newComponent));
+                    bubble.setSubtypedEntityComponentSet(Collections.singletonList(newComponentWithOldId));
                     store.update(bubble);
 
                     Assertions.assertThatThrownBy(() -> store.commitUnitOfWork(uow))
@@ -90,7 +90,7 @@ public class SubtypedEntityComponentSetTest extends StoreTestTestCase {
     }
 
     @Test(groups = {"singlevm-required"})
-    public void updateWithSubtypeChangeShouldThrowWithCopyHelper() {
+    public void updateWithSubtypeChangeShouldThrowWithCopy() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
 
         server.run(new RunOnServerMethod() {
@@ -102,17 +102,17 @@ public class SubtypedEntityComponentSetTest extends StoreTestTestCase {
 
                 BubbleWithSubtypedEntityComponentSetId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentSetMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponentSet bubble = store.lock(bubbleId);
-                BubbleWithSubtypedEntityComponentSet newBubble = CopyHelper.copy(bubble);
+                BubbleWithSubtypedEntityComponentSet bubbleCopy = CopyHelper.copy(bubble);
 
                 Subtype1EntityComponentForSet oldComponent = (Subtype1EntityComponentForSet) bubble.getSubtypedEntityComponentSet().iterator().next();
-                Subtype2EntityComponentForSet newComponent = new Subtype2EntityComponentForSet();
-                newComponent.setId(oldComponent.getId());
-                newComponent.setNr(NON_DEFAULT_NR);
+                Subtype2EntityComponentForSet newComponentWithOldId = new Subtype2EntityComponentForSet();
+                newComponentWithOldId.setId(oldComponent.getId());
+                newComponentWithOldId.setNr(NON_DEFAULT_NR);
 
-                newBubble.setSubtypedEntityComponentSet(Collections.singletonList(newComponent));
+                bubbleCopy.setSubtypedEntityComponentSet(Collections.singletonList(newComponentWithOldId));
 
                 Assertions.assertThatThrownBy(() ->
-                        store.update(newBubble))
+                        store.update(bubbleCopy))
                     .isInstanceOf(ImplementationException.class)
                     .hasMessageContaining("Attempted to change class");
 
