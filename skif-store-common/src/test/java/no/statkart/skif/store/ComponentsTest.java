@@ -61,6 +61,13 @@ public class ComponentsTest {
         Assertions.assertThat(set).isEmpty();
     }
 
+    @Test
+    public void testSetFrom_nullToEmptyFromNotEmpty() {
+        HashSet<TestComponent> set = Sets.newHashSet(new TestComponent(), new TestComponent());
+        Components.setFrom(set, null);
+        Assertions.assertThat(set).isEmpty();
+    }
+
     private static class TestComponent implements Component {
         private static final long serialVersionUID = 1L;
     }
