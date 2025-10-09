@@ -150,11 +150,6 @@ public class Components {
     }
 
     static public <E extends Component> void setFrom(Collection<E> collection, Collection<E> newElements) {
-        if (newElements == null){
-            collection.clear();
-            return;
-        }
-
         // Må ta en kopi av newElements, i tilfelle newElements er den samme som collection eller en form for wrapper for den.
         ImmutableList<E> copy = ImmutableList.copyOf(newElements);
         collection.clear();
