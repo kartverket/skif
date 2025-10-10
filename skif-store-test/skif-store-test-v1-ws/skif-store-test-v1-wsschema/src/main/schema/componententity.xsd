@@ -22,6 +22,20 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="BubbleWithSubtypedEntityComponentId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithSubtypedEntityComponentSetId">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubbleId">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="BubbleWithEntityComponentIdList">
         <xs:sequence>
             <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="entityns:BubbleWithEntityComponentId"/>
@@ -61,6 +75,26 @@
                     <xs:element name="nr" type="xs:int"/>
                     <xs:element name="text" type="xs:string"/>
                     <xs:element name="level1Component" type="entityns:Level1CompositeComponentWithEntity"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithSubtypedEntityComponent">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="subtypedEntityComponent" type="entityns:SubtypedEntityComponent"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BubbleWithSubtypedEntityComponentSet">
+        <xs:complexContent>
+            <xs:extension base="domainns:StoreTestBubble">
+                <xs:sequence>
+                    <xs:element name="subtypedEntityComponentSet" type="entityns:SubtypedEntityComponentSet"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -194,5 +228,54 @@
             <xs:element name="beloepSet" type="basicns:BeloepValueObjectList"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:complexType name="SubtypedEntityComponent">
+        <xs:sequence>
+            <xs:element name="nr" type="xs:long" nillable="true"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="Subtype1EntityComponent">
+        <xs:complexContent>
+            <xs:extension base="entityns:SubtypedEntityComponent">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Subtype2EntityComponent">
+        <xs:complexContent>
+            <xs:extension base="entityns:SubtypedEntityComponent">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SubtypedEntityComponentSet">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="entityns:SubtypedEntityComponentForSet"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="SubtypedEntityComponentForSet">
+        <xs:sequence>
+            <xs:element name="nr" type="xs:long" nillable="true"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Subtype1EntityComponentForSet">
+        <xs:complexContent>
+            <xs:extension base="entityns:SubtypedEntityComponentForSet">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="Subtype2EntityComponentForSet">
+        <xs:complexContent>
+            <xs:extension base="entityns:SubtypedEntityComponentForSet">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
 
 </xs:schema>
