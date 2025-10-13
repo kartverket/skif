@@ -35,6 +35,8 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
     @Inject private BubbleWithCompositeComponentMockupFactory bubbleWithCompositeComponentMockupFactory;
     @Inject private BubbleWithEntityComponentMockupFactory bubbleWithEntityComponentMockupFactory;
     @Inject private BubbleWithEntityInCompositeComponentMockupFactory bubbleWithEntityInCompositeComponentMockupFactory;
+    @Inject private BubbleWithSubtypedEntityComponentMockupFactory bubbleWithSubtypedEntityComponentMockupFactory;
+    @Inject private BubbleWithSubtypedEntityComponentSetMockupFactory bubbleWithSubtypedEntityComponentSetMockupFactory;
 
 
     @Inject private X1BBOneMockupFactory x1BBOneMockupFactory;
@@ -61,6 +63,8 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
                 bubbleWithCompositeComponentMockupFactory,
                 bubbleWithEntityComponentMockupFactory,
                 bubbleWithEntityInCompositeComponentMockupFactory,
+                bubbleWithSubtypedEntityComponentMockupFactory,
+                bubbleWithSubtypedEntityComponentSetMockupFactory,
                 x1BBOneMockupFactory,
                 x1CCManyMockupFactory,
                 x1AAMockupFactory,
@@ -116,6 +120,14 @@ public class StoreTestMockupFacade extends AbstractMockupFacade {
 
     public BubbleWithEntityInCompositeComponentMockupFactory getBubbleWithEntityInCompositeComponentMockupFactory() {
         return bubbleWithEntityInCompositeComponentMockupFactory;
+    }
+
+    public BubbleWithSubtypedEntityComponentMockupFactory getBubbleWithSubtypedEntityComponentMockupFactory() {
+        return bubbleWithSubtypedEntityComponentMockupFactory;
+    }
+
+    public BubbleWithSubtypedEntityComponentSetMockupFactory getBubbleWithSubtypedEntityComponentSetMockupFactory() {
+        return bubbleWithSubtypedEntityComponentSetMockupFactory;
     }
 
     public X1AAMockupFactory getX1AAMockupFactory() {

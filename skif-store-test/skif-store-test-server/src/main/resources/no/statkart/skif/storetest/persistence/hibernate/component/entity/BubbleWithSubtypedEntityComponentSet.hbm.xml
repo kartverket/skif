@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false">
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.BubbleWithSubtypedEntityComponentSet"
+           select-before-update="true" lazy="true">
+        <id name="id" column="id"
+            type="no.statkart.skif.storetest.persistence.hibernate.type.component.entity.BubbleWithSubtypedEntityComponentSetIdType">
+            <generator class="assigned"/>
+        </id>
+        <set name="subtypedEntityComponentSetSet" access="property" lazy="true" batch-size="256"
+             cascade="all-delete-orphan,evict">
+            <key column="ownerId"/>
+            <one-to-many class="no.statkart.skif.storetest.domain.component.entity.SubtypedEntityComponentForSet"/>
+        </set>
+    </class>
+
+    <class name="no.statkart.skif.storetest.domain.component.entity.SubtypedEntityComponentForSet" lazy="true"
+           select-before-update="true">
+        <id name="id" unsaved-value="null">
+            <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>
+        </id>
+        <discriminator column="class" type="string"/>
+
+        <many-to-one
+            name="owner"
+            column="ownerId"
+            class="no.statkart.skif.storetest.domain.component.entity.BubbleWithSubtypedEntityComponentSet"
+            access="field"
+            cascade="none">
+
+        </many-to-one>
+
+        <property name="nr"/>
+
+        <subclass name="no.statkart.skif.storetest.domain.component.entity.Subtype1EntityComponentForSet"
+                  discriminator-value="Subtype1EntityComponentForSet" lazy="true"
+                  select-before-update="true">
+        </subclass>
+        <subclass name="no.statkart.skif.storetest.domain.component.entity.Subtype2EntityComponentForSet"
+                  discriminator-value="Subtype2EntityComponentForSet" lazy="true"
+                  select-before-update="true">
+        </subclass>
+    </class>
+
+</hibernate-mapping>
