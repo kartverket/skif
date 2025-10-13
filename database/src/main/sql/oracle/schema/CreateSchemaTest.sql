@@ -513,6 +513,21 @@ create table X2CCMany (
 );
 alter table X2CCMany add constraint FK_X2CCMany_ownerId foreign key (ownerId) references X2EntityComponentOne;
 
+create table BubbleWithManyBubbles (
+  id number(19,0) not null,
+  text varchar2(255),
+  primary key (id)
+);
+
+create table ManyBubbles (
+  id number(19,0) not null,
+  ownerId number(19,0),
+  indeks number(10,0),
+  text varchar2(255),
+  primary key (id)
+);
+alter table ManyBubbles add constraint FK_ManyBubbles_ownerId foreign key (ownerId) references BubbleWithManyBubbles;
+
 -- Denne map tabell brukes av StoreTest1ServiceTest
 create table TestMap (
 k varchar2(255) not null,

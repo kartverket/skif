@@ -126,6 +126,8 @@ import no.statkart.skif.storetest.domain.multikobling.Multirefererende;
 import no.statkart.skif.storetest.domain.multikobling.entity.BubbleWithEntityInMultikobling;
 import no.statkart.skif.storetest.domain.multikobling_old.Person;
 import no.statkart.skif.storetest.domain.multikobling_old.Rettsstiftelse;
+import no.statkart.skif.storetest.domain.relation.many.BubbleWithManyBubbles;
+import no.statkart.skif.storetest.domain.relation.many.ManyBubbles;
 import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2AAWithEntityComponent;
 import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2BBOne;
 import no.statkart.skif.storetest.domain.relation.uni.component.entity.X2CCMany;
@@ -328,6 +330,9 @@ public class StoreTestServerModule extends SkifModule {
                 .addBubble(X2BBOne.class)
                 .addBubble(X2CCMany.class)
                 .addBubble(X2AAWithEntityComponent.class)
+
+                .addBubble(BubbleWithManyBubbles.class)
+                .addBubble(ManyBubbles.class)
 
                 .addBubble(TestBubble.class)
                 .addBubbleUseSameIndex(SelfBubble.class)   // Blir sortert sammen me TestBubble

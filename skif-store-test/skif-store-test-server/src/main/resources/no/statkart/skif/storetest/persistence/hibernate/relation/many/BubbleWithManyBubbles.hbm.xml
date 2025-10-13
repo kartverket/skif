@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-cascade="none" default-lazy="false" >
+
+    <class name="no.statkart.skif.storetest.domain.relation.many.BubbleWithManyBubbles" select-before-update="true">
+        <id name="id" column="id" type="no.statkart.skif.storetest.persistence.hibernate.type.relation.many.BubbleWithManyBubblesIdType">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="text"/>
+
+        <list name="myBubbles" lazy="true" batch-size="256">
+            <meta attribute="bubble-ref"/>
+            <key column="ownerId"/>
+            <index column="indeks"/>
+            <one-to-many class="no.statkart.skif.storetest.domain.relation.many.ManyBubbles"/>
+        </list>
+    </class>
+</hibernate-mapping>
