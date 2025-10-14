@@ -11,6 +11,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
+import org.hibernate.Version;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.BootstrapServiceRegistry;
@@ -18,6 +19,9 @@ import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.event.service.spi.EventListenerRegistry;
+import org.hibernate.event.spi.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,7 +183,7 @@ public class HibernateSessionFactoryBuilder {
         // som sikre at connection ikke lukkes før sessionn. Se kommentar i https://jira.statkart.no/browse/SKIF-699
         properties.setProperty(AvailableSettings.CONNECTION_HANDLING, "DELAYED_ACQUISITION_AND_HOLD");
         properties.put("no.statkart.skif.SnapshotVersionSeed", snapshotVersionSeed);
-        logger.info("SKIF hibernatekonfigurasjon({}): {}", org.hibernate.Version.getVersionString(), getAndConnectionInfo(snapshotVersionSeed, properties));
+        logger.info("SKIF hibernatekonfigurasjon({}): {}", Version.getVersionString(), getAndConnectionInfo(snapshotVersionSeed, properties));
         logger.debug("creating session factory");
 
         // Konfigurerer Hibernate listeners for raskere initialisering av tomme collections. Listeners er aktive
@@ -230,6 +234,10 @@ public class HibernateSessionFactoryBuilder {
                 sessionFactory = metadata.getSessionFactoryBuilder()
                         .applyInterceptor(interceptor)
                         .build();
+                EventListenerRegistry eventListenerRegistry = ((SessionFactoryImplementor) sessionFactory).getServiceRegistry().getService(EventListenerRegistry.class);
+                eventListenerRegistry.prependListeners(EventType.FLUSH_ENTITY, new OneToManyBubbleRefListener());
+                eventListenerRegistry.prependListeners(EventType.POST_LOAD, new OneToManyBubbleRefListener());
+                // TODO: Trenger nok post update også. Det vil antagelig kunne forekomme ved lock etter get.
             } catch (HibernateException e) {
                 throw new ImplementationException("Error initializing Hibernate", e, logger);
             }

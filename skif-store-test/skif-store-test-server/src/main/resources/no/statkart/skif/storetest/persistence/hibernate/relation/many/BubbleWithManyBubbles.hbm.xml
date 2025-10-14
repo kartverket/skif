@@ -10,8 +10,8 @@
 
         <property name="text"/>
 
-        <list name="myBubbles" lazy="true" batch-size="256">
-            <meta attribute="bubble-ref"/>
+        <list name="myBubblesSet" lazy="true" batch-size="256">
+            <!--meta attribute="bubble-ref"/-->
             <key column="ownerId"/>
             <index column="indeks"/>
             <one-to-many class="no.statkart.skif.storetest.domain.relation.many.ManyBubbles"/>
