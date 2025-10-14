@@ -29,7 +29,7 @@ public class BubbleWithManyBubbles extends AbstractStoreTestBubble {
         this.text = text;
     }
 
-    public List<ManyBubbles> getManyBubbles() {
+    public List<ManyBubbles> getMyBubbles() {
         return store().getOrdered(getMyBubbleIds());
     }
 
