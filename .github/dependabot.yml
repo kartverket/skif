@@ -13,3 +13,23 @@ updates:
           interval: "weekly"
           time: '07:00'
           timezone: 'Europe/Oslo'
+      ignore:
+          # Jakarta EE
+          - dependency-name: "jakarta.*"
+            update-types: ["version-update:semver-major", "version-update:semver-minor"]
+          # Jakarta EE Web services
+          - dependency-name: "com.sun.xml.ws:*"
+            update-types: ["version-update:semver-major", "version-update:semver-minor"]
+          # Jakarta EE JAXB  
+          - dependency-name: "org.glassfish.jaxb:*"
+            update-types: ["version-update:semver-major"]
+            
+          # Jakarta EE Application server
+          - dependency-name: "org.apache.cxf:*"
+            update-types: ["version-update:semver-major", "version-update:semver-minor"]
+          - dependency-name: "org.apache.tomcat:*"
+            update-types: ["version-update:semver-major"]
+          - dependency-name: "org.apache.tomee:tomee-*"
+            update-types: ["version-update:semver-major"]
+            
+            
