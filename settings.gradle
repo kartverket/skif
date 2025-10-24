@@ -1,5 +1,5 @@
 pluginManagement {
-    def SKTOOLS_VERSION = '7.1'
+    def SKTOOLS_VERSION = '7.3'
 
     plugins {
         id 'sktools.dbtools' version "$SKTOOLS_VERSION"
