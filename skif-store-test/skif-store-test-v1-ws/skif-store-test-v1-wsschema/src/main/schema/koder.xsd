@@ -49,6 +49,12 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="SimpleEnumKodeIdList">
+        <xs:sequence>
+            <xs:element name="item" type="koderns:SimpleEnumKodeId" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="SimpleEnumKode">
         <xs:complexContent>
             <xs:extension base="kodelistens:Kode">
