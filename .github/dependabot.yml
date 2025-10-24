@@ -21,6 +21,8 @@ updates:
           - dependency-name: "com.sun.xml.ws:*"
             update-types: ["version-update:semver-major", "version-update:semver-minor"]
           # Jakarta EE JAXB  
+          - dependency-name: "com.sun.xml.bind:*"
+            update-types: ["version-update:semver-major"]
           - dependency-name: "org.glassfish.jaxb:*"
             update-types: ["version-update:semver-major"]
             
