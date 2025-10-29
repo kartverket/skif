@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import no.statkart.skif.bubbleref.persistence.hibernate.HibernateDetachedSupport;
-import no.statkart.skif.bubbleref.persistence.hibernate.HibernateLazySupport;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.ObjectNotFoundException;

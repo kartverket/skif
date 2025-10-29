@@ -25,7 +25,6 @@ ojdbc = '19.12.0.0'
 reflections = '0.10.2'
 servlet-api = '5.0.0'
 skif-bubble-spi = '1.0.0'
-skif-hibernate-support= '2.0.7'
 slf4j = '1.7.32'
 testng = '7.11.0'
 tomee = '9.1.3'
@@ -96,7 +95,6 @@ jakarta-ejbapi          = { module = 'jakarta.ejb:jakarta.ejb-api', version.ref 
 jakarta-interceptor-api = { module = 'jakarta.interceptor:jakarta.interceptor-api', version.ref = 'interceptor-api' }
 
 skif-bubble-spi        = { module = 'no.statkart.skif:skif-bubble-spi', version.ref = 'skif-bubble-spi'}
-skif-hibernate-support = { module = 'no.statkart.skif:skif-hibernate-support', version.ref = 'skif-hibernate-support'}
 hibernate-core-jakarta = { module = 'org.hibernate:hibernate-core-jakarta', version.ref = 'hibernate-core-jakarta'}
 
 [bundles]
@@ -107,7 +105,6 @@ jaxws-rt = [
 ]
 
 hibernate = [
-    'skif-hibernate-support',
     'hibernate-core-jakarta'
 ]
 

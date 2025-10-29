@@ -27,7 +27,6 @@ allprojects {
             name = 'intern-nexus'; url = 'https://nexus.statkart.no/repository/public/'
             content {
                 includeModule 'no.statkart.skif', 'skif-bubble-spi' //SKIF bubbleref hack
-                includeModule 'no.statkart.skif', 'skif-hibernate-support' //SKIF bubbleref hack
                 includeGroup 'org.hibernate' //SKIF bubbleref hack
 
             }
