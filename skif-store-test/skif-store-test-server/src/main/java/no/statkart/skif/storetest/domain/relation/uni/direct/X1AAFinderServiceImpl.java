@@ -66,8 +66,8 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
         SnapshotVersion snapshotVersion = x1CCManyIds.iterator().next().getSnapshotVersion();
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select id, ownerId  from X1CCMany  where id in (select * from table(:idValues))")
-                .addSynchronizedQuerySpace("X1CCMany")
+                .createNativeQuery("select childId as id, ownerId  from X1AAForX1CCMany where childId in (select * from table(:idValues))")
+                .addSynchronizedQuerySpace("X1AAForX1CCMany")
                 .setParameter("idValues", x1CCManyIds, new OracleLongBubbleIdArrayCustomType())
                 .setFetchSize(Math.min(1000, x1CCManyIds.size()))
                 .addScalar("id", StandardBasicTypes.LONG)

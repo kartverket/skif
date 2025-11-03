@@ -20,10 +20,9 @@
         <property name="someBBId"
                   type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.direct.X1BBOneIdType"/>
 
-        <set name="someCCs" lazy="true" batch-size="256">
-            <meta attribute="bubble-ref"/>
+        <set name="someCCsIdsSet" lazy="true" batch-size="256" table="X1AAForX1CCMany">
             <key column="ownerId" />
-            <one-to-many class="no.statkart.skif.storetest.domain.relation.uni.direct.X1CCMany"/>
+            <element column="childId" type="no.statkart.skif.storetest.persistence.hibernate.type.relation.uni.direct.X1CCManyIdType" />
         </set>
 
         <property name="uniqueOnX1AA"/>
