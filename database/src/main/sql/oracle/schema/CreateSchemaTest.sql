@@ -550,10 +550,16 @@ create table X2CCMany (
   id number(19,0) not null,
   nr number(10,0),
   text varchar2(255),
-  ownerId number(19,0),
   primary key (id)
 );
-alter table X2CCMany add constraint FK_X2CCMany_ownerId foreign key (ownerId) references X2EntityComponentOne;
+
+create table X2AAForX2CCMany(
+  ownerId number(19,0) not null,
+  childId number(19,0) not null
+);
+alter table X2AAForX2CCMany add constraint FK_X2AAForX2CCMany_ownerId foreign key (ownerId) references X2EntityComponentOne;
+alter table X2AAForX2CCMany add constraint FK_X2AAForX2CCMany_childId foreign key (childId) references X2CCMany;
+alter table X2AAForX2CCMany add constraint PK_X2AAForX2CCMany_childId primary key (childId);
 
 -- Denne map tabell brukes av StoreTest1ServiceTest
 create table TestMap (

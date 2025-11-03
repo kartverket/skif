@@ -61,8 +61,8 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
         SnapshotVersion snapshotVersion = ids.iterator().next().getSnapshotVersion();
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select t.id, c.ownerId  from X2CCMany t, X2EntityComponentOne c  where t.ownerId = c.id and  t.id in (select * from table(:idValues))")
-                .addSynchronizedQuerySpace("X2CCMany")
+                .createNativeQuery("select t.childId as id, c.ownerId  from X2AAForX2CCMany t, X2EntityComponentOne c  where t.ownerId = c.id and  t.childId in (select * from table(:idValues))")
+                .addSynchronizedQuerySpace("X2AAForX2CCMany")
                 .addSynchronizedQuerySpace("X2EntityComponentOne")
                 .setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType())
                 .setFetchSize(Math.min(1000, ids.size()))
