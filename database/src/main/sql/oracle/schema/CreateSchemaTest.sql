@@ -503,8 +503,8 @@ create table X1AAForX1CCMany (
   ownerId number(19,0) not null,
   childId number(19,0) not null
 );
-alter table X1AAForX1CCMany add constraint FK_X1AAForX1CCMany_ownerId foreign key (ownerId) references X1AA;
-alter table X1AAForX1CCMany add constraint FK_X1AAForX1CCMany_childId foreign key (childId) references X1CCMany;
+alter table X1AAForX1CCMany add constraint FK_X1AAForX1CCMany_ownerId foreign key (ownerId) references X1AA deferrable initially deferred;
+alter table X1AAForX1CCMany add constraint FK_X1AAForX1CCMany_childId foreign key (childId) references X1CCMany deferrable initially deferred;
 alter table X1AAForX1CCMany add constraint PK_X1AAForX1CCMany_childId primary key (childId);
 
 
@@ -557,8 +557,8 @@ create table X2AAForX2CCMany(
   ownerId number(19,0) not null,
   childId number(19,0) not null
 );
-alter table X2AAForX2CCMany add constraint FK_X2AAForX2CCMany_ownerId foreign key (ownerId) references X2EntityComponentOne;
-alter table X2AAForX2CCMany add constraint FK_X2AAForX2CCMany_childId foreign key (childId) references X2CCMany;
+alter table X2AAForX2CCMany add constraint FK_X2AAForX2CCMany_ownerId foreign key (ownerId) references X2EntityComponentOne deferrable initially deferred;
+alter table X2AAForX2CCMany add constraint FK_X2AAForX2CCMany_childId foreign key (childId) references X2CCMany deferrable initially deferred;
 alter table X2AAForX2CCMany add constraint PK_X2AAForX2CCMany_childId primary key (childId);
 
 -- Denne map tabell brukes av StoreTest1ServiceTest
