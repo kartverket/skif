@@ -34,7 +34,6 @@ Etter endring av oppsett må man oppfriske Gradle prosjektet i IntelliJ.
 ```properties 
 # gradle.properties:
 includeBuild.hibernate-orm=../hibernate-orm
-includeBuild.hibernate-support=../skif-hibernate-support
 ```
 
 #### Oppsett av testdatabase
