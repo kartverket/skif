@@ -106,12 +106,28 @@ create table ParentBubbleEmptyColOptimizer(
 create table ChildBubbleEmptyColOptimizer(
   id number(19,0) not null,
   text VARCHAR2(255),
-  parent1Id number(19,0) constraint FK_ChildBubbleInColOpt1 references ParentBubbleEmptyColOptimizer(ID),
-  parent2Id number(19,0) constraint FK_ChildBubbleInColOpt2 references ParentBubbleEmptyColOptimizer(ID),
-  parent3Id number(19,0) constraint FK_ChildBubbleInColOpt3 references ParentBubbleEmptyColOptimizer(ID),
-  parent4Id number(19,0) constraint FK_ChildBubbleInColOpt4 references ParentBubbleEmptyColOptimizer(ID),
-  parent5Id number(19,0) constraint FK_ChildBubbleInColOpt5 references ParentBubbleEmptyColOptimizer(ID),
   primary key (id)
-) ;
+);
+
+create table ParentForChildren1 (
+  parentId number(19, 0) not null,
+  childId number(19, 0) not null
+);
+create table ParentForChildren2 (
+  parentId number(19, 0) not null,
+  childId number(19, 0) not null
+);
+create table ParentForChildren3 (
+  parentId number(19, 0) not null,
+  childId number(19, 0) not null
+);
+create table ParentForChildren4 (
+  parentId number(19, 0) not null,
+  childId number(19, 0) not null
+);
+create table ParentForChildren5 (
+  parentId number(19, 0) not null,
+  childId number(19, 0) not null
+);
 
 

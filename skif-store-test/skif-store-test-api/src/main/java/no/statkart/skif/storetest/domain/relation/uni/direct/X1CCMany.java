@@ -12,9 +12,8 @@ import java.util.Collection;
  * <li>{@link X1AA#getSomeCCsIds()} - med invers relasjon {@link X1AAFinderService#findInvSomeCCsId}</li>
  * </ul>
  *
- * Relasjonen mellom {@link X1AA} og {@link X1CCMany} er implementer i database via en foreign key som ligger i tabellen
- * for X1CCmany. Derfor kan relasjonen kun inngå ett sett om gangen. Kardinaliteten på invers relasjonen er derfor
- * {@code ONE}.
+ * Relasjonen mellom {@link X1AA} og {@link X1CCMany} er implementer i database via en koblingstabell `X1AAForX1CCMany`.
+ * Derfor kan relasjonen kun inngå ett sett om gangen. Kardinaliteten på invers relasjonen er derfor {@code ONE}.
  *
  * <P>Invers relasjonen er modellert både via en eksplisitt property og via en egen findermetode på klassen.
  * Findermetoden er egentlig overflødig og finnes kun for test formål samt for demonstrasjon av hvordan slike

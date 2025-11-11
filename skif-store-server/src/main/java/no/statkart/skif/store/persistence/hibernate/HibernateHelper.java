@@ -1,6 +1,5 @@
 package no.statkart.skif.store.persistence.hibernate;
 
-import no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefIdPersister;
 import org.hibernate.MappingException;
 import org.hibernate.Session;
 import org.hibernate.metadata.ClassMetadata;
@@ -53,7 +52,7 @@ public class HibernateHelper {
     }
 
     public static boolean erAvTypeSomIkkeSkalInitialiseresVidere(ClassMetadata classMetadata) {
-        return (!(classMetadata instanceof EntityPersister)) || classMetadata instanceof BubbleRefIdPersister;
+        return (!(classMetadata instanceof EntityPersister));
     }
 
 

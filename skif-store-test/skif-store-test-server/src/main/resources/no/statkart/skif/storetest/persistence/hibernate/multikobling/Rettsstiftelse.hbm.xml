@@ -21,14 +21,8 @@
                     </type>
                 </property>
 
-                <many-to-one
-                      name="person"
-                      column="personId"
-                      class="no.statkart.skif.storetest.domain.multikobling_old.Person"
-                      access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor"
-                      foreign-key="FK_Rettsstift_Person">
-                   <meta attribute="bubble-ref"/>
-                </many-to-one>
+                <property name="personId"
+                          type="no.statkart.skif.storetest.persistence.hibernate.type.multikobling.PersonIdType"/>
             </composite-element>
         </set>
 

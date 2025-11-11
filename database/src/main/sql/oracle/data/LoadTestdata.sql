@@ -191,9 +191,19 @@ insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class)
 insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (5, unistr('children1 og 2 er tomme, men flagg er nuttstilt og m\00E5 beregnes p\00E5 nytt'), 0, 'ParentBubbleEmptyColOptimizer');
 insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (6, 'children1 har innhold, mens 2 og 4 er tomme', 6, 'ParentBubbleEmptyColOptimizerSub1');
 insert into ParentBubbleEmptyColOptimizer(id, text, emptyCollectionsFlag, class) values (7, 'children1, 2 og 4 er tomme', 7, 'ParentBubbleEmptyColOptimizerSub1');
-insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (11, 'Child bubble with no parent', null, null);
-insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (21, 'Child bubble with parent', null, 2);
-insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (31, 'Child bubble with parent', 3, 3);
-insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (41, 'Child bubble with parent', 4, null);
-insert into ChildBubbleEmptyColOptimizer(id, text, parent1Id, parent2Id) values (61, 'Child bubble with parent', 6, null);
+
+insert into ChildBubbleEmptyColOptimizer(id, text) values (11, 'Child bubble with no parent');
+
+insert into ChildBubbleEmptyColOptimizer(id, text) values (21, 'Child bubble with parent');
+insert into ParentForChildren2 (parentid, childid)  values (2, 21);
+
+insert into ChildBubbleEmptyColOptimizer(id, text) values (31, 'Child bubble with parent');
+insert into ParentForChildren1 (parentid, childid)  values (3, 31);
+insert into ParentForChildren2 (parentid, childid)  values (3, 31);
+
+insert into ChildBubbleEmptyColOptimizer(id, text) values (41, 'Child bubble with parent');
+insert into ParentForChildren1 (parentid, childid)  values (4, 41);
+
+insert into ChildBubbleEmptyColOptimizer(id, text) values (61, 'Child bubble with parent');
+insert into ParentForChildren1 (parentid, childid)  values (6, 61);
 

@@ -9,24 +9,13 @@
       </id>
 
       <property name="text"/>
-      <many-to-one
-          name="foo"
-          column="fooId"
-          class="no.statkart.skif.storetest.domain.mockup.Foo">
-          <meta attribute="bubble-ref"/>
-       </many-to-one>
+       <property name="fooId"
+                 type="no.statkart.skif.storetest.persistence.hibernate.type.mockup.FooIdType"/>
 
        <property name="testAEnumKodeId" type="Demo_AEnumKodeIdType" not-null="true"/>
 
-       <many-to-one
-             name="testC2DbKode"
-             column="testC2DbKodeId"
-             class="no.statkart.skif.storetest.domain.demo.koder.C2DbKode"
-             foreign-key="FK_Baz_C2DbKode"
-             access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefAccessor">
-          <meta attribute="bubble-ref"/>
-       </many-to-one>
-
+       <property name="testC2DbKodeId"
+                 type="no.statkart.skif.storetest.persistence.hibernate.type.kodeliste.C2DbKodeIdType"/>
 
    </class>
 

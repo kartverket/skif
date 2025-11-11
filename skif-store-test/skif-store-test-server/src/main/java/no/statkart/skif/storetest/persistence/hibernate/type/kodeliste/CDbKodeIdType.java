@@ -8,7 +8,7 @@ import no.statkart.skif.storetest.domain.demo.koder.CDbKodeId;
  */
 public class CDbKodeIdType extends KodeIdType {
     @Override
-    public Class returnedClass() {
+    public Class<? extends CDbKodeId> returnedClass() {
         return CDbKodeId.class;
     }
 }

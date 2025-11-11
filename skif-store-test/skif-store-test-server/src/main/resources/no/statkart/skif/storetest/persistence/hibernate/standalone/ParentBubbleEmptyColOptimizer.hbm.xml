@@ -13,39 +13,35 @@
         <property name="emptyCollectionsFlag" access="field">
             <type name="no.statkart.skif.persistence.hibernate.type.EmptyCollectionsOptimizerFlagType">
                 <param name="bit.0">
-                    no.statkart.skif.storetest.domain.standalone.ParentBubbleEmptyColOptimizer.children1
+                    no.statkart.skif.storetest.domain.standalone.ParentBubbleEmptyColOptimizer.children1Ids
                 </param>
                 <param name="bit.1">
-                    no.statkart.skif.storetest.domain.standalone.ParentBubbleEmptyColOptimizer.children2
+                    no.statkart.skif.storetest.domain.standalone.ParentBubbleEmptyColOptimizer.children2Ids
                 </param>
                 <param name="bit.2">
-                    no.statkart.skif.storetest.domain.standalone.ParentBubbleEmptyColOptimizerSub1.children4
+                    no.statkart.skif.storetest.domain.standalone.ParentBubbleEmptyColOptimizerSub1.children4Ids
                 </param>
             </type>
         </property>
-        <set name="children1" access="field" lazy="true" batch-size="256">
-            <meta attribute="bubble-ref"/>
-            <key column="parent1Id"/>
-            <one-to-many  class="no.statkart.skif.storetest.domain.standalone.ChildBubbleEmptyColOptimizer"/>
+        <set name="children1Ids" access="field" lazy="true" batch-size="256" table="ParentForChildren1">
+            <key column="parentId"/>
+            <element column="childId" type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ChildBubbleEmptyColOptimizerIdType" />
         </set>
-        <set name="children2" access="field" lazy="true" batch-size="256">
-            <meta attribute="bubble-ref"/>
-            <key column="parent2Id"/>
-            <one-to-many  class="no.statkart.skif.storetest.domain.standalone.ChildBubbleEmptyColOptimizer"/>
+        <set name="children2Ids" access="field" lazy="true" batch-size="256" table="ParentForChildren2">
+            <key column="parentId"/>
+            <element column="childId" type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ChildBubbleEmptyColOptimizerIdType" />
         </set>
-        <set name="children3" access="field" lazy="true" batch-size="256">
-            <meta attribute="bubble-ref"/>
-            <key column="parent3Id"/>
-            <one-to-many  class="no.statkart.skif.storetest.domain.standalone.ChildBubbleEmptyColOptimizer"/>
+        <set name="children3Ids" access="field" lazy="true" batch-size="256" table="ParentForChildren3">
+            <key column="parentId"/>
+            <element column="childId" type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ChildBubbleEmptyColOptimizerIdType" />
         </set>
         <property name="text"/>
 
 
         <subclass name="no.statkart.skif.storetest.domain.standalone.ParentBubbleEmptyColOptimizerSub1" discriminator-value="ParentBubbleEmptyColOptimizerSub1" lazy="true">
-            <set name="children4" access="field" lazy="true" batch-size="256">
-                <meta attribute="bubble-ref"/>
-                <key column="parent4Id"/>
-                <one-to-many  class="no.statkart.skif.storetest.domain.standalone.ChildBubbleEmptyColOptimizer"/>
+            <set name="children4Ids" access="field" lazy="true" batch-size="256" table="ParentForChildren4">
+                <key column="parentId"/>
+                <element column="childId" type="no.statkart.skif.storetest.persistence.hibernate.type.standalone.ChildBubbleEmptyColOptimizerIdType" />
             </set>
         </subclass>
     </class>

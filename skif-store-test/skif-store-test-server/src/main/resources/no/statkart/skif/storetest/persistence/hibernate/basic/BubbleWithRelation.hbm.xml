@@ -11,12 +11,8 @@
         <property name="nr"/>
         <property name="text"/>
 
-        <many-to-one
-                name="simple"
-                column="simpleId"
-                class="no.statkart.skif.storetest.domain.basic.Simple">
-            <meta attribute="bubble-ref"/>
-        </many-to-one>
+        <property name="simpleId"
+                  type="no.statkart.skif.storetest.persistence.hibernate.type.basic.SimpleIdType"/>
 
     </class>
 </hibernate-mapping>

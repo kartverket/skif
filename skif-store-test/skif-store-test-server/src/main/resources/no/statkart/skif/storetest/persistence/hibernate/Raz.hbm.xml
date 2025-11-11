@@ -11,13 +11,8 @@
         <property name="text"/>
 
         <component name="razComponent" class="no.statkart.skif.storetest.domain.mockup.RazComponent">
-            <many-to-one
-                    name="foo"
-                    column="fooId"
-                    class="no.statkart.skif.storetest.domain.mockup.Foo"
-                    access="no.statkart.skif.store.persistence.hibernate.bubbleref.BubbleRefFieldAccessor">
-                <meta attribute="bubble-ref"/>
-            </many-to-one>
+            <property name="fooId"
+                      type="no.statkart.skif.storetest.persistence.hibernate.type.mockup.FooIdType"/>
 
             <property name="compText"/>
         </component>
