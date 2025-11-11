@@ -1,12 +1,12 @@
 package no.statkart.skif.store;
 
-import no.statkart.skif.bubble.spi.SkifBubbleObject;
+import java.io.Serializable;
 
 /**
  * @author Henrik Fredholm
  * @since 2.0
  */
-public interface BubbleObject extends SkifBubbleObject {
+public interface BubbleObject extends Serializable {
 
     /**
      * Gir tilbake bubbleId for dette bubbleObject og skal implementeres på det høyeste nivået for å gi en så generell id
