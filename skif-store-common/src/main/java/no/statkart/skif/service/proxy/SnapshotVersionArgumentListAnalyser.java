@@ -43,7 +43,8 @@ public class SnapshotVersionArgumentListAnalyser {
         int length = types.length;
 
         // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping på metodenivå  => Bruk SnapshotVersionContext
-        if (length == 0 || hasSuppressSVMappingAnnotation(apiMethod)) return new SnapshotVersionD2WResult(length);
+        if (length == 0 || apiMethod.isAnnotationPresent(SuppressSnapshotVersionMapping.class)) 
+            return new SnapshotVersionD2WResult(length);
 
         // Regel 2: siste parameter er av type SnapshotVersion og er  annotert med @ServiceContextMapped. Denne skal da mappes via ServiceContext og ikke som egen parameter
         if (isSnapshotVersionType(types[length - 1]) && hasServiceContextMappedAnnotation(parameterAnnotations[length - 1]))
@@ -88,7 +89,7 @@ public class SnapshotVersionArgumentListAnalyser {
         int length = types.length;
 
         // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping på metodenivå => apimethod skal ikke ha egen snapshotVersion parameter
-        if (length == 0 || hasSuppressSVMappingAnnotation(apiMethod))
+        if (length == 0 || apiMethod.isAnnotationPresent(SuppressSnapshotVersionMapping.class))
             return new SnapshotVersionW2DResult(false, length);
 
         // Regel 2: siste parameter er av type SnapshotVersion og er annotert med @ServiceContextMapped => apimethod har en ekstra SnapshotVersion parameter
@@ -115,13 +116,6 @@ public class SnapshotVersionArgumentListAnalyser {
         for (Annotation annotation : annotations) {
             if (annotation.annotationType() == JAVAX_NULLABLE_CLAZZ) return true;
             if (annotation.annotationType() == JAKARTA_NULLABLE_CLAZZ) return true;
-            if (annotation.annotationType() == SuppressSnapshotVersionMapping.class) return true;
-        }
-        return false;
-    }
-
-    private boolean hasSuppressSVMappingAnnotation(Method method) {
-        for (Annotation annotation : method.getAnnotations()) {
             if (annotation.annotationType() == SuppressSnapshotVersionMapping.class) return true;
         }
         return false;
