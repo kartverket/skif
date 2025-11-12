@@ -24,14 +24,6 @@ allprojects {
             mavenLocal()
         }
         maven {
-            name = 'intern-nexus'; url = 'https://nexus.statkart.no/repository/public/'
-            content {
-                includeModule 'no.statkart.skif', 'skif-bubble-spi' //SKIF bubbleref hack
-                includeGroup 'org.hibernate' //SKIF bubbleref hack
-
-            }
-        }
-        maven {
             name = 'jboss'; url = 'https://repository.jboss.org/nexus/content/groups/public/'
             content {
                 includeGroup 'org.opensaml'

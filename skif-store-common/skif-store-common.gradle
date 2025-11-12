@@ -11,7 +11,6 @@ configurations {
 
 dependencies {
     api project(':skif-service-common')
-    api libs.skif.bubble.spi
     implementation libs.guava
 
     testImplementation project(':skif-config')
@@ -43,7 +42,6 @@ def assertDependencies = tasks.register("assertDependencies") {
         configurations.apiElements.getAllDependencies().each { Dependency dependency ->
             if (dependency instanceof SelfResolvingDependency) return
             boolean godkjent = [ //liste over dependencies. For syntax se parsing under..
-                    'no.statkart.skif:skif-bubble-spi'
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 
             if (!godkjent) {
