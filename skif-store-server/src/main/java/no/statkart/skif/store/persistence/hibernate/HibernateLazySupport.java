@@ -1,8 +1,8 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.exception.ConfigurationException;
-import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import org.hibernate.EntityMode;
@@ -66,7 +66,7 @@ public class HibernateLazySupport {
     }
 
     MetamodelImplementor getMetamodel() {
-        return no.statkart.skif.store.persistence.hibernate.HibernateHelper.getMetamodel(session());
+        return (MetamodelImplementor) session().getSessionFactory().getMetamodel();
     }
 
     public Map<BubbleId, BubbleObject> getFullyInitializedBubbles() {
