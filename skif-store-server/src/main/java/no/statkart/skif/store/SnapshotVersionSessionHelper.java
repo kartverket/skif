@@ -5,7 +5,7 @@ import no.statkart.skif.exception.OperationalException;
 import org.hibernate.Session;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.NativeQuery;
-import org.hibernate.type.TimestampType;
+import org.hibernate.type.StandardBasicTypes;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -17,16 +17,13 @@ import java.sql.Types;
  * @since 2.1
  */
 public class SnapshotVersionSessionHelper {
-    // TODO: Virker ikke hvis Hibernate.TIMESTAMP brukes. Deprecated i 3.6.10
-    private static final TimestampType TIMESTAMP = new TimestampType();
-
     /**
      * Henter SnapshotVersion satt på databasen
      */
     public static SnapshotVersion getSnapshotVersion(Session session) {
         try {
             final NativeQuery<?> sqlQuery = session.createNativeQuery("select snapshot_time.get_t() as t from dual");
-            sqlQuery.addScalar("t", TIMESTAMP);
+            sqlQuery.addScalar("t", StandardBasicTypes.TIMESTAMP);
             return SnapshotVersion.createInstance((Timestamp) sqlQuery.uniqueResult());
         } catch (SQLGrammarException e) {
             if (e.getErrorCode() == 904 && e.getSQLState().equals("42000") && e.getCause().getMessage().equals("ORA-00904: \"SNAPSHOT_TIME\".\"GET_T\": ugyldig identifikator\n")) {

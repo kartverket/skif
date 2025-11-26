@@ -42,7 +42,7 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
                 .addScalar("ownerId", StandardBasicTypes.LONG);
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[])scroll.get();
                     X2BBOneId<?> key = new X2BBOneId<>((Long) next[0], snapshotVersion);
                     Set<X2AAWithEntityComponentId<?>> relatedIds = result.get(key);
                     relatedIds.add(new X2AAWithEntityComponentId<>((Long) next[1], snapshotVersion));
@@ -71,7 +71,7 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
 
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[])scroll.get();
                     if (next[1] != null) {
                         X2CCManyId<?> key = new X2CCManyId<>((Long) next[0], snapshotVersion);
                         result.put(key, new X2AAWithEntityComponentId<>((Long) next[1], snapshotVersion));
@@ -98,7 +98,7 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
 
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[])scroll.get();
                     X2BBOneId<?> key = new X2BBOneId<>((Long) next[0], snapshotVersion);
                     Set<X2AAWithEntityComponentId<?>> relatedIds = result.get(key);
                     relatedIds.add(new X2AAWithEntityComponentId<>((Long) next[1], snapshotVersion));

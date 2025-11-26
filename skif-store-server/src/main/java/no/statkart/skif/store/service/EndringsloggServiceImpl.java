@@ -26,7 +26,6 @@ import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Session;
-import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.query.NativeQuery;
 
 import javax.annotation.Nullable;
@@ -36,8 +35,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static no.statkart.skif.util.HibernateHelper.getClassMetadata;
-import static no.statkart.skif.util.HibernateHelper.getDiscriminatorSql;
 import static no.statkart.skif.util.HibernateHelper.getTableName;
 
 /**
@@ -212,18 +209,20 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
         // TODO: Legge inn filter
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            ClassMetadata classMetadata = getClassMetadata(session, endringClass);
-            String tableName = getTableName(classMetadata);
-            String discriminatorSql = getDiscriminatorSql(classMetadata, "t");
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<? extends AbstractEndring> root = cq.from(endringClass);
 
-            String sql = "select count(id) from (select * from (select t.id from " + tableName + " t where t.id>:id" + discriminatorSql + ") where rownum <=:antall)";
+            cq.select(root.get("id").as(Long.class));
+            cq.where(cb.gt(root.get("id"), 0L));
+            cq.orderBy(cb.asc(root.get("id")));
 
-            NativeQuery<?> query = session.createNativeQuery(sql)
-                .setParameter("id", 0L)
-                .setParameter("antall", antall);
+            List<Long> ids = session.createQuery(cq)
+                .setMaxResults(antall)
+                .getResultList();
 
             Kontroll result = new Kontroll();
-            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(((long) ids.size())); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
@@ -236,17 +235,19 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            ClassMetadata classMetadata = getClassMetadata(session, bobleklasse);
-            String tableName = getTableName(classMetadata);
-            String discriminatorSql = getDiscriminatorSql(classMetadata, "t");
+            Kontroll result = new Kontroll();
+            result.setAntall(0L);
+            if (ids == null || ids.isEmpty()) {
+                return result;
+            }
 
-            String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))" + discriminatorSql;
+            String tableName = getTableName(session, bobleklasse);
+            String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))";
 
             NativeQuery<?> query = session.createNativeQuery(sql)
                     .setParameter("ids", ids, new OracleLongBubbleIdArrayCustomType());
 
-            Kontroll result = new Kontroll();
-            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(((Number) query.uniqueResult()).longValue());
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();

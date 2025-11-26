@@ -287,7 +287,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             flush();
             HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
             SessionImpl session = persistenceSessionMaster.reserveSession();
-            Connection connection = session.connection();
+            Connection connection = session.doReturningWork(c -> c);
             Savepoint savepoint = connection.setSavepoint();
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry == null) {

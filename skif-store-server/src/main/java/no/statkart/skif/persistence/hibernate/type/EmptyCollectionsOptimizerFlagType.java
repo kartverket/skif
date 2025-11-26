@@ -3,8 +3,8 @@ package no.statkart.skif.persistence.hibernate.type;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
-import org.hibernate.annotations.common.util.StringHelper;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.internal.util.StringHelper;
 import org.hibernate.usertype.EnhancedUserType;
 import org.hibernate.usertype.ParameterizedType;
 import org.slf4j.Logger;
@@ -48,6 +48,7 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
 
     private Properties properties;
 
+    @Override
     public void setParameterValues(Properties parameters) {
         this.properties = parameters;
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
@@ -92,23 +93,22 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         try {
-            long value = rs.getLong(name);
+            long value = rs.getLong(position);
             if (rs.wasNull()) {
                 if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning null as column: " + name);
+                    log().trace("returning null as column: " + position);
                 }
                 return null;
             } else {
                 if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning '" + value + "' as column: " + name);
+                    log().trace("returning '" + value + "' as column: " + position);
                 }
                 return value;
             }
         } catch (RuntimeException | SQLException re) {
-            log().info("could not read column value from result set: " + name + "; " + re.getMessage());
+            log().info("could not read column value from result set: " + position + "; " + re.getMessage());
             throw re;
         }
     }
@@ -145,19 +145,19 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
         return long.class;
     }
 
-    public int[] sqlTypes() {
-        return new int[]{Types.BIGINT};
+    public int getSqlType() {
+        return Types.BIGINT;
     }
 
-    public Object fromXMLString(String xmlValue) {
-        return Long.parseLong(xmlValue);
+    public Object fromStringValue(CharSequence xmlValue) {
+        return Long.parseLong(xmlValue.toString());
     }
 
-    public String objectToSQLString(Object value) {
+    public String toSqlLiteral(Object value) {
         return '\'' + value.toString() + '\'';
     }
 
-    public String toXMLString(Object value) {
+    public String toString(Object value) {
         return value.toString();
     }
 }

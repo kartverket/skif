@@ -24,9 +24,10 @@ import java.sql.Types;
  */
 public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializable {
 
-    private static final int[] SQL_TYPES = new int[] { Types.TIMESTAMP, };
+    private static final int SQL_TYPES = Types.TIMESTAMP;
 
-    public int[] sqlTypes() {
+    @Override
+    public int getSqlType() {
         return SQL_TYPES;
     }
 
@@ -51,9 +52,9 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         OracleResultSet oracleResultSet = rs.unwrap(OracleResultSet.class);
-        TIMESTAMP oracleDate = oracleResultSet.getTIMESTAMP(names[0]);
+        TIMESTAMP oracleDate = oracleResultSet.getTIMESTAMP(position);
         if (oracleDate == null) {
             return null;
         }
@@ -119,16 +120,18 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
         return original;
     }
 
-    public String objectToSQLString(Object object) {
+    @Override
+    public String toSqlLiteral(Object value) {
         throw new UnsupportedOperationException();
     }
 
-    public String toXMLString(Object object) {
-        return object.toString();
+    @Override
+    public String toString(Object value) throws HibernateException {
+        return value.toString();
     }
 
-    public Object fromXMLString(String string) {
-        return new LocalDateTime(string);
+    @Override
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        return new LocalDateTime(sequence);
     }
-
 }

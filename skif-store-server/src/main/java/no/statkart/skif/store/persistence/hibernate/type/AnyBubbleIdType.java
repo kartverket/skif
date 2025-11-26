@@ -46,18 +46,17 @@ public class AnyBubbleIdType extends BubbleIdType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         try {
-            Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);
+            Object value = StoreJDBCHelper.getBubbleIdValue(rs, position, idValueType);
             if (rs.wasNull()) {
                 return null;
             } else {
-                String classname = rs.getString(names[1]);
+                String classname = rs.getString(position + 1); // TODO: hack since UserType is single-column only in hibernate 6.0
                 return createId(new Object[] {value, classname});
             }
         } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(AnyBubbleIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
+            LoggerFactory.getLogger(AnyBubbleIdType.class).info("could not read column value from result set: {}; {}", position, re.getMessage());
             throw re;
         }
     }

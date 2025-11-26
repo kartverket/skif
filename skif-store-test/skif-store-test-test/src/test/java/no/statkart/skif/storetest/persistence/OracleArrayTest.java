@@ -70,7 +70,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()
         );
 
-        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
             statement.setObject(1, OracleArrayType.getOracleNumberArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
@@ -88,7 +88,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()
         );
 
-        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
             statement.setArray(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
@@ -108,7 +108,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 mockupFacade.getBubbleWithRelationMockupFactory().getBubbleWithRelationId1()
         );
 
-        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
         try (PreparedStatement statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.anyId, b.anyIdClass) in (select * from table(:anyBubbleIds))")) {
             statement.setArray(1, new OracleArrayAnyBubbleIdConverter().toArray(connection, anyIds));
             ResultSet resultSet = statement.executeQuery();
@@ -128,7 +128,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                             {mockupFacade.getSimpleMockupFactory().getSimpleId2().getClass().getName(), "En BubbleWithRelation (nr 1) peker til denne"}
                     };
 
-        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
         try (PreparedStatement statement = connection.prepareStatement("select s.id from BubbleWithAnyBubbleRef b, Simple s where b.anyId=s.id and s.id=:sId and (b.anyIdClass,s.text) in (select * from table(:idValues))")) {
             statement.setLong(1, mockupFacade.getSimpleMockupFactory().getSimpleId2().getValue());
             statement.setArray(2, new OracleArrayStringStringConverter().toArray(connection, values));
@@ -149,7 +149,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 new SomeIdent(bubbleWithAnyBubbleRef.getNr(), "null")
         );
 
-        Connection connection = OracleUtils.getOracleConnection(session().connection());
+        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
         try (PreparedStatement statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.someIdentValue, b.someIdentClass) in (select * from table(:identValues))")) {
             statement.setArray(1, new OracleArrayConcatenatedFieldsConverter().toArray(connection, identValues));
             ResultSet resultSet = statement.executeQuery();

@@ -23,9 +23,10 @@ import java.sql.Types;
  */
 public class OraclePersistentLocalDate implements EnhancedUserType, Serializable {
 
-    private static final int[] SQL_TYPES = new int[] { Types.DATE, };
+    private static final int SQL_TYPES = Types.DATE;
 
-    public int[] sqlTypes() {
+    @Override
+    public int getSqlType() {
         return SQL_TYPES;
     }
 
@@ -50,14 +51,14 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        return nullSafeGet(rs, names[0]);
-
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        return nullSafeGet(rs, position);
     }
 
-    public Object nullSafeGet(ResultSet resultSet, String name) throws SQLException {
+
+    public Object nullSafeGet(ResultSet resultSet, int position) throws SQLException {
         OracleResultSet oracleResultSet = resultSet.unwrap(OracleResultSet.class);
-        DATE oracleDate = oracleResultSet.getDATE(name);
+        DATE oracleDate = oracleResultSet.getDATE(position);
         if (oracleDate == null) {
             return null;
         }
@@ -115,16 +116,18 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
         return original;
     }
 
-    public String objectToSQLString(Object object) {
+    @Override
+    public String toSqlLiteral(Object value) {
         throw new UnsupportedOperationException();
     }
 
-    public String toXMLString(Object object) {
-        return object.toString();
+    @Override
+    public String toString(Object value) throws HibernateException {
+        return value.toString();
     }
 
-    public Object fromXMLString(String string) {
-        return new LocalDate(string);
+    @Override
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        return new LocalDate(sequence);
     }
-
 }

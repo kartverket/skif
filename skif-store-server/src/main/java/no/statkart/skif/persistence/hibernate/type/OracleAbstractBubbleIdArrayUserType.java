@@ -44,11 +44,12 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
     private static final String NULL_BIND_MSG_TEMPLATE = "binding parameter [%d] as [%s] - <null>";
     public static final String ORACLE_NUMBER_LIST_TYPE = "NUMBER_LIST_TYPE";
     public static final String ORACLE_STRING_LIST_TYPE = "STRING_LIST_TYPE";
-    private static final int[] SQL_TYPES = {Types.ARRAY};
+    private static final int SQL_TYPES = Types.ARRAY;
 
     protected abstract String getOracleListType();
 
-    public int[] sqlTypes() {
+    @Override
+    public int getSqlType() {
         return SQL_TYPES;
     }
 
@@ -67,7 +68,7 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -83,7 +84,7 @@ public abstract class OracleAbstractBubbleIdArrayUserType implements UserType {
 //                        )
 //                );
 //            }
-            st.setNull(index, SQL_TYPES[0], getOracleListType());
+            st.setNull(index, SQL_TYPES, getOracleListType());
         } else {
             Object[] arrayValue = toArray((Collection<BubbleId>) value);
 

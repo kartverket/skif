@@ -82,8 +82,9 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
         );
     }
 
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    @Override
+    public int getSqlType() {
+        return SQL_TYPES[0];
     }
 
     public abstract Class<? extends BubbleId> returnedClass();
@@ -117,10 +118,9 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         try {
-            Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);
+            Object value = StoreJDBCHelper.getBubbleIdValue(rs, position, idValueType);
             //long value = rs.getLong(name);
             if (rs.wasNull()) {
                 return null;
@@ -128,7 +128,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
                 return createId(value);
             }
         } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(BubbleIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
+            LoggerFactory.getLogger(BubbleIdType.class).info("could not read column value from result set: {}; {}", position, re.getMessage());
             throw re;
         }
 

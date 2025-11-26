@@ -25,7 +25,7 @@ import org.hibernate.boot.cfgxml.spi.LoadedConfig;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.collection.internal.PersistentSet;
+import org.hibernate.collection.spi.PersistentSet;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
@@ -297,7 +297,7 @@ public class EntityComponentChangeTypeTest {
         }
     }
 
-    public static class TestBubbleOneToManyIdType extends BubbleIdType {
+    public static class TestBubbleOneToManyIdType extends BubbleIdType<TestBubbleOneToManyId> {
         @Override
         public Long getValue(Object id) {
             return ((TestBubbleOneToManyId) id).getValue();
@@ -317,7 +317,7 @@ public class EntityComponentChangeTypeTest {
     @Entity
     public static class TestBubbleOneToMany implements BubbleObject {
         @Id
-        @Type(type = "no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest$TestBubbleOneToManyIdType")
+        @Type(TestBubbleOneToManyIdType.class)
         private TestBubbleOneToManyId id;
 
         @OneToMany(cascade = CascadeType.ALL)
@@ -531,7 +531,7 @@ public class EntityComponentChangeTypeTest {
         }
     }
 
-    public static class TestBubbleOneToOneIdType extends BubbleIdType {
+    public static class TestBubbleOneToOneIdType extends BubbleIdType<TestBubbleOneToOneId> {
         @Override
         public Long getValue(Object id) {
             return ((TestBubbleOneToOneId) id).getValue();
@@ -551,7 +551,7 @@ public class EntityComponentChangeTypeTest {
     @Entity
     public static class TestBubbleOneToOne implements BubbleObject {
         @Id
-        @Type(type = "no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest$TestBubbleOneToOneIdType")
+        @Type(TestBubbleOneToOneIdType.class)
         private TestBubbleOneToOneId id;
 
         @SuppressWarnings({"FieldCanBeLocal", "unused"}) // JPA

@@ -49,11 +49,12 @@ public abstract class AbstractOracleArrayUserType implements UserType {
     public static final String ORACLE_NUMBER_LIST_TYPE = "NUMBER_LIST_TYPE";
     public static final String ORACLE_DATE_LIST_TYPE = "DATE_LIST_TYPE";
     public static final String ORACLE_STRING_LIST_TYPE = "STRING_LIST_TYPE";
-    private static final int[] SQL_TYPES = {Types.ARRAY};
+    private static final int SQL_TYPES = Types.ARRAY;
 
     public abstract String getOracleListType();
 
-    public int[] sqlTypes() {
+    @Override
+    public int getSqlType() {
         return SQL_TYPES;
     }
 
@@ -72,9 +73,9 @@ public abstract class AbstractOracleArrayUserType implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         ARRAY result = null;
-        ARRAY array = (ARRAY) rs.getArray(names[0]);
+        ARRAY array = (ARRAY) rs.getArray(position);
         if (!rs.wasNull()) {
             result = array;
         }
@@ -84,7 +85,7 @@ public abstract class AbstractOracleArrayUserType implements UserType {
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         if (value == null) {
-            st.setNull(index, SQL_TYPES[0], getOracleListType());
+            st.setNull(index, SQL_TYPES, getOracleListType());
         } else {
             Connection con = st.getConnection();
             ArrayDescriptor ad = new ArrayDescriptor(getOracleListType(), con);

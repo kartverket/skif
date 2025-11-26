@@ -24,6 +24,6 @@ import org.hibernate.type.CustomType;
  */
 public class OracleArrayLongBubbleIdCustomType extends CustomType {
     public OracleArrayLongBubbleIdCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayLongBubbleIdConverter, BubbleId<?>>(new OracleArrayLongBubbleIdConverter()));
+        super(new OracleArrayUserType<OracleArrayLongBubbleIdConverter, BubbleId<?>>(new OracleArrayLongBubbleIdConverter()), null);
     }
 }

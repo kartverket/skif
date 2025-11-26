@@ -1,7 +1,7 @@
 package no.statkart.skif.store.multikobling;
 
 import no.statkart.skif.store.EntityComponent;
-import org.hibernate.collection.internal.PersistentSet;
+import org.hibernate.collection.spi.PersistentSet;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 import java.util.Map;
