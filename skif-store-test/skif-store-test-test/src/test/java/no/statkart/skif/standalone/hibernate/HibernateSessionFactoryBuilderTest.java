@@ -57,7 +57,7 @@ public class HibernateSessionFactoryBuilderTest {
         SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null);
         assertNotNull(sf);
         SessionImpl s = (SessionImpl) sf.openSession();
-        Connection c = s.connection();
+        Connection c = s.doReturningWork(conn -> conn);
         Statement statement = c.createStatement();
         ResultSet rs = statement.executeQuery("select 1 from dual");
         rs.next();

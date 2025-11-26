@@ -40,7 +40,7 @@ public class ConnectionSelectorUsingHibernate implements ConnectionSelector {
 
     @Override
     public Connection get(SnapshotVersion snapshotVersion) {
-        return sessionSelector.get(snapshotVersion).connection();
+        return sessionSelector.get(snapshotVersion).doReturningWork(c -> c);
     }
 
 

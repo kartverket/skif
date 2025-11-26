@@ -83,7 +83,7 @@ public class ResourceManagerUsingHibernateTest {
         assertSame(persistenceSessionManager.getClass(), DefaultPersistenceSessionManager.class);
         assertSame(persistenceSessionManager, resourceManager.getResource(DefaultPersistenceSessionManager.class));
         assertSame(persistenceSessionManager,resourceManager.getResource(PersistenceSessionManager.class) );
-        Connection connectionFromSession = resourceManager.getResource(PersistenceSessionManager.class).getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class).reserveSession().connection();
+        Connection connectionFromSession = resourceManager.getResource(PersistenceSessionManager.class).getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class).reserveSession().doReturningWork(c -> c);
 
         // Hibernate putter på en wrapper når man henter ut en connection. Men det er samme underliggende connection
         assertSame(connectionFromSession.unwrap(Connection.class), connectionViaConnectionManager.unwrap(Connection.class));

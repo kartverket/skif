@@ -47,7 +47,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[]) scroll.get();
                     X1BBOneId<?> key = new X1BBOneId<>((Long) next[0], snapshotVersion);
                     Set<X1AAId<?>> relatedIds = result.get(key);
                     relatedIds.add(new X1AAId<>((Long) next[1], snapshotVersion));
@@ -75,7 +75,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[]) scroll.get();
                     if (next[1] != null) {
                         X1CCManyId<?> key = new X1CCManyId<>((Long) next[0], snapshotVersion);
                         result.put(key, new X1AAId<>((Long) next[1], snapshotVersion));
@@ -104,7 +104,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[]) scroll.get();
                     if (next[1] != null) {
                         String key = (String) next[0];
                         result.put(key, new X1AAId<>((Long) next[1], snapshotVersion));
@@ -132,7 +132,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[]) scroll.get();
                     if (next[1] != null) {
                         String key = (String) next[0];
                         Set<X1AAId<?>> relatedIds = result.get(key);
@@ -156,7 +156,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
                     " where (b.nr, a.nr) in (select * from table(:idents))")
                 .addSynchronizedQuerySpace("X1AA")
                 .addSynchronizedQuerySpace("X1BBOne")
-                .setParameter("idents", idents, new CustomType(new OracleX1AAIdentArrayUserType()))
+                .setParameter("idents", idents, new CustomType(new OracleX1AAIdentArrayUserType(), null))
                 .setFetchSize(Math.min(1000, idents.size()))
                 .addScalar("bnr", StandardBasicTypes.INTEGER)
                 .addScalar("anr", StandardBasicTypes.INTEGER)
@@ -164,7 +164,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[]) scroll.get();
                     X1AAIdent ident = new X1AAIdent((Integer) next[0], (Integer) next[1]);
                     Set<X1AAId<?>> relatedIds = result.get(ident);
                     relatedIds.add(new X1AAId<>((Long) next[2], snapshotVersion));
@@ -218,14 +218,14 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
                 .createNativeQuery("select b.nr as bnr, b.id  from X1BBOne b where (b.nr) in (select * from table(:idents))")
                 .addSynchronizedQuerySpace("X1BBOne")
-                .setParameter("idents", idents, new CustomType(new OracleX1BBOneIdentArrayUserType()))
+                .setParameter("idents", idents, new CustomType(new OracleX1BBOneIdentArrayUserType(), null))
                 .setFetchSize(Math.min(1000, idents.size()))
                 .addScalar("bnr", StandardBasicTypes.INTEGER)
                 .addScalar("id", StandardBasicTypes.LONG);
 
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[]) scroll.get();
                     X1BBOneIdent ident = new X1BBOneIdent((Integer) next[0]);
                     Set<X1BBOneId<?>> relatedIds = result.get(ident);
                     relatedIds.add(new X1BBOneId<>((Long) next[1], snapshotVersion));

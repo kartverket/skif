@@ -7,7 +7,7 @@ commons-pool = '2.12.1'
 ejb-api = '4.0.1'
 guava = '33.5.0-jre'
 guice = '7.0.0'
-hibernate-core-jakarta = '5.6.15.Final'
+hibernate-core = '6.0.2.Final'
 interceptor-api = '2.1.0'
 jaxb-api  = '3.0.1'
 jaxb-impl = '3.0.2'
@@ -93,7 +93,7 @@ jakarta-transaction-api = { module = 'jakarta.transaction:jakarta.transaction-ap
 jakarta-ejbapi          = { module = 'jakarta.ejb:jakarta.ejb-api', version.ref = 'ejb-api' }
 jakarta-interceptor-api = { module = 'jakarta.interceptor:jakarta.interceptor-api', version.ref = 'interceptor-api' }
 
-hibernate-core-jakarta = { module = 'org.hibernate:hibernate-core-jakarta', version.ref = 'hibernate-core-jakarta'}
+hibernate-core = { module = 'org.hibernate.orm:hibernate-core', version.ref = 'hibernate-core'}
 
 [bundles]
 # for kjøring utenfor container
@@ -103,7 +103,7 @@ jaxws-rt = [
 ]
 
 hibernate = [
-    'hibernate-core-jakarta'
+    'hibernate-core'
 ]
 
 # javax.javaee-api:6.0 virker ikke for testing fordi det er gjort noe rart med klassene

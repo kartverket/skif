@@ -3,8 +3,11 @@ package no.statkart.skif.store.persistence.hibernate.type;
 import no.statkart.skif.store.ConcatenatedFields;
 import no.statkart.skif.store.ConcatenatedFieldsSerialization;
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.internal.util.StringHelper;
+import org.hibernate.metamodel.spi.ValueAccess;
+import org.hibernate.usertype.CompositeUserType;
 import org.hibernate.usertype.UserType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +20,7 @@ import java.sql.Types;
 
 /**
  */
-public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization> implements UserType {
+public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization> implements CompositeUserType<T> {
 
     /* Logging is implemented as in org.hibernate.type.NullableType in order to get similar logging performance and output as for standard hibernate types */
     protected static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
@@ -31,96 +34,70 @@ public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization
         return log;
     }
 
-    public int[] sqlTypes() {
-        return SQL_TYPES;
-    }
-
+    @Override
     public Class returnedClass() {
         return ConcatenatedFieldsSerialization.class;
     }
 
+    @Override
     public boolean isMutable() {
         return false;
     }
 
-    public Serializable disassemble(Object value) throws HibernateException {
+    @Override
+    public Serializable disassemble(T value) {
         return (Serializable) value;
     }
 
-    public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        return cached;
+    @Override
+    public T assemble(Serializable cached, Object owner) throws HibernateException {
+        return (T)cached;
     }
 
-    public Object replace(Object original, Object target, Object owner) throws HibernateException {
+    @Override
+    public T replace(T original, T target, Object owner) throws HibernateException {
         return original;
     }
 
-    public boolean equals(Object x, Object y) {
+    @Override
+    public boolean equals(T x, T y) {
         return (x == y) || (x != null && y != null && x.equals(y));
     }
 
-    public final int hashCode(Object x) throws HibernateException {
+    @Override
+    public final int hashCode(T x) throws HibernateException {
         return x.hashCode();
     }
 
-    public Object deepCopy(Object value) {
+    @Override
+    public T deepCopy(T value) {
         return value;
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
-        try {
-            String value = rs.getString(name);
-            if (rs.wasNull()) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning null as column: " + name);
-                }
-                return null;
-            } else {
-                String classname = rs.getString(names[1]);
-                T object = ConcatenatedFields.createObject(classname, new ConcatenatedFields(value));
-
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning '" + object + "' as column: " + name);
-                }
-                return object;
-            }
-        } catch (RuntimeException | SQLException re) {
-            log().info("could not read column value from result set: " + name + "; " + re.getMessage());
-            throw re;
-        }
+    public Object getPropertyValue(T component, int property) throws HibernateException {
+        if (component == null) return null;
+        if (property == 0) return component.toConcatinatedFields().getValue();
+        if (property == 1) return component.getClass().getName();
+        throw new IllegalArgumentException("Invalid property index: " + property +" into " + component.getClass().getName());
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
-        try {
-            if (value == null) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding null to parameter: " + index);
-                    log().trace("binding null to parameter: " + index+1);
-                }
-                st.setNull(index, Types.VARCHAR);
-                st.setNull(index+1, Types.VARCHAR);
-            } else {
-                String concatenatedFieldsValue = ((T) value).toConcatinatedFields().getValue();
-                String classname = value.getClass().getName();
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding '" + concatenatedFieldsValue + "' to parameter: " + index);
-                    log().trace("binding '" + classname + "' to parameter: " + index+1);
-                }
-                st.setString(index, concatenatedFieldsValue);
-                st.setString(index+1, classname);
-            }
-        } catch (ClassCastException ce) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; ClassCastException: expected parameter of class " + getClass() + " got " + ce.getMessage());
-            throw ce;
-        } catch (RuntimeException re) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + re.getMessage());
-            throw re;
-        } catch (SQLException se) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + se.getMessage());
-            throw se;
+    public T instantiate(ValueAccess values, SessionFactoryImplementor sessionFactory) {
+        String value = values.getValue(0, String.class);
+        String className = values.getValue(0, String.class);
+        if (value == null || className == null) return null;
+
+        T obj = ConcatenatedFields.createObject(className, new ConcatenatedFields(value));
+        if (IS_VALUE_TRACING_ENABLED) {
+            log().trace("instantiated '{}'", obj);
         }
+
+        return obj;
+    }
+
+    @Override
+    public Class<?> embeddable() {
+        return ConcatenatedFieldsSerialization.class;
     }
 }

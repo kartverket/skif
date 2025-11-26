@@ -15,6 +15,6 @@ import org.hibernate.type.CustomType;
  */
 public class OracleArrayConcatenatedFieldsCustomType extends CustomType {
     public OracleArrayConcatenatedFieldsCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayConcatenatedFieldsConverter, ConcatenatedFieldsSerialization>(new OracleArrayConcatenatedFieldsConverter()));
+        super(new OracleArrayUserType<OracleArrayConcatenatedFieldsConverter, ConcatenatedFieldsSerialization>(new OracleArrayConcatenatedFieldsConverter()), null);
     }
 }

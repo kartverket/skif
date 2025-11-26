@@ -62,8 +62,8 @@ public class HibernateSessionFactoryDescriptor {
         }
         if (setSnapshotOnSession) {
             session.createNativeQuery("select snapshot_time.set_t(:timestamp) as result from dual")
-                    .addScalar("result", new CustomType(new OracleLocalTimestamp()))
-                    .setParameter("timestamp", snapshotVersion.getTimestamp(), new CustomType(new OracleLocalTimestamp()))
+                    .addScalar("result", new CustomType(new OracleLocalTimestamp(), null))
+                    .setParameter("timestamp", snapshotVersion.getTimestamp(), new CustomType(new OracleLocalTimestamp(), null))
                     .uniqueResult();
         }
         seed.set(snapshotVersion);

@@ -19,8 +19,8 @@ import java.sql.Types;
  */
 public class EndringstypeType implements UserType {
     @Override
-    public int[] sqlTypes() {
-        return new int[] { Types.TINYINT };
+    public int getSqlType() {
+        return Types.TINYINT;
     }
 
     @Override
@@ -39,8 +39,8 @@ public class EndringstypeType implements UserType {
     }
 
     @Override
-    public Endringstype nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        return Endringstype.values()[rs.getInt(names[0])];
+    public Endringstype nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        return Endringstype.values()[rs.getInt(position)];
     }
 
     @Override

@@ -5,7 +5,6 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -189,7 +188,7 @@ public class HibernateLazySupport {
                 CompositeType t = (CompositeType) type;
                 Object component = values[i];
                 if (component != null) {
-                    Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
+                    Object[] componentProperties = t.getPropertyValues(component);
                     Type[] componentTypes = t.getSubtypes();
                     CascadeStyle[] componentCascadeStyles = new CascadeStyle[componentTypes.length];
                     for (int j = 0; j < componentCascadeStyles.length; j++) {
@@ -205,7 +204,7 @@ public class HibernateLazySupport {
                     if (values[i] instanceof Collection) {
                         Collection<?> col = (Collection<?>) values[i];
                         if (!col.isEmpty()) {
-                            CollectionPersister collectionPersister = sessionFactory.getMetamodel().collectionPersister((((CollectionType) type).getRole()));
+                            CollectionPersister collectionPersister = sessionFactory.getMappingMetamodel().getCollectionDescriptor((((CollectionType) type).getRole()));
                             if (collectionPersister.getElementType() instanceof CompositeType) {
                                 CompositeType compositeType = (CompositeType) collectionPersister.getElementType();
                                 for (Object componentObject : col) {
@@ -226,7 +225,7 @@ public class HibernateLazySupport {
                     } else if (values[i] instanceof Map) {
                         Map<?, ?> map = (Map<?, ?>) values[i];
                         if (!map.isEmpty()) {
-                            CollectionPersister collectionPersister = sessionFactory.getMetamodel().collectionPersister(((CollectionType) type).getRole());
+                            CollectionPersister collectionPersister = sessionFactory.getMappingMetamodel().getCollectionDescriptor(((CollectionType) type).getRole());
                             if (collectionPersister.getElementType() instanceof AssociationType) {
                                 for (Object o : map.values()) {
                                     ensureInitialized(o, initializedObjects);

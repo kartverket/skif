@@ -3,6 +3,7 @@ package no.statkart.skif.store.multikobling;
 import org.hibernate.HibernateException;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.metamodel.CollectionClassification;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.usertype.UserCollectionType;
 
@@ -15,6 +16,16 @@ import java.util.Set;
  * Hibernate type for {@link MultikoblingPersistentSet}
  */
 public class MultikoblingPersistentSetType implements UserCollectionType {
+
+    @Override
+    public CollectionClassification getClassification() {
+        return CollectionClassification.SET;
+    }
+
+    @Override
+    public Class<?> getCollectionClass() {
+        return MultikoblingPersistentSet.class;
+    }
 
     @Override
     public PersistentCollection instantiate(SharedSessionContractImplementor session, CollectionPersister persister) throws HibernateException {
