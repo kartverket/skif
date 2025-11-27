@@ -15,7 +15,7 @@
 
         <list name="entityComponents" cascade="all-delete-orphan,evict">
             <key column="listOfEntityComponentsId" foreign-key="FK_LIST_OF_ENTITY_COMPONENTS"/>
-            <index column="listIndex"/>
+            <list-index column="listIndex"/>
             <one-to-many class="no.statkart.skif.storetest.domain.component.historikk.HistorikkListEntityComponent"/>
         </list>
     </class>
