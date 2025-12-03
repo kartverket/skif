@@ -25,17 +25,21 @@ public abstract class SkifModule extends AbstractModule {
         return moduleConfiguration.getServiceMode();
     }
 
+    /**
+     * Adding default ModuleStrategyFactory when not provided by configuration.
+     * 
+     * @see no.statkart.skif.module.ModuleBuilder#getModuleStrategyFactoryClassname
+     */
     protected final ModuleConfiguration addDefaultFactory(ModuleConfiguration moduleConfiguration) {
-        ModuleConfiguration c = moduleConfiguration;
         if (moduleConfiguration.getStrategyFactory() == null) {
             ModuleStrategyFactory factory = defineDefaultModuleStrategyFactory(moduleConfiguration);
             if (factory != null) {
-                c = new DefaultModuleConfiguration(moduleConfiguration.getConfiguration(), factory);
+                return new DefaultModuleConfiguration(moduleConfiguration.getConfiguration(), factory);
             }
         }
-        return c;
+        return moduleConfiguration;
     }
-
+    
     protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
         return defineDefaultModuleStrategyFactory();
     }
@@ -43,13 +47,8 @@ public abstract class SkifModule extends AbstractModule {
     /**
      * @deprecated Bruk defineDefaultModuleStrategyFactory som tar inn moduleConfiguration som parameter i stedet!
      */
-    @Deprecated
+    @Deprecated(since = "2.10", forRemoval = true)
     protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
         return null;
-    }
-
-    protected void bindConfiguration() {
-        bind(ModuleConfiguration.class).toInstance(moduleConfiguration);
-        bind(Configuration.class).toInstance(moduleConfiguration.getConfiguration());
     }
 }
