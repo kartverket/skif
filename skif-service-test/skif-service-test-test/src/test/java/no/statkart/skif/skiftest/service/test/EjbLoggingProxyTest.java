@@ -149,7 +149,7 @@ public class EjbLoggingProxyTest extends SkifTestCase {
         }
 
         @Override
-        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
             return new ServerModuleStrategyFactory();
         }
 
@@ -177,7 +177,7 @@ public class EjbLoggingProxyTest extends SkifTestCase {
         }
 
         @Override
-        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
             return new ClientModuleStrategyFactory();
         }
 

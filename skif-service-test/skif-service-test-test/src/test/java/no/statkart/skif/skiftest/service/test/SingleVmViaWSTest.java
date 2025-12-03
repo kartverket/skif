@@ -63,7 +63,7 @@ public class SingleVmViaWSTest extends SkifTestCase {
         }
 
         @Override
-        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
             ClientModuleStrategyFactory clientModuleStrategyFactory = new ClientModuleStrategyFactory();
 
             clientModuleStrategyFactory.addPrototype(RemoteServiceModule.class, new StrategyTuple<RemoteServiceModuleStrategy>(null, RemoteServiceModuleStrategySingleVmXml.class));

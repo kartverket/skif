@@ -17,7 +17,7 @@ public class TestClientModule extends TestModule {
     }
 
     @Override
-    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
         return new ClientModuleStrategyFactory();
     }
 

@@ -81,7 +81,7 @@ public class WSMappingTest extends StoreTestTestCase {
         }
 
         @Override
-        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
             ClientModuleStrategyFactory clientModuleStrategyFactory = new ClientModuleStrategyFactory();
 
             // Kjører dermed på en måte alltid i SINGLE_VM_XML-modus (det finnes kanskje en bedre måte å gjøre dette på)

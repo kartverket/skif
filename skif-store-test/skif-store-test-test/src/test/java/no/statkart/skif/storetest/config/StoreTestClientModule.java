@@ -44,7 +44,7 @@ public class StoreTestClientModule extends SkifModule {
     }
 
     @Override
-    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
         return new ClientModuleStrategyFactory(RemoteServiceModuleStrategyWithServiceContextSVMapper.class);
     }
 

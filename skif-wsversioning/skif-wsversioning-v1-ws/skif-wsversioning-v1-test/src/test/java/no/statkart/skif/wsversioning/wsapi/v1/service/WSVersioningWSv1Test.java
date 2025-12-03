@@ -81,7 +81,7 @@ public class WSVersioningWSv1Test extends SkifTestCase {
         }
 
         @Override
-        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
             return new ClientModuleStrategyFactory();
         }
 
