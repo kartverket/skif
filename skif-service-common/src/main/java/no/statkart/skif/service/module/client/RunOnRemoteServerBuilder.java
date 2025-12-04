@@ -5,7 +5,6 @@ import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifServerConfiguration;
 import no.statkart.skif.module.ModuleBuilder;
-import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
 import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
 import no.statkart.skif.service.RunOnServerWithTxRequiredService;
@@ -57,10 +56,6 @@ public class RunOnRemoteServerBuilder {
 
     public Injector buildInjector() {
           return  moduleBuilder.buildInjector();
-    }
-
-    public ContainerManagedTransactionRunOnServerService buildContainerManagedService() {
-        return moduleBuilder.buildInjector().getInstance(ContainerManagedTransactionRunOnServerService.class);
     }
 
     public RunOnServerWithTxNotSupportedService buildContainerManagedNotSupportedTranactionService() {
