@@ -4,15 +4,14 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.module.ModuleConfiguration;
-import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
 import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
 import no.statkart.skif.service.RunOnServerWithTxRequiredService;
 import no.statkart.skif.service.RunOnServerWithTxRequiresNewService;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * ServerServiceModule som i SingleVm mode installere tjenester i serveren som gjøre det mulig for en klient å kjøre
@@ -24,23 +23,15 @@ import java.util.Collection;
  * @since 2.0
  */
 public class RunOnServerServiceModule extends ServerServiceModule {
+    public static final Collection<Class<? extends Object>> CLASSES = List.of(
+        RunOnServerWithTxNotSupportedService.class,
+        RunOnServerWithTxRequiresNewService.class,
+        RunOnServerWithTxRequiredService.class,
+        RunOnServerWithTxBeanManagedService.class);
+    
     public RunOnServerServiceModule(ModuleConfiguration configuration) {
-        super(configuration, getList());
+        super(configuration, CLASSES);
     }
-
-    private static Collection<Class<? extends Object>> getList() {
-        ArrayList<Class<?>> list = new ArrayList<Class<?>>();
-        list.add(RunOnServerWithTxNotSupportedService.class);
-        list.add(RunOnServerWithTxRequiresNewService.class);
-        list.add(RunOnServerWithTxRequiredService.class);
-        list.add(RunOnServerWithTxBeanManagedService.class);
-
-        // TODO: Ta denne bort
-        list.add(ContainerManagedTransactionRunOnServerService.class);
-
-        return list;
-    }
-
 
     @Override
     protected void configure() {

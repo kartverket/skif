@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Named;
-import no.statkart.skif.service.ContainerManagedTransactionRunOnServerService;
 import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.RunOnServerWithTxBeanManagedService;
 import no.statkart.skif.service.RunOnServerWithTxNotSupportedService;
@@ -97,22 +96,6 @@ public class RunOnServerTest {
             @Inject
             @Named("modulename")
             private String moduleName;
-            @Override
-            public Object run() {
-                return moduleName;
-            }
-        });
-        assertEquals(result, "TestServerModule" );
-    }
-
-    public void testBuildContainerManagedService() {
-        final RunOnRemoteServerBuilder builder = new RunOnRemoteServerBuilder(RunOnRemoteServerTestServerModule.class);
-        final ContainerManagedTransactionRunOnServerService service = builder.buildContainerManagedService();
-        Object result = service.runInTxNotSupported(new RunOnServerMethod() {
-            @Inject
-            @Named("modulename")
-            private String moduleName;
-
             @Override
             public Object run() {
                 return moduleName;
