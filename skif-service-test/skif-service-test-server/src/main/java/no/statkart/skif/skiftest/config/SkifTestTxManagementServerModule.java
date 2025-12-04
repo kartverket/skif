@@ -23,7 +23,7 @@ public class SkifTestTxManagementServerModule extends SkifModule {
     }
 
     @Override
-    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
         // Konfigurer EJBServiceChain for denne modul til å bruke en factory som har en ProxyHandler for transaksjonshåndtering
         ModuleStrategyFactory factory = new ServerModuleStrategyFactory();
         StrategyTuple<ServerServiceModuleStrategy> prototype = factory.getPrototype(ServerServiceModule.class);

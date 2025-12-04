@@ -15,6 +15,7 @@ import no.statkart.skif.config.PropertiesConfiguration;
 import no.statkart.skif.config.SkifConfigConstants;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.module.StrategyTuple;
 import no.statkart.skif.persistence.DefaultResourceManager;
@@ -167,7 +168,7 @@ public class StoreTestServerModule extends SkifModule {
     }
 
     @Override
-    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
         // Konfigurer EJBServiceChain til å bruke en factory som har en ProxyHandler for transaksjonshåndtering
         ModuleStrategyFactory factory = new StoreServerModuleStrategyFactory(RemoteServiceModuleStrategyWithServiceContextSVMapper.class);
         StrategyTuple<ServerServiceModuleStrategy> prototype = factory.getPrototype(ServerServiceModule.class);

@@ -9,6 +9,7 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
+import no.statkart.skif.module.ModuleConfiguration;
 import no.statkart.skif.module.ModuleStrategyFactory;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.chain.EJBServiceChainFactory;
@@ -40,7 +41,7 @@ public class SkifTestServerModule extends SkifModule {
     }
 
     @Override
-    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+    protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
         return new ServerModuleStrategyFactory();
     }
 

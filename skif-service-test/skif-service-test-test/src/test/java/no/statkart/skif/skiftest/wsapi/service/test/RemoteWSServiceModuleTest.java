@@ -54,7 +54,7 @@ public class RemoteWSServiceModuleTest extends SkifTestCase {
     public static class ClientModule extends SkifModule {
 
         @Override
-        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory() {
+        protected ModuleStrategyFactory defineDefaultModuleStrategyFactory(ModuleConfiguration moduleConfiguration) {
             return new ClientModuleStrategyFactory();
         }
 
