@@ -31,10 +31,12 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
         return SQL_TYPES;
     }
 
+    @Override
     public Class returnedClass() {
         return LocalDateTime.class;
     }
 
+    @Override
     public boolean equals(Object x, Object y) throws HibernateException {
         if (x == y) {
             return true;
@@ -47,6 +49,7 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
         return dtx.equals(dty);
     }
 
+    @Override
     public int hashCode(Object object) throws HibernateException {
         return object.hashCode();
     }
@@ -100,22 +103,27 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
         }
     }
 
+    @Override
     public Object deepCopy(Object value) throws HibernateException {
         return value;
     }
 
+    @Override
     public boolean isMutable() {
         return false;
     }
 
+    @Override
     public Serializable disassemble(Object value) throws HibernateException {
         return (Serializable) value;
     }
 
+    @Override
     public Object assemble(Serializable cached, Object value) throws HibernateException {
         return cached;
     }
 
+    @Override
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
         return original;
     }

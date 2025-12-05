@@ -10,11 +10,14 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.persistence.OracleArrayConverter;
 import no.statkart.skif.store.persistence.SessionSelector;
+import org.hibernate.Session;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.CustomType;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.spi.TypeConfiguration;
 
 import java.util.Collection;
 import java.util.Map;
@@ -150,13 +153,15 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
+            Session session = sessionSelector.get(snapshotVersion);
+            TypeConfiguration typeConfiguration = ((SharedSessionContractImplementor) session).getTypeConfiguration();
+            NativeQuery<?> sqlQuery = session
                 .createNativeQuery("select b.nr as bnr, a.nr as anr, a.id" +
                     " from X1AA a join X1BBOne b on (a.someBBId=b.id)" +
                     " where (b.nr, a.nr) in (select * from table(:idents))")
                 .addSynchronizedQuerySpace("X1AA")
                 .addSynchronizedQuerySpace("X1BBOne")
-                .setParameter("idents", idents, new CustomType(new OracleX1AAIdentArrayUserType(), null))
+                .setParameter("idents", idents, new CustomType(new OracleX1AAIdentArrayUserType(), typeConfiguration))
                 .setFetchSize(Math.min(1000, idents.size()))
                 .addScalar("bnr", StandardBasicTypes.INTEGER)
                 .addScalar("anr", StandardBasicTypes.INTEGER)
@@ -215,10 +220,12 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
+            Session session = sessionSelector.get(snapshotVersion);
+            TypeConfiguration typeConfiguration = ((SharedSessionContractImplementor) session).getTypeConfiguration();
+            NativeQuery<?> sqlQuery = session
                 .createNativeQuery("select b.nr as bnr, b.id  from X1BBOne b where (b.nr) in (select * from table(:idents))")
                 .addSynchronizedQuerySpace("X1BBOne")
-                .setParameter("idents", idents, new CustomType(new OracleX1BBOneIdentArrayUserType(), null))
+                .setParameter("idents", idents, new CustomType(new OracleX1BBOneIdentArrayUserType(), typeConfiguration))
                 .setFetchSize(Math.min(1000, idents.size()))
                 .addScalar("bnr", StandardBasicTypes.INTEGER)
                 .addScalar("id", StandardBasicTypes.LONG);
