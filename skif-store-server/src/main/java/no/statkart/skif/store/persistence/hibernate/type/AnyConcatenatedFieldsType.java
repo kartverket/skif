@@ -85,7 +85,7 @@ public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization
     @Override
     public T instantiate(ValueAccess values, SessionFactoryImplementor sessionFactory) {
         String value = values.getValue(0, String.class);
-        String className = values.getValue(0, String.class);
+        String className = values.getValue(1, String.class);
         if (value == null || className == null) return null;
 
         T obj = ConcatenatedFields.createObject(className, new ConcatenatedFields(value));
@@ -98,6 +98,7 @@ public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization
 
     @Override
     public Class<?> embeddable() {
+        // TODO Er dette riktig??
         return ConcatenatedFieldsSerialization.class;
     }
 }
