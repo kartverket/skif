@@ -1,7 +1,9 @@
 package no.statkart.skif.store.kodeliste;
 
+import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.module.common.BubbleIdFactory;
 
 /**
  * Superklasse for Koder.
@@ -21,8 +23,19 @@ public abstract class Kode extends AbstractBubbleObject {
 
     @Override
     public void setId(BubbleId<?> id) {
-        super.setId(id);
-        kodelisteId = null;
+        try {
+            String idString = this.getClass().getName() + "Id";
+            Class classid = Class.forName(idString);
+            if (classid != id.getClass()) {
+                Object value = id.getValue();
+                BubbleId<?> newBubbleId = (BubbleId<?>) BubbleIdFactory.createInstance(classid, value, id.getSnapshotVersion());
+                super.setId(newBubbleId);
+            } else {
+                super.setId(id);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new ImplementationException("Class " + this.getClass().getName() + "Id was not found in classpath");
+        }
     }
 
     public KodelisteId<?> getKodelisteId() {
