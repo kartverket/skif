@@ -21,22 +21,6 @@ public abstract class Kode extends AbstractBubbleObject {
         return (KodeId<?>) super.getId();
     }
 
-    @Override
-    public void setId(BubbleId<?> id) {
-        try {
-            String idString = this.getClass().getName() + "Id";
-            Class classid = Class.forName(idString);
-            if (classid != id.getClass()) {
-                Object value = id.getValue();
-                BubbleId<?> newBubbleId = (BubbleId<?>) BubbleIdFactory.createInstance(classid, value, id.getSnapshotVersion());
-                super.setId(newBubbleId);
-            } else {
-                super.setId(id);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new ImplementationException("Class " + this.getClass().getName() + "Id was not found in classpath");
-        }
-    }
 
     public KodelisteId<?> getKodelisteId() {
         if (kodelisteId == null) {

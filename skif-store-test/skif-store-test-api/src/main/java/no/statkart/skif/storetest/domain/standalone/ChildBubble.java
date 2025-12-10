@@ -35,11 +35,6 @@ public class ChildBubble extends AbstractBubbleObject implements StoreTestBubble
     }
 
     @Override
-    public void setId(BubbleId<?> id) {
-        super.setId(id);
-    }
-
-    @Override
     public ChildBubbleId<?> getId() {
         return (ChildBubbleId<?>) super.getId();
     }

@@ -48,11 +48,6 @@ public class ParentBubbleEmptyColOptimizer extends AbstractBubbleObject implemen
     }
 
     @Override
-    public void setId(BubbleId<?> id) {
-        super.setId(id);
-    }
-
-    @Override
     public ParentBubbleEmptyColOptimizerId<?> getId() {
         return (ParentBubbleEmptyColOptimizerId<?>) super.getId();
     }

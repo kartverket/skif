@@ -28,11 +28,6 @@ public class ChildBubbleEmptyColOptimizer extends AbstractBubbleObject implement
     }
 
     @Override
-    public void setId(BubbleId<?> id) {
-        super.setId(id);
-    }
-
-    @Override
     public ChildBubbleEmptyColOptimizerId<?> getId() {
         return (ChildBubbleEmptyColOptimizerId<?>) super.getId();
     }

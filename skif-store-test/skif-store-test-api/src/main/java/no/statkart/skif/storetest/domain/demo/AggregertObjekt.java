@@ -21,11 +21,6 @@ public class AggregertObjekt extends AbstractBubbleObject implements StoreTestBu
     private List<AggregertKomponent> komponenter;
 
     @Override
-    public void setId(BubbleId<?> id) {
-        super.setId(id);
-    }
-
-    @Override
     public AggregertObjektId<?> getId() {
         return (AggregertObjektId<?>) super.getId();
     }
