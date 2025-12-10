@@ -99,6 +99,6 @@ public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization
     @Override
     public Class<?> embeddable() {
         // TODO Er dette riktig??
-        return ConcatenatedFieldsSerialization.class;
+        return AnyConcatenatedFieldsEmbeddable.class;
     }
 }

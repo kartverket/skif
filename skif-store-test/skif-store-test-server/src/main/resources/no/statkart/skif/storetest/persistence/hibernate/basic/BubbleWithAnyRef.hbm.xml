@@ -14,9 +14,10 @@
 <!--            <column name="anyIdClass"/>-->
         </property>
 
-        <property name="someIdent" type="no.statkart.skif.store.persistence.hibernate.type.AnyConcatenatedFieldsType">
-            <column name="someIdentValue"/>
-            <column name="someIdentClass"/>
-        </property>
+        <component name="someIdent" class="no.statkart.skif.store.persistence.hibernate.type.AnyConcatenatedFieldsEmbeddable">
+<!--            TODO: det er noe rundt rekkefølge som må sees på-->
+            <property name="value" column="someIdentValue"/>
+            <property name="className" column="someIdentClass"/>
+        </component>
     </class>
 </hibernate-mapping>
