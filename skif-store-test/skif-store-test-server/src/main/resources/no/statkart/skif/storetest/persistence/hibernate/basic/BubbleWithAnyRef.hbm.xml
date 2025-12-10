@@ -11,7 +11,7 @@
         <property name="nr"/>
         <property name="anyId" type="no.statkart.skif.store.persistence.hibernate.type.AnyBubbleIdType">
             <column name="anyId"/>
-            <column name="anyIdClass"/>
+<!--            <column name="anyIdClass"/>-->
         </property>
 
         <property name="someIdent" type="no.statkart.skif.store.persistence.hibernate.type.AnyConcatenatedFieldsType">
