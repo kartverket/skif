@@ -1,35 +1,35 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
-import jakarta.persistence.Embeddable;
+import no.statkart.skif.store.ConcatenatedFields;
+import no.statkart.skif.store.ConcatenatedFieldsSerialization;
 
 import java.io.Serializable;
 
-@Embeddable
-public class AnyConcatenatedFieldsEmbeddable implements Serializable {
+public class AnyConcatenatedFieldsEmbeddable {
 
     //TODO: Update to record with hibernate 6.2
 
-    private String value;
+    private String a_value;
 
-    private String className;
+    private String b_className;
 
     public AnyConcatenatedFieldsEmbeddable() {
     }
 
 
-    public String getValue() {
-        return value;
+    public String getA_value() {
+        return a_value;
     }
 
-    public void setValue(String a_value) {
-        this.value = a_value;
+    public void setA_value(String a_value) {
+        this.a_value = a_value;
     }
 
-    public String getClassName() {
-        return className;
+    public String getB_className() {
+        return b_className;
     }
 
-    public void setClassName(String b_className) {
-        this.className = b_className;
+    public void setB_className(String b_className) {
+        this.b_className = b_className;
     }
 }

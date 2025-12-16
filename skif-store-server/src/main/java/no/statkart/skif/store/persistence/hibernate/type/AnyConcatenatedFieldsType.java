@@ -25,7 +25,6 @@ public class AnyConcatenatedFieldsType<T extends ConcatenatedFieldsSerialization
     /* Logging is implemented as in org.hibernate.type.NullableType in order to get similar logging performance and output as for standard hibernate types */
     protected static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
     private transient Logger log;
-    private final int[] SQL_TYPES = {Types.VARCHAR, Types.VARCHAR};
 
     protected Logger log() {
         if (log == null) {

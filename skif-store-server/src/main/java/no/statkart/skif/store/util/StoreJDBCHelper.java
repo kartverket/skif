@@ -84,11 +84,11 @@ public class StoreJDBCHelper extends JDBCHelper {
         }
     }
 
-    public static Object getBubbleIdValue(ResultSet resultSet, String name, Class idValueType) throws SQLException {
+    public static Object getBubbleIdValue(BubbleId component, Class idValueType) {
         if (idValueType == Long.class) {
-            return resultSet.getLong(name);
+            return component.getValue();
         } else if (idValueType == String.class) {
-            return resultSet.getString(name);
+            return component.getValue();
         } else {
             throw new ImplementationException("Value type " + idValueType.getName() + " is not supported");
         }

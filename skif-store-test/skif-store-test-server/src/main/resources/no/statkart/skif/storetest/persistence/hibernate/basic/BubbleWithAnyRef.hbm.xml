@@ -11,13 +11,13 @@
         <property name="nr"/>
         <property name="anyId" type="no.statkart.skif.store.persistence.hibernate.type.AnyBubbleIdType">
             <column name="anyId"/>
-<!--            <column name="anyIdClass"/>-->
+            <column name="anyIdClass"/>
         </property>
 
-        <component name="someIdent" class="no.statkart.skif.store.persistence.hibernate.type.AnyConcatenatedFieldsEmbeddable">
-<!--            TODO: det er noe rundt rekkefølge som må sees på-->
-            <property name="value" column="someIdentValue"/>
-            <property name="className" column="someIdentClass"/>
-        </component>
+        <property name="someIdent" type="no.statkart.skif.store.persistence.hibernate.type.AnyConcatenatedFieldsType">
+            <column name="someIdentValue"/>
+            <column name="someIdentClass"/>
+        </property>
+
     </class>
 </hibernate-mapping>

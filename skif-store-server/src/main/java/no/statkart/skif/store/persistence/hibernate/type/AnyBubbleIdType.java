@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Henrik Fredholm
  * @since 2.0
  */
+//TODO: oppdatere denne med tanke på compositeusertype
 public class AnyBubbleIdType extends BubbleIdType {
 
     public AnyBubbleIdType() {
