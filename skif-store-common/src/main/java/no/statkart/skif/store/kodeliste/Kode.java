@@ -1,9 +1,7 @@
 package no.statkart.skif.store.kodeliste;
 
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.module.common.BubbleIdFactory;
 
 /**
  * Superklasse for Koder.
@@ -21,7 +19,12 @@ public abstract class Kode extends AbstractBubbleObject {
         return (KodeId<?>) super.getId();
     }
 
-
+    @Override
+    public void setId(BubbleId<?> id) {
+        super.setId(id);
+        kodelisteId = null;
+    }
+    
     public KodelisteId<?> getKodelisteId() {
         if (kodelisteId == null) {
             KodelisteId<?> kId = KodeId.class.cast(id).getKodelisteId();
