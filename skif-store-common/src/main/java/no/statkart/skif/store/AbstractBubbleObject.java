@@ -39,12 +39,11 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     }
 
     public void setId(BubbleId<?> id) {
-        Class<? extends BubbleId<?>> idClass = BubbleIds.getBubbleIdClass(this.getClass());
-        if (idClass != id.getClass()) {
-            Object value = id.getValue();
-            this.id = BubbleIds.createInstance(idClass, value, id.getSnapshotVersion());
-        } else {
+        if (id.getType() == this.getClass()) {
             this.id = id;
+        } else {
+            Class<? extends BubbleId<?>> idClass = BubbleIds.getBubbleIdClass(this.getClass());
+            this.id = BubbleIds.createInstance(idClass, id.getValue(), id.getSnapshotVersion());
         }
     }
 
