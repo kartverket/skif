@@ -5,6 +5,7 @@ import no.statkart.skif.domain.EqualityByFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
@@ -43,8 +44,9 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     }
 
     @SuppressWarnings("removal")
-    public void setId(BubbleId<?> id) {
-        if (id.getType() == getClass()
+    public void setId(@Nullable BubbleId<?> id) {
+        if (id == null
+            || id.getType() == getClass()
             || "true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
             this.id = id;
         } else {
