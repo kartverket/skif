@@ -2,6 +2,8 @@ package no.statkart.skif.store;
 
 import com.google.common.collect.ImmutableSet;
 import no.statkart.skif.domain.EqualityByFields;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -18,6 +20,7 @@ import static no.statkart.skif.config.SkifConfigConstants.TOGGLE_LEGACY_IDCLASS_
  */
 public class AbstractBubbleObject implements BubbleObject, Serializable, EqualityByFields {
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(AbstractBubbleObject.class);
 
     protected transient Store store;
     private transient boolean flushed = false;
@@ -41,12 +44,13 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
 
     @SuppressWarnings("removal")
     public void setId(BubbleId<?> id) {
-        if (id.getType() == this.getClass()
+        if (id.getType() == getClass()
             || "true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
             this.id = id;
         } else {
-            Class<? extends BubbleId<?>> idClass = BubbleIds.getBubbleIdClass(this.getClass());
+            Class<? extends BubbleId<?>> idClass = BubbleIds.getBubbleIdClass(getClass());
             this.id = BubbleIds.createInstance(idClass, id.getValue(), id.getSnapshotVersion());
+            logger.info("Endret id for {} fra: {} til: {}", getClass().getName(), id.getClass(), this.id.getClass());
         }
     }
 
