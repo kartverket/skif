@@ -2,7 +2,6 @@ package no.statkart.skif.store;
 
 import com.google.common.collect.ImmutableSet;
 import no.statkart.skif.domain.EqualityByFields;
-import no.statkart.skif.store.module.common.BubbleIdFactory;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -43,7 +42,7 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
         Class<? extends BubbleId<?>> idClass = BubbleIds.getBubbleIdClass(this.getClass());
         if (idClass != id.getClass()) {
             Object value = id.getValue();
-            this.id = BubbleIdFactory.createInstance(idClass, value, id.getSnapshotVersion());
+            this.id = BubbleIds.createInstance(idClass, value, id.getSnapshotVersion());
         } else {
             this.id = id;
         }
