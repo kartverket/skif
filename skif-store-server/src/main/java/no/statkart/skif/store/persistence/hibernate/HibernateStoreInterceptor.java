@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
+import static no.statkart.skif.config.SkifConfigConstants.TOGGLE_LEGACY_IDCLASS_STRATEGY;
+
 
 /**
  * Interceptor for hibernate. Dvs. at metoder på denne klassen alltid blir kalt når objekter blir lastet, lagret og
@@ -38,14 +40,22 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      * @return false fordi vi ikke endrer på <code>state</code> til <code>entity</code>
      * @see {@link org.hibernate.Interceptor#onLoad(Object, java.io.Serializable, Object[], String[], org.hibernate.type.Type[])}
      */
+    @SuppressWarnings("removal")
     public boolean onLoad(Object entity, Serializable hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
+        if ("true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
+            modifyIdSubclass(entity);
+        }
+        return false;
+    }
+
+    private boolean modifyIdSubclass(Object entity) {
         if (entity instanceof BubbleObject) {
             BubbleObject bubbleEntity = (BubbleObject) entity;
             String classname = bubbleEntity.getClass().getName();
             BubbleId<?> bubbleId = bubbleEntity.getBubbleId();
             try {
                 String idString;
-                if(classname.contains("Impl")) {
+                if (classname.contains("Impl")) {
                     idString = classname.substring(0, classname.indexOf("Impl")) + "IdImpl";
                 } else {
                     idString = classname + "Id";
@@ -58,7 +68,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Endret id for " + classname + " fra: " + bubbleId + " til: " + newBubbleId);
                     }
-                    return false;
+                    return true;
                 }
             } catch (ClassNotFoundException e) {
                 throw new ImplementationException("Class " + classname + "Id was not found in classpath");
