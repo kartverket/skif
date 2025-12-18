@@ -2,7 +2,6 @@ package no.statkart.skif.store;
 
 import com.google.common.collect.ImmutableSet;
 import no.statkart.skif.domain.EqualityByFields;
-import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.module.common.BubbleIdFactory;
 
 import java.io.Serializable;
@@ -41,18 +40,12 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
     }
 
     public void setId(BubbleId<?> id) {
-        try {
-            String idString = this.getClass().getName() + "Id";
-            Class classid = Class.forName(idString);
-            if (classid != id.getClass()) {
-                Object value = id.getValue();
-                BubbleId<?> newBubbleId = (BubbleId<?>) BubbleIdFactory.createInstance(classid, value, id.getSnapshotVersion());
-                this.id = newBubbleId;
-            } else {
-                this.id = id;
-            }
-        } catch (ClassNotFoundException e) {
-            throw new ImplementationException("Class " + this.getClass().getName() + "Id was not found in classpath");
+        Class<? extends BubbleId<?>> idClass = BubbleIds.getBubbleIdClass(this.getClass());
+        if (idClass != id.getClass()) {
+            Object value = id.getValue();
+            this.id = BubbleIdFactory.createInstance(idClass, value, id.getSnapshotVersion());
+        } else {
+            this.id = id;
         }
     }
 
