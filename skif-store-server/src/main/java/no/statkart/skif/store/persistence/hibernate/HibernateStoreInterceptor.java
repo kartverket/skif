@@ -48,7 +48,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
         return false;
     }
 
-    private boolean modifyIdSubclass(Object entity) {
+    private void modifyIdSubclass(Object entity) {
         if (entity instanceof BubbleObject) {
             BubbleObject bubbleEntity = (BubbleObject) entity;
             String classname = bubbleEntity.getClass().getName();
@@ -68,13 +68,11 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Endret id for " + classname + " fra: " + bubbleId + " til: " + newBubbleId);
                     }
-                    return true;
                 }
             } catch (ClassNotFoundException e) {
                 throw new ImplementationException("Class " + classname + "Id was not found in classpath");
             }
         }
-        return false;
     }
 
     public Object instantiate(Class entitetClazz, Serializable id) throws CallbackException {
