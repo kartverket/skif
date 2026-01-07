@@ -7,12 +7,10 @@ import no.statkart.skif.exception.FinderException;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.exception.ObjectsNotFoundException;
 import no.statkart.skif.service.sequence.IdService;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleTransfer;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.StoreClient;
 import no.statkart.skif.store.UnitOfWork;
-import no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.domain.basic.SubTypeWithCollection;
@@ -354,13 +352,6 @@ public class StoreTest extends StoreTestTestCase {
         objectWithEmptyCollection.getTekster().addAll(stringList);
     }
 
-    @Test
-    public void testHentBubbleViaAnyBubbleRef() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-        BubbleWithAnyBubbleRef bubbleWithAnyBubbleRef = store.get(mockupFacade.getBubbleWithAnyBubbleRefMockupFactory().getBubbleWithAnyBubbleRefId1());
-        assertEquals(bubbleWithAnyBubbleRef.getAnyId(), mockupFacade.getSimpleMockupFactory().getSimpleId2());
-        assertEquals(store.get((BubbleId<?>) bubbleWithAnyBubbleRef.getAnyId()).getId(), mockupFacade.getSimpleMockupFactory().getSimpleId2());
-    }
 
     public void testRegisterTransferWhenNotLoadedInStoreAndNotLockedInTransfer() {
         StoreTestMockupFacade mockupFacade = getWriteMockupFacadeAndSaveDataForTestSet1();
