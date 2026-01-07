@@ -1,6 +1,4 @@
 package no.statkart.skif.store.persistence.hibernate.type;
-
-import no.statkart.skif.SkifUtil;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
@@ -9,43 +7,39 @@ import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.config.spi.ConfigurationService;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.metamodel.spi.ValueAccess;
 import org.hibernate.type.spi.TypeConfiguration;
 import org.hibernate.type.spi.TypeConfigurationAware;
-import org.hibernate.usertype.CompositeUserType;
 import org.hibernate.usertype.UserType;
 import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Objects;
-
-
 /**
  * Hibernate UserType for BubbleId
  *
  * @author Henrik Fredholm
  * @since 2.0
  */
-public abstract class BubbleIdType implements CompositeUserType<BubbleId<?>>, TypeConfigurationAware {
-
+public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
+    private final int[] SQL_TYPES;
     private TypeConfiguration typeConfiguration;
-
     /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
     private SnapshotVersionSeed snapshotVersionSeed = null;
-
     protected final Class<?> idValueType;
-
     public BubbleIdType() {
         idValueType = BubbleIds.getValueType(returnedClass());
+        if (idValueType==Long.class) {
+            SQL_TYPES = new int[]{Types.BIGINT};
+        } else {
+            SQL_TYPES = new int[]{Types.VARCHAR};
+        }
     }
-
     protected BubbleIdType(int[] SQL_TYPES) {
+        this.SQL_TYPES= SQL_TYPES;
         if (SQL_TYPES[0]== Types.BIGINT) {
             idValueType=Long.class;
         } else if (SQL_TYPES[0]== Types.VARCHAR) {
@@ -54,33 +48,34 @@ public abstract class BubbleIdType implements CompositeUserType<BubbleId<?>>, Ty
             throw new ImplementationException("SQL type " + Types.VARCHAR + " is not supported as id type for BubbleId");
         }
     }
-
     public SnapshotVersionSeed getSnapshotVersionSeed() {
         return snapshotVersionSeed;
     }
-
     public void setSnapshotVersionSeed(SnapshotVersionSeed snapshotVersionSeed) {
         this.snapshotVersionSeed = snapshotVersionSeed;
     }
-
     @Override
     public TypeConfiguration getTypeConfiguration() {
         return typeConfiguration;
     }
-
     @Override
     public void setTypeConfiguration(TypeConfiguration typeConfiguration) {
         this.typeConfiguration = typeConfiguration;
         snapshotVersionSeed = Objects.requireNonNull(
-                typeConfiguration.getServiceRegistry()
-                        .requireService(ConfigurationService.class)
-                        .getSetting("no.statkart.skif.SnapshotVersionSeed", SnapshotVersionSeed.class, snapshotVersionSeed),
-                "SnapshotVersionSeed not configured for session factory"
+            typeConfiguration.getServiceRegistry()
+                .requireService(ConfigurationService.class)
+                .getSetting("no.statkart.skif.SnapshotVersionSeed", SnapshotVersionSeed.class, snapshotVersionSeed),
+            "SnapshotVersionSeed not configured for session factory"
         );
     }
 
     @Override
-    public abstract Class returnedClass();
+    public int getSqlType() {
+        return SQL_TYPES[0];
+    }
+
+    @Override
+    public abstract Class<? extends BubbleId> returnedClass();
 
     @Override
     public boolean isMutable() {
@@ -88,56 +83,70 @@ public abstract class BubbleIdType implements CompositeUserType<BubbleId<?>>, Ty
     }
 
     @Override
-    public Serializable disassemble(BubbleId value) {
+    public Serializable disassemble(Object value) throws HibernateException {
         return (Serializable) value;
     }
 
     @Override
-    public BubbleId<?> assemble(Serializable cached, Object owner) throws HibernateException {
-        return (BubbleId<?>) cached;
+    public Object assemble(Serializable cached, Object owner) throws HibernateException {
+        return cached;
     }
 
     @Override
-    public BubbleId<?> replace(BubbleId original, BubbleId target, Object owner) throws HibernateException {
+    public Object replace(Object original, Object target, Object owner) throws HibernateException {
         return original;
     }
 
     @Override
-    public boolean equals(BubbleId x, BubbleId y) {
+    public boolean equals(Object x, Object y) {
         return (x == y) || (x != null && y != null && x.equals(y));
     }
 
     @Override
-    public final int hashCode(BubbleId x) throws HibernateException {
+    public final int hashCode(Object x) throws HibernateException {
         return x.hashCode();
     }
 
     @Override
-    public BubbleId<?> deepCopy(BubbleId value) {
+    public Object deepCopy(Object value) {
         return value;
     }
 
     @Override
-    public Object getPropertyValue(BubbleId component, int property) throws HibernateException {
-        //TODO: Tror ikke denne er riktig
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        try {
+            Object value = StoreJDBCHelper.getBubbleIdValue(rs, position, idValueType);
+            //long value = rs.getLong(name);
+            if (rs.wasNull()) {
+                return null;
+            } else {
+                return createId(value);
+            }
+        } catch (RuntimeException | SQLException re) {
+            LoggerFactory.getLogger(BubbleIdType.class).info("could not read column value from result set: {}; {}", position, re.getMessage());
+            throw re;
+        }
 
-        if (component == null) return null;
-        if (property == 0) return StoreJDBCHelper.getBubbleIdValue(component, idValueType);
-        if (property == 1) return component.getClass().getName();
-        throw new IllegalArgumentException("Invalid property index: " + property +" into " + component.getClass().getName());
     }
-
     @Override
-    public BubbleId<?> instantiate(ValueAccess values, SessionFactoryImplementor sessionFactory) {
-        //TODO: Tror ikke denne er riktig
-
-        Object value = values.getValue(0, idValueType);
-        String className = values.getValue(1, String.class);
-        if (value == null || className == null) return null;
-
-        return createId(value);
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+        try {
+            if (value == null) {
+                StoreJDBCHelper.setBubbleIdValue(st, index, null, idValueType);
+                //st.setNull(index, Types.BIGINT);
+            } else {
+                BubbleId<?> bubbleId = (BubbleId<?>) value;
+                StoreJDBCHelper.setBubbleIdValue(st, index, bubbleId.getValue(), idValueType) ;
+                //st.setLong(index, (Long) bubbleId.getValue());
+            }
+        } catch (ClassCastException ce) {
+            LoggerFactory.getLogger(BubbleIdType.class).info("could not bind value '{}' to parameter: {}; ClassCastException: expected parameter of class {} got {}", value, index, returnedClass(), ce.getMessage());
+            throw ce;
+        } catch (RuntimeException | SQLException re) {
+            LoggerFactory.getLogger(BubbleIdType.class).info("could not bind value '{}' to parameter: {}; {}", value, index, re.getMessage());
+            throw re;
+        }
     }
-
     /**
      * Oppretter id med den spesifisert verdi. Id classen må være av den type metoden {@link
      * #returnedClass()} spesifisere. SnapshotVersion kan ha defalut verdi siden den overskrive
@@ -148,7 +157,6 @@ public abstract class BubbleIdType implements CompositeUserType<BubbleId<?>>, Ty
     protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
         return BubbleIds.createInstance(returnedClass(), value, snapshotVersion);
     }
-
     /**
      * Oppretter BubbleId av riktig type og setter idvalue og SnapshotVersion
      *
@@ -157,11 +165,5 @@ public abstract class BubbleIdType implements CompositeUserType<BubbleId<?>>, Ty
     public BubbleId<?> createId(Object value) {
         SnapshotVersion snapshotVersion = Objects.requireNonNull(snapshotVersionSeed.get(), "snapshotVersionSeed not specified");
         return (BubbleId<?>) createPrototypeId(value, snapshotVersion);
-    }
-
-    @Override
-    public Class<?> embeddable() {
-        //TODO: Gjenstår en del på denne
-        return AnyConcatenatedFieldsEmbeddable.class;
     }
 }
