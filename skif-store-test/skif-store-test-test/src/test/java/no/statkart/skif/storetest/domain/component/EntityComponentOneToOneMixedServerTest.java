@@ -918,19 +918,17 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
 
-    private boolean existsInDatabase(final Class<?> type, final Long id) {
+    private boolean existsInDatabase(final Class<?> clazz, final Long id) {
+        String className = clazz.getSimpleName();
         return (Boolean) server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
             Session session;
 
             public Object run() {
-                CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-                CriteriaQuery<?> query = criteriaBuilder.createQuery(type);
-                Root<?> table = query.from(type);
-                query.where(criteriaBuilder.equal(table.get("id"), id));
-
-                List<?> resultList = session.createQuery(query).getResultList();
-                return !resultList.isEmpty();
+                Long count = session.createNativeQuery(String.format("select count(*) from %s where id=:id", className), Long.class)
+                    .setParameter("id", id)
+                    .uniqueResult();
+                return count > 0;
             }
         });
     }
