@@ -5,6 +5,7 @@ import no.statkart.skif.domain.EqualityByFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
@@ -50,10 +51,19 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
             || "true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
             this.id = id;
         } else {
-            Class<? extends BubbleId<?>> idClass = BubbleIds.getBubbleIdClass(getClass());
-            this.id = BubbleIds.createInstance(idClass, id.getValue(), id.getSnapshotVersion());
-            logger.info("Endret id for {} fra: {} til: {}", getClass().getName(), id.getClass(), this.id.getClass());
+            this.id = subtypeCompatibleId(id);
         }
+    }
+
+    @Nonnull
+    private BubbleId<?> subtypeCompatibleId(@Nonnull BubbleId<?> id) {
+        Class<? extends BubbleId<?>> idClass = BubbleIds.getBubbleIdClass(getClass());
+        var downcastId =  BubbleIds.createInstance(idClass, id.getValue(), id.getSnapshotVersion());
+        logger.debug("Subtyping id for {} from: {} to: {}", getClass().getName(), id.getClass(), downcastId.getClass());
+        if (id.getBaseType() != downcastId.getBaseType()) {
+            throw new IllegalArgumentException(id.getClass() + " is incompatible id for " + getClass());
+        }
+        return downcastId;
     }
 
     @Override
