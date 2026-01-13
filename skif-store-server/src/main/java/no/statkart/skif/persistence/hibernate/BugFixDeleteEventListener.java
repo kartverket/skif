@@ -16,7 +16,7 @@ public class BugFixDeleteEventListener extends DefaultDeleteEventListener
 {
 protected void deleteTransientEntity(EventSource session, Object entity, boolean cascadeDeleteEnabled,
                                      EntityPersister persister, DeleteContext transientEntities) {
-    super.deleteTransientEntity(session, entity, cascadeDeleteEnabled, persister,
+    super.deleteTransientEntity(session, entity, persister,
                                                        transientEntities == null ? DeleteContext.create() : transientEntities);
   }
 }
