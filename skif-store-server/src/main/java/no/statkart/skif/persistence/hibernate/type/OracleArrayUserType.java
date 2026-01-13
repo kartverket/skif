@@ -14,7 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
 
     @Override
     public Class returnedClass() {
-        return List.class;
+        return OracleArrayConverter.Wrapper.class;
     }
 
     @Override
@@ -78,7 +77,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
             }
             st.setNull(index, SQL_TYPES, oracleArrayConverter.getOracleArrayType());
         } else {
-            Collection<E> values = (Collection<E>) value;
+            OracleArrayConverter.Wrapper<E> values = (OracleArrayConverter.Wrapper<E>) value;
 
             if (log.isTraceEnabled()) {
                 log.trace(
@@ -86,11 +85,11 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
                                 BIND_MSG_TEMPLATE,
                                 index,
                                 JdbcTypeNameMapper.getTypeName(Types.ARRAY),
-                                extractLoggableRepresentation(Lists.newArrayList(values))
+                                extractLoggableRepresentation(Lists.newArrayList(values.collection))
                         )
                 );
             }
-            st.setArray(index, oracleArrayConverter.toArray(st.getConnection(), values));
+            st.setArray(index, oracleArrayConverter.toArray(st.getConnection(), values.collection));
         }
     }
 
