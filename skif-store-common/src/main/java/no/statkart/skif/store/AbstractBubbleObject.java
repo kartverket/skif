@@ -2,13 +2,18 @@ package no.statkart.skif.store;
 
 import com.google.common.collect.ImmutableSet;
 import no.statkart.skif.domain.EqualityByFields;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
+import static no.statkart.skif.config.SkifConfigConstants.TOGGLE_LEGACY_IDCLASS_STRATEGY;
 
 /**
  * @author Henrik Fredholm
@@ -17,6 +22,7 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class AbstractBubbleObject implements BubbleObject, Serializable, EqualityByFields {
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(AbstractBubbleObject.class);
 
     protected transient Store store;
     private transient boolean flushed = false;
@@ -38,8 +44,26 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
         return id;
     }
 
-    public void setId(BubbleId<?> id) {
-        this.id = id;
+    @SuppressWarnings("removal")
+    public void setId(@Nullable BubbleId<?> id) {
+        if (id == null
+            || id.getType() == getClass()
+            || "true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
+            this.id = id;
+        } else {
+            this.id = subtypeCompatibleId(id);
+        }
+    }
+
+    @Nonnull
+    private BubbleId<?> subtypeCompatibleId(@Nonnull BubbleId<?> id) {
+        Class<? extends BubbleId<?>> idClass = BubbleIds.getBubbleIdClass(getClass());
+        var downcastId =  BubbleIds.createInstance(idClass, id.getValue(), id.getSnapshotVersion());
+        logger.debug("Subtyping id for {} from: {} to: {}", getClass().getName(), id.getClass(), downcastId.getClass());
+        if (id.getBaseType() != downcastId.getBaseType()) {
+            throw new IllegalArgumentException(id.getClass() + " is incompatible id for " + getClass());
+        }
+        return downcastId;
     }
 
     @Override

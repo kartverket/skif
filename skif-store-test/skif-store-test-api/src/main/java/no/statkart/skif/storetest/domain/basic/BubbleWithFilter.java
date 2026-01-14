@@ -32,11 +32,6 @@ public class BubbleWithFilter extends AbstractStoreTestBubble {
     }
 
     @Override
-    public void setId(BubbleId<?> id) {
-        super.setId(id);
-    }
-
-    @Override
     public BubbleWithFilterId<?> getId() {
         return (BubbleWithFilterId<?>) super.getId();
     }

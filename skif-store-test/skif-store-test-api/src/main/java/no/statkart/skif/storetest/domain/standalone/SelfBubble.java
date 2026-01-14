@@ -29,11 +29,6 @@ public class SelfBubble extends AbstractBubbleObject implements StoreTestBubble 
     }
 
     @Override
-    public void setId(BubbleId<?> id) {
-        super.setId(id);
-    }
-
-    @Override
     public SelfBubbleId<?> getId() {
         return (SelfBubbleId<?>) super.getId();
     }

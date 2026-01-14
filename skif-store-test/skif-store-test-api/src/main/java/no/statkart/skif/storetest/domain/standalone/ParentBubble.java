@@ -33,11 +33,6 @@ public class ParentBubble extends AbstractBubbleObject implements StoreTestBubbl
     }
 
     @Override
-    public void setId(BubbleId<?> id) {
-        super.setId(id);
-    }
-
-    @Override
     public ParentBubbleId<?> getId() {
         return (ParentBubbleId<?>) super.getId();
     }

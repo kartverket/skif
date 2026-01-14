@@ -32,12 +32,6 @@ public class SkifConfigConstants {
 
     public static final String DB_USERNAME = "skif.db_username";
     public static final String DB_PASSWORD = "skif.db_password";
-    @Deprecated //bruk DB_JDBC_URL
-    public static final String DB_HOSTNAME = "skif.db_hostname";
-    @Deprecated //bruk DB_JDBC_URL
-    public static final String DB_PORT = "skif.db_port";
-    @Deprecated //bruk DB_JDBC_URL
-    public static final String DB_SERVICE = "skif.db_service";
     /**
      * NB: Used for testing SKIF - consuming projects need to implement their own test-support!
      * URL for the database e.g. {@code "jdbc:oracle:thin:@//localhost:1521/XEPDB1"}
@@ -54,4 +48,9 @@ public class SkifConfigConstants {
     public static final String USE_DATABASE_EVENT_LISTENER = "skif.use_database_event_listener";
 
     public static final String ENDRINGSNUMMER_SEQUENCE_NAME = "skif.endringsnummer_sequence_name";
+
+    //Feature toggles
+    @Deprecated(since = "5.0.2", forRemoval = true)
+    public static final String TOGGLE_LEGACY_IDCLASS_STRATEGY = "skif.toggle.legacy.idclass.strategy";
+
 }

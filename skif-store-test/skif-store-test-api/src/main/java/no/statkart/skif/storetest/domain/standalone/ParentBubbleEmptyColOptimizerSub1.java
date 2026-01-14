@@ -24,11 +24,6 @@ public class ParentBubbleEmptyColOptimizerSub1 extends ParentBubbleEmptyColOptim
     }
 
     @Override
-    public void setId(BubbleId<?> id) {
-        super.setId(id);
-    }
-
-    @Override
     public ParentBubbleEmptyColOptimizerSub1Id<?> getId() {
         return (ParentBubbleEmptyColOptimizerSub1Id<?>) super.getId();
     }

@@ -24,7 +24,7 @@ public abstract class Kode extends AbstractBubbleObject {
         super.setId(id);
         kodelisteId = null;
     }
-
+    
     public KodelisteId<?> getKodelisteId() {
         if (kodelisteId == null) {
             KodelisteId<?> kId = KodeId.class.cast(id).getKodelisteId();

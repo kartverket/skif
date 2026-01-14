@@ -36,11 +36,6 @@ public class TestBubbleWithHistory extends AbstractBubbleObject implements Store
     }
 
     @Override
-    public void setId(BubbleId<?> id) {
-        super.setId(id);
-    }
-
-    @Override
     public TestBubbleWithHistoryId<?> getId() {
         return (TestBubbleWithHistoryId<?>) super.getId();
     }
