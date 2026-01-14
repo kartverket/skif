@@ -15,6 +15,7 @@ import no.statkart.skif.store.persistence.kodeliste.CachingKodelistePersistenceS
 import no.statkart.skif.store.persistence.kodeliste.DefaultKodelistePersistenceSessionSubtypeHandler;
 import no.statkart.skif.store.persistence.kodeliste.EnumKodelisteManager;
 import no.statkart.skif.store.persistence.kodeliste.KodelistePersistenceSessionSubtypeHandler;
+import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.storetest.domain.demo.koder.ADbKode;
 import no.statkart.skif.storetest.domain.demo.koder.ADbKodeId;
 import no.statkart.skif.storetest.domain.demo.koder.AEnumKode;
@@ -56,6 +57,7 @@ import static org.testng.Assert.assertEquals;
  */
 @Test(groups = "singlevm-required")
 public class CachingKodelistePersistenceSessionSubtypeHandlerTest {
+    private static final long INSERT_BDBKODE_ID_VALUE = 2345L;
     private final Locale norsk = new Locale("no", "NO");
     private final Locale norskNynorsk = new Locale("no", "NO", "NY");
 
@@ -86,6 +88,21 @@ public class CachingKodelistePersistenceSessionSubtypeHandlerTest {
     @AfterClass
     void tearDown() {
         sessionFactoryManagerBundle.close();
+    }
+
+    private BDbKodeId insertDbKodeId() {
+        return new BDbKodeId(INSERT_BDBKODE_ID_VALUE, SnapshotVersion.CURRENT);
+    }
+
+    private void deleteExistingDbKode(PersistenceSessionManager persistenceSessionManager, BDbKodeId id) {
+        try {
+            BDbKode existing = persistenceSessionManager.get(id);
+            persistenceSessionManager.beginTransaction();
+            persistenceSessionManager.delete(existing);
+            persistenceSessionManager.commit();
+        } catch (ObjectNotFoundException ignored) {
+            // No existing row to delete.
+        }
     }
 
     private PersistenceSessionManager createPersistenceSessionManager() {
@@ -355,8 +372,10 @@ public class CachingKodelistePersistenceSessionSubtypeHandlerTest {
 
         try {
             BDbKode bDbKodeNy = new BDbKode();
-            bDbKodeNy.setId(new BDbKodeId(2345L, SnapshotVersion.CURRENT));
-            bDbKodeNy.setKodeverdi("AAD12");
+            BDbKodeId id = insertDbKodeId();
+            deleteExistingDbKode(persistenceSessionManager, id);
+            bDbKodeNy.setId(id);
+            bDbKodeNy.setKodeverdi("AAD12-" + id.getValue());
             Locale bokmaal = norsk;
             bDbKodeNy.getBeskrivelse().setText(bokmaal, "Kodebeskrivelse ting for ny kode som er inserted. BOKMÅL");
             bDbKodeNy.getNavn().setText(bokmaal, "1234-Bokmål");
@@ -374,7 +393,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandlerTest {
         PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
-            BDbKode dbKode = persistenceSessionManager.get(new BDbKodeId(2345L, SnapshotVersion.CURRENT));
+            BDbKode dbKode = persistenceSessionManager.get(insertDbKodeId());
             Locale nynorsk = norskNynorsk;
             dbKode.getBeskrivelse().setText(nynorsk, "Kodebeskrivelse ting for ny kode som er inserted. NYNORSK");
             dbKode.getNavn().setText(nynorsk, "1234-Nynorsk");
@@ -391,7 +410,7 @@ public class CachingKodelistePersistenceSessionSubtypeHandlerTest {
         PersistenceSessionManager persistenceSessionManager = createPersistenceSessionManager();
 
         try {
-            BDbKode dbKode = persistenceSessionManager.get(new BDbKodeId(2345L, SnapshotVersion.CURRENT));
+            BDbKode dbKode = persistenceSessionManager.get(insertDbKodeId());
             persistenceSessionManager.beginTransaction();
             persistenceSessionManager.delete(dbKode);
             persistenceSessionManager.commit();
@@ -401,4 +420,3 @@ public class CachingKodelistePersistenceSessionSubtypeHandlerTest {
     }
 
 }
-

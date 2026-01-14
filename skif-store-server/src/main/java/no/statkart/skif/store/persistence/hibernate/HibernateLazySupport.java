@@ -5,7 +5,6 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
-import org.hibernate.EntityMode;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -151,7 +150,7 @@ public class HibernateLazySupport {
         initializedObjects.put(object, null);
 
         final SessionImplementor sessionImpl = (SessionImplementor) session();
-        final SessionFactoryImplementor sessionFactory = sessionImpl.getFactory();
+        final SessionFactoryImplementor sessionFactory = sessionImpl.getSessionFactory();
         ClassMetadata classMetadata = HibernateHelper.getClassMetadata(sessionImpl, object);
 
         if (classMetadata == null) {
@@ -189,7 +188,7 @@ public class HibernateLazySupport {
                 CompositeType t = (CompositeType) type;
                 Object component = values[i];
                 if (component != null) {
-                    Object[] componentProperties = t.getPropertyValues(component, EntityMode.POJO);
+                    Object[] componentProperties = t.getPropertyValues(component);
                     Type[] componentTypes = t.getSubtypes();
                     CascadeStyle[] componentCascadeStyles = new CascadeStyle[componentTypes.length];
                     for (int j = 0; j < componentCascadeStyles.length; j++) {

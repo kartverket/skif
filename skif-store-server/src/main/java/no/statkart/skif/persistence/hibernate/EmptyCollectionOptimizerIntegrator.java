@@ -20,7 +20,9 @@ public class EmptyCollectionOptimizerIntegrator implements Integrator {
    @Override
    public void integrate(Metadata metadata, SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
       final EventListenerRegistry eventListenerRegistry = serviceRegistry.getService( EventListenerRegistry.class );
+      eventListenerRegistry.prependListeners(EventType.FLUSH, CompositeComponentCollectionOwnerListener.class);
       eventListenerRegistry.appendListeners(EventType.PRE_LOAD, EmptyCollectionsOptimizerListener.class);
+      eventListenerRegistry.appendListeners(EventType.POST_LOAD, EmptyCollectionsOptimizerListener.class);
       eventListenerRegistry.appendListeners(EventType.PRE_COLLECTION_UPDATE, EmptyCollectionsOptimizerListener.class);
       eventListenerRegistry.appendListeners(EventType.SAVE, EmptyCollectionsOptimizerListener.class);
    }
@@ -29,5 +31,3 @@ public class EmptyCollectionOptimizerIntegrator implements Integrator {
    public void disintegrate(SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
    }
 }
-
-

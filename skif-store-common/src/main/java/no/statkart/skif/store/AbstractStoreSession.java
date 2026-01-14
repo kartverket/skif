@@ -958,8 +958,17 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
                     case DELETED_INSERTED:
                     case UPDATED:
                     case UNCHANGED: /* UNCHANGED representerer objekter er låst hvor Store.update() ikke har blitt kallt ennå. Objektet kan likevel være endret */
-                        persistedBubbleObject = getPersistedBubbleObjectForLocked(storeEntry);
                         bubbleObject = storeEntry.getDerivedBubbleObject(level);
+                        if (inAttachedMode()) {
+                            if (bubbleObject instanceof InverseRelationParticipation) {
+                                relationCache.updateAdded(bubbleObject.getBubbleId(), (InverseRelationParticipation) bubbleObject);
+                            }
+                            if (bubbleObject instanceof BubbleObjectWithIdent) {
+                                ((BubbleObjectWithIdent<?>) bubbleObject).onIdentChanged();
+                            }
+                            break;
+                        }
+                        persistedBubbleObject = getPersistedBubbleObjectForLocked(storeEntry);
                         if (persistedBubbleObject != bubbleObject) {
                             if (persistedBubbleObject instanceof InverseRelationParticipation) {
                                 relationCache.updateRemoved(persistedBubbleObject.getBubbleId(), (InverseRelationParticipation) persistedBubbleObject, new WithoutUnitOfWorkExecutor());

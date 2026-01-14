@@ -14,7 +14,14 @@ public class SubTypeWithCollection extends SubTypedBubble {
 
     @Override
     public SubTypeWithCollectionId<?> getId() {
-        return (SubTypeWithCollectionId<?>) super.getId();
+        SubTypedBubbleId<?> id = (SubTypedBubbleId<?>) super.getId();
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof SubTypeWithCollectionId) {
+            return (SubTypeWithCollectionId<?>) id;
+        }
+        return new SubTypeWithCollectionId<>(id.getValue(), id.getSnapshotVersion());
     }
 
     public Set<String> getTekster() {

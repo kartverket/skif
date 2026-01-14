@@ -5,7 +5,9 @@ import no.statkart.skif.persistence.hibernate.type.OracleLocalTimestamp;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.Session;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.CustomType;
+import org.hibernate.type.spi.TypeConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,9 +63,12 @@ public class HibernateSessionFactoryDescriptor {
                                           " (database session will NOT be updated as this has been disabled for this descriptor)" ) );
         }
         if (setSnapshotOnSession) {
+            SessionImplementor sessionImplementor = (SessionImplementor) session;
+            TypeConfiguration typeConfiguration = sessionImplementor.getSessionFactory().getTypeConfiguration();
+            CustomType<?> localTimestampType = new CustomType<>(new OracleLocalTimestamp(), typeConfiguration);
             session.createNativeQuery("select snapshot_time.set_t(:timestamp) as result from dual")
-                    .addScalar("result", new CustomType(new OracleLocalTimestamp()))
-                    .setParameter("timestamp", snapshotVersion.getTimestamp(), new CustomType(new OracleLocalTimestamp()))
+                    .addScalar("result", localTimestampType)
+                    .setParameter("timestamp", snapshotVersion.getTimestamp(), localTimestampType)
                     .uniqueResult();
         }
         seed.set(snapshotVersion);

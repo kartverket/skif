@@ -5,6 +5,8 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.ComponentWithOwnerReference;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.event.spi.PostLoadEvent;
+import org.hibernate.event.spi.PostLoadEventListener;
 import org.hibernate.event.spi.PreCollectionUpdateEvent;
 import org.hibernate.event.spi.PreCollectionUpdateEventListener;
 import org.hibernate.event.spi.PreLoadEvent;
@@ -26,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2.11
  * @author Henrik Fredholm
  */
-public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, PreCollectionUpdateEventListener, SaveOrUpdateEventListener {
+public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, PostLoadEventListener, PreCollectionUpdateEventListener, SaveOrUpdateEventListener {
     private final Map<EntityPersister, EmptyCollectionsOptimizer> optimizers = new ConcurrentHashMap<>();
 
     public void onPreLoad(PreLoadEvent event) {
@@ -39,6 +41,15 @@ public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, 
                 optimizers.put(persister, optimizer);
             }
             optimizer.initializeEmptyCollections(event, persister);
+        }
+    }
+
+    @Override
+    public void onPostLoad(PostLoadEvent event) {
+        EntityPersister persister = event.getPersister();
+        if (BubbleObject.class.isAssignableFrom(persister.getMappedClass())) {
+            EmptyCollectionsOptimizer optimizer = getOrCreateOptimizer(persister);
+            optimizer.initializeEmptyCollections(event.getEntity(), event.getId(), persister, event.getSession());
         }
     }
 
@@ -92,5 +103,4 @@ public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, 
     }
 
 }
-
 

@@ -11,15 +11,17 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.EntityComponent;
 import no.statkart.skif.util.CopyHelper;
-import org.hibernate.EntityMode;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
-import org.hibernate.collection.internal.PersistentMap;
 import org.hibernate.collection.spi.PersistentCollection;
+import org.hibernate.collection.spi.PersistentMap;
 import org.hibernate.engine.spi.CascadeStyle;
 import org.hibernate.engine.spi.CascadeStyles;
 import org.hibernate.engine.spi.CascadingActions;
+import org.hibernate.engine.spi.EntityEntry;
+import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.Assigned;
 import org.hibernate.metadata.ClassMetadata;
@@ -33,10 +35,9 @@ import org.hibernate.type.ComponentType;
 import org.hibernate.type.CompositeType;
 import org.hibernate.type.CustomType;
 import org.hibernate.type.EntityType;
-import org.hibernate.type.LiteralType;
 import org.hibernate.type.MapType;
-import org.hibernate.type.SingleColumnType;
 import org.hibernate.type.Type;
+import org.hibernate.type.BasicType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,8 +100,10 @@ public class HibernateDetachedSupport {
     public <T extends BubbleObject> void update(T bubbleObject) {
         List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents = Lists.newArrayList();
         try {
-            assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject, orphanOneToOneEntityComponents);
             Session session = session();
+            boolean attachedInstance = isAttachedInstance(session, bubbleObject);
+            checkForSubtypeChangedEntityComponentsOnAttachedInstance(bubbleObject);
+            assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject, orphanOneToOneEntityComponents);
             session.update(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
             for (int i = orphanOneToOneEntityComponents.size() - 1; i >= 0; i--) {
                 Multimap<Class<? extends EntityComponent>, EntityComponent> multimap = orphanOneToOneEntityComponents.get(i);
@@ -108,8 +111,162 @@ public class HibernateDetachedSupport {
                     session.delete(orphanEntity);
                 }
             }
+            if (!attachedInstance && session instanceof org.hibernate.internal.SessionImpl) {
+                session.flush();
+            }
         } catch (HibernateException | SQLException e) {
             throw new ImplementationException("Update failed for " + bubbleObject, e);
+        }
+    }
+
+    private boolean isAttachedInstance(Session session, BubbleObject bubbleObject) {
+        if (!(session instanceof SessionImplementor)) {
+            return false;
+        }
+        if (!(session instanceof org.hibernate.internal.SessionImpl)) {
+            return false;
+        }
+        PersistenceContext persistenceContext = ((SessionImplementor) session).getPersistenceContext();
+        return persistenceContext != null && persistenceContext.getEntry(bubbleObject) != null;
+    }
+
+    private void checkForSubtypeChangedEntityComponentsOnAttachedInstance(BubbleObject bubbleObject) {
+        Session session = session();
+        if (!(session instanceof SessionImplementor)) {
+            return;
+        }
+        if (!(session instanceof org.hibernate.internal.SessionImpl)) {
+            return;
+        }
+        PersistenceContext persistenceContext = ((SessionImplementor) session).getPersistenceContext();
+        EntityEntry entityEntry = persistenceContext.getEntry(bubbleObject);
+        Object[] loadedState = entityEntry != null ? entityEntry.getLoadedState() : null;
+        EntityPersister persister = (EntityPersister) HibernateHelper.getClassMetadata(session, bubbleObject);
+        Type[] types = persister.getPropertyTypes();
+        int loadedLength = loadedState != null ? loadedState.length : 0;
+        int length = Math.min(types.length, Math.max(loadedLength, types.length));
+        for (int i = 0; i < length; i++) {
+            Type type = types[i];
+            if (!type.isEntityType()) {
+                continue;
+            }
+            Object current = persister.getPropertyValue(bubbleObject, i);
+            Object loaded = loadedState != null && i < loadedState.length ? loadedState[i] : null;
+            if (!(current instanceof EntityComponent)) {
+                continue;
+            }
+            EntityComponent currentComponent = (EntityComponent) current;
+            if (currentComponent.getId() != null) {
+                verifyPersistedEntityComponentType((EntityType) type, session, currentComponent);
+            }
+            EntityComponent oldComponent = resolveLoadedEntityComponent(loaded, (EntityType) type, session, currentComponent);
+            if (oldComponent != null) {
+                Class<?> oldClass = resolveEntityComponentClass(oldComponent);
+                Class<?> currentClass = resolveEntityComponentClass(currentComponent);
+                if (Objects.equals(currentComponent.getId(), oldComponent.getId())
+                        && !Objects.equals(oldClass, currentClass)) {
+                    throw new ImplementationException("Attempted to change class from " + oldComponent.getClass().getName()
+                            + " to " + currentComponent.getClass().getName() + " for id " + currentComponent.getId());
+                }
+                if (oldComponent == currentComponent && currentComponent.getId() != null) {
+                    verifyPersistedEntityComponentType((EntityType) type, session, currentComponent);
+                }
+            } else if (currentComponent.getId() != null) {
+                verifyPersistedEntityComponentType((EntityType) type, session, currentComponent);
+            }
+        }
+    }
+
+    private EntityComponent resolveLoadedEntityComponent(Object loaded, EntityType entityType, Session session, EntityComponent currentComponent) {
+        if (loaded instanceof HibernateProxy) {
+            Object implementation = ((HibernateProxy) loaded).getHibernateLazyInitializer().getImplementation();
+            if (implementation instanceof EntityComponent) {
+                return (EntityComponent) implementation;
+            }
+        } else if (loaded instanceof EntityComponent) {
+            return (EntityComponent) loaded;
+        } else if (loaded instanceof Serializable) {
+            EntityComponent byLoadedId = loadEntityComponentById(entityType, session, (Serializable) loaded, currentComponent);
+            if (byLoadedId != null) {
+                return byLoadedId;
+            }
+        }
+        Long currentId = currentComponent != null ? currentComponent.getId() : null;
+        if (currentId == null) {
+            return null;
+        }
+        return loadEntityComponentById(entityType, session, currentId, currentComponent);
+    }
+
+    private EntityComponent loadEntityComponentById(EntityType entityType, Session session, Serializable id, EntityComponent currentComponent) {
+        Object oldEntity = session.get(entityType.getAssociatedEntityName(), id);
+        if (oldEntity == currentComponent) {
+            EntityComponent freshEntity = loadEntityComponentByIdIgnoringCache(entityType, session, id);
+            if (freshEntity != null) {
+                return freshEntity;
+            }
+        }
+        if (oldEntity instanceof EntityComponent) {
+            return (EntityComponent) oldEntity;
+        }
+        return null;
+    }
+
+    private EntityComponent loadEntityComponentByIdIgnoringCache(EntityType entityType, Session session, Serializable id) {
+        try (org.hibernate.StatelessSession statelessSession = session.getSessionFactory().openStatelessSession()) {
+            Object oldEntity = statelessSession.get(entityType.getAssociatedEntityName(), id);
+            if (oldEntity instanceof EntityComponent) {
+                return (EntityComponent) oldEntity;
+            }
+            return null;
+        }
+    }
+
+    private void verifyPersistedEntityComponentType(EntityType entityType, Session session, EntityComponent currentComponent) {
+        if (session instanceof SessionImplementor) {
+            SessionImplementor sessionImplementor = (SessionImplementor) session;
+            EntityPersister entityPersister = sessionImplementor.getSessionFactory()
+                    .getRuntimeMetamodels()
+                    .getMappingMetamodel()
+                    .getEntityDescriptor(entityType.getAssociatedEntityName());
+            if (entityPersister instanceof org.hibernate.persister.entity.SingleTableEntityPersister) {
+                org.hibernate.persister.entity.SingleTableEntityPersister singleTablePersister =
+                        (org.hibernate.persister.entity.SingleTableEntityPersister) entityPersister;
+                String[] idColumns = singleTablePersister.getIdentifierColumnNames();
+                if (idColumns.length == 1) {
+                    String discriminatorColumn = singleTablePersister.getDiscriminatorColumnName();
+                    String tableName = singleTablePersister.getRootTableName();
+                    String sql = "select " + discriminatorColumn + " from " + tableName + " where " + idColumns[0] + " = ?";
+                    String discriminatorValue = sessionImplementor.doReturningWork(connection -> {
+                        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                            statement.setObject(1, currentComponent.getId());
+                            try (java.sql.ResultSet resultSet = statement.executeQuery()) {
+                                if (!resultSet.next()) {
+                                    return null;
+                                }
+                                String value = resultSet.getString(1);
+                                return value != null ? value.trim() : null;
+                            }
+                        }
+                    });
+                    if (discriminatorValue != null) {
+                        if (!discriminatorValue.equals(currentComponent.getClass().getSimpleName())) {
+                            throw new ImplementationException("Attempted to change class from " + discriminatorValue
+                                    + " to " + currentComponent.getClass().getName() + " for id " + currentComponent.getId());
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+        EntityComponent persistedComponent = loadEntityComponentByIdIgnoringCache(entityType, session, currentComponent.getId());
+        if (persistedComponent != null) {
+            Class<?> persistedClass = resolveEntityComponentClass(persistedComponent);
+            Class<?> currentClass = resolveEntityComponentClass(currentComponent);
+            if (!Objects.equals(persistedClass, currentClass)) {
+            throw new ImplementationException("Attempted to change class from " + persistedComponent.getClass().getName()
+                    + " to " + currentComponent.getClass().getName() + " for id " + currentComponent.getId());
+            }
         }
     }
 
@@ -286,11 +443,20 @@ public class HibernateDetachedSupport {
                 EntityComponent entityComponent = (EntityComponent) value;
                 EntityComponent oldComponent = (EntityComponent) valueExisting;
                 // Sjekk om id har blitt gjenbrukt i entitycomponent av annen subtype
-                if (Objects.equals(entityComponent.getId(), oldComponent.getId()) && !oldComponent.getClass().equals(entityComponent.getClass())) {
+                Class<?> oldClass = resolveEntityComponentClass(oldComponent);
+                Class<?> currentClass = resolveEntityComponentClass(entityComponent);
+                if (Objects.equals(entityComponent.getId(), oldComponent.getId()) && !Objects.equals(oldClass, currentClass)) {
                     throw new ImplementationException("Attempted to change class from " + oldComponent.getClass().getName() +" to " + entityComponent.getClass().getName() + " for id " + entityComponent.getId());
                 }
             }
         }
+    }
+
+    private Class<?> resolveEntityComponentClass(Object component) {
+        if (component instanceof HibernateProxy) {
+            return ((HibernateProxy) component).getHibernateLazyInitializer().getPersistentClass();
+        }
+        return component != null ? component.getClass() : null;
     }
 
     /**
@@ -372,7 +538,7 @@ public class HibernateDetachedSupport {
      * @since 2.3
      */
     void setPropertyValues(Type componentType, Object component, Object[] properties) {
-        ((CompositeType) componentType).setPropertyValues(component, properties, EntityMode.POJO);
+        ((CompositeType) componentType).setPropertyValues(component, properties);
     }
 
     /**
@@ -382,7 +548,7 @@ public class HibernateDetachedSupport {
      * @since 2.3
      */
     Object[] getPropertyValues(Type componentType, Object component) {
-        return ((CompositeType) componentType).getPropertyValues(component, EntityMode.POJO);
+        return ((CompositeType) componentType).getPropertyValues(component);
     }
 
     /**
@@ -404,10 +570,10 @@ public class HibernateDetachedSupport {
             }
 
             final SessionImplementor sessionImpl = (SessionImplementor) session();
-            final AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) sessionImpl.getFactory().getMetamodel().collectionPersister(mapType.getRole());
+            final AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) sessionImpl.getSessionFactory().getMetamodel().collectionPersister(mapType.getRole());
 
-            if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
-                throw new ImplementationException("Key must be LiteralType");
+            if (!(collectionPersister.getKeyType() instanceof BasicType)) {
+                throw new ImplementationException("Key must be BasicType");
             }
             Map<?, ?> map = (Map<?, ?>) mapType.instantiate(mapInObject != null ? mapInObject.size() : 0);
             PersistentMap persistentMap = (PersistentMap) mapType.wrap(sessionImpl, map);
@@ -447,6 +613,9 @@ public class HibernateDetachedSupport {
                 Collection<?> collection = (Collection<?>) collectionType.instantiate(collectionInObject != null ? collectionInObject.size() : 0);
                 PersistentCollection persistentCollection = collectionType.wrap(sessionImpl, collection);
                 persistentCollection.unsetSession(sessionImpl); // Skal ikke være attached enda, men null er ikke lov over
+                if (!persistentCollectionInExistingObject.wasInitialized()) {
+                    Hibernate.initialize(persistentCollectionInExistingObject);
+                }
                 persistentCollection.setSnapshot(persistentCollectionInExistingObject.getKey(), persistentCollectionInExistingObject.getRole(), persistentCollectionInExistingObject.getStoredSnapshot());
 
                 // Det er viktig å gjøre dette etter setSnapshot pga. MultikoblingPersistentSet
@@ -454,7 +623,7 @@ public class HibernateDetachedSupport {
                     ((Collection) persistentCollection).addAll(collectionInObject);
                 }
 
-                Type elementType = collectionType.getElementType(sessionImpl.getFactory());
+                Type elementType = collectionType.getElementType(sessionImpl.getSessionFactory());
                 checkForStolenEntityComponent(elementType, collectionInObject, collectionInExistingObject);
                 attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollectionCascade((Collection<?>) persistentCollection, collectionInExistingObject, elementType, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
                 return (Collection<?>) persistentCollection;
@@ -472,11 +641,11 @@ public class HibernateDetachedSupport {
             Map<Serializable, Object> oldElementMap = Maps.newHashMap();
             for (Object o : collectionInExistingObject) {
                 final EntityPersister elementPersister = sessionImpl.getEntityPersister(elementType.getName(), o);
-                oldElementMap.put(elementPersister.getIdentifier(o, sessionImpl), o);
+                oldElementMap.put((Serializable) elementPersister.getIdentifier(o, sessionImpl), o);
             }
             for (Object object : collectionInOject) {
                 final EntityPersister elementPersister = sessionImpl.getEntityPersister(elementType.getName(), object);
-                final Serializable identifier = elementPersister.getIdentifier(object, sessionImpl);
+                final Serializable identifier = (Serializable) elementPersister.getIdentifier(object, sessionImpl);
                 final Object valueExisting = oldElementMap.get(identifier);
                 if (valueExisting != null) { // TODO: Dersom objektet ikke fantes før, så kan det vel ikke være noen collections som skal attaches?
                     attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities(object, valueExisting, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
@@ -563,7 +732,7 @@ public class HibernateDetachedSupport {
                     checkEntityComponentsInMapOnInsert(collectionType, (Map<?, ?>) value, processedObjects, cascadeStyle);
                 } else {
                     CollectionType collectionType = (CollectionType) type;
-                    Type elementType = collectionType.getElementType(((SessionImplementor) session()).getFactory());
+                    Type elementType = collectionType.getElementType(((SessionImplementor) session()).getSessionFactory());
                     checkForStolenEntitiesInNewObjectForCollection(elementType, (Collection<?>) value, processedObjects, newlyInsertedComponents, cascadeStyle);
                 }
             } else if (!isSingleColumnType(type) // ting som ligger i én kolonne (Primitiver, String, o.l.). Disse kan ikke ha collections.
@@ -596,7 +765,7 @@ public class HibernateDetachedSupport {
                             checkEntityComponentsInMapOnInsert(collectionType, (Map<?, ?>) property,  processedObjects, cascadeStyle);
                         } else {
                             CollectionType collectionType = (CollectionType) propertyType;
-                            Type elementType = collectionType.getElementType(((SessionImplementor) session()).getFactory());
+                            Type elementType = collectionType.getElementType(((SessionImplementor) session()).getSessionFactory());
                             checkForStolenEntitiesInNewObjectForCollection(elementType, (Collection<?>) property, processedObjects, newlyInsertedComponents, cascadeStyle);
                         }
                         wasModified = true;
@@ -618,8 +787,8 @@ public class HibernateDetachedSupport {
     private void checkEntityComponentsInMapOnInsert(CollectionType collectionType, Map<?, ?> value, IdentityHashMap<Object, Object> processedObjects, CascadeStyle cascadeStyle) {
         AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) lazyInitializer.getMetamodel().collectionPersister(collectionType.getRole());
 
-        if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
-            throw new ImplementationException("Key must be LiteralType");
+        if (!(collectionPersister.getKeyType() instanceof BasicType)) {
+            throw new ImplementationException("Key must be BasicType");
         }
 
         if (cascadeStyle.doCascade(CascadingActions.SAVE_UPDATE)) {
@@ -928,7 +1097,7 @@ public class HibernateDetachedSupport {
     }
 
     protected boolean isSingleColumnType(Type type) {
-        return type instanceof SingleColumnType;
+        return type instanceof BasicType;
 
     }
 
@@ -976,7 +1145,7 @@ public class HibernateDetachedSupport {
                     if (value instanceof Map) {
                         checkForStolenEntitiesInNewObjectForMap((Map<?, ?>) value, collectionType, processedObjects, cascadeStyleForElement);
                     } else {
-                        Type elementType = collectionType.getElementType(((SessionImplementor) session()).getFactory());
+                        Type elementType = collectionType.getElementType(((SessionImplementor) session()).getSessionFactory());
                         checkForStolenEntitiesInNewObjectForCollection(elementType, (Collection<?>) value, processedObjects, newlyInsertedComponents, cascadeStyleForElement);
                     }
                 }
@@ -988,8 +1157,8 @@ public class HibernateDetachedSupport {
     private void checkForStolenEntitiesInNewObjectForMap(Map<?, ?> mapInObject, CollectionType collectionType, IdentityHashMap<Object, Object> processedObjects, CascadeStyle cascadeStyleForElement) {
         AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) lazyInitializer.getMetamodel().collectionPersister(collectionType.getRole());
 
-        if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
-            throw new ImplementationException("Key must be LiteralType");
+        if (!(collectionPersister.getKeyType() instanceof BasicType)) {
+            throw new ImplementationException("Key must be BasicType");
         }
 
         // Sjekk at det ikke er noen collections inni her

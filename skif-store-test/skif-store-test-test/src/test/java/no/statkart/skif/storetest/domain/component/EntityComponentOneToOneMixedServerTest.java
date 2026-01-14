@@ -611,7 +611,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1Component.getLevel1Component().getId()));
     }
 
@@ -635,7 +635,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1Component.getLevel1Component().getId()));
     }
 
@@ -655,7 +655,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertTrue(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id().getValue()));
+        assertTrue(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1Component.getLevel1Component().getId()));
     }
 
@@ -681,7 +681,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertTrue(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id().getValue()));
+        assertTrue(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1Component.getLevel1Component().getId()));
     }
 
@@ -701,7 +701,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1Component.getLevel1Component().getId()));
     }
 
@@ -726,7 +726,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, mockupFactory.getWithNullLevel2Id()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1Component.getLevel1Component().getId()));
     }
 
@@ -744,7 +744,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getId()));
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
@@ -769,7 +769,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getId()));
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
@@ -790,7 +790,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getId()));
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
@@ -816,7 +816,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getId()));
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
@@ -837,7 +837,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getId()));
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
@@ -863,7 +863,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getId()));
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
@@ -886,7 +886,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getId()));
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
@@ -913,12 +913,12 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
                 return null;
             }
         });
-        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId().getValue()));
+        assertFalse(existsInDatabase(BubbleWithEntityComponent.class, bubbleWithLevel1AndLevel2Component2.getId()));
         assertFalse(existsInDatabase(Level1EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getId()));
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
 
-    private boolean existsInDatabase(final Class<?> type, final Long id) {
+    private boolean existsInDatabase(final Class<?> type, final Object id) {
         return (Boolean) server.runInTxRequiresNew(new RunOnServerMethod() {
             @Inject
             Session session;

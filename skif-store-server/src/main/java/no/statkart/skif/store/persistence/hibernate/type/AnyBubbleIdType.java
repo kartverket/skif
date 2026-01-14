@@ -1,18 +1,21 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
+import jakarta.persistence.Embeddable;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.util.StoreJDBCHelper;
+import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.slf4j.LoggerFactory;
+import org.hibernate.engine.config.spi.ConfigurationService;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.metamodel.spi.ValueAccess;
+import org.hibernate.type.spi.TypeConfiguration;
+import org.hibernate.type.spi.TypeConfigurationAware;
+import org.hibernate.usertype.CompositeUserType;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.io.Serializable;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -23,13 +26,53 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class AnyBubbleIdType extends BubbleIdType {
+public class AnyBubbleIdType implements CompositeUserType<BubbleId<?>>, TypeConfigurationAware {
+    private TypeConfiguration typeConfiguration;
+
+    /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
+    private SnapshotVersionSeed snapshotVersionSeed = null;
+
+    private final Class<?> idValueType = BubbleIds.getValueType(BubbleId.class);
 
     public AnyBubbleIdType() {
-        super(new int[]{Types.BIGINT, Types.VARCHAR});
     }
 
-    public Class<? extends BubbleId> returnedClass() { return BubbleId.class; }
+    @Override
+    public TypeConfiguration getTypeConfiguration() {
+        return typeConfiguration;
+    }
+
+    @Override
+    public void setTypeConfiguration(TypeConfiguration typeConfiguration) {
+        this.typeConfiguration = typeConfiguration;
+        snapshotVersionSeed = Objects.requireNonNull(
+                typeConfiguration.getServiceRegistry()
+                        .requireService(ConfigurationService.class)
+                        .getSetting("no.statkart.skif.SnapshotVersionSeed", SnapshotVersionSeed.class, snapshotVersionSeed),
+                "SnapshotVersionSeed not configured for session factory"
+        );
+    }
+
+    @Override
+    public Class<BubbleId<?>> returnedClass() {
+        @SuppressWarnings("unchecked")
+        Class<BubbleId<?>> bubbleIdClass = (Class<BubbleId<?>>) (Class<?>) BubbleId.class;
+        return bubbleIdClass;
+    }
+
+    @Override
+    public Object getPropertyValue(BubbleId<?> component, int property) throws HibernateException {
+        if (component == null) {
+            return null;
+        }
+        Object[] values = toSQLValues(component);
+        if (property == 0) {
+            return values[0];
+        } else if (property == 1) {
+            return values[1];
+        }
+        throw new HibernateException("Unknown property index: " + property);
+    }
 
     /**
      * Denne metode kan overskrives av subklasser som ønsker å bruke noe annet enn fully qualified classname som discriminator
@@ -46,41 +89,18 @@ public class AnyBubbleIdType extends BubbleIdType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
-        try {
-            Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);
-            if (rs.wasNull()) {
-                return null;
-            } else {
-                String classname = rs.getString(names[1]);
-                return createId(new Object[] {value, classname});
-            }
-        } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(AnyBubbleIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
-            throw re;
+    public BubbleId<?> instantiate(ValueAccess valueAccess, SessionFactoryImplementor sessionFactory) {
+        Object idValue = valueAccess.getValue(0, idValueType);
+        String classname = valueAccess.getValue(1, String.class);
+        if (idValue == null || classname == null) {
+            return null;
         }
+        return createId(new Object[]{idValue, classname});
     }
 
-
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
-        try {
-            if (value == null) {
-                StoreJDBCHelper.setBubbleIdValue(st, index, null, idValueType);
-                st.setNull(index+1, Types.VARBINARY);
-            } else {
-                Object[] values = toSQLValues((BubbleId<?>) value);
-                st.setLong(index, (Long) values[0]);
-                st.setString(index + 1, (String)values[1]);
-            }
-        } catch (ClassCastException ce) {
-            LoggerFactory.getLogger(AnyBubbleIdType.class).info("could not bind value '{}' to parameter: {}; ClassCastException: expected parameter of class {} got {}", value, index, returnedClass(), ce.getMessage());
-            throw ce;
-        } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(AnyBubbleIdType.class).info("could not bind value '{}' to parameter: {}; {}", value, index, re.getMessage());
-            throw re;
-        }
+    public Class<?> embeddable() {
+        return AnyBubbleIdEmbeddable.class;
     }
 
     /**
@@ -90,13 +110,74 @@ public class AnyBubbleIdType extends BubbleIdType {
      *
      * @param value Object array med  id value og classname for bubbleid'en
      */
-    @Override
     protected BubbleId<?> createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
         Object[] values = (Object[]) value;
         return BubbleIds.createInstance(returnedClass(values[1]), values[0], snapshotVersion);
     }
 
+    public BubbleId<?> createId(Object value) {
+        SnapshotVersion snapshotVersion = Objects.requireNonNull(snapshotVersionSeed.get(), "snapshotVersionSeed not specified");
+        return createPrototypeId(value, snapshotVersion);
+    }
+
     public Object[] toSQLValues(BubbleId<?> id) {
         return new Object[] {id.getValue(), id.getBaseIdType().getName()};
+    }
+
+    @Override
+    public boolean equals(BubbleId<?> x, BubbleId<?> y) {
+        return (x == y) || (x != null && y != null && x.equals(y));
+    }
+
+    @Override
+    public int hashCode(BubbleId<?> x) {
+        return x.hashCode();
+    }
+
+    @Override
+    public BubbleId<?> deepCopy(BubbleId<?> value) {
+        return value;
+    }
+
+    @Override
+    public boolean isMutable() {
+        return false;
+    }
+
+    @Override
+    public Serializable disassemble(BubbleId<?> value) {
+        return value;
+    }
+
+    @Override
+    public BubbleId<?> assemble(Serializable cached, Object owner) {
+        return (BubbleId<?>) cached;
+    }
+
+    @Override
+    public BubbleId<?> replace(BubbleId<?> original, BubbleId<?> target, Object owner) {
+        return original;
+    }
+
+    @Embeddable
+    public static class AnyBubbleIdEmbeddable {
+        private Object value;
+        private String className;
+
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(Object value) {
+            this.value = value;
+        }
+
+        public String getClassName() {
+            return className;
+        }
+
+        public void setClassName(String className) {
+            this.className = className;
+        }
     }
 }

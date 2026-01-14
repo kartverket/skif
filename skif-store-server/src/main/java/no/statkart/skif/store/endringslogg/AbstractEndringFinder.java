@@ -56,7 +56,7 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Long> cq = cb.createQuery(Long.class);
             Root<? extends T> root = cq.from(endringsklasse);
-            cq.select(cb.max(root.get("id")));
+            cq.select(cb.max(root.get("id").as(Long.class)));
             Long result = session.createQuery(cq).uniqueResult();
             return result == null ? 0L : result;
         } finally {
@@ -93,7 +93,7 @@ public abstract class AbstractEndringFinder<T extends AbstractEndring> {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<E> cq = cb.createQuery(endringsklasse);
             Root<E> root = cq.from(endringsklasse);
-            cq.where(cb.greaterThan(root.get("id"), new AbstractEndringId<>(endringsnummer)));
+            cq.where(cb.greaterThan(root.get("id").as(Long.class), endringsnummer));
             // addOrder(Order.asc("id")) // trengs ikke da Endring er definert som organization index tabell
             return session.createQuery(cq).setMaxResults(maksAntall).getResultList();
         } finally {

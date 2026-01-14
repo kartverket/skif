@@ -25,7 +25,7 @@ import org.hibernate.boot.cfgxml.spi.LoadedConfig;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.collection.internal.PersistentSet;
+import org.hibernate.collection.spi.PersistentSet;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
@@ -46,6 +46,7 @@ public class EntityComponentChangeTypeTest {
         LoadedConfig loadedConfig = new LoadedConfig(null);
         //noinspection unchecked
         loadedConfig.getConfigurationValues().put(AvailableSettings.DIALECT, "org.hibernate.dialect.H2Dialect");
+        loadedConfig.getConfigurationValues().put("hibernate.temp.use_jdbc_metadata_defaults", "false");
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure(loadedConfig).build();
         return new MetadataSources(registry)
             .addAnnotatedClass(TestBubbleOneToMany.class)
@@ -61,8 +62,8 @@ public class EntityComponentChangeTypeTest {
 
         try (SessionFactory sessionFactory = metadata.buildSessionFactory()) {
             SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
-            Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
+            Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToManyComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToManyComponent.class.getName()), Mockito.any(TestBubbleOneToManyComponent.class));
             Mockito.doNothing().when(session).evict(Mockito.any());
 
@@ -97,8 +98,8 @@ public class EntityComponentChangeTypeTest {
 
         try (SessionFactory sessionFactory = metadata.buildSessionFactory()) {
             SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
-            Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
+            Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToManyComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToManyComponent.class.getName()), Mockito.any(TestBubbleOneToManyComponent.class));
             Mockito.doNothing().when(session).evict(Mockito.any());
 
@@ -130,6 +131,7 @@ public class EntityComponentChangeTypeTest {
         LoadedConfig loadedConfig = new LoadedConfig(null);
         //noinspection unchecked
         loadedConfig.getConfigurationValues().put(AvailableSettings.DIALECT, "org.hibernate.dialect.H2Dialect");
+        loadedConfig.getConfigurationValues().put("hibernate.temp.use_jdbc_metadata_defaults", "false");
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure(loadedConfig).build();
         return new MetadataSources(registry)
             .addAnnotatedClass(TestBubbleOneToOne.class)
@@ -145,8 +147,8 @@ public class EntityComponentChangeTypeTest {
 
         try (SessionFactory sessionFactory = metadata.buildSessionFactory()) {
             SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
-            Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
+            Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToOneComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToOneComponent.class.getName()), Mockito.any(TestBubbleOneToOneComponent.class));
             Mockito.doNothing().when(session).evict(Mockito.any());
 
@@ -179,8 +181,8 @@ public class EntityComponentChangeTypeTest {
 
         try (SessionFactory sessionFactory = metadata.buildSessionFactory()) {
             SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
-            Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
+            Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToOneComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToOneComponent.class.getName()), Mockito.any(TestBubbleOneToOneComponent.class));
             Mockito.doNothing().when(session).evict(Mockito.any());
 
@@ -297,10 +299,10 @@ public class EntityComponentChangeTypeTest {
         }
     }
 
-    public static class TestBubbleOneToManyIdType extends BubbleIdType {
+    public static class TestBubbleOneToManyIdType extends BubbleIdType<TestBubbleOneToManyId> {
         @Override
-        public Long getValue(Object id) {
-            return ((TestBubbleOneToManyId) id).getValue();
+        public Long getValue(TestBubbleOneToManyId id) {
+            return id.getValue();
         }
 
         @Override
@@ -317,7 +319,7 @@ public class EntityComponentChangeTypeTest {
     @Entity
     public static class TestBubbleOneToMany implements BubbleObject {
         @Id
-        @Type(type = "no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest$TestBubbleOneToManyIdType")
+        @Type(TestBubbleOneToManyIdType.class)
         private TestBubbleOneToManyId id;
 
         @OneToMany(cascade = CascadeType.ALL)
@@ -531,10 +533,10 @@ public class EntityComponentChangeTypeTest {
         }
     }
 
-    public static class TestBubbleOneToOneIdType extends BubbleIdType {
+    public static class TestBubbleOneToOneIdType extends BubbleIdType<TestBubbleOneToOneId> {
         @Override
-        public Long getValue(Object id) {
-            return ((TestBubbleOneToOneId) id).getValue();
+        public Long getValue(TestBubbleOneToOneId id) {
+            return id.getValue();
         }
 
         @Override
@@ -551,7 +553,7 @@ public class EntityComponentChangeTypeTest {
     @Entity
     public static class TestBubbleOneToOne implements BubbleObject {
         @Id
-        @Type(type = "no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest$TestBubbleOneToOneIdType")
+        @Type(TestBubbleOneToOneIdType.class)
         private TestBubbleOneToOneId id;
 
         @SuppressWarnings({"FieldCanBeLocal", "unused"}) // JPA

@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain.endringslogg;
 
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.basic.BubbleWithRelationId;
 
 /**
@@ -22,12 +23,30 @@ public class BubbleWithRelationEndring<I extends BubbleWithRelationEndringId<?>,
 
     @Override
     public I getId() {
-        return super.getId();
+        EndringId<?> id = super.getId();
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof BubbleWithRelationEndringId) {
+            @SuppressWarnings("unchecked")
+            I typedId = (I) id;
+            return typedId;
+        }
+        @SuppressWarnings("unchecked")
+        I typedId = (I) new BubbleWithRelationEndringId<>(id.getValue(), id.getSnapshotVersion());
+        return typedId;
     }
 
     @Override
     public EI getEndretBubbleId() {
-        return super.getEndretBubbleId();
+        BubbleId<?> id = super.getEndretBubbleId();
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof BubbleWithRelationId) {
+            return (EI) id;
+        }
+        return (EI) new BubbleWithRelationId<>((Long) id.getValue(), id.getSnapshotVersion());
     }
 
 }

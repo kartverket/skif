@@ -3,19 +3,17 @@ package no.statkart.skif.storetest.domain.relation.uni.direct;
 import com.google.inject.Inject;
 import jakarta.inject.Provider;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.persistence.hibernate.type.OracleArrayStringCustomType;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayUserType;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.persistence.OracleArrayConverter;
+import no.statkart.skif.store.persistence.OracleArrayLongBubbleIdConverter;
+import no.statkart.skif.store.persistence.OracleArrayStringConverter;
 import no.statkart.skif.store.persistence.SessionSelector;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.type.CustomType;
-import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.Session;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -37,24 +35,25 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
         SnapshotVersion snapshotVersion = x1BBOneIds.iterator().next().getSnapshotVersion();
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select someBBId, id  from X1AA  where someBBId in (select * from table(:idValues))")
-                .addSynchronizedQuerySpace("X1AA")
-                .setParameter("idValues", x1BBOneIds, new OracleLongBubbleIdArrayCustomType())
-                .setFetchSize(Math.min(1000, x1BBOneIds.size()))
-                .addScalar("someBBId", StandardBasicTypes.LONG)
-                .addScalar("id", StandardBasicTypes.LONG);
-            
-            try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
-                while (scroll.next()) {
-                    Object[] next = scroll.get();
-                    X1BBOneId<?> key = new X1BBOneId<>((Long) next[0], snapshotVersion);
-                    Set<X1AAId<?>> relatedIds = result.get(key);
-                    relatedIds.add(new X1AAId<>((Long) next[1], snapshotVersion));
+            Session session = sessionSelector.get(snapshotVersion);
+            session.flush();
+            return session.doReturningWork(connection -> {
+                try (PreparedStatement statement = connection.prepareStatement(
+                    "select someBBId, id from X1AA where someBBId in (select * from table(?))"
+                )) {
+                    statement.setArray(1, new OracleArrayLongBubbleIdConverter().toArray(connection, x1BBOneIds));
+                    statement.setFetchSize(Math.min(1000, x1BBOneIds.size()));
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            X1BBOneId<?> key = new X1BBOneId<>(resultSet.getLong(1), snapshotVersion);
+                            Set<X1AAId<?>> relatedIds = result.get(key);
+                            relatedIds.add(new X1AAId<>(resultSet.getLong(2), snapshotVersion));
+                        }
+                    }
                 }
-            }
+                return result;
+            });
         }
-        return result;
     }
 
     @Override
@@ -65,25 +64,27 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
         SnapshotVersion snapshotVersion = x1CCManyIds.iterator().next().getSnapshotVersion();
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select childId as id, ownerId  from X1AAForX1CCMany where childId in (select * from table(:idValues))")
-                .addSynchronizedQuerySpace("X1AAForX1CCMany")
-                .setParameter("idValues", x1CCManyIds, new OracleLongBubbleIdArrayCustomType())
-                .setFetchSize(Math.min(1000, x1CCManyIds.size()))
-                .addScalar("id", StandardBasicTypes.LONG)
-                .addScalar("ownerId", StandardBasicTypes.LONG);
-
-            try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
-                while (scroll.next()) {
-                    Object[] next = scroll.get();
-                    if (next[1] != null) {
-                        X1CCManyId<?> key = new X1CCManyId<>((Long) next[0], snapshotVersion);
-                        result.put(key, new X1AAId<>((Long) next[1], snapshotVersion));
+            Session session = sessionSelector.get(snapshotVersion);
+            session.flush();
+            return session.doReturningWork(connection -> {
+                try (PreparedStatement statement = connection.prepareStatement(
+                    "select childId as id, ownerId from X1AAForX1CCMany where childId in (select * from table(?))"
+                )) {
+                    statement.setArray(1, new OracleArrayLongBubbleIdConverter().toArray(connection, x1CCManyIds));
+                    statement.setFetchSize(Math.min(1000, x1CCManyIds.size()));
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            Object ownerId = resultSet.getObject(2);
+                            if (ownerId != null) {
+                                X1CCManyId<?> key = new X1CCManyId<>(resultSet.getLong(1), snapshotVersion);
+                                result.put(key, new X1AAId<>(resultSet.getLong(2), snapshotVersion));
+                            }
+                        }
                     }
                 }
-            }
+                return result;
+            });
         }
-        return result;
     }
 
     @Override
@@ -94,25 +95,27 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
         SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select uniqueOnX1AA, id  from X1AA  where uniqueOnX1AA in (select * from table(:textValues))")
-                .addSynchronizedQuerySpace("X1AA")
-                .setParameter("textValues", textValues, new OracleArrayStringCustomType())
-                .setFetchSize(Math.min(1000, textValues.size()))
-                .addScalar("uniqueOnX1AA", StandardBasicTypes.STRING)
-                .addScalar("id", StandardBasicTypes.LONG);
-
-            try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
-                while (scroll.next()) {
-                    Object[] next = scroll.get();
-                    if (next[1] != null) {
-                        String key = (String) next[0];
-                        result.put(key, new X1AAId<>((Long) next[1], snapshotVersion));
+            Session session = sessionSelector.get(snapshotVersion);
+            session.flush();
+            return session.doReturningWork(connection -> {
+                try (PreparedStatement statement = connection.prepareStatement(
+                    "select uniqueOnX1AA, id from X1AA where uniqueOnX1AA in (select * from table(?))"
+                )) {
+                    statement.setArray(1, new OracleArrayStringConverter().toArray(connection, textValues));
+                    statement.setFetchSize(Math.min(1000, textValues.size()));
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            Object idValue = resultSet.getObject(2);
+                            if (idValue != null) {
+                                String key = resultSet.getString(1);
+                                result.put(key, new X1AAId<>(resultSet.getLong(2), snapshotVersion));
+                            }
+                        }
                     }
                 }
-            }
+                return result;
+            });
         }
-        return result;
     }
 
     public Map<String, Set<X1AAId<?>>> findX1AAIdsForNonUniqueOnX1AA(Collection<String> textValues) {
@@ -122,26 +125,28 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
         SnapshotVersion snapshotVersion = SnapshotVersion.CURRENT;
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select nonUniqueOnX1AA, id  from X1AA  where nonUniqueOnX1AA in (select * from table(:textValues))")
-                .addSynchronizedQuerySpace("X1AA")
-                .setParameter("textValues", textValues, new OracleArrayStringCustomType())
-                .setFetchSize(Math.min(1000, textValues.size()))
-                .addScalar("nonUniqueOnX1AA", StandardBasicTypes.STRING)
-                .addScalar("id", StandardBasicTypes.LONG);
-
-            try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
-                while (scroll.next()) {
-                    Object[] next = scroll.get();
-                    if (next[1] != null) {
-                        String key = (String) next[0];
-                        Set<X1AAId<?>> relatedIds = result.get(key);
-                        relatedIds.add(new X1AAId<>((Long) next[1], snapshotVersion));
+            Session session = sessionSelector.get(snapshotVersion);
+            session.flush();
+            return session.doReturningWork(connection -> {
+                try (PreparedStatement statement = connection.prepareStatement(
+                    "select nonUniqueOnX1AA, id from X1AA where nonUniqueOnX1AA in (select * from table(?))"
+                )) {
+                    statement.setArray(1, new OracleArrayStringConverter().toArray(connection, textValues));
+                    statement.setFetchSize(Math.min(1000, textValues.size()));
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            Object idValue = resultSet.getObject(2);
+                            if (idValue != null) {
+                                String key = resultSet.getString(1);
+                                Set<X1AAId<?>> relatedIds = result.get(key);
+                                relatedIds.add(new X1AAId<>(resultSet.getLong(2), snapshotVersion));
+                            }
+                        }
                     }
                 }
-            }
+                return result;
+            });
         }
-        return result;
     }
 
     @Override
@@ -150,28 +155,27 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select b.nr as bnr, a.nr as anr, a.id" +
-                    " from X1AA a join X1BBOne b on (a.someBBId=b.id)" +
-                    " where (b.nr, a.nr) in (select * from table(:idents))")
-                .addSynchronizedQuerySpace("X1AA")
-                .addSynchronizedQuerySpace("X1BBOne")
-                .setParameter("idents", idents, new CustomType(new OracleX1AAIdentArrayUserType()))
-                .setFetchSize(Math.min(1000, idents.size()))
-                .addScalar("bnr", StandardBasicTypes.INTEGER)
-                .addScalar("anr", StandardBasicTypes.INTEGER)
-                .addScalar("id", StandardBasicTypes.LONG);
-
-            try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
-                while (scroll.next()) {
-                    Object[] next = scroll.get();
-                    X1AAIdent ident = new X1AAIdent((Integer) next[0], (Integer) next[1]);
-                    Set<X1AAId<?>> relatedIds = result.get(ident);
-                    relatedIds.add(new X1AAId<>((Long) next[2], snapshotVersion));
+            Session session = sessionSelector.get(snapshotVersion);
+            session.flush();
+            return session.doReturningWork(connection -> {
+                try (PreparedStatement statement = connection.prepareStatement(
+                    "select b.nr as bnr, a.nr as anr, a.id" +
+                        " from X1AA a join X1BBOne b on (a.someBBId=b.id)" +
+                        " where (b.nr, a.nr) in (select * from table(?))"
+                )) {
+                    statement.setArray(1, new OracleX1AAIdentArrayConverter().toArray(connection, idents));
+                    statement.setFetchSize(Math.min(1000, idents.size()));
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            X1AAIdent ident = new X1AAIdent(resultSet.getInt(1), resultSet.getInt(2));
+                            Set<X1AAId<?>> relatedIds = result.get(ident);
+                            relatedIds.add(new X1AAId<>(resultSet.getLong(3), snapshotVersion));
+                        }
+                    }
                 }
-            }
+                return result;
+            });
         }
-        return result;
     }
 
     private static class OracleX1AAIdentArrayConverter extends OracleArrayConverter<X1AAIdent> {
@@ -215,24 +219,24 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
 
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             SnapshotVersion snapshotVersion = SnapshotVersionContext.getInstance().getSnapshotVersion();
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select b.nr as bnr, b.id  from X1BBOne b where (b.nr) in (select * from table(:idents))")
-                .addSynchronizedQuerySpace("X1BBOne")
-                .setParameter("idents", idents, new CustomType(new OracleX1BBOneIdentArrayUserType()))
-                .setFetchSize(Math.min(1000, idents.size()))
-                .addScalar("bnr", StandardBasicTypes.INTEGER)
-                .addScalar("id", StandardBasicTypes.LONG);
-
-            try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
-                while (scroll.next()) {
-                    Object[] next = scroll.get();
-                    X1BBOneIdent ident = new X1BBOneIdent((Integer) next[0]);
-                    Set<X1BBOneId<?>> relatedIds = result.get(ident);
-                    relatedIds.add(new X1BBOneId<>((Long) next[1], snapshotVersion));
+            Session session = sessionSelector.get(snapshotVersion);
+            return session.doReturningWork(connection -> {
+                try (PreparedStatement statement = connection.prepareStatement(
+                    "select b.nr as bnr, b.id from X1BBOne b where (b.nr) in (select * from table(?))"
+                )) {
+                    statement.setArray(1, new OracleX1BBOneIdentArrayConverter().toArray(connection, idents));
+                    statement.setFetchSize(Math.min(1000, idents.size()));
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            X1BBOneIdent ident = new X1BBOneIdent(resultSet.getInt(1));
+                            Set<X1BBOneId<?>> relatedIds = result.get(ident);
+                            relatedIds.add(new X1BBOneId<>(resultSet.getLong(2), snapshotVersion));
+                        }
+                    }
                 }
-            }
+                return result;
+            });
         }
-        return result;
     }
 
 }

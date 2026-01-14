@@ -48,7 +48,7 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
                 throw e.getTargetException();
             }
         } else {
-            Connection connection = persistenceSessionMaster.reserveSession().connection();
+            Connection connection = persistenceSessionMaster.reserveSession().doReturningWork(c -> c);
 
             try {
                 //noinspection UnnecessaryLocalVariable
@@ -63,7 +63,7 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
     @Override
     public Connection reserve() {
         //noinspection UnnecessaryLocalVariable
-        Connection connection = persistenceSessionMaster.reserveSession().connection();
+        Connection connection = persistenceSessionMaster.reserveSession().doReturningWork(c -> c);
         return connection;
     }
 

@@ -1,8 +1,7 @@
 package no.statkart.skif.store.persistence;
 
 
-import oracle.sql.ARRAY;
-
+import java.sql.Array;
 import java.sql.Connection;
 import java.util.Collection;
 
@@ -14,7 +13,7 @@ public class OracleArrayNumberConverter extends OracleArrayConverter<Number> {
     }
 
     @Override
-    public ARRAY toArray(Connection sqlConnection, Object[] objects) {
+    public Array toArray(Connection sqlConnection, Object[] objects) {
         return super.toArray(sqlConnection, objects);
     }
 

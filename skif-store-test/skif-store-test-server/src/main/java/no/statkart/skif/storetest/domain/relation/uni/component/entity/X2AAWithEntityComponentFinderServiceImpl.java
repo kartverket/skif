@@ -3,13 +3,10 @@ package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 import com.google.inject.Inject;
 import jakarta.inject.Provider;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.SnapshotVersion;
+import no.statkart.skif.store.persistence.OracleArrayLongBubbleIdConverter;
 import no.statkart.skif.store.persistence.SessionSelector;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.Session;
 
 import java.util.Collection;
 import java.util.Map;
@@ -30,26 +27,26 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
 
         Map<X2BBOneId<?>, Set<X2AAWithEntityComponentId<?>>> result = SkifUtil.newHashMapWithEmptySetValues(ids);
 
-
         SnapshotVersion snapshotVersion = ids.iterator().next().getSnapshotVersion();
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select someBBId, ownerId  from X2EntityComponentOne  where someBBId in (select * from table(:idValues))")
-                .addSynchronizedQuerySpace("X2EntityComponentOne")
-                .setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType())
-                .setFetchSize(Math.min(1000, ids.size()))
-                .addScalar("someBBId", StandardBasicTypes.LONG)
-                .addScalar("ownerId", StandardBasicTypes.LONG);
-            try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
-                while (scroll.next()) {
-                    Object[] next = scroll.get();
-                    X2BBOneId<?> key = new X2BBOneId<>((Long) next[0], snapshotVersion);
-                    Set<X2AAWithEntityComponentId<?>> relatedIds = result.get(key);
-                    relatedIds.add(new X2AAWithEntityComponentId<>((Long) next[1], snapshotVersion));
+            Session session = sessionSelector.get(snapshotVersion);
+            return session.doReturningWork(connection -> {
+                try (java.sql.PreparedStatement statement = connection.prepareStatement(
+                    "select someBBId, ownerId from X2EntityComponentOne where someBBId in (select * from table(?))"
+                )) {
+                    statement.setArray(1, new OracleArrayLongBubbleIdConverter().toArray(connection, ids));
+                    statement.setFetchSize(Math.min(1000, ids.size()));
+                    try (java.sql.ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            X2BBOneId<?> key = new X2BBOneId<>(resultSet.getLong(1), snapshotVersion);
+                            Set<X2AAWithEntityComponentId<?>> relatedIds = result.get(key);
+                            relatedIds.add(new X2AAWithEntityComponentId<>(resultSet.getLong(2), snapshotVersion));
+                        }
+                    }
                 }
-            }
+                return result;
+            });
         }
-        return result;
     }
 
     @Override
@@ -60,26 +57,27 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
 
         SnapshotVersion snapshotVersion = ids.iterator().next().getSnapshotVersion();
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select t.childId as id, c.ownerId  from X2AAForX2CCMany t, X2EntityComponentOne c  where t.ownerId = c.id and  t.childId in (select * from table(:idValues))")
-                .addSynchronizedQuerySpace("X2AAForX2CCMany")
-                .addSynchronizedQuerySpace("X2EntityComponentOne")
-                .setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType())
-                .setFetchSize(Math.min(1000, ids.size()))
-                .addScalar("id", StandardBasicTypes.LONG)
-                .addScalar("ownerId", StandardBasicTypes.LONG);
-
-            try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
-                while (scroll.next()) {
-                    Object[] next = scroll.get();
-                    if (next[1] != null) {
-                        X2CCManyId<?> key = new X2CCManyId<>((Long) next[0], snapshotVersion);
-                        result.put(key, new X2AAWithEntityComponentId<>((Long) next[1], snapshotVersion));
+            Session session = sessionSelector.get(snapshotVersion);
+            return session.doReturningWork(connection -> {
+                try (java.sql.PreparedStatement statement = connection.prepareStatement(
+                    "select t.childId as id, c.ownerId from X2AAForX2CCMany t, X2EntityComponentOne c" +
+                        " where t.ownerId = c.id and t.childId in (select * from table(?))"
+                )) {
+                    statement.setArray(1, new OracleArrayLongBubbleIdConverter().toArray(connection, ids));
+                    statement.setFetchSize(Math.min(1000, ids.size()));
+                    try (java.sql.ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            Object ownerId = resultSet.getObject(2);
+                            if (ownerId != null) {
+                                X2CCManyId<?> key = new X2CCManyId<>(resultSet.getLong(1), snapshotVersion);
+                                result.put(key, new X2AAWithEntityComponentId<>(resultSet.getLong(2), snapshotVersion));
+                            }
+                        }
                     }
                 }
-            }
+                return result;
+            });
         }
-        return result;
     }
 
     @Override
@@ -88,23 +86,23 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
 
         SnapshotVersion snapshotVersion = ids.iterator().next().getSnapshotVersion();
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
-            NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
-                .createNativeQuery("select role1BBOneId, ownerId  from X2SetEntityComp  where role1BBOneId in (select * from table(:idValues))")
-                .addSynchronizedQuerySpace("X2SetEntityComp")
-                .setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType())
-                .setFetchSize(Math.min(1000, ids.size()))
-                .addScalar("role1BBOneId", StandardBasicTypes.LONG)
-                .addScalar("ownerId", StandardBasicTypes.LONG);
-
-            try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
-                while (scroll.next()) {
-                    Object[] next = scroll.get();
-                    X2BBOneId<?> key = new X2BBOneId<>((Long) next[0], snapshotVersion);
-                    Set<X2AAWithEntityComponentId<?>> relatedIds = result.get(key);
-                    relatedIds.add(new X2AAWithEntityComponentId<>((Long) next[1], snapshotVersion));
+            Session session = sessionSelector.get(snapshotVersion);
+            return session.doReturningWork(connection -> {
+                try (java.sql.PreparedStatement statement = connection.prepareStatement(
+                    "select role1BBOneId, ownerId from X2SetEntityComp where role1BBOneId in (select * from table(?))"
+                )) {
+                    statement.setArray(1, new OracleArrayLongBubbleIdConverter().toArray(connection, ids));
+                    statement.setFetchSize(Math.min(1000, ids.size()));
+                    try (java.sql.ResultSet resultSet = statement.executeQuery()) {
+                        while (resultSet.next()) {
+                            X2BBOneId<?> key = new X2BBOneId<>(resultSet.getLong(1), snapshotVersion);
+                            Set<X2AAWithEntityComponentId<?>> relatedIds = result.get(key);
+                            relatedIds.add(new X2AAWithEntityComponentId<>(resultSet.getLong(2), snapshotVersion));
+                        }
+                    }
                 }
-            }
+                return result;
+            });
         }
-        return result;
     }
 }

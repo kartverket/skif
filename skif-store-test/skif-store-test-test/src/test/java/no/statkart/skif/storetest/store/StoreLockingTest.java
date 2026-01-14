@@ -18,7 +18,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.locker.DBLockerService;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.assertj.core.api.Assertions;
-import org.hibernate.collection.internal.PersistentSet;
+import org.hibernate.collection.spi.PersistentSet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

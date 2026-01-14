@@ -29,7 +29,7 @@ import java.util.Objects;
  * @since 2.0
  */
 public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
-    private final int[] SQL_TYPES;
+    private final int sqlType;
 
     private TypeConfiguration typeConfiguration;
 
@@ -40,19 +40,19 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
 
     public BubbleIdType() {
         idValueType = BubbleIds.getValueType(returnedClass());
-        if (idValueType==Long.class) {
-            SQL_TYPES = new int[]{Types.BIGINT};
+        if (idValueType == Long.class) {
+            sqlType = Types.BIGINT;
         } else {
-            SQL_TYPES = new int[]{Types.VARCHAR};
+            sqlType = Types.VARCHAR;
         }
     }
 
-    protected BubbleIdType(int[] SQL_TYPES) {
-        this.SQL_TYPES= SQL_TYPES;
-        if (SQL_TYPES[0]== Types.BIGINT) {
-            idValueType=Long.class;
-        } else if (SQL_TYPES[0]== Types.VARCHAR) {
-            idValueType=String.class;
+    protected BubbleIdType(int sqlType) {
+        this.sqlType = sqlType;
+        if (sqlType == Types.BIGINT) {
+            idValueType = Long.class;
+        } else if (sqlType == Types.VARCHAR) {
+            idValueType = String.class;
         } else {
             throw new ImplementationException("SQL type " + Types.VARCHAR + " is not supported as id type for BubbleId");
         }
@@ -82,8 +82,8 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
         );
     }
 
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    public int getSqlType() {
+        return sqlType;
     }
 
     public abstract Class<? extends BubbleId> returnedClass();
@@ -117,10 +117,9 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         try {
-            Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);
+            Object value = StoreJDBCHelper.getBubbleIdValue(rs, position, idValueType);
             //long value = rs.getLong(name);
             if (rs.wasNull()) {
                 return null;
@@ -128,7 +127,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
                 return createId(value);
             }
         } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(BubbleIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
+            LoggerFactory.getLogger(BubbleIdType.class).info("could not read column value from result set at index {}: {}", position, re.getMessage());
             throw re;
         }
 

@@ -53,7 +53,7 @@ public class HistSimpleFinder {
     public Set<HistSimpleId<?>> findHistSimpleIdsForTextUsingHibernate(String text, int testsetNummer, SnapshotVersion snapshotVersion) {
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             List<HistSimple> histSimples = sessionSelector.get(snapshotVersion)
-                .createQuery("from HistSimple where text = :text and testsetNumber = :testsetNumber", HistSimple.class)
+                .createQuery("from HistSimple where text = :text and testSetNumber = :testsetNumber", HistSimple.class)
                 .setParameter("text", text)
                 .setParameter("testsetNumber", testsetNummer)
                 .list();

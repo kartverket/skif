@@ -38,14 +38,24 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      * @return false fordi vi ikke endrer på <code>state</code> til <code>entity</code>
      * @see {@link org.hibernate.Interceptor#onLoad(Object, java.io.Serializable, Object[], String[], org.hibernate.type.Type[])}
      */
+    @Override
     public boolean onLoad(Object entity, Serializable hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
+        return onLoadInternal(entity);
+    }
+
+    @Override
+    public boolean onLoad(Object entity, Object hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
+        return onLoadInternal(entity);
+    }
+
+    private boolean onLoadInternal(Object entity) {
         if (entity instanceof BubbleObject) {
             BubbleObject bubbleEntity = (BubbleObject) entity;
             String classname = bubbleEntity.getClass().getName();
             BubbleId<?> bubbleId = bubbleEntity.getBubbleId();
             try {
                 String idString;
-                if(classname.contains("Impl")) {
+                if (classname.contains("Impl")) {
                     idString = classname.substring(0, classname.indexOf("Impl")) + "IdImpl";
                 } else {
                     idString = classname + "Id";
@@ -73,18 +83,35 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
         return null;
     }
 
+    @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
         return false;
     }
 
+    @Override
+    public boolean onFlushDirty(Object entity, Object id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) throws CallbackException {
+        sjekkSnapshotVersjon(id);
+        flagFlushed(entity);
+        return false;
+    }
+
+    @Override
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
         return false;
     }
 
+    @Override
+    public boolean onSave(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
+        sjekkSnapshotVersjon(id);
+        flagFlushed(entity);
+        return false;
+    }
+
+    @Override
     public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
@@ -96,7 +123,19 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
         flagFlushed(persistentCollection.getOwner());
     }
 
-    private void sjekkSnapshotVersjon(Serializable id) {
+    @Override
+    public void onCollectionUpdate(Object collection, Object key) throws CallbackException {
+        PersistentCollection persistentCollection = (PersistentCollection) collection;
+        flagFlushed(persistentCollection.getOwner());
+    }
+
+    @Override
+    public void onDelete(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
+        sjekkSnapshotVersjon(id);
+        flagFlushed(entity);
+    }
+
+    private void sjekkSnapshotVersjon(Object id) {
         if (id instanceof BubbleId) {
             if (((BubbleId) id).getSnapshotVersion() != snapshotVersionSeed.get()) {
                 throw new ImplementationException("Id for instance has wrong SnapshotVersion", logger);

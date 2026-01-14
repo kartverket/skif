@@ -3,7 +3,7 @@ package no.statkart.skif.persistence.hibernate.type;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
-import org.hibernate.annotations.common.util.StringHelper;
+import org.hibernate.internal.util.StringHelper;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.EnhancedUserType;
 import org.hibernate.usertype.ParameterizedType;
@@ -92,23 +92,22 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         try {
-            long value = rs.getLong(name);
+            long value = rs.getLong(position);
             if (rs.wasNull()) {
                 if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning null as column: " + name);
+                    log().trace("returning null as column index: " + position);
                 }
                 return null;
             } else {
                 if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning '" + value + "' as column: " + name);
+                    log().trace("returning '" + value + "' as column index: " + position);
                 }
                 return value;
             }
         } catch (RuntimeException | SQLException re) {
-            log().info("could not read column value from result set: " + name + "; " + re.getMessage());
+            log().info("could not read column value from result set at index " + position + "; " + re.getMessage());
             throw re;
         }
     }
@@ -142,11 +141,11 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
     }
 
     public Class returnedClass() {
-        return long.class;
+        return Long.class;
     }
 
-    public int[] sqlTypes() {
-        return new int[]{Types.BIGINT};
+    public int getSqlType() {
+        return Types.BIGINT;
     }
 
     public Object fromXMLString(String xmlValue) {
@@ -155,6 +154,28 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
 
     public String objectToSQLString(Object value) {
         return '\'' + value.toString() + '\'';
+    }
+
+    @Override
+    public String toSqlLiteral(Object value) {
+        return value == null ? "null" : value.toString();
+    }
+
+    @Override
+    public String toString(Object value) throws HibernateException {
+        return value == null ? null : value.toString();
+    }
+
+    @Override
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        if (sequence == null) {
+            return null;
+        }
+        String value = sequence.toString();
+        if (value.isEmpty()) {
+            return null;
+        }
+        return Long.parseLong(value);
     }
 
     public String toXMLString(Object value) {

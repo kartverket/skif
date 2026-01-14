@@ -14,6 +14,7 @@ import no.statkart.skif.persistence.VersionFinder;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.util.CopyHelper;
+import jakarta.persistence.PersistenceException;
 import org.hibernate.JDBCException;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.resource.transaction.spi.TransactionCoordinator;
@@ -287,7 +288,7 @@ public class StoreSessionServer extends AbstractStoreSession {
             flush();
             HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
             SessionImpl session = persistenceSessionMaster.reserveSession();
-            Connection connection = session.connection();
+            Connection connection = session.doReturningWork(c -> c);
             Savepoint savepoint = connection.setSavepoint();
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry == null) {
@@ -310,10 +311,32 @@ public class StoreSessionServer extends AbstractStoreSession {
                 clearPersistenceSessionAndSyncronizeWithStore(persistenceSessionMaster);
                 storeEntry.getBubbleObject(level).setFlushed(oldFlushed);
                 throw new AttemptDeleteException(bubbleId, e);
+            } catch (PersistenceException e) {
+                JDBCException jdbcException = findJdbcException(e);
+                if (jdbcException == null) {
+                    throw e;
+                }
+                connection.rollback(savepoint);
+                if (!markedForRollbackOnly) resetRollbackOnly(session);
+                storeEntry.setState(level, oldState);
+                clearPersistenceSessionAndSyncronizeWithStore(persistenceSessionMaster);
+                storeEntry.getBubbleObject(level).setFlushed(oldFlushed);
+                throw new AttemptDeleteException(bubbleId, jdbcException);
             }
         } catch (SQLException e) {
             throw new OperationalException("Error attempting delete", e);
         }
+    }
+
+    private JDBCException findJdbcException(Throwable e) {
+        Throwable current = e;
+        while (current != null) {
+            if (current instanceof JDBCException) {
+                return (JDBCException) current;
+            }
+            current = current.getCause();
+        }
+        return null;
     }
 
     private void resetRollbackOnly(SessionImpl session) {

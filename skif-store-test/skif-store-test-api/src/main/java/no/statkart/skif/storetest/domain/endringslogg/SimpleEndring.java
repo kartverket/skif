@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain.endringslogg;
 
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 
 /**
@@ -22,12 +23,26 @@ public class SimpleEndring<I extends SimpleEndringId<?>, EI extends SimpleId<?>>
 
     @Override
     public I getId() {
-        return super.getId();
+        EndringId<?> id = (EndringId<?>) super.getId();
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof SimpleEndringId) {
+            return (I) id;
+        }
+        return (I) new SimpleEndringId<>(id.getValue(), id.getSnapshotVersion());
     }
 
     @Override
     public EI getEndretBubbleId() {
-        return super.getEndretBubbleId();
+        BubbleId<?> id = super.getEndretBubbleId();
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof SimpleId) {
+            return (EI) id;
+        }
+        return (EI) new SimpleId<>((Long) id.getValue(), id.getSnapshotVersion());
     }
 
 }

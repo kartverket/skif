@@ -5,7 +5,8 @@ import no.statkart.skif.exception.OperationalException;
 import org.hibernate.Session;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.NativeQuery;
-import org.hibernate.type.TimestampType;
+import org.hibernate.type.BasicTypeReference;
+import org.hibernate.type.StandardBasicTypes;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -18,7 +19,7 @@ import java.sql.Types;
  */
 public class SnapshotVersionSessionHelper {
     // TODO: Virker ikke hvis Hibernate.TIMESTAMP brukes. Deprecated i 3.6.10
-    private static final TimestampType TIMESTAMP = new TimestampType();
+    private static final BasicTypeReference<?> TIMESTAMP = StandardBasicTypes.TIMESTAMP;
 
     /**
      * Henter SnapshotVersion satt på databasen

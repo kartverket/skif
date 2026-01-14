@@ -23,10 +23,10 @@ import java.sql.Types;
  */
 public class OraclePersistentLocalDate implements EnhancedUserType, Serializable {
 
-    private static final int[] SQL_TYPES = new int[] { Types.DATE, };
+    private static final int SQL_TYPE = Types.DATE;
 
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    public int getSqlType() {
+        return SQL_TYPE;
     }
 
     public Class returnedClass() {
@@ -50,14 +50,14 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        return nullSafeGet(rs, names[0]);
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        return nullSafeGet(rs, position);
 
     }
 
-    public Object nullSafeGet(ResultSet resultSet, String name) throws SQLException {
+    public Object nullSafeGet(ResultSet resultSet, int position) throws SQLException {
         OracleResultSet oracleResultSet = resultSet.unwrap(OracleResultSet.class);
-        DATE oracleDate = oracleResultSet.getDATE(name);
+        DATE oracleDate = oracleResultSet.getDATE(position);
         if (oracleDate == null) {
             return null;
         }
@@ -117,6 +117,28 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
 
     public String objectToSQLString(Object object) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toSqlLiteral(Object value) {
+        return value == null ? "null" : "'" + value.toString() + "'";
+    }
+
+    @Override
+    public String toString(Object value) throws HibernateException {
+        return value == null ? null : value.toString();
+    }
+
+    @Override
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        if (sequence == null) {
+            return null;
+        }
+        String value = sequence.toString();
+        if (value.isEmpty()) {
+            return null;
+        }
+        return new LocalDate(value);
     }
 
     public String toXMLString(Object object) {

@@ -11,7 +11,14 @@ public class SubTypeWithPrimitive extends SubTypedBubble {
 
     @Override
     public SubTypeWithPrimitiveId<?> getId() {
-        return (SubTypeWithPrimitiveId<?>) super.getId();
+        SubTypedBubbleId<?> id = (SubTypedBubbleId<?>) super.getId();
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof SubTypeWithPrimitiveId) {
+            return (SubTypeWithPrimitiveId<?>) id;
+        }
+        return new SubTypeWithPrimitiveId<>(id.getValue(), id.getSnapshotVersion());
     }
 
     public int getNum() {

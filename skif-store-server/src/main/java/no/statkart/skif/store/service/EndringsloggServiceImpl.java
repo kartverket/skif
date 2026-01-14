@@ -10,7 +10,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
 import no.statkart.skif.exception.NotImplementedException;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
+import no.statkart.skif.store.persistence.OracleArrayLongBubbleIdConverter;
 import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
@@ -30,6 +30,8 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.query.NativeQuery;
 
 import javax.annotation.Nullable;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +109,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
                 CriteriaBuilder cb = session.getCriteriaBuilder();
                 CriteriaQuery<E> cq = (CriteriaQuery<E>) (CriteriaQuery<?>) cb.createQuery(endringClass);
                 Root<? extends AbstractEndring> root = cq.from(endringClass);
-                cq.where(cb.greaterThan(root.get("id"), id));
+                cq.where(cb.greaterThan(root.get("id").as(Long.class), id.getValue()));
                 cq.orderBy(cb.asc(root.get("id")));
                 List<E> endringList = session.createQuery(cq).setMaxResults(maksAntall).getResultList();
                 boolean alleEndringerFunnet = endringList.size() < maksAntall;
@@ -124,9 +126,9 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
                     CriteriaQuery<E> cq = (CriteriaQuery<E>) (CriteriaQuery<?>) cb.createQuery(endringClass);
                     Root<? extends AbstractEndring> root = cq.from(endringClass);
                     if (endringer.getSisteEndringIdProsessert() == null) {
-                        cq.where(cb.greaterThan(root.get("id"), id));
+                        cq.where(cb.greaterThan(root.get("id").as(Long.class), id.getValue()));
                     } else {
-                        cq.where(cb.greaterThan(root.get("id"), endringer.getSisteEndringIdProsessert()));
+                        cq.where(cb.greaterThan(root.get("id").as(Long.class), endringer.getSisteEndringIdProsessert().getValue()));
                     }
                     cq.orderBy(cb.asc(root.get("id")));
                     List<E> endringList = session.createQuery(cq).setMaxResults(oensketAntallEndringer).getResultList();
@@ -233,6 +235,11 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
     @Override
     public <T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<? extends BubbleId<?>> ids, Class<T> bobleklasse) {
         checkEndringsklasseFinnes(bobleklasse);
+        if (ids.isEmpty()) {
+            Kontroll emptyResult = new Kontroll();
+            emptyResult.setAntall(0L);
+            return emptyResult;
+        }
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
@@ -241,13 +248,20 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
             String discriminatorSql = getDiscriminatorSql(classMetadata, "t");
 
             String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))" + discriminatorSql;
-
-            NativeQuery<?> query = session.createNativeQuery(sql)
-                    .setParameter("ids", ids, new OracleLongBubbleIdArrayCustomType());
-
-            Kontroll result = new Kontroll();
-            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
-            return result;
+            return session.doReturningWork(connection -> {
+                try (PreparedStatement statement = connection.prepareStatement(sql.replace(":ids", "?"))) {
+                    statement.setArray(1, new OracleArrayLongBubbleIdConverter().toArray(connection, ids));
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        Kontroll result = new Kontroll();
+                        if (resultSet.next()) {
+                            result.setAntall(resultSet.getLong(1));
+                        } else {
+                            result.setAntall(0L);
+                        }
+                        return result;
+                    }
+                }
+            });
         } finally {
             if (sessionSelector != null) sessionSelector.close();
         }
@@ -257,11 +271,14 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
         @SuppressWarnings("unchecked")
         Class<E> cls = (Class<E>) AbstractBubbleId.getType(endringIdClass);
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<EI> cq = cb.createQuery(endringIdClass);
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<E> root = cq.from(cls);
-        Expression<EI> id = root.get("id");
-        cq.select(cb.greatest(id));
-        return setIfNull(session.createQuery(cq).uniqueResult());
+        cq.select(cb.greatest(root.get("id").as(Long.class)));
+        Long result = session.createQuery(cq).uniqueResult();
+        if (result == null) {
+            return setIfNull(null);
+        }
+        return BubbleIds.createInstance(endringIdClass, result, SnapshotVersionContext.getInstance().getSnapshotVersion());
     }
 
     private EI setIfNull(EI id) {

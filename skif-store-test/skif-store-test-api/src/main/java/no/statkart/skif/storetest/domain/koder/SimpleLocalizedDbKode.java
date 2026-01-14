@@ -11,6 +11,13 @@ public class SimpleLocalizedDbKode extends HistoriskDbKode {
 
     @Override
     public SimpleLocalizedDbKodeId getId() {
-        return (SimpleLocalizedDbKodeId) super.getId();
+        HistoriskDbKodeId<?> id = super.getId();
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof SimpleLocalizedDbKodeId) {
+            return (SimpleLocalizedDbKodeId) id;
+        }
+        return new SimpleLocalizedDbKodeId(id.getValue(), id.getSnapshotVersion());
     }
 }

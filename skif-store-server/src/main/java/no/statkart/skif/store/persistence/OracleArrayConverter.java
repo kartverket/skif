@@ -1,11 +1,12 @@
 package no.statkart.skif.store.persistence;
 
 import no.statkart.skif.util.OracleUtils;
-import oracle.sql.ARRAY;
-import oracle.sql.ArrayDescriptor;
+import oracle.jdbc.OracleConnection;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Struct;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -62,13 +63,26 @@ public class OracleArrayConverter<T> {
      * {@link #toArray(java.sql.Connection, java.util.Collection)} i stedet for
      * {@link #toObjectArray(java.sql.Connection, java.util.Collection)}
      */
-    protected ARRAY toArray(Connection sqlConnection, Object[] objects) {
+    protected Array toArray(Connection sqlConnection, Object[] objects) {
         try {
-            final Connection oracleConnection = OracleUtils.getOracleConnection(sqlConnection);
-            ArrayDescriptor oracleArrayDescriptor = ArrayDescriptor.createDescriptor(oracleArrayType, oracleConnection, true, false);
-            ARRAY array = new ARRAY(oracleArrayDescriptor, oracleConnection, objects);
-            array.setAutoIndexing(true);
-            return array;
+            OracleConnection oracleConnection = OracleUtils.getOracleConnection(sqlConnection);
+            Object[] elements = objects;
+            String structType = resolveOracleStructType();
+            if (structType != null && objects != null) {
+                Object[] structValues = new Object[objects.length];
+                for (int i = 0; i < objects.length; i++) {
+                    Object element = objects[i];
+                    if (element instanceof Struct) {
+                        structValues[i] = element;
+                    } else if (element instanceof Object[]) {
+                        structValues[i] = element;
+                    } else {
+                        structValues[i] = new Object[]{element};
+                    }
+                }
+                elements = structValues;
+            }
+            return oracleConnection.createOracleArray(oracleArrayType, elements);
         } catch (SQLException e) {
             if(e.getErrorCode() == 17074 && e.getMessage().contains(oracleArrayType)) {
                 throw new RuntimeException(oracleArrayType + " is not defined in schema, create it by running the following command: CREATE TYPE " + oracleArrayType + " AS AS TABLE OF NUMBER;", e);
@@ -91,8 +105,18 @@ public class OracleArrayConverter<T> {
         return list;
     }
 
-    public ARRAY toArray(Connection sqlConnection, Collection<? extends T> objects) {
+    public Array toArray(Connection sqlConnection, Collection<? extends T> objects) {
         return toArray(sqlConnection, toObjectArray(sqlConnection, objects));
+    }
+
+    protected String resolveOracleStructType() {
+        if (ORACLE_NUMBER_STRING_LIST_TYPE.equals(oracleArrayType)) {
+            return "NUMBER_STRING_TYPE";
+        }
+        if (ORACLE_STRING_STRING_LIST_TYPE.equals(oracleArrayType)) {
+            return "STRING_STRING_TYPE";
+        }
+        return null;
     }
 
     /**

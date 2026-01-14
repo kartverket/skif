@@ -538,7 +538,10 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     private EntityPersister getClassPersister(Class theClass) {
         try {
             if (lastClass != theClass) {
-                lastResultForClass = ((SessionImpl) session()).getFactory().getEntityPersister(theClass.getName());
+                lastResultForClass = ((SessionImpl) session()).getSessionFactory()
+                        .getRuntimeMetamodels()
+                        .getMappingMetamodel()
+                        .getEntityDescriptor(theClass.getName());
                 lastClass = theClass;
             }
             return lastResultForClass;
@@ -616,6 +619,6 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         Preconditions.checkState(persistenceContext.reentrantSafeEntityEntries().length == 0, "EntityEntries er ikke tom");
         Preconditions.checkState(persistenceContext.getCollectionEntries().size() == 0, "CollectionEnties er ikke tom");
         Preconditions.checkState(persistenceContext.getCollectionsByKey().size() == 0, "CollectionEntiesByKey er ikke tom");
-        Preconditions.checkState(persistenceContext.getNullifiableEntityKeys().size() == 0, "NullifiableEntityKeys er ikke tom");
+        Preconditions.checkState(persistenceContext.isNullifiableEntityKeysEmpty(), "NullifiableEntityKeys er ikke tom");
     }
 }

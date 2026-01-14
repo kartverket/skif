@@ -24,10 +24,10 @@ import java.sql.Types;
  */
 public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializable {
 
-    private static final int[] SQL_TYPES = new int[] { Types.TIMESTAMP, };
+    private static final int SQL_TYPE = Types.TIMESTAMP;
 
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    public int getSqlType() {
+        return SQL_TYPE;
     }
 
     public Class returnedClass() {
@@ -51,9 +51,9 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         OracleResultSet oracleResultSet = rs.unwrap(OracleResultSet.class);
-        TIMESTAMP oracleDate = oracleResultSet.getTIMESTAMP(names[0]);
+        TIMESTAMP oracleDate = oracleResultSet.getTIMESTAMP(position);
         if (oracleDate == null) {
             return null;
         }
@@ -75,7 +75,7 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         if (value == null) {
-            st.setNull(index, Types.DATE);
+            st.setNull(index, SQL_TYPE);
         } else {
             OraclePreparedStatement oraclePreparedStatement = st.unwrap(OraclePreparedStatement.class);
             LocalDateTime localDate = (LocalDateTime) value;
@@ -121,6 +121,28 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
 
     public String objectToSQLString(Object object) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toSqlLiteral(Object value) {
+        return value == null ? "null" : "'" + value.toString() + "'";
+    }
+
+    @Override
+    public String toString(Object value) throws HibernateException {
+        return value == null ? null : value.toString();
+    }
+
+    @Override
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        if (sequence == null) {
+            return null;
+        }
+        String value = sequence.toString();
+        if (value.isEmpty()) {
+            return null;
+        }
+        return new LocalDateTime(value);
     }
 
     public String toXMLString(Object object) {

@@ -36,7 +36,7 @@ public class HighLowGenerator implements IdentifierGenerator, Configurable {
      */
     @Override
     public synchronized Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
-        final Provider<IdService> idServiceProvider = getIdServiceProvider(session.getFactory());
+        final Provider<IdService> idServiceProvider = getIdServiceProvider(session.getSessionFactory());
         return (Serializable) idServiceProvider.get().getNextIdValue((Class<BubbleId>) object.getClass());
     }
 

@@ -22,12 +22,12 @@ import java.util.Objects;
  */
 public class OracleLocalTimestamp implements UserType {
 
-    private static final int[] SQL_TYPES = new int[]{Types.TIMESTAMP};
+    private static final int SQL_TYPE = Types.TIMESTAMP;
 
     @Override
-    public int[] sqlTypes() {
+    public int getSqlType() {
         // Er oracle.jdbc.OracleTypes.TIMESTAMPLTZ er alternativ her?
-        return SQL_TYPES;
+        return SQL_TYPE;
     }
 
     @Override
@@ -46,12 +46,16 @@ public class OracleLocalTimestamp implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        return rs.getTimestamp(names[0]);
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        return rs.getTimestamp(position);
     }
 
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+        if (value == null) {
+            st.setNull(index, SQL_TYPE);
+            return;
+        }
         OraclePreparedStatement ops = st.unwrap(OraclePreparedStatement.class);
         ops.setTIMESTAMPTZ(index, new TIMESTAMPTZ(ops.getConnection(), (Timestamp) value));
     }

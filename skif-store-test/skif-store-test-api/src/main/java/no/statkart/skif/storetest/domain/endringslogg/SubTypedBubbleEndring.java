@@ -1,5 +1,6 @@
 package no.statkart.skif.storetest.domain.endringslogg;
 
+import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.basic.SubTypedBubbleId;
 
 /**
@@ -23,12 +24,30 @@ public class SubTypedBubbleEndring<I extends SubTypedBubbleEndringId<?>, EI exte
 
     @Override
     public I getId() {
-        return super.getId();
+        EndringId<?> id = super.getId();
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof SubTypedBubbleEndringId) {
+            @SuppressWarnings("unchecked")
+            I typedId = (I) id;
+            return typedId;
+        }
+        @SuppressWarnings("unchecked")
+        I typedId = (I) new SubTypedBubbleEndringId<>(id.getValue(), id.getSnapshotVersion());
+        return typedId;
     }
 
     @Override
     public EI getEndretBubbleId() {
-        return super.getEndretBubbleId();
+        BubbleId<?> id = super.getEndretBubbleId();
+        if (id == null) {
+            return null;
+        }
+        if (id instanceof SubTypedBubbleId) {
+            return (EI) id;
+        }
+        return (EI) new SubTypedBubbleId<>((Long) id.getValue(), id.getSnapshotVersion());
     }
 
 }

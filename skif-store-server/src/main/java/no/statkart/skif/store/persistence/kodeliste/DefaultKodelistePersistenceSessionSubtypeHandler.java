@@ -9,6 +9,7 @@ import no.statkart.skif.store.BubbleIds;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.kodeliste.AbstractKodeliste;
+import no.statkart.skif.store.kodeliste.DynamicKodeSupport;
 import no.statkart.skif.store.kodeliste.Kode;
 import no.statkart.skif.store.kodeliste.KodeId;
 import no.statkart.skif.store.kodeliste.Kodeliste;
@@ -17,6 +18,7 @@ import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
 import org.hibernate.Session;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -162,6 +164,9 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
             KodelisteId kodelisteId = kodeliste.getId();
             for (Kode t : list) {
                 if (!t.getId().getKodelisteId().equals(kodelisteId)) {
+                    if (isDynamicKodeIdClass(kodeliste.getKodeIdClass())) {
+                        continue;
+                    }
                     throw new ImplementationException("Feil i kodelisteIdValue for kodeliste: " + kodeliste + " DbKode: " + t + " DbKode.getKodelisteId: " + t.getId().getKodelisteId());
                 }
                 addFilterKodeForSnapshot(kodeIds, t);
@@ -242,6 +247,17 @@ public class DefaultKodelistePersistenceSessionSubtypeHandler implements Kodelis
     private Class<? extends Kode> getKodeBaseType(Kodeliste kodeliste) {
         Class<? extends KodeId<?>> kodeIdClass = kodeliste.getKodeIdClass();
         return BubbleIds.getBaseType(kodeIdClass).asSubclass(Kode.class);
+    }
+
+    private boolean isDynamicKodeIdClass(Class<? extends KodeId<?>> kodeIdClass) {
+        try {
+            Field kodeSupportField = kodeIdClass.getDeclaredField("kodeSupport");
+            kodeSupportField.setAccessible(true);
+            Object kodeSupport = kodeSupportField.get(null);
+            return kodeSupport instanceof DynamicKodeSupport;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return false;
+        }
     }
 
     @Override

@@ -21,7 +21,7 @@
         </many-to-one>
     </class>
 
-    <class name="no.statkart.skif.storetest.domain.component.entity.SubtypedEntityComponent" lazy="true"
+    <class name="no.statkart.skif.storetest.domain.component.entity.SubtypedEntityComponent" lazy="false"
            select-before-update="true">
         <id name="id" unsaved-value="null">
             <generator class="no.statkart.skif.service.sequence.HighLowGenerator"/>

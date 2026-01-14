@@ -990,26 +990,31 @@ public class StoreUnitOfWorkTest extends StoreTestMixedTestCase {
             StoreServer store;
 
             public Object run() {
-                Simple simple1;
-                Simple simpleLocked;
-                Simple simple2;
-                try (UnitOfWork outer = store.beginUnitOfWork()) {
-                    try (UnitOfWork ignore = store.beginUnitOfWork()) {
-                        simpleLocked = store.lock(simpleId); // Her får vi en ny kopi som slettes i linjen under
-                        store.update(simpleLocked);
-                        simple1 = (Simple) store.getAllLoaded().getObject(simpleId); // Original versjon kan hentes ut via loaded
-                        store.commitUnitOfWork(ignore); // Bare for å være tydelig
+                store.beginTransaction();
+                try {
+                    Simple simple1;
+                    Simple simpleLocked;
+                    Simple simple2;
+                    try (UnitOfWork outer = store.beginUnitOfWork()) {
+                        try (UnitOfWork ignore = store.beginUnitOfWork()) {
+                            simpleLocked = store.lock(simpleId); // Her får vi en ny kopi som slettes i linjen under
+                            store.update(simpleLocked);
+                            simple1 = (Simple) store.getAllLoaded().getObject(simpleId); // Original versjon kan hentes ut via loaded
+                            store.commitUnitOfWork(ignore); // Bare for å være tydelig
+                        }
+                        simple2 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
+                        assertNotSame(simpleLocked, simple1, "Forventet at objektet som kan modifiseres ikke er samme instans");
+                        assertSame(simple1, simple2, "Objekt som låses og endres skal ikke måtte lastes på nytt etter abortUnitOfWork");
+                        store.commitUnitOfWork(outer);
                     }
-                    simple2 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
-                    assertNotSame(simpleLocked, simple1, "Forventet at objektet som kan modifiseres ikke er samme instans");
-                    assertSame(simple1, simple2, "Objekt som låses og endres skal ikke måtte lastes på nytt etter abortUnitOfWork");
-                    store.commitUnitOfWork(outer);
-                }
 
-                // Her går vi mot StoreSessionServer som ikke jobber med kopier. Så det er instansen som ble modifisert som vi får ut og ikke opprinnelig!
-                Simple simple3 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
-                assertSame(simple3, simpleLocked, "Forventet at store.getAllLoaded() gir instansen som ble modifisert og ikke opprinnelig kopi");
-                return null;
+                    // Her går vi mot StoreSessionServer som ikke jobber med kopier. Så det er instansen som ble modifisert som vi får ut og ikke opprinnelig!
+                    Simple simple3 = (Simple) store.getAllLoaded().getObject(simpleId); // Objektet er fortsatt lastet
+                    assertSame(simple3, simpleLocked, "Forventet at store.getAllLoaded() gir instansen som ble modifisert og ikke opprinnelig kopi");
+                    return null;
+                } finally {
+                    store.rollbackTransaction();
+                }
             }
         });
     }

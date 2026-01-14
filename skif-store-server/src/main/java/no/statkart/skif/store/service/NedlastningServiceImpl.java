@@ -2,7 +2,11 @@ package no.statkart.skif.store.service;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Provider;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Root;
+import no.statkart.skif.store.persistence.OracleArrayLongBubbleIdConverter;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Bubbles;
@@ -11,15 +15,16 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.persistence.SessionSelector;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.metadata.ClassMetadata;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
+
+import static no.statkart.skif.util.HibernateHelper.getClassMetadata;
+import static no.statkart.skif.util.HibernateHelper.getDiscriminatorSql;
+import static no.statkart.skif.util.HibernateHelper.getTableName;
 
 /**
  * @author Henrik Fredholm
@@ -49,14 +54,18 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            Criteria criteria = session.createCriteria(domainklasse);
-            criteria.setMaxResults(maksAntall);
-            criteria.setProjection(Projections.id());
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<BubbleId> cq = cb.createQuery(BubbleId.class);
+            Root<T> root = cq.from(domainklasse);
+            Path<BubbleId> idPath = root.get("id");
+            cq.select(idPath);
             if (id != null) {
-                criteria.add(Restrictions.gt("id", id));
+                cq.where(cb.greaterThan(idPath, id));
             }
-            criteria.addOrder(Order.asc("id"));
-            return (List<I>) criteria.list();
+            cq.orderBy(cb.asc(idPath));
+            @SuppressWarnings("unchecked")
+            List<I> results = (List<I>) (List<?>) session.createQuery(cq).setMaxResults(maksAntall).getResultList();
+            return results;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
         }
@@ -68,13 +77,15 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            Criteria criteria = session.createCriteria(domainklasse);
-            criteria.setMaxResults(maksAntall);
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<T> cq = cb.createQuery(domainklasse);
+            Root<T> root = cq.from(domainklasse);
+            Path<BubbleId<?>> idPath = root.get("id");
             if (id != null) {
-                criteria.add(Restrictions.gt("id", id));
+                cq.where(cb.greaterThan(idPath, id));
             }
-            criteria.addOrder(Order.asc("id"));
-            return (List) store.getOrdered(Bubbles.asIds(criteria.list()));
+            cq.orderBy(cb.asc(idPath));
+            return (List) store.getOrdered(Bubbles.asIds(session.createQuery(cq).setMaxResults(maksAntall).getResultList()));
         } finally {
             if (sessionSelector != null) sessionSelector.close();
         }
@@ -86,16 +97,25 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            Criteria criteria = session.createCriteria(domainklasse);
-            criteria.setProjection(Projections.rowCount());
-            if (fraId != null) {
-                criteria.add(Restrictions.gt("id", fraId));
-            }
-            if (tilId != null) {
-                criteria.add(Restrictions.le("id", tilId));
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<T> root = cq.from(domainklasse);
+            Path<BubbleId<?>> idPath = root.get("id");
+            cq.select(cb.count(root));
+            if (fraId != null || tilId != null) {
+                if (fraId != null && tilId != null) {
+                    cq.where(cb.and(
+                            cb.greaterThan(idPath, fraId),
+                            cb.lessThanOrEqualTo(idPath, tilId)
+                    ));
+                } else if (fraId != null) {
+                    cq.where(cb.greaterThan(idPath, fraId));
+                } else {
+                    cq.where(cb.lessThanOrEqualTo(idPath, tilId));
+                }
             }
             Kontroll result =  new Kontroll();
-            result.setAntall(((Number)criteria.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(session.createQuery(cq).uniqueResult()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
@@ -108,12 +128,29 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
         SessionSelector sessionSelector = sessionSelectorProvider.get();
         try {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            Criteria criteria = session.createCriteria(domainklasse);
-            criteria.setProjection(Projections.rowCount());
-            criteria.add(Restrictions.sqlRestriction("id in (select * from table(?))", ids, new OracleLongBubbleIdArrayCustomType()));
+            ClassMetadata classMetadata = getClassMetadata(session, domainklasse);
+            String tableName = getTableName(classMetadata);
+            String discriminatorSql = getDiscriminatorSql(classMetadata, "t");
+            String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))" + discriminatorSql;
+
             Kontroll result = new Kontroll();
-            result.setAntall(((Number) criteria.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
-            return result;
+            if (ids.isEmpty()) {
+                result.setAntall(0L);
+                return result;
+            }
+            return session.doReturningWork(connection -> {
+                try (java.sql.PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setArray(1, new OracleArrayLongBubbleIdConverter().toArray(connection, ids));
+                    try (java.sql.ResultSet resultSet = statement.executeQuery()) {
+                        if (resultSet.next()) {
+                            result.setAntall(resultSet.getLong(1));
+                        } else {
+                            result.setAntall(0L);
+                        }
+                    }
+                }
+                return result;
+            });
         } finally {
             if (sessionSelector != null) sessionSelector.close();
         }

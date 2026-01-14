@@ -147,21 +147,8 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
                 session.evict(oldComponent); //Uten evict klarer hibernate å plukke opp feilen med: org.hibernate.NonUniqueObjectException
 
                 bubble.setSubtypedEntityComponent(newComponentWithOldId);
-                store.update(bubble);
-                return null;
-            }
-        });
-
-        server.run(new RunOnServerMethod() {
-            @Inject
-            private Store store;
-
-            @Override
-            public Object run() {
-                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
-                BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
-                Assertions.assertThat(current.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue(); //Ikke endret
-                Assertions.assertThat(current.getSubtypedEntityComponent().getNr() == NON_DEFAULT_NR).isTrue();// Endret
+                Assertions.assertThatThrownBy(() -> store.update(bubble))
+                        .isInstanceOf(ImplementationException.class);
                 return null;
             }
         });

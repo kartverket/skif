@@ -111,17 +111,16 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         try {
-            int code = rs.getInt(name);
+            int code = rs.getInt(position);
             if (rs.wasNull()) {
                 return null;
             } else {
                 return getInstance(code);
             }
         } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
+            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not read column value from result set at index {}: {}", position, re.getMessage());
             throw re;
         }
 
@@ -155,8 +154,8 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
         return enumClass;
     }
 
-    public int[] sqlTypes() {
-        return new int[]{Types.SMALLINT};
+    public int getSqlType() {
+        return Types.SMALLINT;
     }
 
     public Object fromXMLString(String xmlValue) {
@@ -165,6 +164,28 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
 
     public String objectToSQLString(Object value) {
         return '\'' + returnedClass().cast(value).getValue().toString() + '\'';
+    }
+
+    @Override
+    public String toSqlLiteral(Object value) {
+        return value == null ? "null" : returnedClass().cast(value).getValue().toString();
+    }
+
+    @Override
+    public String toString(Object value) throws HibernateException {
+        return value == null ? null : returnedClass().cast(value).getValue().toString();
+    }
+
+    @Override
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        if (sequence == null) {
+            return null;
+        }
+        String value = sequence.toString();
+        if (value.isEmpty()) {
+            return null;
+        }
+        return getInstance(Integer.parseInt(value));
     }
 
     public String toXMLString(Object value) {

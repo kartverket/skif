@@ -2,7 +2,6 @@ package no.statkart.skif.persistence.hibernate;
 
 import no.statkart.skif.persistence.hibernate.type.EmptyCollectionsOptimizerFlagType;
 import no.statkart.skif.store.BubbleObject;
-import org.hibernate.EntityMode;
 import org.hibernate.MappingException;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.engine.spi.CollectionEntry;
@@ -125,7 +124,10 @@ public class EmptyCollectionsOptimizer {
                 }
                 collectionMappers[i] = mapper;
                 collectionTypes[i] = mapper.getCollectionType(types);
-                collectionPersisters[i] = persister.getFactory().getCollectionPersister(collectionTypes[i].getRole());
+                collectionPersisters[i] = persister.getFactory()
+                        .getRuntimeMetamodels()
+                        .getMappingMetamodel()
+                        .getCollectionDescriptor(collectionTypes[i].getRole());
             }
         }
     }
@@ -177,12 +179,12 @@ public class EmptyCollectionsOptimizer {
          * Returns the collection mapped by this CollectionMapper. There is no guarantee that this collection
          * will be a subtype of PersistentCollection.
          */
-        Collection getCollection(Object[] values, Type[] types, EntityMode entityMode) {
+        Collection getCollection(Object[] values, Type[] types) {
             if (component != null) {
                 CompositeType type = (CompositeType) types[index];
                 Type[] componentTypes = type.getSubtypes();
-                Object[] componentValues = type.getPropertyValues(values[index], entityMode);
-                return component.getCollection(componentValues, componentTypes, entityMode);
+                Object[] componentValues = type.getPropertyValues(values[index]);
+                return component.getCollection(componentValues, componentTypes);
             } else {
                 return (Collection) values[index];
             }
@@ -216,51 +218,73 @@ public class EmptyCollectionsOptimizer {
         if (this == NO_OPTIMIZER_MARKER) return;
 
         Object[] values = event.getState();
+        initializeEmptyCollections(event.getEntity(), event.getId(), values, persister, event.getSession());
+    }
+
+    public void initializeEmptyCollections(Object entity, Object id, EntityPersister persister, EventSource eventSource) {
+        if (this == NO_OPTIMIZER_MARKER) return;
+        if (entity == null) {
+            return;
+        }
+        Object[] values = persister.getPropertyValues(entity);
+        initializeEmptyCollections(entity, id, values, persister, eventSource);
+    }
+
+    private void initializeEmptyCollections(Object entity, Object id, Object[] values, EntityPersister persister, EventSource eventSource) {
+        if (values == null) {
+            return;
+        }
         Type[] types = persister.getPropertyTypes();
-        EventSource eventSource = event.getSession();
-        EntityMode entityMode = EntityMode.POJO; // eventSource.getEntityMode();
         PersistenceContext persistenceContext = eventSource.getPersistenceContext();
 
+        Object flagValue = values[indexOfFlag];
+        if (!(flagValue instanceof Number)) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Empty collection flag was not available for entity: " + getEntityInfoString(persister, id, eventSource));
+            }
+            return;
+        }
         // Each bit in the flag corresponds to a collection. If the bit is set the collection is known to be empty.
-        long flag = (Long) values[indexOfFlag];
+        long flag = ((Number) flagValue).longValue();
 
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Optimizing initialization of collections using empty collection flag %d (octal: 0%o) for entity: %s", flag, flag, getEntityInfoString(event, persister)));
+            logger.debug(String.format("Optimizing initialization of collections using empty collection flag %d (octal: 0%o) for entity: %s", flag, flag, getEntityInfoString(persister, id, eventSource)));
         }
 
         for (int i = 0; i < collectionMappers.length; i++) {
             if (collectionMappers[i] == null) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("Collection for bit %d is not mapped for entity subtype: %s"), i, getEntityInfoString(event, persister));
+                    logger.debug(String.format("Collection for bit %d is not mapped for entity subtype: %s", i, getEntityInfoString(persister, id, eventSource)));
                 }
                 continue; // i'th bit in the flag does not map to a collection for this subtype
             }
 
             long bit_i = 1 << i;
             if ((flag & bit_i) == bit_i) {
-                // The object is being read from the database, thus the collection is guaranteed to be a PersistentCollection
-                PersistentCollection collection = (PersistentCollection) collectionMappers[i].getCollection(values, types, entityMode);
+                Object collectionValue = collectionMappers[i].getCollection(values, types);
+                if (!(collectionValue instanceof PersistentCollection)) {
+                    continue;
+                }
+                PersistentCollection collection = (PersistentCollection) collectionValue;
 
                 if (!collection.wasInitialized()) {
                     if (logger.isDebugEnabled()) {
-                        logger.debug(String.format("Collection for bit %d is known to be empty. Initializing collection [%s] without database queries for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(event, persister)));
+                        logger.debug(String.format("Collection for bit %d is known to be empty. Initializing collection [%s] without database queries for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(persister, id, eventSource)));
                     }
                     // Initialize the collection to 0 elements without querying the database
-                    collection.beginRead();
-                    collection.beforeInitialize(collectionPersisters[i], 0);
-                    collection.endRead();
+                    collection.initializeEmptyCollection(collectionPersisters[i]);
 
                     // Set the snapshot of the collection such that this also will be initialized to an empty collection.
                     CollectionEntry ce = persistenceContext.getCollectionEntry(collection);
                     ce.postInitialize(collection);
                 } else {
                     if (logger.isDebugEnabled()) {
-                        logger.debug(String.format("Collection for bit %d is already initialized. No need to optimize initialization of collection [%s] for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(event, persister)));
+                        logger.debug(String.format("Collection for bit %d is already initialized. No need to optimize initialization of collection [%s] for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(persister, id, eventSource)));
                     }
                 }
             } else {
                 if (logger.isDebugEnabled()) {
-                    logger.debug(String.format("Collection for bit %d may contain elements and must be read from database. Cannot optimize initialization of collection [%s] for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(event, persister)));
+                    logger.debug(String.format("Collection for bit %d may contain elements and must be read from database. Cannot optimize initialization of collection [%s] for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(persister, id, eventSource)));
                 }
             }
         }
@@ -283,7 +307,7 @@ public class EmptyCollectionsOptimizer {
             }
 
             // During flush there is no guarantee that the collection is an instance of PersistentCollection.
-            Collection collection = collectionMappers[i].getCollection(values, types, EntityMode.POJO);
+            Collection collection = collectionMappers[i].getCollection(values, types);
             boolean wasInitialized = !(collection instanceof PersistentCollection) || ((PersistentCollection) collection).wasInitialized();
 
             if (wasInitialized) {
@@ -321,11 +345,11 @@ public class EmptyCollectionsOptimizer {
         }
     }
 
-    private String getEntityInfoString(PreLoadEvent event, EntityPersister persister) {
-        return MessageHelper.infoString(persister, event.getId(), event.getSession().getFactory());
-    }
-
     private String getEntityInfoString(BubbleObject entity) {
         return MessageHelper.infoString(entity.getClass().getName(), entity.getId());
+    }
+
+    private String getEntityInfoString(EntityPersister persister, Object id, EventSource eventSource) {
+        return MessageHelper.infoString(persister, id, eventSource.getSessionFactory());
     }
 }

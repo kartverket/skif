@@ -3,7 +3,6 @@ package no.statkart.skif.storetest.persistence.hibernate.type.standalone;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import no.statkart.skif.storetest.domain.standalone.FilteredBubbleId;
-import no.statkart.skif.storetest.domain.standalone.ParentBubbleId;
 
 /**
  * @since 2.1
@@ -18,7 +17,7 @@ public class FilteredBubbleIdType extends BubbleIdType {
 
     @Override
     protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
-        return new ParentBubbleId((Long)value).asSnapshotVersion(snapshotVersion);
+        return new FilteredBubbleId((Long) value).asSnapshotVersion(snapshotVersion);
     }
 
 }

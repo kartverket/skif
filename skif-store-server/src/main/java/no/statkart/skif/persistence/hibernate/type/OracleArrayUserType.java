@@ -30,7 +30,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
 
     private static final String BIND_MSG_TEMPLATE = "binding parameter [%d] as [%s] - %s";
     private static final String NULL_BIND_MSG_TEMPLATE = "binding parameter [%d] as [%s] - <null>";
-    private static final int[] SQL_TYPES = {Types.ARRAY};
+    private static final int SQL_TYPE = Types.ARRAY;
 
     protected final T oracleArrayConverter;
 
@@ -38,8 +38,8 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
         this.oracleArrayConverter = oracleArrayConverter;
     }
 
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    public int getSqlType() {
+        return SQL_TYPE;
     }
 
     public Class returnedClass() {
@@ -57,7 +57,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -73,7 +73,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
                         )
                 );
             }
-            st.setNull(index, SQL_TYPES[0], oracleArrayConverter.getOracleArrayType());
+            st.setNull(index, SQL_TYPE, oracleArrayConverter.getOracleArrayType());
         } else {
             Collection<E> values = (Collection<E>) value;
 

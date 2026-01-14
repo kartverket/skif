@@ -9,14 +9,14 @@
         </id>
 
         <property name="nr"/>
-        <property name="anyId" type="no.statkart.skif.store.persistence.hibernate.type.AnyBubbleIdType">
-            <column name="anyId"/>
-            <column name="anyIdClass"/>
-        </property>
+        <component name="anyIdEmbeddable" class="no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef$AnyIdEmbeddable">
+            <property name="value" column="anyId"/>
+            <property name="className" column="anyIdClass"/>
+        </component>
 
-        <property name="someIdent" type="no.statkart.skif.store.persistence.hibernate.type.AnyConcatenatedFieldsType">
-            <column name="someIdentValue"/>
-            <column name="someIdentClass"/>
-        </property>
+        <component name="someIdentEmbeddable" class="no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef$SomeIdentEmbeddable">
+            <property name="value" column="someIdentValue"/>
+            <property name="className" column="someIdentClass"/>
+        </component>
     </class>
 </hibernate-mapping>

@@ -4,6 +4,7 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.persistence.OracleArrayStringBubbleIdConverter;
 import org.hibernate.MappingException;
 import org.hibernate.type.CustomType;
+import org.hibernate.type.spi.TypeConfiguration;
 
 /**
  * En Hibernate {@code CustomType} klasse som gjør det mulig å bruke collections av vilkårlig størrelse
@@ -23,7 +24,7 @@ import org.hibernate.type.CustomType;
  * @author Henrik Fredholm
  */
 public class OracleArrayStringBubbleIdCustomType extends CustomType {
-    public OracleArrayStringBubbleIdCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayStringBubbleIdConverter, BubbleId<?>>(new OracleArrayStringBubbleIdConverter()));
+    public OracleArrayStringBubbleIdCustomType(TypeConfiguration typeConfiguration) throws MappingException {
+        super(new OracleArrayUserType<OracleArrayStringBubbleIdConverter, BubbleId<?>>(new OracleArrayStringBubbleIdConverter()), typeConfiguration);
     }
 }

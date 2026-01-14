@@ -4,6 +4,7 @@ import no.statkart.skif.store.ConcatenatedFieldsSerialization;
 import no.statkart.skif.store.persistence.OracleArrayConcatenatedFieldsConverter;
 import org.hibernate.MappingException;
 import org.hibernate.type.CustomType;
+import org.hibernate.type.spi.TypeConfiguration;
 
 /**
  * En Hibernate {@code CustomType} klasse som gjør det mulig å bruke collections av vilkårlig størrelse
@@ -14,7 +15,7 @@ import org.hibernate.type.CustomType;
  * @author Henrik Fredholm
  */
 public class OracleArrayConcatenatedFieldsCustomType extends CustomType {
-    public OracleArrayConcatenatedFieldsCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayConcatenatedFieldsConverter, ConcatenatedFieldsSerialization>(new OracleArrayConcatenatedFieldsConverter()));
+    public OracleArrayConcatenatedFieldsCustomType(TypeConfiguration typeConfiguration) throws MappingException {
+        super(new OracleArrayUserType<OracleArrayConcatenatedFieldsConverter, ConcatenatedFieldsSerialization>(new OracleArrayConcatenatedFieldsConverter()), typeConfiguration);
     }
 }
