@@ -258,11 +258,15 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
         @SuppressWarnings("unchecked")
         Class<E> cls = (Class<E>) AbstractBubbleId.getType(endringIdClass);
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<EI> cq = cb.createQuery(endringIdClass);
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<E> root = cq.from(cls);
-        Expression<EI> id = root.get("id");
+        Expression<Long> id = root.get("id").as(Long.class);
         cq.select(cb.greatest(id));
-        return setIfNull(session.createQuery(cq).uniqueResult());
+        return  endringIdFromLong(session.createQuery(cq).uniqueResult());
+    }
+
+    private EI endringIdFromLong(Long id) {
+        return BubbleIds.createInstance(endringIdClass, id==null?0L:id, SnapshotVersionContext.getInstance().getSnapshotVersion());
     }
 
     private EI setIfNull(EI id) {
@@ -270,7 +274,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
             id = BubbleIds.createInstance(endringIdClass, 0L, SnapshotVersionContext.getInstance().getSnapshotVersion());
         }
         return id;
-    }
+    } 
 
     private <T extends BubbleObject> void checkEndringsklasseFinnes(Class<T> bobleklasse) {
         endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
