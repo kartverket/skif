@@ -214,8 +214,8 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
             Root<? extends AbstractEndring> root = cq.from(endringClass);
 
             cq.select(root.get("id").as(Long.class));
-            cq.where(cb.gt(root.get("id"), 0L));
-            cq.orderBy(cb.asc(root.get("id")));
+            cq.where(cb.gt(root.get("id").as(Long.class), 0L));
+            cq.orderBy(cb.asc(root.get("id").as(Long.class)));
 
             List<Long> ids = session.createQuery(cq)
                 .setMaxResults(antall)
