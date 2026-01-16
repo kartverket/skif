@@ -18,6 +18,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.assertj.core.api.Assertions;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
@@ -49,7 +50,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
             public Object run() {
                 BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
-                Assertions.assertThat(current.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue();
+                Assertions.assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent()) instanceof Subtype1EntityComponent).isTrue();
                 return null;
             }
         });
