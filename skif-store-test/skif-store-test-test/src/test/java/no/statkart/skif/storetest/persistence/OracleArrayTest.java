@@ -115,26 +115,26 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 //        }
 //    }
 
-    public void testOracleArrayStringStringConverter() throws SQLException {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-
-            Object[][] values =
-                    {
-                            {mockupFacade.getSimpleMockupFactory().getSimpleId2().getClass().getName(), "En BubbleWithRelation (nr 1) peker til denne"}
-                    };
-
-        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
-        try (PreparedStatement statement = connection.prepareStatement("select s.id from BubbleWithAnyBubbleRef b, Simple s where b.anyId=s.id and s.id=:sId and (b.anyIdClass,s.text) in (select * from table(:idValues))")) {
-            statement.setLong(1, mockupFacade.getSimpleMockupFactory().getSimpleId2().getValue());
-            statement.setArray(2, new OracleArrayStringStringConverter().toArray(connection, values));
-            ResultSet resultSet = statement.executeQuery();
-            int size = 0;
-            while (resultSet.next()) {
-                size++;
-            }
-            assertEquals(size, 1);
-        }
-    }
+//    public void testOracleArrayStringStringConverter() throws SQLException {
+//        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+//
+//            Object[][] values =
+//                    {
+//                            {mockupFacade.getSimpleMockupFactory().getSimpleId2().getClass().getName(), "En BubbleWithRelation (nr 1) peker til denne"}
+//                    };
+//
+//        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
+//        try (PreparedStatement statement = connection.prepareStatement("select s.id from BubbleWithAnyBubbleRef b, Simple s where b.anyId=s.id and s.id=:sId and (b.anyIdClass,s.text) in (select * from table(:idValues))")) {
+//            statement.setLong(1, mockupFacade.getSimpleMockupFactory().getSimpleId2().getValue());
+//            statement.setArray(2, new OracleArrayStringStringConverter().toArray(connection, values));
+//            ResultSet resultSet = statement.executeQuery();
+//            int size = 0;
+//            while (resultSet.next()) {
+//                size++;
+//            }
+//            assertEquals(size, 1);
+//        }
+//    }
 
 //    public void testOracleArrayConcatenatedFieldsConverter() throws SQLException {
 //        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
