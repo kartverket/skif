@@ -445,7 +445,7 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
                 if (flushing) store.flush();
                 // Her legges til et element fra set i Nested level 1 component
                 componentInNestedSet.getNestedComponents().add(
-                        new NestedEntityComponent("I am new element in set inside Nested Level 1 component")
+                    new NestedEntityComponent("I am new element in set inside Nested Level 1 component")
                 );
                 if (flushing) store.flush();
                 store.update(bubble);
@@ -485,7 +485,7 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
                     componentInNestedSet.getNestedComponents().remove(componentToRemove);
                     // Her legges til et element fra set i Nested level 1 component
                     componentInNestedSet.getNestedComponents().add(
-                            new NestedEntityComponent("I am new element in set inside Nested Level 1 component")
+                        new NestedEntityComponent("I am new element in set inside Nested Level 1 component")
                     );
                     bubble.removeHibernatePersistenceSet();
                     store.update(bubble);

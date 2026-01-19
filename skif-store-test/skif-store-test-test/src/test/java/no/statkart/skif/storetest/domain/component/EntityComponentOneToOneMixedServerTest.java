@@ -2,9 +2,6 @@ package no.statkart.skif.storetest.domain.component;
 
 
 import com.google.inject.Inject;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
@@ -21,12 +18,11 @@ import no.statkart.skif.storetest.mockup.BubbleWithEntityComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
+import no.statkart.skif.storetest.util.testsupport.ExistsInDatabase;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.assertj.core.api.Assertions;
-import org.hibernate.Session;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -919,17 +915,6 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
     }
 
     private boolean existsInDatabase(final Class<?> clazz, final Long id) {
-        String className = clazz.getSimpleName();
-        return (Boolean) server.runInTxRequiresNew(new RunOnServerMethod() {
-            @Inject
-            Session session;
-
-            public Object run() {
-                Long count = session.createNativeQuery(String.format("select count(*) from %s where id=:id", className), Long.class)
-                    .setParameter("id", id)
-                    .uniqueResult();
-                return count > 0;
-            }
-        });
+        return (Boolean) server.runInTxRequiresNew(new ExistsInDatabase(clazz.getSimpleName(), id));
     }
 }
