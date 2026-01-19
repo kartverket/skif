@@ -2,6 +2,7 @@ package no.statkart.skif.storetest.persistence;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.persistence.OracleArrayNumberConverter;
 import no.statkart.skif.store.persistence.OracleArrayStringStringConverter;
@@ -53,7 +54,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
         Collection<SimpleId<?>> eierIds = getSimpleIds();
         NativeQuery<Simple> query = session
             .createNativeQuery("select s.* from Simple s where s.id in (select * from table(:idValues))", Simple.class)
-            .setParameter("idValues", eierIds, new OracleLongBubbleIdArrayCustomType());
+            .setParameter("idValues", OracleArrayLongBubbleIdCustomType.wrap(eierIds), new OracleLongBubbleIdArrayCustomType());
 
         assertThat(query.list()).hasSize(1);
     }
