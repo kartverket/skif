@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.metamodel.Metamodel;
+import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
@@ -148,7 +149,7 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
             String sql = "select count(*) from " + tableName + " where id in (select * from table(?))";
 
             Number count = (Number) session.createNativeQuery(sql)
-                .setParameter(1, ids, new OracleLongBubbleIdArrayCustomType())
+                .setParameter(1, OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleLongBubbleIdArrayCustomType())
                 .getSingleResult();
 
             Kontroll result = new Kontroll();
