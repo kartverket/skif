@@ -2,9 +2,6 @@ package no.statkart.skif.storetest.domain.component;
 
 
 import com.google.inject.Inject;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.IdSelector;
 import no.statkart.skif.service.RunOnServerMethod;
@@ -21,12 +18,11 @@ import no.statkart.skif.storetest.mockup.BubbleWithEntityComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
+import no.statkart.skif.storetest.util.testsupport.ExistsInDatabase;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.assertj.core.api.Assertions;
-import org.hibernate.Session;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -918,20 +914,7 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
         assertFalse(existsInDatabase(Level2EntityComponent.class, bubbleWithLevel1AndLevel2Component2.getLevel1Component().getLevel2Component().getId()));
     }
 
-    private boolean existsInDatabase(final Class<?> type, final Long id) {
-        return (Boolean) server.runInTxRequiresNew(new RunOnServerMethod() {
-            @Inject
-            Session session;
-
-            public Object run() {
-                CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-                CriteriaQuery<?> query = criteriaBuilder.createQuery(type);
-                Root<?> table = query.from(type);
-                query.where(criteriaBuilder.equal(table.get("id"), id));
-
-                List<?> resultList = session.createQuery(query).getResultList();
-                return !resultList.isEmpty();
-            }
-        });
+    private boolean existsInDatabase(final Class<?> clazz, final Long id) {
+        return (Boolean) server.runInTxRequiresNew(new ExistsInDatabase(clazz.getName(), id));
     }
 }

@@ -1,0 +1,29 @@
+package no.statkart.skif.storetest.util.testsupport;
+
+import com.google.inject.Inject;
+import no.statkart.skif.service.RunOnServerMethod;
+import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
+
+public class ExistsInDatabase extends RunOnServerMethod {
+
+    @Inject
+    Session session;
+
+    final String className;
+    final Long id;
+
+    public ExistsInDatabase(String className, Long id) {
+        this.className = className;
+        this.id = id;
+    }
+
+    @Override
+    public Boolean run() {
+        Number count = session.createQuery(String.format("select count(*) from %s where id=:id", className), Long.class)
+            .setParameter("id", id, StandardBasicTypes.LONG)
+            .uniqueResult();
+        return count.longValue() > 0L;
+    }
+
+}

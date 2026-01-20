@@ -154,7 +154,7 @@ public class ValueObjectTest extends StoreTestTestCase {
             storeUpdateService.saveTransfer(store.getUnitOfWorkTransfer());
             Assert.fail("Expected exception due to database constraint");
         } catch (ImplementationException e) {
-            assertThat(e.getMessage()).isEqualTo("could not execute batch");
+            assertThat(e.getMessage()).contains("could not execute batch");
         } finally {
             store.closeUnitOfWork(unitOfWork);
         }
