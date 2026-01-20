@@ -915,6 +915,6 @@ public class EntityComponentOneToOneMixedServerTest extends StoreTestMixedTestCa
     }
 
     private boolean existsInDatabase(final Class<?> clazz, final Long id) {
-        return (Boolean) server.runInTxRequiresNew(new ExistsInDatabase(clazz.getSimpleName(), id));
+        return (Boolean) server.runInTxRequiresNew(new ExistsInDatabase(clazz.getName(), id));
     }
 }

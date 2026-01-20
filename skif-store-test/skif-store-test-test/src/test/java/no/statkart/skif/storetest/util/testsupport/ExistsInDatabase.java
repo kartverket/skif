@@ -3,6 +3,7 @@ package no.statkart.skif.storetest.util.testsupport;
 import com.google.inject.Inject;
 import no.statkart.skif.service.RunOnServerMethod;
 import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
 
 public class ExistsInDatabase extends RunOnServerMethod {
 
@@ -19,8 +20,8 @@ public class ExistsInDatabase extends RunOnServerMethod {
 
     @Override
     public Boolean run() {
-        Number count = session.createNativeQuery(String.format("select count(*) from %s where id=:id", className), Long.class)
-            .setParameter("id", id)
+        Number count = session.createQuery(String.format("select count(*) from %s where id=:id", className), Long.class)
+            .setParameter("id", id, StandardBasicTypes.LONG)
             .uniqueResult();
         return count.longValue() > 0L;
     }
