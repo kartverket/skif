@@ -25,8 +25,8 @@ import no.statkart.skif.storetest.mockup.BubbleWithEntityComponentMockupFactory;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.service.store.StoreUpdateService;
+import no.statkart.skif.storetest.util.testsupport.ExistsInDatabase;
 import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
-import org.hibernate.Session;
 import org.testng.annotations.Test;
 
 import java.util.Iterator;
@@ -506,17 +506,7 @@ public class EntityComponentOneToManyServerTest extends StoreTestMixedTestCase {
     }
 
     private boolean existsInDatabase(final String className, final Long id) {
-        return (Boolean) server.runInTxRequiresNew(new RunOnServerMethod() {
-            @Inject
-            Session session;
-
-            public Object run() {
-                Long count = session.createQuery(String.format("select count(*) from %s where id=:id", className), Long.class)
-                        .setParameter("id", id)
-                        .uniqueResult();
-                return count > 0;
-            }
-        });
+        return (Boolean) server.runInTxRequiresNew(new ExistsInDatabase(className, id));
     }
 
     /**
