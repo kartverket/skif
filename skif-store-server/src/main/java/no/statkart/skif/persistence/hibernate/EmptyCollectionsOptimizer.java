@@ -245,8 +245,7 @@ public class EmptyCollectionsOptimizer {
                     }
                     // Initialize the collection to 0 elements without querying the database
                     collection.beginRead();
-                    collection.beforeInitialize(collectionPersisters[i], 0);
-                    collection.endRead();
+                    collection.initializeEmptyCollection(collectionPersisters[i]);
 
                     // Set the snapshot of the collection such that this also will be initialized to an empty collection.
                     CollectionEntry ce = persistenceContext.getCollectionEntry(collection);
