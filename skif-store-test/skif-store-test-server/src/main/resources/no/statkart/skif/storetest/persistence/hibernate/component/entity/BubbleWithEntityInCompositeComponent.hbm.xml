@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-
-<hibernate-mapping default-cascade="none" default-lazy="false">
+<hibernate-mapping
+    xmlns="http://www.hibernate.org/xsd/hibernate-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.hibernate.org/xsd/hibernate-mapping https://www.hibernate.org/xsd/hibernate-mapping-4.0.xsd"
+    default-lazy="false">
 
     <class name="no.statkart.skif.storetest.domain.component.entity.BubbleWithEntityInCompositeComponent" table="BubbleWithEntInCompComponent"
            select-before-update="true" lazy="true">
