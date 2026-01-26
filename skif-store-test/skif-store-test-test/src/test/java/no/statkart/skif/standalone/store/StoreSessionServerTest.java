@@ -133,9 +133,9 @@ import static org.testng.FileAssert.fail;
  */
 @Test(groups = "singlevm-required")
 public class StoreSessionServerTest {
-    final Logger logger = LoggerFactory.getLogger(StoreSessionServerTest.class);
+    static final Logger logger = LoggerFactory.getLogger(StoreSessionServerTest.class);
 
-    private Properties hibernateProperties;
+    private final Properties hibernateProperties;
 
     static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_CURRENT = new TestBubbleWithHistoryId<>(10L, SnapshotVersion.CURRENT);
     static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_OLD = new TestBubbleWithHistoryId<>(10L, SnapshotVersion.OLD);
@@ -143,40 +143,41 @@ public class StoreSessionServerTest {
     static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S2 = new TestBubbleWithHistoryId<>(10L, S2);
     static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S3 = new TestBubbleWithHistoryId<>(10L, S3);
 
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_CURRENT = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.CURRENT);
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<>(11L, S3);
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.OLD);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_CURRENT = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.CURRENT);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<>(11L, S3);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.OLD);
 
-    private final TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<>(1L);
-    private final TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101L);
+    static final TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<>(1L);
+    static final TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101L);
 
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<>(1L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<>(2L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_3 = new FilteredBubbleId<>(3L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_4 = new FilteredBubbleId<>(4L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_5 = new FilteredBubbleId<>(5L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<>(101L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<>(1L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<>(2L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_3 = new FilteredBubbleId<>(3L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleId_4 = new FilteredBubbleId<>(4L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_5 = new FilteredBubbleId<>(5L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<>(101L);
 
-    private final ParentBubbleId<ParentBubble> parentBubbleId_1 = new ParentBubbleId<>(1L);
-    private final ParentBubbleId<ParentBubble> parentBubbleId_2 = new ParentBubbleId<>(2L);
+    static final ParentBubbleId<ParentBubble> parentBubbleId_1 = new ParentBubbleId<>(1L);
+    static final ParentBubbleId<ParentBubble> parentBubbleId_2 = new ParentBubbleId<>(2L);
 
     private HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
     private DefaultPersistenceSessionManager persistenceSessionManager;
     private PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_11 = new ChildBubbleEmptyColOptimizerId<>(11L);
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_21 = new ChildBubbleEmptyColOptimizerId<>(21L);
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_31 = new ChildBubbleEmptyColOptimizerId<>(31L);
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_41 = new ChildBubbleEmptyColOptimizerId<>(41L);
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_61 = new ChildBubbleEmptyColOptimizerId<>(61L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_11 = new ChildBubbleEmptyColOptimizerId<>(11L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_21 = new ChildBubbleEmptyColOptimizerId<>(21L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_31 = new ChildBubbleEmptyColOptimizerId<>(31L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_41 = new ChildBubbleEmptyColOptimizerId<>(41L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_61 = new ChildBubbleEmptyColOptimizerId<>(61L);
 
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_1 = new ParentBubbleEmptyColOptimizerId<>(1L);
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_2 = new ParentBubbleEmptyColOptimizerId<>(2L);
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_3 = new ParentBubbleEmptyColOptimizerId<>(3L);
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_4 = new ParentBubbleEmptyColOptimizerId<>(4L); //PS: Dersom 
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_5 = new ParentBubbleEmptyColOptimizerId<>(5L);
-    private ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_6 = new ParentBubbleEmptyColOptimizerSub1Id<>(6L);
-    private ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_7 = new ParentBubbleEmptyColOptimizerSub1Id<>(7L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_1 = new ParentBubbleEmptyColOptimizerId<>(1L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_2 = new ParentBubbleEmptyColOptimizerId<>(2L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_3 = new ParentBubbleEmptyColOptimizerId<>(3L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_4 = new ParentBubbleEmptyColOptimizerId<>(4L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_5 = new ParentBubbleEmptyColOptimizerId<>(5L);
+    static final ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_6 = new ParentBubbleEmptyColOptimizerSub1Id<>(6L);
+    static final ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_7 = new ParentBubbleEmptyColOptimizerSub1Id<>(7L);
+    
     private TestBubbleFilter testBubbleFilter = new TestBubbleFilter();
     private StoreServer storeServer;
 
@@ -287,7 +288,7 @@ public class StoreSessionServerTest {
         @Override
         public void onFinish(StoreServer storeServer) {
             BubbleId<?> bubbleId = storeServer.getUpdatedIds().stream()
-                .filter(id -> id.equals(new ParentBubbleEmptyColOptimizerId<>(4L)))
+                .filter(parentBubbleEmptyColOptimizerId_4::equals)
                 .findFirst().orElse(null);
             if (bubbleId != null) {
                 ParentBubbleEmptyColOptimizer parent = (ParentBubbleEmptyColOptimizer) storeServer.get(bubbleId);
