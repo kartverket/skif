@@ -74,7 +74,7 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
             });
             failBecauseExceptionWasNotThrown(HibernateException.class);
         } catch (Exception e) {
-            assertThat(e).hasMessageContaining("A collection with cascade=\"all-delete-orphan\" was no longer referenced by the owning entity instance");
+            assertThat(e).hasMessageContaining("A collection with orphan deletion was no longer referenced by the owning entity instance");
         }
     }
 
@@ -134,7 +134,7 @@ public class CompositeComponentMixedServerTest extends StoreTestMixedTestCase {
             });
             failBecauseExceptionWasNotThrown(HibernateException.class);
         } catch (Exception e) {
-            assertThat(e).hasMessageContaining("A collection with cascade=\"all-delete-orphan\" was no longer referenced by the owning entity instance");
+            assertThat(e).hasMessageContaining("A collection with orphan deletion was no longer referenced by the owning entity instance");
         }
 
     }

@@ -249,7 +249,7 @@ public class EmptyCollectionsOptimizer {
 
                     // Set the snapshot of the collection such that this also will be initialized to an empty collection.
                     CollectionEntry ce = persistenceContext.getCollectionEntry(collection);
-                    ce.postInitialize(collection);
+                    ce.postInitialize(collection, eventSource);
                 } else {
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("Collection for bit %d is already initialized. No need to optimize initialization of collection [%s] for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(event, persister)));
