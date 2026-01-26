@@ -2201,7 +2201,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
+     * Leser en bubble hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
      * children1 collection er tom. Flush beregner ikke flagget på nytt da alle collections er uendret, men update
      * gjør det.
      * <p>
@@ -2225,7 +2225,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
+     * Leser en bubble hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
      * children1 collection er tom. Flush beregner flagget på nytt for alle lastede collections (inkl. children1)
      * siden minst en collection (children2) oppdateres.
      * <p>
@@ -2248,7 +2248,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
+     * Leser en bubble hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
      * children1Ids collection er tom. Flush beregner ikke flagget på nytt da collections ikke er materialisert
      * når flush kalles. Etterfølgende materialisering av collection påvirker ikke dette..
      * <p>
