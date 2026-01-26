@@ -133,50 +133,51 @@ import static org.testng.FileAssert.fail;
  */
 @Test(groups = "singlevm-required")
 public class StoreSessionServerTest {
-    private Logger logger = LoggerFactory.getLogger(StoreSessionServerTest.class);
+    static final Logger logger = LoggerFactory.getLogger(StoreSessionServerTest.class);
 
-    private Properties hibernateProperties;
+    private final Properties hibernateProperties;
 
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_CURRENT = new TestBubbleWithHistoryId<>(10L, SnapshotVersion.CURRENT);
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_OLD = new TestBubbleWithHistoryId<>(10L, SnapshotVersion.OLD);
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S1 = new TestBubbleWithHistoryId<>(10L, S1);
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S2 = new TestBubbleWithHistoryId<>(10L, S2);
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S3 = new TestBubbleWithHistoryId<>(10L, S3);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_CURRENT = new TestBubbleWithHistoryId<>(10L, SnapshotVersion.CURRENT);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_OLD = new TestBubbleWithHistoryId<>(10L, SnapshotVersion.OLD);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S1 = new TestBubbleWithHistoryId<>(10L, S1);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S2 = new TestBubbleWithHistoryId<>(10L, S2);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_10_S3 = new TestBubbleWithHistoryId<>(10L, S3);
 
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_CURRENT = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.CURRENT);
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<>(11L, S3);
-    private TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.OLD);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_CURRENT = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.CURRENT);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_S3 = new TestBubbleWithHistoryId<>(11L, S3);
+    static final TestBubbleWithHistoryId<TestBubbleWithHistory> testBubbleWithHistoryId_11_OLD = new TestBubbleWithHistoryId<>(11L, SnapshotVersion.OLD);
 
-    private final TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<>(1L);
-    private final TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101L);
+    static final TestBubbleId<TestBubble> TestBubbleId_1 = new TestBubbleId<>(1L);
+    static final TestBubbleId<TestBubble> TestBubbleId_101 = new TestBubbleId<>(101L);
 
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<>(1L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<>(2L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_3 = new FilteredBubbleId<>(3L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_4 = new FilteredBubbleId<>(4L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_5 = new FilteredBubbleId<>(5L);
-    private final FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<>(101L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleId_1 = new FilteredBubbleId<>(1L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleId_2 = new FilteredBubbleId<>(2L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_3 = new FilteredBubbleId<>(3L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleId_4 = new FilteredBubbleId<>(4L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleWithPermissionDeniedId_5 = new FilteredBubbleId<>(5L);
+    static final FilteredBubbleId<FilteredBubble> filteredBubbleId_101 = new FilteredBubbleId<>(101L);
 
-    private final ParentBubbleId<ParentBubble> parentBubbleId_1 = new ParentBubbleId<>(1L);
-    private final ParentBubbleId<ParentBubble> parentBubbleId_2 = new ParentBubbleId<>(2L);
+    static final ParentBubbleId<ParentBubble> parentBubbleId_1 = new ParentBubbleId<>(1L);
+    static final ParentBubbleId<ParentBubble> parentBubbleId_2 = new ParentBubbleId<>(2L);
 
     private HibernateSessionFactoryManagerBundle sessionFactoryManagerBundle;
     private DefaultPersistenceSessionManager persistenceSessionManager;
     private PersistenceSessionForSnapshot persistenceSessionForSnapshot;
 
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_11 = new ChildBubbleEmptyColOptimizerId<>(11L);
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_21 = new ChildBubbleEmptyColOptimizerId<>(21L);
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_31 = new ChildBubbleEmptyColOptimizerId<>(31L);
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_41 = new ChildBubbleEmptyColOptimizerId<>(41L);
-    private ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_61 = new ChildBubbleEmptyColOptimizerId<>(61L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_11 = new ChildBubbleEmptyColOptimizerId<>(11L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_21 = new ChildBubbleEmptyColOptimizerId<>(21L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_31 = new ChildBubbleEmptyColOptimizerId<>(31L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_41 = new ChildBubbleEmptyColOptimizerId<>(41L);
+    static final ChildBubbleEmptyColOptimizerId<ChildBubbleEmptyColOptimizer> childBubbleEmptyColOptimizerId_61 = new ChildBubbleEmptyColOptimizerId<>(61L);
 
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_1 = new ParentBubbleEmptyColOptimizerId<>(1L);
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_2 = new ParentBubbleEmptyColOptimizerId<>(2L);
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_3 = new ParentBubbleEmptyColOptimizerId<>(3L);
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_4 = new ParentBubbleEmptyColOptimizerId<>(4L);
-    private ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_5 = new ParentBubbleEmptyColOptimizerId<>(5L);
-    private ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_6 = new ParentBubbleEmptyColOptimizerSub1Id<>(6L);
-    private ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_7 = new ParentBubbleEmptyColOptimizerSub1Id<>(7L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_1 = new ParentBubbleEmptyColOptimizerId<>(1L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_2 = new ParentBubbleEmptyColOptimizerId<>(2L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_3 = new ParentBubbleEmptyColOptimizerId<>(3L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_4 = new ParentBubbleEmptyColOptimizerId<>(4L);
+    static final ParentBubbleEmptyColOptimizerId<ParentBubbleEmptyColOptimizer> parentBubbleEmptyColOptimizerId_5 = new ParentBubbleEmptyColOptimizerId<>(5L);
+    static final ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_6 = new ParentBubbleEmptyColOptimizerSub1Id<>(6L);
+    static final ParentBubbleEmptyColOptimizerSub1Id<ParentBubbleEmptyColOptimizerSub1> parentBubbleEmptyColOptimizerId_7 = new ParentBubbleEmptyColOptimizerSub1Id<>(7L);
+    
     private TestBubbleFilter testBubbleFilter = new TestBubbleFilter();
     private StoreServer storeServer;
 
@@ -205,21 +206,21 @@ public class StoreSessionServerTest {
         enumKodelistManager.installStatic(SEnumKodeId.class);
 
         HibernatePersistenceSessionMasterImpl masterCurrent = new HibernatePersistenceSessionMasterImpl(
-                sessionFactoryManagerBundle.getBundle().get(0)
+            sessionFactoryManagerBundle.getBundle().get(0)
         );
         HibernatePersistenceSessionMasterImpl masterOld = new HibernatePersistenceSessionMasterImpl(
-                sessionFactoryManagerBundle.getBundle().get(1)
+            sessionFactoryManagerBundle.getBundle().get(1)
         );
 
         return new DefaultPersistenceSessionManager(
-                new DefaultPersistenceSessionStrategy(
-                        masterCurrent,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelistManager)
-                ),
-                new DefaultPersistenceSessionStrategy(
-                        masterOld,
-                        new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelistManager)
-                )
+            new DefaultPersistenceSessionStrategy(
+                masterCurrent,
+                new DefaultKodelistePersistenceSessionSubtypeHandler(masterCurrent, enumKodelistManager)
+            ),
+            new DefaultPersistenceSessionStrategy(
+                masterOld,
+                new DefaultKodelistePersistenceSessionSubtypeHandler(masterOld, enumKodelistManager)
+            )
         );
     }
 
@@ -235,8 +236,8 @@ public class StoreSessionServerTest {
                 bind(IdService.class).toProvider(Providers.<IdService>of(null));
                 TypeLiteral<MemoryLocker<Long>> memoryLockerLongType = SkifUtil.typeLiteral(MemoryLocker.class, Long.class);
                 bind(memoryLockerLongType).in(Singleton.class);
-                bind((TypeLiteral<DBLockerService>)SkifUtil.typeLiteral(DBLockerService.class, Long.class)).to(memoryLockerLongType);
-                bind((TypeLiteral<DBLockerInTransactionService>)SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(memoryLockerLongType);
+                bind((TypeLiteral<DBLockerService>) SkifUtil.typeLiteral(DBLockerService.class, Long.class)).to(memoryLockerLongType);
+                bind((TypeLiteral<DBLockerInTransactionService>) SkifUtil.typeLiteral(DBLockerInTransactionService.class, Long.class)).to(memoryLockerLongType);
                 bind(LockerStrategy.class).to(TransactionalLockerStrategy.class);
                 bind(TransactionalLockerStrategy.class).in(Singleton.class);
                 bind(Configuration.class).toInstance(new SkifServerConfiguration());
@@ -254,17 +255,18 @@ public class StoreSessionServerTest {
                                                                 TestBubbleFinishFilter testBubbleFinishFilter) {
                 List<StoreSessionReadListener> readListeners = ImmutableList.of(testBubbleFilter);
                 List<StoreSessionWriteListener> writeListeners = ImmutableList.of(
-                        testBubbleFilter
+                    testBubbleFilter
                 );
                 List<StoreSessionFinishListener> finishListeners = ImmutableList.of(
-                        testBubbleFinishFilter,
-                        new UpdatingFinishListener() /* StoreListener som endre på boble som bruker empty collection flag */
+                    testBubbleFinishFilter,
+                    new UpdatingFinishListener() /* StoreListener som endre på boble som bruker empty collection flag */
                 );
 
                 StoreSessionServer storeSessionServer = new StoreSessionServer(persistenceSessionManager, Providers.<VersionFinder>of(null), Providers.of(SnapshotVersion.CURRENT), lockerStrategy, dependencyComparator, readListeners, writeListeners, finishListeners);
                 injector.injectMembers(storeSessionServer);
                 return storeSessionServer;
             }
+
             @Provides
             private StoreServer createStoreServer(StoreSessionServer storeSessionServer, Injector injector) {
                 StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -286,9 +288,9 @@ public class StoreSessionServerTest {
         @Override
         public void onFinish(StoreServer storeServer) {
             BubbleId<?> bubbleId = storeServer.getUpdatedIds().stream()
-                    .filter(id -> id.equals(new ParentBubbleEmptyColOptimizerId<>(4L)))
-                    .findFirst().orElse(null);
-            if (bubbleId!=null) {
+                .filter(parentBubbleEmptyColOptimizerId_4::equals)
+                .findFirst().orElse(null);
+            if (bubbleId != null) {
                 ParentBubbleEmptyColOptimizer parent = (ParentBubbleEmptyColOptimizer) storeServer.get(bubbleId);
                 parent.setText("UpdatingFinishListener changed collection children1Ids");
                 parent.getChildren1Ids().clear();
@@ -441,20 +443,20 @@ public class StoreSessionServerTest {
         assertThat(testBubbleFilter.getTimesOnPreRegisterBubblesWasCalled()).isEqualTo(1);
         assertThat(testBubbleFilter.getTimesOnPostRegisterBubblesWasCalled()).isEqualTo(1);
         assertThat(testBubbleFilter.getBubbleObjects()).extracting("id")
-                .containsExactlyInAnyOrder(filteredBubbleId_1, filteredBubbleId_2);
+            .containsExactlyInAnyOrder(filteredBubbleId_1, filteredBubbleId_2);
     }
 
     public void testLesFilteredKlasseGetObjectPermissionDenied() {
-        assertThatThrownBy(()->storeServer.get(filteredBubbleWithPermissionDeniedId_3))
-                .isInstanceOf(PermissionDeniedException.class)
-                .hasMessage("Ikke lov å laste objektet: FilteredBubbleId{value=3, snapshotVersion=SnapshotVersion{timestamp=CURRENT}}");
+        assertThatThrownBy(() -> storeServer.get(filteredBubbleWithPermissionDeniedId_3))
+            .isInstanceOf(PermissionDeniedException.class)
+            .hasMessage("Ikke lov å laste objektet: FilteredBubbleId{value=3, snapshotVersion=SnapshotVersion{timestamp=CURRENT}}");
     }
 
     public void testLesFilteredKlasseGetListPermissionDenied() {
         List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(filteredBubbleId_1, filteredBubbleWithPermissionDeniedId_3, filteredBubbleId_4, filteredBubbleWithPermissionDeniedId_5);
-        assertThatThrownBy(()->storeServer.get(filteredBubbleWithPermissionDeniedId_3))
-                .isInstanceOf(PermissionDeniedException.class)
-                .hasMessageStartingWith("Ikke lov å laste objektet: FilteredBubbleId");
+        assertThatThrownBy(() -> storeServer.get(filteredBubbleWithPermissionDeniedId_3))
+            .isInstanceOf(PermissionDeniedException.class)
+            .hasMessageStartingWith("Ikke lov å laste objektet: FilteredBubbleId");
         assertThat(storeServer.get(filteredBubbleId_1)).as("Forventet å kunne laste boble").isNotNull();
         assertThat(storeServer.get(filteredBubbleId_4)).as("Forventet å kunne laste boble").isNotNull();
     }
@@ -465,14 +467,14 @@ public class StoreSessionServerTest {
      */
     public void testLesFilteredKlasseGetListPermissionDeniedAndObjectNotFound() {
         List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(
-                filteredBubbleId_1,
-                filteredBubbleWithPermissionDeniedId_3,
-                filteredBubbleId_4,
-                new FilteredBubbleId<>(99L), // finnes ikke
-                filteredBubbleWithPermissionDeniedId_5);
-        assertThatThrownBy(()->storeServer.get(bubbleIds))
-                .isInstanceOf(ObjectsNotFoundException.class)
-                .hasMessage("[FilteredBubbleId{value=99, snapshotVersion=SnapshotVersion{timestamp=CURRENT}}]");
+            filteredBubbleId_1,
+            filteredBubbleWithPermissionDeniedId_3,
+            filteredBubbleId_4,
+            new FilteredBubbleId<>(99L), // finnes ikke
+            filteredBubbleWithPermissionDeniedId_5);
+        assertThatThrownBy(() -> storeServer.get(bubbleIds))
+            .isInstanceOf(ObjectsNotFoundException.class)
+            .hasMessage("[FilteredBubbleId{value=99, snapshotVersion=SnapshotVersion{timestamp=CURRENT}}]");
         assertThat(testBubbleFilter.getTimesOnPreRegisterBubblesWasCalled()).isEqualTo(0);
         assertThat(testBubbleFilter.getTimesOnPostRegisterBubblesWasCalled()).isEqualTo(0);
         assertThat(testBubbleFilter.getBubbleObjects()).isNull();
@@ -486,21 +488,21 @@ public class StoreSessionServerTest {
 
     public void testLesFilteredKlasseGetIgnoreMissingPermissionDenied_FlereIds() {
         List<FilteredBubbleId<?>> bubbleIds = Arrays.asList(
-                filteredBubbleId_1,
-                filteredBubbleWithPermissionDeniedId_3,
-                filteredBubbleId_4,
-                new FilteredBubbleId<>(99L), // finnes ikke
-                filteredBubbleWithPermissionDeniedId_5);
+            filteredBubbleId_1,
+            filteredBubbleWithPermissionDeniedId_3,
+            filteredBubbleId_4,
+            new FilteredBubbleId<>(99L), // finnes ikke
+            filteredBubbleWithPermissionDeniedId_5);
         List<FilteredBubble> ignoreMissing = storeServer.getIgnoreMissing(bubbleIds);
         assertThat(ignoreMissing).extracting("id").
-                containsExactly(filteredBubbleId_1, filteredBubbleId_4);
+            containsExactly(filteredBubbleId_1, filteredBubbleId_4);
         assertThat(testBubbleFilter.getTimesOnPreRegisterBubblesWasCalled()).isEqualTo(1);
         assertThat(testBubbleFilter.getTimesOnPostRegisterBubblesWasCalled()).isEqualTo(1);
         assertThat(testBubbleFilter.getBubbleObjects()).extracting("id").containsExactlyInAnyOrder(
-                filteredBubbleId_1,
-                filteredBubbleWithPermissionDeniedId_3,
-                filteredBubbleId_4,
-                filteredBubbleWithPermissionDeniedId_5
+            filteredBubbleId_1,
+            filteredBubbleWithPermissionDeniedId_3,
+            filteredBubbleId_4,
+            filteredBubbleWithPermissionDeniedId_5
         );
     }
 
@@ -1101,7 +1103,8 @@ public class StoreSessionServerTest {
         }
     }
 
-    @Test(groups="oracleLatest")   // Tidligere versjoner av oracle enn 11.2.0.3.0 gir ikke constraintfeil hvis objekter er i samme batch
+    @Test(groups = "oracleLatest")
+    // Tidligere versjoner av oracle enn 11.2.0.3.0 gir ikke constraintfeil hvis objekter er i samme batch
     public void testReorderModificationNoReorder() {
         try {
             storeServer.beginTransaction();
@@ -1354,7 +1357,7 @@ public class StoreSessionServerTest {
         storeServer.beginTransaction();
         storeServer.lock(childBubble_201.getBubbleId());
         logger.warn("Denne test forsøker å bryte integritetsskranke 'FK_CHILDFORPARENT_CHILD'. Hibernate (org.hibernate.util.JDBCExceptionReporter) logger en ERROR om dette, hvilket er ok.");
-        for (long i = 1000; i < 1000+MAX_SAVEPOINTS; i++) {
+        for (long i = 1000; i < 1000 + MAX_SAVEPOINTS; i++) {
             ParentBubble parentBubble = new ParentBubble(new ParentBubbleId<>(i));
             parentBubble.setText("Insert parent" + i);
             storeServer.insert(parentBubble);
@@ -1364,15 +1367,15 @@ public class StoreSessionServerTest {
             } catch (AttemptDeleteException e) {
                 // OK
             }
-            parentBubble.setText("Updated parent " + i );
+            parentBubble.setText("Updated parent " + i);
             storeServer.update(parentBubble);
         }
         storeServer.commitTransaction();
         storeServer.clear();
         assertThat(storeServer.get(new ParentBubbleId<ParentBubble>(1000L)).getText())
-                .isEqualTo("Updated parent " + 1000);
+            .isEqualTo("Updated parent " + 1000);
         assertThat(storeServer.get(new ParentBubbleId<ParentBubble>(1000L + MAX_SAVEPOINTS - 1)).getText())
-                .isEqualTo("Updated parent " + (1000 + MAX_SAVEPOINTS-1));
+            .isEqualTo("Updated parent " + (1000 + MAX_SAVEPOINTS - 1));
     }
 
     public void testAttemptDeleteManyCallsWithoutFail() {
@@ -1395,10 +1398,10 @@ public class StoreSessionServerTest {
 
         storeServer.beginTransaction();
         storeServer.lock(childBubble_201.getBubbleId());
-        ParentBubble previousParent= new ParentBubble(new ParentBubbleId<>(999L));
+        ParentBubble previousParent = new ParentBubble(new ParentBubbleId<>(999L));
         previousParent.setText("Insert parent" + 999);
         storeServer.insert(previousParent);
-        for (long i = 1000; i < 1000+MAX_SAVEPOINTS; i++) {
+        for (long i = 1000; i < 1000 + MAX_SAVEPOINTS; i++) {
             ParentBubble parentBubble = new ParentBubble(new ParentBubbleId<>(i));
             parentBubble.setText("Insert parent" + i);
             storeServer.insert(parentBubble);
@@ -1407,9 +1410,9 @@ public class StoreSessionServerTest {
             } catch (AttemptDeleteException e) {
                 Assert.fail();
             }
-            parentBubble.setText("Updated parent " + i );
+            parentBubble.setText("Updated parent " + i);
             storeServer.update(parentBubble);
-            previousParent=parentBubble;
+            previousParent = parentBubble;
         }
         storeServer.commitTransaction();
         storeServer.clear();
@@ -1433,14 +1436,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1479,14 +1482,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1523,14 +1526,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1568,14 +1571,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1624,14 +1627,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1677,14 +1680,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1727,14 +1730,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1779,14 +1782,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1828,14 +1831,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1868,14 +1871,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1905,14 +1908,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -1950,14 +1953,14 @@ public class StoreSessionServerTest {
         });
 
         StoreSessionServer storeSessionServer = new StoreSessionServer(
-                persistenceSessionManager,
-                Providers.of(null),
-                Providers.of(SnapshotVersion.CURRENT),
-                lockerStrategy,
-                StandAloneTestHelper.getBubbleDependencyComparator(),
-                null,
-                null,
-                null
+            persistenceSessionManager,
+            Providers.of(null),
+            Providers.of(SnapshotVersion.CURRENT),
+            lockerStrategy,
+            StandAloneTestHelper.getBubbleDependencyComparator(),
+            null,
+            null,
+            null
         );
 
         StoreServer storeServer = new StoreServer(storeSessionServer, injector);
@@ -2148,8 +2151,8 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * En bobler som får endret en collection under kall til finish vil få oppdatert flagget sitt. Umaterialiserte
-     * collections berøres ikke. I denne test endres children1 for boble med idvalue 4.
+     * En bubble som får endret en collection under kall til finish vil få oppdatert flagget sitt. Umaterialiserte
+     * collections berøres ikke. I testen trigges setting av cache-flagg via {@link UpdatingFinishListener}.
      * <p>
      * Denne test ruller endringer tilbake slik at testdata er uendret etter testen.
      */
@@ -2162,9 +2165,10 @@ public class StoreSessionServerTest {
             storeServer.update(parent);
             assertThat(Hibernate.isInitialized(parent.getChildren1Ids())).isFalse();// Denne er ikke tom og derfor ennå ikke lastet
             assertThat(Hibernate.isInitialized(parent.getChildren2Ids())).isTrue(); // Denne er tom og derfor lastet allerede
-            storeServer.update(parent);
             assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 1 skal være satt").isEqualTo(2);
-            storeServer.finish(); // UpdatingFinishListener endre collection children1 for boble med idvalue 4
+
+            // Testoppsett: UpdatingFinishListener endre collection children1 for boble med idvalue 4
+            storeServer.finish();
             assertThat(parent.getEmptyCollectionsFlag()).describedAs("Bitt 1 og 2 skal være satt").isEqualTo(3);
             assertThat(Hibernate.isInitialized(parent.getChildren1Ids())).isTrue();
             assertThat(parent.getChildren1Ids()).isEmpty();
@@ -2197,7 +2201,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
+     * Leser en bubble hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
      * children1 collection er tom. Flush beregner ikke flagget på nytt da alle collections er uendret, men update
      * gjør det.
      * <p>
@@ -2221,7 +2225,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
+     * Leser en bubble hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
      * children1 collection er tom. Flush beregner flagget på nytt for alle lastede collections (inkl. children1)
      * siden minst en collection (children2) oppdateres.
      * <p>
@@ -2244,7 +2248,7 @@ public class StoreSessionServerTest {
     }
 
     /**
-     * Leser en bobler hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
+     * Leser en bubble hvor flagget ikke er optimalt satt, dvs flagget er 0, men bitt 0 kunne være satt siden
      * children1Ids collection er tom. Flush beregner ikke flagget på nytt da collections ikke er materialisert
      * når flush kalles. Etterfølgende materialisering av collection påvirker ikke dette..
      * <p>
