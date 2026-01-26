@@ -31,7 +31,7 @@ updates:
             update-types: ["version-update:semver-major", "version-update:semver-minor"]
           - dependency-name: "org.apache.tomcat:*"
             update-types: ["version-update:semver-major"]
-          - dependency-name: "org.apache.tomee:tomee-*"
+          - dependency-name: "org.apache.tomee:*"
             update-types: ["version-update:semver-major"]
             
             
