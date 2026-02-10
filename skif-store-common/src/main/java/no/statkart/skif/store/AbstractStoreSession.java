@@ -73,12 +73,7 @@ public abstract class AbstractStoreSession implements WrappableStoreSession {
 
     @Override
     public final <T extends BubbleObject> T get(BubbleId<? extends T> bubbleId) {
-
-        StoreEntry entry = storeCache.get(bubbleId);
-        if (entry == null) {
-            entry = loadEntry(level, bubbleId, false);
-        }
-
+        StoreEntry entry = storeCache.computeIfAbsent(bubbleId, (id) -> loadEntry(level, id, false));
         StoreEntryState state = entry.getState(level);
         if (state == StoreEntryState.DELETED || state == StoreEntryState.INSERTED_DELETED) {
             throw new ObjectNotFoundException(bubbleId);

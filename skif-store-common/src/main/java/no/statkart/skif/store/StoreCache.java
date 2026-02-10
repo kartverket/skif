@@ -4,16 +4,18 @@ package no.statkart.skif.store;
 import no.statkart.skif.exception.ImplementationException;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * @author Henrik Fredholm
  */
 public class StoreCache {
     private Store store;
-    private final Map<BubbleId<?>, StoreEntry> cacheMap;
+    private final ConcurrentHashMap<BubbleId<?>, StoreEntry> cacheMap;
+    private final ConcurrentHashMap<BubbleId<?>, Object> loadLocks;
 
 
     public Store getStore() {
@@ -24,6 +26,35 @@ public class StoreCache {
         return cacheMap.get(bubbleId);
     }
 
+    public StoreEntry computeIfAbsent(BubbleId<?> bubbleId, Function<BubbleId<?>, StoreEntry> mappingFunction) {
+        StoreEntry existingEntry = cacheMap.get(bubbleId);
+        if (existingEntry != null) {
+            return existingEntry;
+        }
+
+        // This implementation of computeIfAbsent is done "manually" since the mappingFunction
+        // might call `loadEntry` or try to register the entry with the cache, and that causes "Recursive Update" exception.
+        Object lock = loadLocks.computeIfAbsent(bubbleId, (id) -> new Object());
+        synchronized (lock) {
+            try {
+                existingEntry = cacheMap.get(bubbleId);
+                if (existingEntry != null) {
+                    return existingEntry;
+                }
+
+                StoreEntry computedEntry = mappingFunction.apply(bubbleId);
+                if (computedEntry == null) {
+                    return null;
+                }
+
+                StoreEntry registeredEntry = cacheMap.get(bubbleId);
+                return registeredEntry != null ? registeredEntry : computedEntry;
+            } finally {
+                loadLocks.remove(bubbleId, lock);
+            }
+        }
+    }
+
     public StoreEntry remove(BubbleId<?> bubbleId) {
         //noinspection UnnecessaryLocalVariable
         StoreEntry storeEntry = cacheMap.remove(bubbleId);
@@ -31,7 +62,8 @@ public class StoreCache {
     }
 
     public StoreCache() {
-        cacheMap = new HashMap<>(1000);
+        cacheMap = new ConcurrentHashMap<>(1000);
+        loadLocks = new ConcurrentHashMap<>(1000);
     }
 
     public void clear() {
