@@ -84,6 +84,8 @@ subprojects { Project project ->
     plugins.withType(JavaPlugin) {
         // Avhengigheter som trengs for testing (riktignok ikke alle overalt)
         project.dependencies {
+            implementation platform(libs.jakarta.bom)
+
             testImplementation (libs.testng){
                 exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
             }

@@ -1,33 +1,23 @@
 #Alfabetisk rekkefølge
 [versions]
-annotation-api = '2.1.1'
 assertj = '3.27.7'
 c3p0 = '0.9.5.5'
 commons-pool = '2.12.1'
-ejb-api = '4.0.1'
 guava = '33.5.0-jre'
 guice = '7.0.0'
 hibernate-core-jakarta = '5.6.15.Final'
-interceptor-api = '2.1.0'
-jaxb-api  = '3.0.1'
-jaxb-impl = '3.0.2'
-jaxb-runtime = '3.0.2'
-jaxb-xjc = '3.0.2'
-jaxws-api = '3.0.1'
-jaxws-rt = '3.0.2'
-jaxws-tools = '3.0.2'
+jakarta = '10.0.0'
+jaxb-impl = '4.0.5'
+jaxws-rt = '4.0.3'
 jodatime = '2.10.1'
 jsr305 = '3.0.2'
-jws-api = '3.0.0'
 logback = '1.5.25'
 mockito = '4.7.0'
 ojdbc = '19.12.0.0'
 reflections = '0.10.2'
-servlet-api = '5.0.0'
 slf4j = '1.7.36'
 testng = '7.12.0'
-tomee = '9.1.3'
-transaction-api = '2.0.1'
+tomee = '10.1.4'
 unitils = '3.4.6'
 xstream = '1.4.21'
 
@@ -55,9 +45,9 @@ xstream         = { module = 'com.thoughtworks.xstream:xstream', version.ref = '
 commons-pool    = { module = 'org.apache.commons:commons-pool2', version.ref = 'commons-pool' }
 
 
-jaxws-tools  = { module = 'com.sun.xml.ws:jaxws-tools', version.ref = 'jaxws-tools' }
-jaxb-runtime = { module = 'org.glassfish.jaxb:jaxb-runtime', version.ref = 'jaxb-runtime' }
-jaxb-xjc     = { module = 'org.glassfish.jaxb:jaxb-xjc', version.ref = 'jaxb-xjc' }
+jaxws-tools  = { module = 'com.sun.xml.ws:jaxws-tools', version = '4.0.3' }
+jaxb-runtime = { module = 'org.glassfish.jaxb:jaxb-runtime', version = '4.0.6' }
+jaxb-xjc     = { module = 'org.glassfish.jaxb:jaxb-xjc', version = '4.0.3' }
 
 tomee-embedded = { module = 'org.apache.tomee:tomee-embedded', version.ref = 'tomee' }
 openejb-core = { module = 'org.apache.tomee:openejb-core', version.ref = 'tomee' }
@@ -79,19 +69,19 @@ jodatime    = { module = 'joda-time:joda-time', version.ref = 'jodatime' }
 
 
 # JAXB
-jaxb-api = { module = 'jakarta.xml.bind:jakarta.xml.bind-api', version.ref ='jaxb-api' }
+jaxb-api = { module = 'jakarta.xml.bind:jakarta.xml.bind-api'}
 
 # JAXWS
-jaxws-api = { module = 'jakarta.xml.ws:jakarta.xml.ws-api', version.ref ='jaxws-api' } # for kompilering
-jws-api   = { module = 'jakarta.jws:jakarta.jws-api', version.ref ='jws-api' }
+jaxws-api = { module = 'jakarta.xml.ws:jakarta.xml.ws-api'} # for kompilering
 xml-ws-jaxb-rt = { module = 'com.sun.xml.ws:jaxws-rt', version.ref = 'jaxws-rt'}
 
+jakarta-bom = { group = "jakarta.platform", name = "jakarta.jakartaee-bom", version.ref = "jakarta" }
 
-jakarta-annotation-api  = { module = 'jakarta.annotation:jakarta.annotation-api', version.ref = 'annotation-api' }
-jakarta-serverlet-api   = { module = 'jakarta.servlet:jakarta.servlet-api', version.ref = 'servlet-api' }
-jakarta-transaction-api = { module = 'jakarta.transaction:jakarta.transaction-api', version.ref = 'transaction-api' }
-jakarta-ejbapi          = { module = 'jakarta.ejb:jakarta.ejb-api', version.ref = 'ejb-api' }
-jakarta-interceptor-api = { module = 'jakarta.interceptor:jakarta.interceptor-api', version.ref = 'interceptor-api' }
+jakarta-annotation-api  = { module = 'jakarta.annotation:jakarta.annotation-api'}
+jakarta-serverlet-api   = { module = 'jakarta.servlet:jakarta.servlet-api'}
+jakarta-transaction-api = { module = 'jakarta.transaction:jakarta.transaction-api'}
+jakarta-ejbapi          = { module = 'jakarta.ejb:jakarta.ejb-api'}
+jakarta-interceptor-api = { module = 'jakarta.interceptor:jakarta.interceptor-api'}
 
 hibernate-core-jakarta = { module = 'org.hibernate:hibernate-core-jakarta', version.ref = 'hibernate-core-jakarta'}
 

@@ -19,8 +19,7 @@ dependencies {
     implementation libs.jodatime
     implementation libs.commons.pool
     compileOnly libs.jaxws.api
-    compileOnly libs.jws.api
-
+    
     testImplementation libs.bundles.jaxws.rt
     testImplementation libs.reflections
     testImplementation libs.logback.classic
