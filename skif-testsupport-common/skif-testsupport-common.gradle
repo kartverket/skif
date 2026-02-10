@@ -9,6 +9,7 @@ dependencies {
         exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
     }
     compileOnly libs.jaxws.api
+    compileOnly libs.jaxb.api
 }
 
 publishing {
