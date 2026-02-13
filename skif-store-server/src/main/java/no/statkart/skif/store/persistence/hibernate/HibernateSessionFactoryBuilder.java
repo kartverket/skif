@@ -12,7 +12,9 @@ import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.model.TypeContributor;
 import org.hibernate.boot.registry.BootstrapServiceRegistry;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -60,6 +62,7 @@ public class HibernateSessionFactoryBuilder {
     private String mappingFilesDirectory;
     private final Map<String, String> className2resourceNameMap = new HashMap<>();
     private MetadataInterceptor metadataInterceptor;
+    private List<TypeContributor> typeContributors =  new ArrayList<>();
 
     public HibernateSessionFactoryBuilder() {
     }
@@ -88,6 +91,10 @@ public class HibernateSessionFactoryBuilder {
     public HibernateSessionFactoryBuilder withMetadataInterceptor(MetadataInterceptor metadataInterceptor) {
         this.metadataInterceptor = metadataInterceptor;
         return this;
+    }
+
+    public void addTypeContributor(TypeContributor typeContributor) {
+        typeContributors.add(typeContributor);
     }
 
     /**
@@ -223,7 +230,9 @@ public class HibernateSessionFactoryBuilder {
         SessionFactory sessionFactory;
         synchronized (LOCK) {
             try {
-                Metadata metadata = metadataSources.buildMetadata();
+                MetadataBuilder metadataBuilder = metadataSources.getMetadataBuilder();
+                typeContributors.forEach(metadataBuilder::applyTypes);
+                Metadata metadata = metadataBuilder.build();
                 if (metadataInterceptor != null) {
                     metadataInterceptor.apply(metadata);
                 }
