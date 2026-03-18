@@ -24,7 +24,7 @@ jobs:
                 id: version-string
                 shell: bash
                 run: |
-                    version="$(date -u '+%Y.%m.%d-%H.%M')-$(echo "${GITHUB_SHA}" | cut -c1-7)"
+                    version=".$(date -u '+%Y.%m.%d-%H.%M')-$(echo "${GITHUB_SHA}" | cut -c1-7)"
                     echo "version=${version}" >> "$GITHUB_OUTPUT"
 
     build:
@@ -124,7 +124,7 @@ jobs:
             - build
             - test
             - calculate-version
-        #if: github.ref_name == 'trunk' && github.event_name == 'push'
+        if: github.ref_name == 'trunk' && github.event_name == 'push'
 
         permissions:
             contents: read
