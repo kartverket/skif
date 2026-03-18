@@ -124,7 +124,7 @@ jobs:
             - build
             - test
             - calculate-version
-        if: github.ref_name == 'trunk' && github.event_name == 'push'
+        #if: github.ref_name == 'trunk' && github.event_name == 'push'
 
         permissions:
             contents: read
