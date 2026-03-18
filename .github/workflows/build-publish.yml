@@ -90,10 +90,7 @@ jobs:
             - build
             - test
             - calculate-version
-        if: github.ref_name == 'trunk' && github.event_name != 'pull_request'
-
-        env:
-            GH_PACKAGES_READ_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
+        #if: github.ref_name == 'trunk' && github.event_name != 'pull_request'
 
         permissions:
             contents: read
