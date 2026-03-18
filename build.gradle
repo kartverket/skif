@@ -93,6 +93,21 @@ subprojects { Project project ->
                 }
             }
         }
+
+        // Kobler publiserte pakker til kildecommiten i GitHub Packages-grensesnittet.
+        // GITHUB_SHA er kun tilgjengelig når bygget kjøres i GitHub Actions, så dette vil kun fungere ved publisering fra GitHub Actions.
+        def githubSha = System.getenv('GITHUB_SHA')
+        if (githubSha) {
+            publications.withType(MavenPublication) {
+                pom {
+                    scm {
+                        connection = "scm:git:https://github.com/kartverket/skif.git"
+                        url = "https://github.com/kartverket/skif/commit/${githubSha}"
+                        tag = githubSha
+                    }
+                }
+            }
+        }
     }
 
 
