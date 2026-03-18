@@ -6,6 +6,9 @@ on:
             - '**'
     workflow_dispatch:
 
+env:
+    MAJOR_VERSION: 4
+
 jobs:
     calculate-version:
         name: Calculate Version
@@ -26,8 +29,6 @@ jobs:
         runs-on: ubuntu-latest
         needs:
             - calculate-version
-
-
 
         permissions:
             contents: read
@@ -56,6 +57,22 @@ jobs:
         needs:
             - calculate-version
 
+        services:
+            oracle:
+                image: gvenzl/oracle-xe:18.4.0
+                ports:
+                    - 1521:1521
+                env:
+                    ORACLE_PASSWORD: MATRIKKELADM
+                    APP_USER: SKIF_DEV
+                    APP_USER_PASSWORD: SKIF_DEV
+                    ORACLE_DATABASE: XEPDB1
+                options: >-
+                    --health-cmd healthcheck.sh
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 10
+
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
@@ -69,8 +86,25 @@ jobs:
             - name: Validate Gradle wrapper
               uses: gradle/actions/wrapper-validation@v4
 
+            - name: Initialize database
+              run: ./gradlew dbInit --stacktrace
+                  -Pbase_version=${{ needs.calculate-version.outputs.version }}
+                  -Pdb_jdbc_url=jdbc:oracle:thin:@//localhost:1521/XEPDB1
+                  -Pdb_username=SKIF_DEV
+                  -Pdb_password=SKIF_DEV
+                  -Padmin_db_username=SYSTEM
+                  -Padmin_db_password=MATRIKKELADM
+                  -Pdb_dataroot_dir=/opt/oracle/oradata
+
             - name: Run tests
-              run: ./gradlew check --continue --stacktrace -Pbase_version=${{ needs.calculate-version.outputs.version }}
+              run: ./gradlew check --continue --stacktrace
+                       -Pbase_version=${{ needs.calculate-version.outputs.version }}
+                       -Pdb_jdbc_url=jdbc:oracle:thin:@//localhost:1521/XEPDB1
+                       -Pdb_username=SKIF_DEV
+                       -Pdb_password=SKIF_DEV
+                       -Padmin_db_username=SYSTEM
+                       -Padmin_db_password=MATRIKKELADM
+                       -Pdb_dataroot_dir=/opt/oracle/oradata
               env:
                   PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
