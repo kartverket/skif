@@ -48,7 +48,7 @@ jobs:
             - name: Build
               run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ needs.calculate-version.outputs.version }}
               env:
-                  GH_PACKAGES_READ_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
+                  PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
     test:
         name: Test
@@ -72,7 +72,7 @@ jobs:
             - name: Run tests
               run: ./gradlew check --continue --stacktrace -Pbase_version=${{ needs.calculate-version.outputs.version }}
               env:
-                  GH_PACKAGES_READ_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
+                  PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
             - name: Publish Test Report
               if: always()
@@ -110,4 +110,4 @@ jobs:
               run: ./gradlew publish --stacktrace -Pbase_version=${{ needs.calculate-version.outputs.version }}
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  GH_PACKAGES_READ_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
+                  PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
