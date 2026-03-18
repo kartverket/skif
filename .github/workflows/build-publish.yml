@@ -107,11 +107,15 @@ jobs:
                        -Padmin_db_password=MATRIKKELADM
                        -Pdb_dataroot_dir=/opt/oracle/oradata
 
+            -   name: Find test results
+                if: always()
+                run: find . -name "testng-results.xml" -print
+
             - name: Publish Test Report
               if: always()
               uses: mikepenz/action-junit-report@v5
               with:
-                  report_paths: '**/testng-results.xml'
+                  report_paths: '**/build/test-results/*/*.xml'
                   check_name: Test rapport
                   annotate_only: true
                   detailed_summary: true
