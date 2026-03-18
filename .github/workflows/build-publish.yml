@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - 'trunk'
+    pull_request:
     workflow_dispatch:
 
 env:
@@ -57,7 +58,7 @@ jobs:
         name: Test
         runs-on: ubuntu-latest
         needs:
-            - calculate-version
+            - build
         env:
             PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
