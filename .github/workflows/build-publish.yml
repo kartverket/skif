@@ -100,6 +100,9 @@ jobs:
               run: |
                 ./gradlew check --continue --stacktrace \
                 -Pbase_version=${{ needs.calculate-version.outputs.version }} \
+                -Duser.language=no \
+                -Duser.country=NO \
+                -Dfile.encoding=UTF-8 \
                 ${TEST_PROPERTIES}
 
             - name: Publish Test Report
