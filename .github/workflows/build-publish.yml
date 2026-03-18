@@ -8,6 +8,7 @@ on:
 
 env:
     MAJOR_VERSION: 4
+    TEST_PROPERTIES: "-Pdb_jdbc_url=jdbc:oracle:thin:@//localhost:1521/skifdev -Pdb_username=SKIF_DEV -Pdb_password=SKIF_DEV -Padmin_db_username=SYSTEM -Padmin_db_password=MATRIKKELADM -Pdb_dataroot_dir=/opt/oracle/oradata"
 
 jobs:
     calculate-version:
@@ -68,6 +69,7 @@ jobs:
                     ORACLE_PASSWORD: MATRIKKELADM
                     APP_USER: SKIF_DEV
                     APP_USER_PASSWORD: SKIF_DEV
+                    ORACLE_DATABASE: skifdev
                 options: >-
                     --health-cmd healthcheck.sh
                     --health-interval 10s
@@ -88,28 +90,16 @@ jobs:
               uses: gradle/actions/wrapper-validation@v4
 
             - name: Initialize database
-              run: ./gradlew dbInit --stacktrace
-                  -Pbase_version=${{ needs.calculate-version.outputs.version }}
-                  -Pdb_jdbc_url=jdbc:oracle:thin:@//localhost:1521/XEPDB1
-                  -Pdb_username=SKIF_DEV
-                  -Pdb_password=SKIF_DEV
-                  -Padmin_db_username=SYSTEM
-                  -Padmin_db_password=MATRIKKELADM
-                  -Pdb_dataroot_dir=/opt/oracle/oradata
+              run: |
+                ./gradlew dbInit \
+                  -Pbase_version=${{ needs.calculate-version.outputs.version }} \
+                  ${TEST_PROPERTIES}
 
             - name: Run tests
-              run: ./gradlew check --continue --stacktrace
-                       -Pbase_version=${{ needs.calculate-version.outputs.version }}
-                       -Pdb_jdbc_url=jdbc:oracle:thin:@//localhost:1521/XEPDB1
-                       -Pdb_username=SKIF_DEV
-                       -Pdb_password=SKIF_DEV
-                       -Padmin_db_username=SYSTEM
-                       -Padmin_db_password=MATRIKKELADM
-                       -Pdb_dataroot_dir=/opt/oracle/oradata
-
-            -   name: Find test results
-                if: always()
-                run: find . -name "testng-results.xml" -print
+              run: |
+                ./gradlew check --continue --stacktrace \
+                -Pbase_version=${{ needs.calculate-version.outputs.version }} \
+                ${TEST_PROPERTIES}
 
             - name: Publish Test Report
               if: always()
