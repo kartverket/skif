@@ -66,7 +66,6 @@ jobs:
                     ORACLE_PASSWORD: MATRIKKELADM
                     APP_USER: SKIF_DEV
                     APP_USER_PASSWORD: SKIF_DEV
-                    ORACLE_DATABASE: XEPDB1
                 options: >-
                     --health-cmd healthcheck.sh
                     --health-interval 10s
