@@ -24,7 +24,7 @@ jobs:
                 id: version-string
                 shell: bash
                 run: |
-                    version="${{ env.MAJOR_VERSION }}.$(date -u '+%Y.%m.%d-%H.%M')-$(echo "${GITHUB_SHA}" | cut -c1-7)"
+                    version="$(date -u '+%Y.%m.%d-%H.%M')-$(echo "${GITHUB_SHA}" | cut -c1-7)"
                     echo "version=${version}" >> "$GITHUB_OUTPUT"
 
     build:
@@ -50,7 +50,7 @@ jobs:
               uses: gradle/actions/wrapper-validation@v4
 
             - name: Build
-              run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ needs.calculate-version.outputs.version }}
+              run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }}
               env:
                   PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
@@ -94,13 +94,15 @@ jobs:
             - name: Initialize database
               run: |
                 ./gradlew dbInit \
-                  -Pbase_version=${{ needs.calculate-version.outputs.version }} \
+                  -Pbase_version=${{ env.MAJOR_VERSION }} \
+                  -Psub_version=${{ needs.calculate-version.outputs.version }} \
                   ${TEST_PROPERTIES}
 
             - name: Run tests
               run: |
                 ./gradlew check --continue --stacktrace \
-                -Pbase_version=${{ needs.calculate-version.outputs.version }} \
+                -Pbase_version=${{ env.MAJOR_VERSION }} \
+                -Psub_version=${{ needs.calculate-version.outputs.version }} \
                 -Duser.language=no \
                 -Duser.country=NO \
                 -Dfile.encoding=UTF-8 \
@@ -122,7 +124,7 @@ jobs:
             - build
             - test
             - calculate-version
-        #if: github.ref_name == 'trunk' && github.event_name == 'push'
+        if: github.ref_name == 'trunk' && github.event_name == 'push'
 
         permissions:
             contents: read
@@ -139,7 +141,7 @@ jobs:
                   distribution: 'temurin'
 
             - name: Publish to GitHub Packages
-              run: ./gradlew publish --stacktrace -Pbase_version=${{ needs.calculate-version.outputs.version }}
+              run: ./gradlew publish --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }}
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
