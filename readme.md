@@ -1,32 +1,21 @@
 # Versjonering og utviklingsløp
-Utvikling er trunk basert, slik at alle endringer tas ned til hovedbranch etter at de har gjennomgått PR og er blitt tilstrekkelig testet.
-Hvert team tar ansvar for sin versjon. Hovedbranch heter "trunk".
 
-Fra en vedlikeholdsversjon til en annen skal det ikke være API-endringer, med mindre det er absolutt nødvendige for den feilen vedlikeholdsversjonen er til for å rette.
+## Publisering
+Pakkene ble tidligere publisert til Nexus. Gamle pakker er migrert til GitHub Packages.
 
-CI/CD er satt opp til å bygge alle brancher automatisk når noe sjekkes inn. Versjonsnummeret er det samme som branchnavnet, etterfulgt av `-build<n>`, 
-hvor `<n>` er byggnummeret i Jenkins. Disse automatiske byggene er å anse som snapshot-versjoner og slettes automatisk etter en periode.
+Nye pakker publiseres til [GitHub Packages](https://github.com/orgs/kartverket/packages?repo_name=skif) via [build-push.yml](.github/workflows/build-publish.yml) workflowen.
+Ved hver push til `trunk` så vil det bygges og publiseres en ny versjon av pakkene.
 
-## Versjonsstrategi
-SKIF er versjonert etter malen `<hovedversjon>.<underversjon>.<vedlikeholdsversjon>`.
 
-## Vedlikeholdsversjoner
-Dersom hovedbranch representerer gjeldende underversjon så kan releasen versjonsmerkes der. 
-Hvis ikke, så cherry-pickes endringer ut på frittstående release-branch.
+## Releasetesting
+Tester kjøres automatisk som en del av [build-push.yml](.github/workflows/build-publish.yml) workflowen ved PR og push til `trunk`.
 
-## Hvordan publisere ny versjon
-Versjonsmerke defineres manuelt på release-branch med navn på formen `<hovedversjon>.<underversjon>`.
-Publiser release i Jenkins:
- * https://jenkins.matrikkel.no/job/Github%20SKIF/job/skif-release/
- * Klikk på "Scan Repository Now" dersom branchen ikke finnes i listen enda.
- * Start så jobb og sett vedlikeholdsversjon (starter på 0).
 
-### Tagge release på GitHub
- * Definer er ny release https://github.com/kartverket/skif/releases/new
- * Versjonsmerke (tag) skal være på formen `<hovedversjon>.<underversjon>.<vedlikeholdsversjon>`
-   * Hovedversjon og underversjon stammer fra branchnavn.
-   * Vedlikeholdsversjon stammer fra input til publiseringsjobb.
- * Target skal være commit (hash) til publiseringsjobb.
+## Versjonering
+Pakkene har versjonsnummer som er av formatet `[Major version].[Date].[SHA]`
+Alle pakker har samme versjon, og versjonsnummeret oppdateres ved hver publisering.
+
+`[Major version]` oppdateres ved breaking changes og kan endres i [build-push.yml](.github/workflows/build-publish.yml) workflowen.
 
 # Lokal utvikling på tvers av prosjekter
 For enkelt å teste endringer i andre gradle prosjekt kan disse inkluderes som "composite builds" i byggesystemet.
