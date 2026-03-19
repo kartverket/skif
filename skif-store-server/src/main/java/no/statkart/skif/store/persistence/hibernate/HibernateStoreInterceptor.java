@@ -80,13 +80,15 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
 
     @Override
     public Object instantiate(String entityName, EntityRepresentationStrategy representationStrategy, Object id) throws CallbackException {
-        sjekkSnapshotVersjon(id);
+        //FIXME: TH-2583
+        //sjekkSnapshotVersjon(id);
         return null;
     }
 
     @Override
     public Object instantiate(String entityName, RepresentationMode representationMode, Object id) throws CallbackException {
-        sjekkSnapshotVersjon(id);
+        //FIXME: TH-2583
+        //sjekkSnapshotVersjon(id);
         return null;
     }
 
