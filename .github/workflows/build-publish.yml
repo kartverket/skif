@@ -1,0 +1,151 @@
+name: Build and Publish
+
+on:
+    push:
+        branches:
+            - 'trunk'
+    pull_request:
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    MAJOR_VERSION: 5
+    TEST_PROPERTIES: "-Pdb_jdbc_url=jdbc:oracle:thin:@//localhost:1521/skifdev -Pdb_username=SKIF_DEV -Pdb_password=SKIF_DEV -Padmin_db_username=SYSTEM -Padmin_db_password=MATRIKKELADM -Pdb_dataroot_dir=/opt/oracle/oradata"
+    TZ: Europe/Oslo #SKIF-760: workaround for historikk-tester
+
+jobs:
+    calculate-version:
+        name: Calculate Version
+        runs-on: ubuntu-latest
+        outputs:
+            version: ${{ steps.version-string.outputs.version }}
+
+        steps:
+            -   name: Generate version string
+                id: version-string
+                shell: bash
+                run: |
+                    version=".$(date -u '+%Y.%m.%d-%H.%M')-$(echo "${GITHUB_SHA}" | cut -c1-7)"
+                    echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        needs:
+            - calculate-version
+
+        permissions:
+            contents: read
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up JDK 17
+              uses: actions/setup-java@v4
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+
+            - name: Validate Gradle wrapper
+              uses: gradle/actions/wrapper-validation@v4
+
+            - name: Build
+              run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }}
+              env:
+                  PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
+
+    test:
+        name: Test
+        runs-on: ubuntu-latest
+        needs:
+            - build
+        env:
+            PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
+
+        services:
+            oracle:
+                image: gvenzl/oracle-xe:18.4.0
+                ports:
+                    - 1521:1521
+                env:
+                    ORACLE_PASSWORD: MATRIKKELADM
+                    APP_USER: SKIF_DEV
+                    APP_USER_PASSWORD: SKIF_DEV
+                    ORACLE_DATABASE: skifdev
+                options: >-
+                    --health-cmd healthcheck.sh
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 10
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up JDK 17
+              uses: actions/setup-java@v4
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+
+            - name: Validate Gradle wrapper
+              uses: gradle/actions/wrapper-validation@v4
+
+            - name: Initialize database
+              run: |
+                ./gradlew dbInit \
+                  -Pbase_version=${{ env.MAJOR_VERSION }} \
+                  -Psub_version=${{ needs.calculate-version.outputs.version }} \
+                  ${TEST_PROPERTIES}
+
+            - name: Run tests
+              run: |
+                ./gradlew check --continue --stacktrace \
+                -Pbase_version=${{ env.MAJOR_VERSION }} \
+                -Psub_version=${{ needs.calculate-version.outputs.version }} \
+                -Duser.language=no \
+                -Duser.country=NO \
+                -Dfile.encoding=UTF-8 \
+                ${TEST_PROPERTIES}
+
+            - name: Publish Test Report
+              if: always()
+              uses: mikepenz/action-junit-report@v5
+              with:
+                  report_paths: '**/build/test-results/*/*.xml'
+                  check_name: Test rapport
+                  annotate_only: true
+                  detailed_summary: true
+
+    publish:
+        name: Publish to GitHub Packages
+        runs-on: ubuntu-latest
+        needs:
+            - build
+            - test
+            - calculate-version
+        if: github.ref_name == 'trunk' && github.event_name == 'push'
+
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up JDK 17
+              uses: actions/setup-java@v4
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
+
+            - name: Publish to GitHub Packages
+              run: ./gradlew publish --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
