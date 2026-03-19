@@ -43,7 +43,8 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      * @see {@link org.hibernate.Interceptor#onLoad(Object, java.io.Serializable, Object[], String[], org.hibernate.type.Type[])}
      */
     @SuppressWarnings("removal")
-    public boolean onLoad(Object entity, Serializable hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
+    @Override
+    public boolean onLoad(Object entity, Object hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         if ("true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
             modifyIdSubclass(entity);
         }
