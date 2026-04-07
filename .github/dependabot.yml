@@ -1,8 +1,8 @@
 version: 2
 registries:
-    github-packages:
+    github-sktools:
         type: maven-repository
-        url: https://maven.pkg.github.com/kartverket/matrikkel
+        url: https://maven.pkg.github.com/kartverket/SkTools
         username: x-access-token
         password: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
@@ -17,7 +17,7 @@ updates:
       directory: "/"
       open-pull-requests-limit: 20
       registries:
-          - github-packages
+          - github-sktools
       schedule:
           interval: "weekly"
           time: '07:00'
