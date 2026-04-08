@@ -1,65 +1,71 @@
 package no.statkart.skif.store.persistence.hibernate.type;
 
-import no.statkart.skif.store.BubbleIds;
-import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.kodeliste.KodeId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
-import org.hibernate.engine.config.spi.ConfigurationService;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.spi.TypeConfiguration;
 import org.hibernate.type.spi.TypeConfigurationAware;
 import org.hibernate.usertype.EnhancedUserType;
 import org.hibernate.usertype.ParameterizedType;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Objects;
 import java.util.Properties;
 
 /**
  * Hibernate type for EnumKodeId.
  *
  * @author Henrik Fredholm
+ * @author Leif Lislegård
  */
 public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, TypeConfigurationAware {
-    private TypeConfiguration typeConfiguration;
+    
+    private Impl impl;
 
-    /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
-    private SnapshotVersionSeed snapshotVersionSeed = null;
+    final class Impl extends BubbleIdType {
+        private final Class<? extends KodeId> enumClass;
 
-    private Class<? extends KodeId> enumClass;
+        private Impl(Class<? extends KodeId> enumClass) {
+            this.enumClass = enumClass;
+        }
+
+        @Override
+        public Class<? extends KodeId> returnedClass() {
+            return enumClass;
+        }
+    }
+
 
     public EnumKodeIdType() {
     }
 
     @SuppressWarnings("UnusedDeclaration") // API
     public EnumKodeIdType(Class<? extends KodeId> enumClass) {
-        this.enumClass = enumClass;
+        setEnumClass(enumClass);
     }
 
     @SuppressWarnings("UnusedDeclaration") // API
     public Class<? extends KodeId> getEnumClass() {
-        return enumClass;
+        return impl.enumClass;
     }
 
-    @SuppressWarnings("UnusedDeclaration") // API
+    // API
     public void setEnumClass(Class<? extends KodeId> enumClass) {
-        this.enumClass = enumClass;
+        if (!KodeId.class.isAssignableFrom(enumClass)) {
+            throw new MappingException("Enumklasse er ikke en KodeId: " + enumClass.getName());
+        }
+        this.impl = new Impl(enumClass);
     }
 
+    @Override
     public void setParameterValues(Properties parameters) {
         String enumClassName = parameters.getProperty("enumClassName");
         try {
-            enumClass = Class.forName(enumClassName).asSubclass(KodeId.class);
-            if (!KodeId.class.isAssignableFrom(enumClass)) {
-                throw new MappingException("Enumklasse er ikke en KodeId: " + enumClass.getName());
-            }
+            setEnumClass(Class.forName(enumClassName).asSubclass(KodeId.class));
         } catch (ClassNotFoundException cnfe) {
             throw new HibernateException("Enumklasse ble ikke funnet", cnfe);
         }
@@ -67,106 +73,80 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
 
     @Override
     public TypeConfiguration getTypeConfiguration() {
-        return typeConfiguration;
+        return impl.getTypeConfiguration();
     }
 
     @Override
     public void setTypeConfiguration(TypeConfiguration typeConfiguration) {
-        this.typeConfiguration = typeConfiguration;
-        snapshotVersionSeed = Objects.requireNonNull(
-                typeConfiguration.getServiceRegistry()
-                        .requireService(ConfigurationService.class)
-                        .getSetting("no.statkart.skif.SnapshotVersionSeed", SnapshotVersionSeed.class, snapshotVersionSeed),
-                "SnapshotVersionSeed not configured for session factory"
-        );
+        impl.setTypeConfiguration(typeConfiguration);
     }
 
-    public Object getInstance(int code) throws HibernateException {
-        SnapshotVersion snapshotVersion = Objects.requireNonNull(snapshotVersionSeed.get(), "snapshotVersionSeed not specified");
-        return BubbleIds.createInstance(enumClass, (long) code, snapshotVersion);
-    }
-
+    @Override
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        return cached;
+        return impl.assemble(cached, owner);
     }
 
-    public Object deepCopy(Object value) throws HibernateException {
-        return value;
+    @Override
+    public Object deepCopy(Object value) {
+        return impl.deepCopy(value);
     }
 
+    @Override
     public Serializable disassemble(Object value) throws HibernateException {
-        return (Enum<?>) value;
+        return impl.disassemble(value);
     }
 
-    public boolean equals(Object x, Object y) throws HibernateException {
-        return !(x == null && y != null) && (x == null || x.equals(y));
+    @Override
+    public boolean equals(Object x, Object y) {
+        return impl.equals(x, y);
     }
 
+    @Override
     public int hashCode(Object x) throws HibernateException {
-        return x.hashCode();
+        return impl.hashCode(x);
     }
 
+    @Override
     public boolean isMutable() {
-        return false;
+        return impl.isMutable();
     }
 
     @Override
     public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
-        try {
-            int code = rs.getInt(name);
-            if (rs.wasNull()) {
-                return null;
-            } else {
-                return getInstance(code);
-            }
-        } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
-            throw re;
-        }
-
+        return impl.nullSafeGet(rs, names, session, owner);
     }
-
 
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
-        try {
-            if (value == null) {
-                st.setNull(index, Types.SMALLINT);
-            } else {
-                // TODO: Fix så det virker for string også
-                long idValue = (Long) returnedClass().cast(value).getValue();
-                st.setInt(index, (int) idValue);
-            }
-        } catch (ClassCastException ce) {
-            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not bind value '{}' to parameter: {}; ClassCastException: expected parameter of class {} got {}", value, index, returnedClass(), ce.getMessage());
-            throw ce;
-        } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not bind value '{}' to parameter: {}; {}", value, index, re.getMessage());
-            throw re;
-        }
+        impl.nullSafeSet(st, value, index, session);
     }
 
+    @Override
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
-        return original;
+        return impl.replace(original, target, owner);
     }
 
+    @Override
     public Class<? extends KodeId> returnedClass() {
-        return enumClass;
+        return impl.returnedClass();
     }
 
+    @Override
     public int[] sqlTypes() {
         return new int[]{Types.SMALLINT};
     }
 
+    @Override
     public Object fromXMLString(String xmlValue) {
-        return getInstance(Integer.parseInt(xmlValue));
+        return impl.createId(Long.parseLong(xmlValue));
     }
 
+    @Override
     public String objectToSQLString(Object value) {
         return '\'' + returnedClass().cast(value).getValue().toString() + '\'';
     }
 
+    @Override
     public String toXMLString(Object value) {
         return returnedClass().cast(value).getValue().toString();
     }
