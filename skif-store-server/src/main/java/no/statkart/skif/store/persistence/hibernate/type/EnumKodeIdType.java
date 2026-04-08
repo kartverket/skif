@@ -13,17 +13,18 @@ import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.Properties;
 
 /**
  * Hibernate type for EnumKodeId.
+ * Støtter datatyper som Long og String.
  *
  * @author Henrik Fredholm
  * @author Leif Lislegård
+ * @see BubbleIdType
  */
 public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, TypeConfigurationAware {
-    
+
     private Impl impl;
 
     final class Impl extends BubbleIdType {
@@ -133,7 +134,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
 
     @Override
     public int[] sqlTypes() {
-        return new int[]{Types.SMALLINT};
+        return impl.sqlTypes();
     }
 
     @Override
