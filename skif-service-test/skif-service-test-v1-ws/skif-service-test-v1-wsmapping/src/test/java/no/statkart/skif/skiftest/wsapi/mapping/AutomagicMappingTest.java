@@ -6,11 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.unitils.reflectionassert.ReflectionAssert;
-import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -53,7 +52,7 @@ public class AutomagicMappingTest extends AutomagicTest {
     }
 
     @Test
-    public void testAllClasses() throws Exception {
+    public void testAllClasses() {
         int abstrakte = 0;
         int lister = 0;
         int hardkodet = 0;
@@ -82,7 +81,10 @@ public class AutomagicMappingTest extends AutomagicTest {
 
                     Object o3;
                     o3 = mapping.d2w(mapping.w2d(o2, Object.class), Object.class);
-                    ReflectionAssert.assertReflectionEquals(o3.getClass().getSimpleName() + " var ikke like", o2, o3, ReflectionComparatorMode.LENIENT_ORDER);
+                    assertThat(o3)
+                        .usingRecursiveComparison()
+                        .ignoringCollectionOrder()
+                        .isEqualTo(o2);
                 }
             } catch (Throwable e) {
                 feilet++;
