@@ -7,8 +7,8 @@ import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
@@ -46,6 +46,9 @@ import static no.statkart.skif.util.HibernateHelper.getTableName;
 public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extends AbstractEndringId<?>> implements EndringsloggService<E, EI> {
     private static final int LIMIT = 1000;
 
+    /**
+     * Konfigurert baseklasse for EndringId - feks MatrikkelEndringId 
+     */
     private final Class<EI> endringIdClass;
 
     private final Provider<SnapshotVersion> snapshotVersionProvider;
@@ -258,16 +261,17 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
     private EI findSisteEndringId(Session session) {
         @SuppressWarnings("unchecked")
         Class<E> cls = (Class<E>) AbstractBubbleId.getType(endringIdClass);
+        
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        CriteriaQuery<E> cq = cb.createQuery(cls);
         Root<E> root = cq.from(cls);
-        Expression<Long> id = root.get("id").as(Long.class);
-        cq.select(cb.greatest(id));
-        return  endringIdFromLong(session.createQuery(cq).uniqueResult());
-    }
 
-    private EI endringIdFromLong(Long id) {
-        return BubbleIds.createInstance(endringIdClass, id==null?0L:id, SnapshotVersionContext.getInstance().getSnapshotVersion());
+        Subquery<Long> sub = cq.subquery(Long.class);
+        Root<E> subRoot = sub.from(cls);
+        sub.select(cb.max(subRoot.get("id")));
+
+        cq.where(cb.equal(root.get("id"), sub));
+        return session.createQuery(cq).uniqueResult().getId();
     }
 
     private EI setIfNull(EI id) {
