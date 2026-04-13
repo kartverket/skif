@@ -1,6 +1,6 @@
 package no.statkart.skif.domain;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 

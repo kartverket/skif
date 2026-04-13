@@ -1,6 +1,6 @@
 package no.statkart.skif.store;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Objekter som har ident må implementere dette interface for å støtte relasjonscaching for identer.

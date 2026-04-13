@@ -20,6 +20,7 @@ dependencies {
     implementation libs.commons.pool
     compileOnly libs.jaxws.api
     compileOnly libs.jws.api
+    compileOnly libs.bundles.jee
 
     testImplementation libs.bundles.jaxws.rt
     testImplementation libs.reflections

@@ -2,7 +2,7 @@ package no.statkart.skif.domain;
 
 import com.google.common.collect.Multimap;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * {@link Multimap#equals(Object)} kaller {@link Object#equals(Object)} på innholdet. Vi ønsker vanligvis ikke dette,

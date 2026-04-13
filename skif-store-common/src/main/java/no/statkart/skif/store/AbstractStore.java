@@ -9,7 +9,7 @@ import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.store.relation.cache.StoreRelationCacheImpl;
 import no.statkart.skif.util.CopyHelper;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

@@ -8,7 +8,7 @@ import no.statkart.skif.store.CompositeComponentWithCollections;
 import no.statkart.skif.store.ValueObjects;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**

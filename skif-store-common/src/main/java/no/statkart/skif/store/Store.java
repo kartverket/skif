@@ -2,7 +2,7 @@ package no.statkart.skif.store;
 
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

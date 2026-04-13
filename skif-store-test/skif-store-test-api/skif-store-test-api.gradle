@@ -8,6 +8,8 @@ dependencies {
     api libs.jsr305
     api libs.jodatime
 
+    compileOnly libs.bundles.jee
+
     testImplementation project(':skif-testsupport-common')
 
     //internal dependencies + optional deps to logging frameworks:

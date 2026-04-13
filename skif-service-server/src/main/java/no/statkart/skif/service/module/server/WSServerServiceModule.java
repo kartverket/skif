@@ -15,7 +15,7 @@ import no.statkart.skif.service.proxy.W2DAdapterProxyHandler;
 import no.statkart.skif.service.proxy.W2DAdapterWithServiceContextMapperProxyHandler;
 import no.statkart.skif.service.ws.ServiceWSI;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;

@@ -6,7 +6,7 @@ import no.statkart.skif.store.InverseRelationCollector;
 import no.statkart.skif.store.InverseRelationParticipation;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
