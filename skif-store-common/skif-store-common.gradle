@@ -18,7 +18,7 @@ dependencies {
     testImplementation project(':skif-testsupport-common')
 
     testImplementation libs.reflections
-
+    testCompileOnly libs.bundles.jee
 }
 
 task testJar(type: Jar) {
