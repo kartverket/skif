@@ -15,7 +15,7 @@ import org.hibernate.type.CustomType;
  *    Collection<String> stringValues = ...;
  *    SQLQuery query = session.createSQLQuery("select {e.*} from Eier {e} where e.someText in (select * from table(:stringValues))");
  *    query.addEntity("e", Eier.class);
- *    query.setParameter("stringValues", stringIds, new OracleStringArrayCustomType());
+ *    query.setParameter("stringValues", stringIds, new OracleArrayAnyBubbleIdCustomType());
  *    List<Eier> eiers = query.list();
  * </pre>
  *
