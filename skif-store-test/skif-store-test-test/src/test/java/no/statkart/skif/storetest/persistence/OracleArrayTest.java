@@ -8,7 +8,6 @@ import no.statkart.skif.store.persistence.OracleArrayAnyBubbleIdConverter;
 import no.statkart.skif.store.persistence.OracleArrayConcatenatedFieldsConverter;
 import no.statkart.skif.store.persistence.OracleArrayNumberConverter;
 import no.statkart.skif.store.persistence.OracleArrayStringStringConverter;
-import no.statkart.skif.store.persistence.OracleArrayType;
 import no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
@@ -72,7 +71,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 
         Connection connection = OracleUtils.getOracleConnection(session().connection());
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
-            statement.setObject(1, OracleArrayType.getOracleNumberArray(connection, simpleIds));
+            statement.setObject(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
             while (resultSet.next()) {

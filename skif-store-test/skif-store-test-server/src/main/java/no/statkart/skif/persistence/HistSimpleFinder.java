@@ -5,7 +5,7 @@ import jakarta.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.persistence.jdbc.ConnectionSelector;
 import no.statkart.skif.store.SnapshotVersion;
-import no.statkart.skif.store.persistence.OracleArrayType;
+import no.statkart.skif.store.persistence.OracleArrayLongBubbleIdConverter;
 import no.statkart.skif.store.persistence.SessionSelector;
 import no.statkart.skif.storetest.domain.basic.HistSimple;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
@@ -73,7 +73,7 @@ public class HistSimpleFinder {
         try (ConnectionSelector connectionSelector = connectionSelectorProvider.get()) {
             final Connection connection = connectionSelector.get(snapshotVersion);
             try (PreparedStatement statement = connection.prepareStatement("select h.id from HistSimple h where h.id in (select * from table(:idValues))")) {
-                statement.setObject(1, OracleArrayType.getOracleBubbleIdArray(connection, histSimpleIds));
+                statement.setObject(1, new OracleArrayLongBubbleIdConverter().toArray(connection, histSimpleIds));
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     result.add(HistSimpleId.create(resultSet.getLong(1), snapshotVersion));
