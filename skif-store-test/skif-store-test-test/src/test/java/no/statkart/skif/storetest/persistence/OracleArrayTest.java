@@ -91,7 +91,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 
         Connection connection = OracleUtils.getOracleConnection(session().connection());
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
-            statement.setObject(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
+            statement.setArray(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
             while (resultSet.next()) {

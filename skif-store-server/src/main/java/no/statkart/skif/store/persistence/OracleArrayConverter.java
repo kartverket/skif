@@ -32,7 +32,7 @@ import java.util.Iterator;
  *    Collection<Long> eierIds = List.of(1234L);
  *    Connection connection = OracleUtils.getOracleConnection(session.connection());
  *    statement = connection.prepareStatement("select e.id from Eier e where e.id in (select * from table(:idValues))");
- *    statement.setObject(1, new OracleArrayNumberConverter().toArray(connection, eierIds));
+ *    statement.setArray(1, new OracleArrayNumberConverter().toArray(connection, eierIds));
  *    ResultSet resultSet = statement.executeQuery();
  * </pre>
  *

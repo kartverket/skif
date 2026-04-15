@@ -78,7 +78,7 @@ public class HistWithRelationFinder {
             Connection connection = connectionSelector.get(snapshotVersion);
             try (PreparedStatement statement = connection.prepareStatement("select hr.histSimpleId, hr.id from HistWithRelation hr where hr.text = ? and hr.histSimpleId in (select * from table(:idValues))")) {
                 statement.setString(1, text);
-                statement.setObject(2, new OracleArrayLongBubbleIdConverter().toArray(connection, histSimpleIds));
+                statement.setArray(2, new OracleArrayLongBubbleIdConverter().toArray(connection, histSimpleIds));
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
                     final HistSimpleId<HistSimple> key = HistSimpleId.create(rs.getLong(1), snapshotVersion);
