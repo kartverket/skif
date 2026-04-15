@@ -63,7 +63,8 @@ public class OracleArrayTest extends StoreTestServerTestCase {
     }
 
 
-    public void testOracleNumberArrayType() throws SQLException {
+    @Test
+    public void testOracleArrayNumberConverter_setArray() throws SQLException {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         Collection<Long> simpleIds = ImmutableList.of(
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()
@@ -71,7 +72,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 
         Connection connection = OracleUtils.getOracleConnection(session().connection());
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
-            statement.setObject(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
+            statement.setArray(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
             while (resultSet.next()) {
@@ -81,7 +82,8 @@ public class OracleArrayTest extends StoreTestServerTestCase {
         }
     }
 
-    public void testOracleArrayNumberConverter() throws SQLException {
+    @Test
+    public void testOracleArrayNumberConverter_setObject() throws SQLException {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         Collection<Long> simpleIds = ImmutableList.of(
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()
@@ -89,7 +91,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 
         Connection connection = OracleUtils.getOracleConnection(session().connection());
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
-            statement.setArray(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
+            statement.setObject(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
             while (resultSet.next()) {
