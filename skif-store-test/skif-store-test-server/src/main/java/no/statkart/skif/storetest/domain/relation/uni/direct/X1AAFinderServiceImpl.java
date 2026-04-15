@@ -3,9 +3,9 @@ package no.statkart.skif.storetest.domain.relation.uni.direct;
 import com.google.inject.Inject;
 import jakarta.inject.Provider;
 import no.statkart.skif.SkifUtil;
+import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayStringCustomType;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayUserType;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 import no.statkart.skif.store.persistence.OracleArrayConverter;
@@ -40,7 +40,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
                 .createNativeQuery("select someBBId, id  from X1AA  where someBBId in (select * from table(:idValues))")
                 .addSynchronizedQuerySpace("X1AA")
-                .setParameter("idValues", x1BBOneIds, new OracleLongBubbleIdArrayCustomType())
+                .setParameter("idValues", x1BBOneIds, new OracleArrayLongBubbleIdCustomType())
                 .setFetchSize(Math.min(1000, x1BBOneIds.size()))
                 .addScalar("someBBId", StandardBasicTypes.LONG)
                 .addScalar("id", StandardBasicTypes.LONG);
@@ -68,7 +68,7 @@ public class X1AAFinderServiceImpl implements X1AAFinderService {
             NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
                 .createNativeQuery("select childId as id, ownerId  from X1AAForX1CCMany where childId in (select * from table(:idValues))")
                 .addSynchronizedQuerySpace("X1AAForX1CCMany")
-                .setParameter("idValues", x1CCManyIds, new OracleLongBubbleIdArrayCustomType())
+                .setParameter("idValues", x1CCManyIds, new OracleArrayLongBubbleIdCustomType())
                 .setFetchSize(Math.min(1000, x1CCManyIds.size()))
                 .addScalar("id", StandardBasicTypes.LONG)
                 .addScalar("ownerId", StandardBasicTypes.LONG);

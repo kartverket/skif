@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.persistence;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
+import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.persistence.OracleArrayAnyBubbleIdConverter;
 import no.statkart.skif.store.persistence.OracleArrayConcatenatedFieldsConverter;
@@ -20,6 +20,7 @@ import no.statkart.skif.util.OracleUtils;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.query.NativeQuery;
+import org.testng.annotations.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -54,11 +55,12 @@ public class OracleArrayTest extends StoreTestServerTestCase {
         );
     }
 
-    public void testOracleLongBubbleIdArrayCustomType() {
+    @Test
+    public void testOracleArrayLongBubbleIdCustomType() {
         Collection<SimpleId<?>> eierIds = getSimpleIds();
         NativeQuery<Simple> query = session
             .createNativeQuery("select s.* from Simple s where s.id in (select * from table(:idValues))", Simple.class)
-            .setParameter("idValues", eierIds, new OracleLongBubbleIdArrayCustomType());
+            .setParameter("idValues", eierIds, new OracleArrayLongBubbleIdCustomType());
 
         assertThat(query.list()).hasSize(1);
     }
