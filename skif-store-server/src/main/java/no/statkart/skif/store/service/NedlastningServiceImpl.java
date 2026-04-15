@@ -2,7 +2,7 @@ package no.statkart.skif.store.service;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Provider;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
+import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Bubbles;
@@ -110,7 +110,7 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
             Criteria criteria = session.createCriteria(domainklasse);
             criteria.setProjection(Projections.rowCount());
-            criteria.add(Restrictions.sqlRestriction("id in (select * from table(?))", ids, new OracleLongBubbleIdArrayCustomType()));
+            criteria.add(Restrictions.sqlRestriction("id in (select * from table(?))", ids, new OracleArrayLongBubbleIdCustomType()));
             Kontroll result = new Kontroll();
             result.setAntall(((Number) criteria.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
             return result;

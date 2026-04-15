@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 import com.google.inject.Inject;
 import jakarta.inject.Provider;
 import no.statkart.skif.SkifUtil;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
+import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.ScrollMode;
@@ -36,7 +36,7 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
             NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
                 .createNativeQuery("select someBBId, ownerId  from X2EntityComponentOne  where someBBId in (select * from table(:idValues))")
                 .addSynchronizedQuerySpace("X2EntityComponentOne")
-                .setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType())
+                .setParameter("idValues", ids, new OracleArrayLongBubbleIdCustomType())
                 .setFetchSize(Math.min(1000, ids.size()))
                 .addScalar("someBBId", StandardBasicTypes.LONG)
                 .addScalar("ownerId", StandardBasicTypes.LONG);
@@ -64,7 +64,7 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
                 .createNativeQuery("select t.childId as id, c.ownerId  from X2AAForX2CCMany t, X2EntityComponentOne c  where t.ownerId = c.id and  t.childId in (select * from table(:idValues))")
                 .addSynchronizedQuerySpace("X2AAForX2CCMany")
                 .addSynchronizedQuerySpace("X2EntityComponentOne")
-                .setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType())
+                .setParameter("idValues", ids, new OracleArrayLongBubbleIdCustomType())
                 .setFetchSize(Math.min(1000, ids.size()))
                 .addScalar("id", StandardBasicTypes.LONG)
                 .addScalar("ownerId", StandardBasicTypes.LONG);
@@ -91,7 +91,7 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
             NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
                 .createNativeQuery("select role1BBOneId, ownerId  from X2SetEntityComp  where role1BBOneId in (select * from table(:idValues))")
                 .addSynchronizedQuerySpace("X2SetEntityComp")
-                .setParameter("idValues", ids, new OracleLongBubbleIdArrayCustomType())
+                .setParameter("idValues", ids, new OracleArrayLongBubbleIdCustomType())
                 .setFetchSize(Math.min(1000, ids.size()))
                 .addScalar("role1BBOneId", StandardBasicTypes.LONG)
                 .addScalar("ownerId", StandardBasicTypes.LONG);
