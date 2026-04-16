@@ -22,6 +22,7 @@ import org.hibernate.internal.SessionImpl;
 import org.hibernate.query.NativeQuery;
 import org.testng.annotations.Test;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,12 +44,13 @@ public class OracleArrayTest extends StoreTestServerTestCase {
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
-    private OracleConnection getOracleConnection() throws SQLException {
+    // Testene er avhengig av Oracle JDBC driver
+    private Connection getOracleConnection() throws SQLException {
         return ((SessionImpl) session)
             .getJdbcCoordinator()
             .getLogicalConnection()
             .getPhysicalConnection()
-            .unwrap(OracleConnection.class);
+            .unwrap(OracleConnection.class); //verifiserer faktisk Oracle connection
     }
 
     private Collection<SimpleId<?>> getSimpleIds() {
