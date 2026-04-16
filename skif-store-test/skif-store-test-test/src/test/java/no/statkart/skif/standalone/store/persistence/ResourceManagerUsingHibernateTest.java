@@ -72,21 +72,29 @@ public class ResourceManagerUsingHibernateTest {
     /**
      * Tester oppslag på resource via implementasjonsklasse og interface
      */
+    @Test
     public void testGetResource() throws SQLException {
         ConnectionManager connectionManager = resourceManager.getResource(ConnectionManagerUsingHibernate.class);
         assertSame(connectionManager.getClass(), ConnectionManagerUsingHibernate.class);
         assertSame(connectionManager,resourceManager.getResource(ConnectionManagerUsingHibernate.class) );
         assertSame(connectionManager,resourceManager.getResource(ConnectionManager.class) );
-        Connection connectionViaConnectionManager = resourceManager.getResource(ConnectionManager.class).getForSnapshotVersion(SnapshotVersion.CURRENT).reserve();
+        Connection connectionViaConnectionManager = resourceManager.getResource(ConnectionManager.class)
+            .getForSnapshotVersion(SnapshotVersion.CURRENT).reserve()
+            .unwrap(Connection.class); // Hibernate putter på en wrapper når man henter ut en connection.
 
         PersistenceSessionManager persistenceSessionManager = resourceManager.getResource(DefaultPersistenceSessionManager.class);
         assertSame(persistenceSessionManager.getClass(), DefaultPersistenceSessionManager.class);
         assertSame(persistenceSessionManager, resourceManager.getResource(DefaultPersistenceSessionManager.class));
         assertSame(persistenceSessionManager,resourceManager.getResource(PersistenceSessionManager.class) );
-        Connection connectionFromSession = resourceManager.getResource(PersistenceSessionManager.class).getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMaster.class).reserveSession().connection();
+        Connection connectionFromSession = resourceManager.getResource(PersistenceSessionManager.class)
+            .getForSnapshotVersion(SnapshotVersion.CURRENT)
+            .getImplementation(HibernatePersistenceSessionMaster.class).reserveSession()
+            .getJdbcCoordinator()
+            .getLogicalConnection()
+            .getPhysicalConnection()
+            .unwrap(Connection.class); // Hibernate putter på en wrapper når man henter ut en connection.
 
-        // Hibernate putter på en wrapper når man henter ut en connection. Men det er samme underliggende connection
-        assertSame(connectionFromSession.unwrap(Connection.class), connectionViaConnectionManager.unwrap(Connection.class));
+        assertSame(connectionFromSession, connectionViaConnectionManager);
    }
 
 }
