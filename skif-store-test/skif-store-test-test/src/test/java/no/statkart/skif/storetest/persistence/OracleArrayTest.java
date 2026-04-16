@@ -19,6 +19,7 @@ import no.statkart.skif.util.OracleUtils;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.query.NativeQuery;
+import org.testng.annotations.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
