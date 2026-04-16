@@ -288,17 +288,5 @@ public class KodeTest extends StoreTestTestCase {
         store.register(kodelisteTransfer);
         assertFalse(store.get(C1DbKodeId.KODELISTE_ID).getKoderIds().contains(c1DbKodeNew.getId()), "Forventet at kodeliste fra server har blitt oppdatert automatisk når koder fjernes");
     }
-
-//    public void testKodeIdLookup() {
-//        KodelisteService kodelisteService = injector.getInstance(KodelisteService.class);
-//        Store store = injector.getInstance(Store.class);
-//        KodelisteTransfer kodelisteTransfer = kodelisteService.getKodelister();
-//        List<Kode> objects = new ArrayList<Kode>();
-//        store.register(kodelisteTransfer.getObjects(), objects);
-//        KodeIdLookup kodeIdLookup = KodeIdLookup.buildFromKodeliste((Collection<? extends Kodeliste>) store.get(kodelisteTransfer.getKodelisterIds()));
-//        BEnumKodeId bKodeId = kodeIdLookup.fromKodeVerdi(BEnumKodeId.class, "B");
-//        assertSame(bKodeId, BEnumKodeId.KodeBId);
-//    }
-
-
+    
 }
