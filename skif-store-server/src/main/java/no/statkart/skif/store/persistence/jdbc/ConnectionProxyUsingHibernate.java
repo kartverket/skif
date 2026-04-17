@@ -15,6 +15,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Proxy for å garantere samme connection som Hibernate session bruker. 
+ * Dette slik at endringer i evt transaksjon vil være synlige. 
+ * 
  * @author Henrik Fredholm
  * @since 2.1
  */
