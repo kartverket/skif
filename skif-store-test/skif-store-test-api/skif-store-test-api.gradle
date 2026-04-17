@@ -5,7 +5,6 @@ plugins {
 dependencies {
     api project(':skif-store-common')
     api project(':skif-service-common')
-    api libs.jsr305
     api libs.jodatime
 
     compileOnly libs.bundles.jee
