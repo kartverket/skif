@@ -3,6 +3,7 @@ package no.statkart.skif.store.persistence.jdbc;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.persistence.jdbc.ConnectionReservationForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
+import org.hibernate.internal.SessionImpl;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -48,12 +49,11 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
                 throw e.getTargetException();
             }
         } else {
-            Connection connection = persistenceSessionMaster.reserveSession().connection();
-
+            SessionImpl session = persistenceSessionMaster.reserveSession();
             try {
-                //noinspection UnnecessaryLocalVariable
-                Object result = method.invoke(connection, args);
-                return result;
+                session.checkOpen();
+                Connection connection = session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
+                return method.invoke(connection, args);
             } finally {
                 persistenceSessionMaster.releaseSession();
             }
@@ -62,9 +62,9 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
 
     @Override
     public Connection reserve() {
-        //noinspection UnnecessaryLocalVariable
-        Connection connection = persistenceSessionMaster.reserveSession().connection();
-        return connection;
+        SessionImpl session = persistenceSessionMaster.reserveSession();
+        session.checkOpen();
+        return session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
     }
 
     @Override

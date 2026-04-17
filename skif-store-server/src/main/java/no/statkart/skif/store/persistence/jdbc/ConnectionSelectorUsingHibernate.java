@@ -5,6 +5,7 @@ import no.statkart.skif.persistence.jdbc.ConnectionSelector;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.SessionSelector;
+import org.hibernate.internal.SessionImpl;
 
 import java.sql.Connection;
 
@@ -40,7 +41,9 @@ public class ConnectionSelectorUsingHibernate implements ConnectionSelector {
 
     @Override
     public Connection get(SnapshotVersion snapshotVersion) {
-        return sessionSelector.get(snapshotVersion).connection();
+        SessionImpl session = sessionSelector.get(snapshotVersion);
+        session.checkOpen(true);
+        return session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
     }
 
 
