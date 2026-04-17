@@ -66,7 +66,7 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
     @Override
     public Connection reserve() {
         SharedSessionContractImplementor session = persistenceSessionMaster.reserveSession();
-        session.checkOpen();
+        session.checkOpen(true);
         return session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
     }
 
