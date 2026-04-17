@@ -283,11 +283,12 @@ public class StoreSessionServer extends AbstractStoreSession {
      */
     public void attemptDelete(BubbleId<?> bubbleId) throws AttemptDeleteException {
         Preconditions.checkState(level == 0, "level!=0");
+        HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
         try {
             flush();
-            HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
             SessionImpl session = persistenceSessionMaster.reserveSession();
-            Connection connection = session.connection();
+            //session.checkOpen() er allerede gjort i flush() over 
+            Connection connection = session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
             Savepoint savepoint = connection.setSavepoint();
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry == null) {
