@@ -405,7 +405,7 @@ public class HibernateDetachedSupport {
                 throw new ImplementationException("Uninitialized map in detached object not supported");
             }
 
-            final SessionImplementor sessionImpl = (SessionImplementor) session();
+            final SharedSessionContractImplementor sessionImpl = (SharedSessionContractImplementor) session();
             final CollectionPersister collectionPersister = sessionImpl.getFactory().getMetamodel().collectionPersister(mapType.getRole());
 
             if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
@@ -1048,7 +1048,7 @@ public class HibernateDetachedSupport {
 //                    checkEntityComponentsInMapOnInsert((Map) value, collectionType, processedObjects, cascade);
 //                } else {
 //                    CollectionType collectionType = (CollectionType) type;
-//                    Type elementType = collectionType.getElementType(((SessionImpl) session()).getFactory());
+//                    Type elementType = collectionType.getElementType(((SessionImplementor) session()).getFactory());
 //                    checkForStolenEntitiesInNewObjectForCollection((Collection) value, elementType, processedObjects, cascade);
 //                }
             }

@@ -18,7 +18,7 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
 import oracle.jdbc.OracleConnection;
 import org.hibernate.Session;
-import org.hibernate.internal.SessionImpl;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.query.NativeQuery;
 import org.testng.annotations.Test;
 
@@ -46,7 +46,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 
     // Testene er avhengig av Oracle JDBC driver
     private Connection getOracleConnection() throws SQLException {
-        return ((SessionImpl) session)
+        return ((SharedSessionContractImplementor) session)
             .getJdbcCoordinator()
             .getLogicalConnection()
             .getPhysicalConnection()
