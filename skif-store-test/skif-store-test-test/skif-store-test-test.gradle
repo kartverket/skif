@@ -14,7 +14,6 @@ dependencies {
     testImplementation project(':skif-store-test:skif-store-test-server')
     testImplementation project(':skif-store-test:skif-store-test-v1-ws:skif-store-test-v1-wsclient')
 
-    testImplementation libs.unitils //optional library for testing
     testImplementation libs.xstream // Brukes i test
 
     //internal dependencies + optional deps to logging frameworks:

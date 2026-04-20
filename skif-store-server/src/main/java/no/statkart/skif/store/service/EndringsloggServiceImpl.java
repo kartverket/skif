@@ -11,7 +11,6 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
@@ -246,7 +245,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
             String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))";
 
             NativeQuery<?> query = session.createNativeQuery(sql)
-                    .setParameter("ids", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleLongBubbleIdArrayCustomType());
+                    .setParameter("ids", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType());
 
             result.setAntall(((Number) query.uniqueResult()).longValue());
             return result;

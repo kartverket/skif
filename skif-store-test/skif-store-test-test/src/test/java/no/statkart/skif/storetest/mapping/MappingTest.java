@@ -14,12 +14,11 @@ import no.statkart.skif.util.testsupport.AutomagicTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.unitils.reflectionassert.ReflectionAssert;
-import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import java.io.IOException;
 import java.util.Iterator;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertTrue;
 
 
@@ -120,7 +119,10 @@ public class MappingTest extends AutomagicTest {
                     Object o3;
                     Object oTemp = mapping.w2d(o2, Object.class);
                     o3 = mapping.d2w(oTemp, Object.class);
-                    ReflectionAssert.assertReflectionEquals(o3.getClass().getSimpleName() + " var ikke like", o2, o3, ReflectionComparatorMode.LENIENT_ORDER);
+                    assertThat(o3)
+                        .usingRecursiveComparison()
+                        .ignoringCollectionOrder()
+                        .isEqualTo(o2);
                 }
             } catch (Throwable e) {
                 feilet++;

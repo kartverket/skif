@@ -3,10 +3,7 @@ package no.statkart.skif.storetest.persistence;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.persistence.OracleArrayNumberConverter;
-import no.statkart.skif.store.persistence.OracleArrayStringStringConverter;
-import no.statkart.skif.store.persistence.OracleArrayType;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -16,6 +13,7 @@ import no.statkart.skif.util.OracleUtils;
 import org.hibernate.Session;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.query.NativeQuery;
+import org.testng.annotations.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,17 +48,19 @@ public class OracleArrayTest extends StoreTestServerTestCase {
         );
     }
 
-    public void testOracleLongBubbleIdArrayCustomType() {
+    @Test
+    public void testOracleArrayLongBubbleIdCustomType() {
         Collection<SimpleId<?>> eierIds = getSimpleIds();
         NativeQuery<Simple> query = session
             .createNativeQuery("select s.* from Simple s where s.id in (select * from table(:idValues))", Simple.class)
-            .setParameter("idValues", OracleArrayLongBubbleIdCustomType.wrap(eierIds), new OracleLongBubbleIdArrayCustomType());
+            .setParameter("idValues", OracleArrayLongBubbleIdCustomType.wrap(eierIds), new OracleArrayLongBubbleIdCustomType());
 
         assertThat(query.list()).hasSize(1);
     }
 
 
-    public void testOracleNumberArrayType() throws SQLException {
+    @Test
+    public void testOracleArrayNumberConverter_setArray() throws SQLException {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         Collection<Long> simpleIds = ImmutableList.of(
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()
@@ -68,7 +68,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 
         Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
-            statement.setObject(1, OracleArrayType.getOracleNumberArray(connection, simpleIds));
+            statement.setArray(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
             int size = 0;
             while (resultSet.next()) {
@@ -78,7 +78,8 @@ public class OracleArrayTest extends StoreTestServerTestCase {
         }
     }
 
-    public void testOracleArrayNumberConverter() throws SQLException {
+    @Test
+    public void testOracleArrayNumberConverter_setObject() throws SQLException {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         Collection<Long> simpleIds = ImmutableList.of(
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()

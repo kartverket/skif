@@ -7,9 +7,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.persistence.metamodel.Metamodel;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Bubbles;
@@ -19,6 +17,7 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Session;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -149,9 +148,8 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
             String sql = "select count(*) from " + tableName + " where id in (select * from table(?))";
 
             Number count = (Number) session.createNativeQuery(sql)
-                .setParameter(1, OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleLongBubbleIdArrayCustomType())
+                .setParameter(1, OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType())
                 .getSingleResult();
-
             Kontroll result = new Kontroll();
             result.setAntall(count.longValue());
             return result;

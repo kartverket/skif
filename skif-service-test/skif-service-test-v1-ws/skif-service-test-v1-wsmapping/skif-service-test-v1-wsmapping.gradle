@@ -11,7 +11,6 @@ dependencies {
 
     testImplementation project(':skif-service-test:skif-service-test-v1-ws:skif-service-test-v1-wsschema')
     testImplementation project(':skif-testsupport-common')
-    testImplementation libs.unitils //optional library for testing
 
     //internal dependencies + optional deps to logging frameworks:
     testImplementation project(':skif-config')
