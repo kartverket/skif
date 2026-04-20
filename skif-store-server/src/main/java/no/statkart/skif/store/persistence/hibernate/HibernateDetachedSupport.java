@@ -21,9 +21,11 @@ import org.hibernate.engine.spi.CascadeStyle;
 import org.hibernate.engine.spi.CascadeStyles;
 import org.hibernate.engine.spi.CascadingActions;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.Assigned;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.persister.collection.AbstractCollectionPersister;
+import org.hibernate.persister.collection.CollectionPersister;
+import org.hibernate.persister.collection.QueryableCollection;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
@@ -142,7 +144,7 @@ public class HibernateDetachedSupport {
         //
         // Metoden trenger imidlertid alltid informasjon om eksisterende innhold i collections så objektet må lastes
         // uansett. For å skifte subtype trenges det også at objektet er lastet for å nulle ut ikke-felles-felter.
-        // Dersom objektet ikke allerede er lastet lastes eksistrende objekt her. For bulk updates vil det går raksere
+        // Dersom objektet ikke allerede er lastet lastes eksisterende objekt her. For bulk updates vil det går raskere
         // hvis eksisterende objekter allerede er lastet før man kommer her slik at eksisterende objekter ikke lastes
         // en-etter-en.
         BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getId().getBaseType(), bubbleObject.getId(), LockMode.NONE);
@@ -404,7 +406,7 @@ public class HibernateDetachedSupport {
             }
 
             final SessionImplementor sessionImpl = (SessionImplementor) session();
-            final AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) sessionImpl.getFactory().getMetamodel().collectionPersister(mapType.getRole());
+            final CollectionPersister collectionPersister = sessionImpl.getFactory().getMetamodel().collectionPersister(mapType.getRole());
 
             if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
                 throw new ImplementationException("Key must be LiteralType");
@@ -442,7 +444,7 @@ public class HibernateDetachedSupport {
             if (collectionInObject instanceof PersistentCollection && !((PersistentCollection) collectionInObject).wasInitialized()) {
                 throw new ImplementationException("Uninitialized collection in detached object not supported");
             } else {
-                final SessionImplementor sessionImpl = (SessionImplementor) session();
+                final SharedSessionContractImplementor sessionImpl = (SharedSessionContractImplementor) session();
 
                 Collection<?> collection = (Collection<?>) collectionType.instantiate(collectionInObject != null ? collectionInObject.size() : 0);
                 PersistentCollection persistentCollection = collectionType.wrap(sessionImpl, collection);
@@ -616,7 +618,7 @@ public class HibernateDetachedSupport {
     }
 
     private void checkEntityComponentsInMapOnInsert(CollectionType collectionType, Map<?, ?> value, IdentityHashMap<Object, Object> processedObjects, CascadeStyle cascadeStyle) {
-        AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) lazyInitializer.getMetamodel().collectionPersister(collectionType.getRole());
+        CollectionPersister collectionPersister = lazyInitializer.getMetamodel().collectionPersister(collectionType.getRole());
 
         if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
             throw new ImplementationException("Key must be LiteralType");
@@ -986,7 +988,7 @@ public class HibernateDetachedSupport {
 
     // TODO: Denne gjør ikke noe av det den sier den gjør
     private void checkForStolenEntitiesInNewObjectForMap(Map<?, ?> mapInObject, CollectionType collectionType, IdentityHashMap<Object, Object> processedObjects, CascadeStyle cascadeStyleForElement) {
-        AbstractCollectionPersister collectionPersister = (AbstractCollectionPersister) lazyInitializer.getMetamodel().collectionPersister(collectionType.getRole());
+        CollectionPersister collectionPersister = lazyInitializer.getMetamodel().collectionPersister(collectionType.getRole());
 
         if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
             throw new ImplementationException("Key must be LiteralType");
@@ -997,7 +999,7 @@ public class HibernateDetachedSupport {
         if (elementType.isCollectionType()) {
             throw new NotImplementedException("Map value kan ikke være collection");
         } else if (elementType.isAssociationType()) {
-            EntityPersister entityPersister = collectionPersister.getElementPersister();
+            EntityPersister entityPersister = ((QueryableCollection) collectionPersister).getElementPersister();
             Type[] propertyTypes = entityPersister.getPropertyTypes();
             for (int i = 0; i < propertyTypes.length; i++) {
                 Type propertyType = propertyTypes[i];
