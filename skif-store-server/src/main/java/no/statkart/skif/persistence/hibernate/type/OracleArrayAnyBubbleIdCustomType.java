@@ -7,15 +7,15 @@ import org.hibernate.type.CustomType;
 
 /**
  * En Hibernate {@code CustomType} klasse som gjør det mulig å bruke collections av vilkårlig størrelse
- * som innput parameter i hibernate spørringer. Klassen baserer seg på [@code OracleLongBubbleIdArrayUserType}
- * som er en Hibernate {@code UserType} for persistering av Oracle {@code oracle.sql.ARRAY}.
+ * som innput parameter i hibernate spørringer. Implementasjonen forutsetter at en type i databaseskjema er opprettet. 
+ * Implementasjonen bruker {@code oracle.sql.ARRAY} i Oracle JDBC driver.
  * <p>
  * <strong>Eksempel på bruk:</strong>
  * <pre>
  *    Collection<String> stringValues = ...;
  *    SQLQuery query = session.createSQLQuery("select {e.*} from Eier {e} where e.someText in (select * from table(:stringValues))");
  *    query.addEntity("e", Eier.class);
- *    query.setParameter("stringValues", stringIds, new OracleStringArrayCustomType());
+ *    query.setParameter("stringValues", stringIds, new OracleArrayAnyBubbleIdCustomType());
  *    List<Eier> eiers = query.list();
  * </pre>
  *
