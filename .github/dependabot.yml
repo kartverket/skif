@@ -8,7 +8,7 @@ registries:
 
 updates:
     - package-ecosystem: 'github-actions'
-      directory: '.github'
+      directory: '.github/workflows'
       schedule:
           interval: 'weekly'
           time: '07:00'
