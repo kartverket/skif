@@ -9,7 +9,6 @@ import no.statkart.skif.storetest.domain.standalone.TestEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.internal.SessionImpl;
 import org.hibernate.query.Query;
 import org.hibernate.type.IntegerType;
 import org.testng.annotations.Test;
@@ -53,7 +52,7 @@ public class HibernateSessionFactoryBuilderTest {
         sfbuilder.addResource(Foo.class);
         Properties hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm() ;
         try (SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null)) {
-            try (SessionImpl s = (SessionImpl) sf.openSession()) {
+            try (Session s = sf.openSession()) {
                 var nativeQuery = s.createNativeQuery("select 1 as value from dual");
                 nativeQuery.addScalar("value", IntegerType.INSTANCE);
                 assertThat(nativeQuery.list().get(0)).isEqualTo(1);
