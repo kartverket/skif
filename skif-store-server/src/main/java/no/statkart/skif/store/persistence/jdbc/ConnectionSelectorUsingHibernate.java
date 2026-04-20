@@ -41,7 +41,7 @@ public class ConnectionSelectorUsingHibernate implements ConnectionSelector {
 
     @Override
     public Connection get(SnapshotVersion snapshotVersion) {
-        SharedSessionContractImplementor session = sessionSelector.get(snapshotVersion);
+        SharedSessionContractImplementor session = (SharedSessionContractImplementor) sessionSelector.get(snapshotVersion);
         session.checkOpen(true);
         return session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
     }
