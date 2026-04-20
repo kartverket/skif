@@ -154,11 +154,11 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     @Override
-    public SessionImpl reserveSession() {
+    public Session reserveSession() {
         if (sessionFactoryDescriptor.isSnapshotChangable()) {
             reserveCount++;
         }
-        return (SessionImpl)session();
+        return session();
     }
 
     @Override

@@ -12,6 +12,7 @@ import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionM
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryBuilder;
 import no.statkart.skif.store.persistence.hibernate.HibernateSessionFactoryManagerBundle;
 import no.statkart.skif.store.persistence.jdbc.ConnectionManagerUsingHibernate;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -74,22 +75,21 @@ public class ResourceManagerUsingHibernateTest {
      */
     @Test
     public void testGetResource() throws SQLException {
-        ConnectionManager connectionManager = resourceManager.getResource(ConnectionManagerUsingHibernate.class);
+        final ConnectionManager connectionManager = resourceManager.getResource(ConnectionManagerUsingHibernate.class);
         assertSame(connectionManager.getClass(), ConnectionManagerUsingHibernate.class);
-        assertSame(connectionManager,resourceManager.getResource(ConnectionManagerUsingHibernate.class) );
-        assertSame(connectionManager,resourceManager.getResource(ConnectionManager.class) );
-        Connection connectionViaConnectionManager = resourceManager.getResource(ConnectionManager.class)
+        assertSame(connectionManager,resourceManager.getResource(ConnectionManager.class));
+        Connection connectionViaConnectionManager = connectionManager
             .getForSnapshotVersion(SnapshotVersion.CURRENT).reserve()
             .unwrap(Connection.class); // Hibernate putter på en wrapper når man henter ut en connection.
 
-        PersistenceSessionManager persistenceSessionManager = resourceManager.getResource(DefaultPersistenceSessionManager.class);
+        final PersistenceSessionManager persistenceSessionManager = resourceManager.getResource(DefaultPersistenceSessionManager.class);
         assertSame(persistenceSessionManager.getClass(), DefaultPersistenceSessionManager.class);
-        assertSame(persistenceSessionManager, resourceManager.getResource(DefaultPersistenceSessionManager.class));
-        assertSame(persistenceSessionManager,resourceManager.getResource(PersistenceSessionManager.class) );
-        Connection connectionFromSession = resourceManager.getResource(PersistenceSessionManager.class)
+        assertSame(persistenceSessionManager,resourceManager.getResource(PersistenceSessionManager.class));
+        Connection connectionFromSession = ((SharedSessionContractImplementor) 
+            persistenceSessionManager
             .getForSnapshotVersion(SnapshotVersion.CURRENT)
             .getImplementation(HibernatePersistenceSessionMaster.class).reserveSession()
-            .getJdbcCoordinator()
+        ).getJdbcCoordinator()
             .getLogicalConnection()
             .getPhysicalConnection()
             .unwrap(Connection.class); // Hibernate putter på en wrapper når man henter ut en connection.

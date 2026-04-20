@@ -15,7 +15,7 @@ import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.util.CopyHelper;
 import org.hibernate.JDBCException;
-import org.hibernate.internal.SessionImpl;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.resource.transaction.spi.TransactionCoordinator;
 
 import javax.annotation.Nullable;
@@ -286,9 +286,9 @@ public class StoreSessionServer extends AbstractStoreSession {
         HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
         try {
             flush();
-            SessionImpl session = persistenceSessionMaster.reserveSession();
-            //session.checkOpen() er allerede gjort i flush() over 
-            Connection connection = session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
+            SharedSessionContractImplementor session = (SharedSessionContractImplementor) persistenceSessionMaster.reserveSession();
+            //session.checkOpen() er allerede gjort i flush() over
+            final Connection connection = session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
             Savepoint savepoint = connection.setSavepoint();
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry == null) {
@@ -317,7 +317,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
-    private void resetRollbackOnly(SessionImpl session) {
+    private void resetRollbackOnly(SharedSessionContractImplementor session) {
         TransactionCoordinator.TransactionDriver transactionDriverControl = session.getTransactionCoordinator().getTransactionDriverControl();
         Field rollbackOnlyField = null;
         try {

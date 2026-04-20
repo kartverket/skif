@@ -52,7 +52,7 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
                 throw e.getTargetException();
             }
         } else {
-            SharedSessionContractImplementor session = persistenceSessionMaster.reserveSession();
+            SharedSessionContractImplementor session = (SharedSessionContractImplementor) persistenceSessionMaster.reserveSession();
             try {
                 session.checkOpen(true);
                 Connection connection = session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
@@ -65,7 +65,7 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
 
     @Override
     public Connection reserve() {
-        SharedSessionContractImplementor session = persistenceSessionMaster.reserveSession();
+        SharedSessionContractImplementor session = (SharedSessionContractImplementor) persistenceSessionMaster.reserveSession();
         session.checkOpen(true);
         return session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
     }
