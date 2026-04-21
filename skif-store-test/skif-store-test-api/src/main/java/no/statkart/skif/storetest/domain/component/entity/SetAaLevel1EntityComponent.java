@@ -6,7 +6,7 @@ import no.statkart.skif.store.EntityComponentWithOwnerReference;
 import no.statkart.skif.store.ValueObjects;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**

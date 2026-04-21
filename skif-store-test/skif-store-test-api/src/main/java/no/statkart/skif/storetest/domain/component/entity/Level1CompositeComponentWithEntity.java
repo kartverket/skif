@@ -4,7 +4,7 @@ import no.statkart.skif.store.AbstractCompositeBubbleComponent;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.CompositeComponentWithCollections;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**

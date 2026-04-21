@@ -9,9 +9,9 @@ import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestServerTestCase;
-import no.statkart.skif.util.OracleUtils;
+import oracle.jdbc.OracleConnection;
 import org.hibernate.Session;
-import org.hibernate.internal.SessionImpl;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.query.NativeQuery;
 import org.testng.annotations.Test;
 
@@ -37,8 +37,13 @@ public class OracleArrayTest extends StoreTestServerTestCase {
     @Inject
     StoreTestMockupFacadeFactory mockupFacadeFactory;
 
-    private SessionImpl session() {
-        return (SessionImpl) session;
+    // Testene er avhengig av Oracle JDBC driver
+    private Connection getOracleConnection() throws SQLException {
+        return ((SharedSessionContractImplementor) session)
+            .getJdbcCoordinator()
+            .getLogicalConnection()
+            .getPhysicalConnection()
+            .unwrap(OracleConnection.class); //verifiserer faktisk Oracle connection
     }
 
     private Collection<SimpleId<?>> getSimpleIds() {
@@ -66,7 +71,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()
         );
 
-        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
+        var connection = getOracleConnection();
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
             statement.setArray(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
@@ -85,7 +90,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
                 mockupFacade.getSimpleMockupFactory().getSimpleId1().getValue()
         );
 
-        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
+        var connection = getOracleConnection();
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where s.id in (select * from table(:idValues))")) {
             statement.setArray(1, new OracleArrayNumberConverter().toArray(connection, simpleIds));
             ResultSet resultSet = statement.executeQuery();
@@ -105,7 +110,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 //                mockupFacade.getBubbleWithRelationMockupFactory().getBubbleWithRelationId1()
 //        );
 //
-//        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
+//        var connection = getOracleConnection();
 //        try (PreparedStatement statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.anyId, b.anyIdClass) in (select * from table(:anyBubbleIds))")) {
 //            statement.setArray(1, new OracleArrayAnyBubbleIdConverter().toArray(connection, anyIds));
 //            ResultSet resultSet = statement.executeQuery();
@@ -116,16 +121,16 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 //            assertEquals(size, 2);
 //        }
 //    }
-
+//
 //    public void testOracleArrayStringStringConverter() throws SQLException {
 //        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 //
-//            Object[][] values =
-//                    {
-//                            {mockupFacade.getSimpleMockupFactory().getSimpleId2().getClass().getName(), "En BubbleWithRelation (nr 1) peker til denne"}
-//                    };
+//        Object[][] values =
+//            {
+//                {mockupFacade.getSimpleMockupFactory().getSimpleId2().getClass().getName(), "En BubbleWithRelation (nr 1) peker til denne"}
+//            };
 //
-//        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
+//        var connection = getOracleConnection();
 //        try (PreparedStatement statement = connection.prepareStatement("select s.id from BubbleWithAnyBubbleRef b, Simple s where b.anyId=s.id and s.id=:sId and (b.anyIdClass,s.text) in (select * from table(:idValues))")) {
 //            statement.setLong(1, mockupFacade.getSimpleMockupFactory().getSimpleId2().getValue());
 //            statement.setArray(2, new OracleArrayStringStringConverter().toArray(connection, values));
@@ -137,16 +142,16 @@ public class OracleArrayTest extends StoreTestServerTestCase {
 //            assertEquals(size, 1);
 //        }
 //    }
-
+//
 //    public void testOracleArrayConcatenatedFieldsConverter() throws SQLException {
 //        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
 //
 //        BubbleWithAnyBubbleRef bubbleWithAnyBubbleRef = mockupFacade.getStore().get(mockupFacade.getBubbleWithAnyBubbleRefMockupFactory().getBubbleWithAnyBubbleRefId2());
 //        ImmutableList<SomeIdent> identValues = ImmutableList.of(
-//                new SomeIdent(bubbleWithAnyBubbleRef.getNr(), "null")
+//            new SomeIdent(bubbleWithAnyBubbleRef.getNr(), "null")
 //        );
 //
-//        Connection connection = OracleUtils.getOracleConnection(session().doReturningWork(c -> c));
+//        var connection = getOracleConnection();
 //        try (PreparedStatement statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.someIdentValue, b.someIdentClass) in (select * from table(:identValues))")) {
 //            statement.setArray(1, new OracleArrayConcatenatedFieldsConverter().toArray(connection, identValues));
 //            ResultSet resultSet = statement.executeQuery();

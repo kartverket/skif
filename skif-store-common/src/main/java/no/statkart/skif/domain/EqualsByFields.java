@@ -2,7 +2,7 @@ package no.statkart.skif.domain;
 
 import com.google.common.collect.Multimap;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

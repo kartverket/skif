@@ -3,8 +3,7 @@ package no.statkart.skif.store.persistence.jdbc;
 import no.statkart.skif.persistence.jdbc.ConnectionForSnapshotVersion;
 import no.statkart.skif.persistence.jdbc.ConnectionReservationForSnapshot;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -16,6 +15,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Proxy for å garantere samme connection som Hibernate session bruker. 
+ * Dette slik at endringer i evt transaksjon vil være synlige. 
+ * 
  * @author Henrik Fredholm
  * @since 2.1
  */
@@ -50,12 +52,11 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
                 throw e.getTargetException();
             }
         } else {
-            Connection connection = reserve();
-
+            SharedSessionContractImplementor session = (SharedSessionContractImplementor) persistenceSessionMaster.reserveSession();
             try {
-                //noinspection UnnecessaryLocalVariable
-                Object result = method.invoke(connection, args);
-                return result;
+                session.checkOpen(true);
+                Connection connection = session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
+                return method.invoke(connection, args);
             } finally {
                 persistenceSessionMaster.releaseSession();
             }
@@ -64,8 +65,9 @@ public class ConnectionProxyUsingHibernate implements InvocationHandler, Connect
 
     @Override
     public Connection reserve() {
-        Session session = persistenceSessionMaster.reserveSession();
-        return session.doReturningWork(conn -> conn);
+        SharedSessionContractImplementor session = (SharedSessionContractImplementor) persistenceSessionMaster.reserveSession();
+        session.checkOpen(true);
+        return session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
     }
 
     @Override

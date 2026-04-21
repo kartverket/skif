@@ -5,7 +5,7 @@ import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;

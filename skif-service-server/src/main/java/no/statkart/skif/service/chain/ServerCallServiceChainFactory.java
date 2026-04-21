@@ -10,7 +10,7 @@ import no.statkart.skif.service.ejb.EJBCallTypeChooserProxyHandler;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

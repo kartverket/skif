@@ -104,8 +104,6 @@ subprojects { Project project ->
             }
             testImplementation libs.mockito
             testImplementation libs.assertj
-
-            compileOnly libs.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
         }
 
         project.java {

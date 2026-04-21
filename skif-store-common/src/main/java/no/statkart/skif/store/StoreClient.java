@@ -3,7 +3,7 @@ package no.statkart.skif.store;
 import com.google.inject.Injector;
 import no.statkart.skif.exception.ImplementationException;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author Henrik Fredholm

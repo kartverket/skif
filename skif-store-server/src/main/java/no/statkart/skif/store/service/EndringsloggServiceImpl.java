@@ -28,7 +28,7 @@ import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

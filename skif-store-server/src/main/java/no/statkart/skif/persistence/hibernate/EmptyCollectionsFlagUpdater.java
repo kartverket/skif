@@ -2,7 +2,7 @@ package no.statkart.skif.persistence.hibernate;
 
 import no.statkart.skif.store.BubbleObject;
 import org.hibernate.Session;
-import org.hibernate.internal.SessionImpl;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.persister.entity.EntityPersister;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class EmptyCollectionsFlagUpdater {
         // This call actually fetches the entityPersister from the underlying SessionFactory and not the actual session.
         // Thus the persister will not change across different sessions and can be used as a key for looking up the
         // EmptyCollectionsOptimizer.
-        EntityPersister entityPersister = ((SessionImpl) session).getEntityPersister(null, storeBubbleObject);
+        EntityPersister entityPersister = ((SharedSessionContractImplementor) session).getEntityPersister(null, storeBubbleObject);
         EmptyCollectionsOptimizer emptyCollectionsOptimizer = getOrCreateOptimizer(entityPersister);
         emptyCollectionsOptimizer.updateEmptyCollectionFlag(entityPersister, storeBubbleObject);
     }

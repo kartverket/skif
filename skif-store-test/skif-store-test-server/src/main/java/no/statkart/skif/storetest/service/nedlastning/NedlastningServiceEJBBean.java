@@ -13,7 +13,7 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Kontroll;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 

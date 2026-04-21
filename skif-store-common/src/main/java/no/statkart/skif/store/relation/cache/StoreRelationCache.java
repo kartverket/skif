@@ -13,8 +13,8 @@ import no.statkart.skif.store.InverseRelationParticipation;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.WrappableStoreSession;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;

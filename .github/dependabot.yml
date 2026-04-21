@@ -8,11 +8,18 @@ registries:
 
 updates:
     - package-ecosystem: 'github-actions'
-      directory: '.github'
+      directory: '.github/workflows'
       schedule:
           interval: 'weekly'
           time: '07:00'
           timezone: 'Europe/Oslo'
+      groups:
+          marocchino:
+            patterns:
+               - "marocchino/*"
+          github-actions:
+            patterns:
+               - "actions/*"
     - package-ecosystem: "gradle"
       directory: "/"
       open-pull-requests-limit: 20

@@ -18,7 +18,7 @@ import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Session;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
