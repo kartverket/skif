@@ -1,7 +1,8 @@
 package no.statkart.skif.store.persistence.hibernate;
 
 import no.statkart.skif.store.persistence.PersistenceSessionMaster;
-import org.hibernate.internal.SessionImpl;
+import org.hibernate.Session;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 /**
  * @author Henrik Fredholm
@@ -9,9 +10,9 @@ import org.hibernate.internal.SessionImpl;
 public interface HibernatePersistenceSessionMaster extends PersistenceSessionMaster {
 
     /**
-     * Gir ut {@code SessionImpl} for å kunne få adgang til connection direkte.
+     * TIP: Cast to {@link SharedSessionContractImplementor} to gain access to underlying connection.
      */
-    SessionImpl reserveSession();
+    Session reserveSession();
 
     void releaseSession();
 

@@ -3,7 +3,7 @@ package no.statkart.skif.store.persistence;
 import com.google.inject.Inject;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMaster;
-import org.hibernate.internal.SessionImpl;
+import org.hibernate.Session;
 
 import java.util.Objects;
 
@@ -32,7 +32,7 @@ import java.util.Objects;
 public class SessionSelector implements AutoCloseable {
     private PersistenceSessionManager persistenceSessionManager;
     private HibernatePersistenceSessionMaster implementation;
-    private SessionImpl session;
+    private Session session;
 
     @Inject
     public SessionSelector(PersistenceSessionManager persistenceSessionManager) {
@@ -43,7 +43,7 @@ public class SessionSelector implements AutoCloseable {
      * Returnerer en session som er låst til en gitt snapshotversion. Sessionen er kun gyldig sålenge det ikke hentes
      * ut en session for en annen snapshotversion via selectoren.
      */
-    public SessionImpl get(SnapshotVersion snapshotVersion) {
+    public Session get(SnapshotVersion snapshotVersion) {
         if (implementation == null) {
             reserveForSnapshot(snapshotVersion);
         } else if (!snapshotVersion.equals(this.implementation.getSnapshot())) {

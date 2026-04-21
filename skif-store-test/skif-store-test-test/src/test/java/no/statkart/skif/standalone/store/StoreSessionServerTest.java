@@ -748,7 +748,7 @@ public class StoreSessionServerTest {
      * for å returnere en filtrert eller oppdatert instans.
      */
     @SuppressWarnings("JpaQlInspection")
-    private TestBubbleId testBubbleIdFinder() {
+    private TestBubbleId<?> testBubbleIdFinder() {
         try {
             Session hibernateSession = persistenceSessionForSnapshot.getImplementation(HibernatePersistenceSessionMaster.class).reserveSession();
             TestBubble testBubble = hibernateSession.createQuery("from TestBubble where id=:id", TestBubble.class)
