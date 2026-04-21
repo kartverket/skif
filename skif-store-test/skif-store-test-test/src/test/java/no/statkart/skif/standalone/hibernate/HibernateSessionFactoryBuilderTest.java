@@ -13,6 +13,7 @@ import org.hibernate.query.Query;
 import org.hibernate.type.IntegerType;
 import org.testng.annotations.Test;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -53,9 +54,21 @@ public class HibernateSessionFactoryBuilderTest {
         Properties hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm() ;
         try (SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null)) {
             try (Session s = sf.openSession()) {
+                
+                //via Hibernate Worker API
                 var nativeQuery = s.createNativeQuery("select 1 as value from dual");
                 nativeQuery.addScalar("value", IntegerType.INSTANCE);
                 assertThat(nativeQuery.list().get(0)).isEqualTo(1);
+                
+                //via PreparedStatement
+                s.doWork(c -> {
+                    try (var preparedStatement = c.prepareStatement("select 1 from dual")) {
+                        try (ResultSet rs = preparedStatement.executeQuery()) {
+                            rs.next();
+                            assertThat(rs.getInt(1)).isEqualTo(1);
+                        }
+                    }
+                });
             }
         }
     }
