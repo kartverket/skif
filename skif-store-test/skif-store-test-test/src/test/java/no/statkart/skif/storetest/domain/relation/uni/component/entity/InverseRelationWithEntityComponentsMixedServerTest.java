@@ -12,7 +12,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;

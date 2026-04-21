@@ -23,7 +23,7 @@ import no.statkart.skif.service.ws.WebServiceExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

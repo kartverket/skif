@@ -8,7 +8,7 @@ import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 /**

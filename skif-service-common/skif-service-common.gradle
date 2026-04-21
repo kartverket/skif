@@ -11,7 +11,6 @@ configurations {
 
 dependencies {
     api libs.slf4j.api
-    api libs.jsr305
     api libs.guice
     api libs.guava //pga TypeToken
 
@@ -20,6 +19,7 @@ dependencies {
     implementation libs.commons.pool
     compileOnly libs.jaxws.api
     compileOnly libs.jws.api
+    compileOnly libs.bundles.jee
 
     testImplementation libs.bundles.jaxws.rt
     testImplementation libs.reflections
@@ -53,7 +53,6 @@ def assertDependencies = tasks.register("assertDependencies") {
             if (dependency instanceof SelfResolvingDependency) return
             boolean godkjent = [
                 'org.slf4j',
-                'com.google.code.findbugs:jsr305',
                 'com.google.inject:guice',
                 'com.google.guava:guava',
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }

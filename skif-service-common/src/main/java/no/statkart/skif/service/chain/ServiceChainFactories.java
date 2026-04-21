@@ -7,7 +7,7 @@ import com.google.inject.multibindings.Multibinder;
 import com.google.inject.util.Types;
 import no.statkart.skif.SkifUtil;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**

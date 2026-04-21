@@ -2,7 +2,7 @@ package no.statkart.skif.mockup;
 
 import no.statkart.skif.store.AbstractBubbleObject;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 class Krets extends AbstractBubbleObject {
     @Nullable

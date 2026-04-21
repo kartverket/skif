@@ -7,7 +7,7 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.UnitOfWorkTransfer;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 /**

@@ -21,7 +21,7 @@ import java.util.Collection;
  */
 public class SnapshotVersionArgumentListAnalyser {
     /**
-     * Legacy klasse fra JSR305 (finnes ikke i Java/Jakarta EE)
+     * Legacy klasse fra JSR305 (finnes ikke i Java/Jakarta EE). Ligger bare her i tilfelle konsumenter fortsatt bruker JSR305
      */
     static final Class<?> JAVAX_NULLABLE_CLAZZ = tryFindOptionalClass("javax.annotation.Nullable");
     /**

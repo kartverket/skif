@@ -18,7 +18,7 @@ import org.hibernate.JDBCException;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.resource.transaction.spi.TransactionCoordinator;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;

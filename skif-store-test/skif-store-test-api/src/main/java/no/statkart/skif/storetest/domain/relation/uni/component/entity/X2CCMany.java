@@ -3,7 +3,7 @@ package no.statkart.skif.storetest.domain.relation.uni.component.entity;
 import no.statkart.skif.store.InverseRelation;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 /**

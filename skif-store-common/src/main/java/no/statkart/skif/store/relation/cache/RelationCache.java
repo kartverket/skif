@@ -9,7 +9,7 @@ import no.statkart.skif.store.BubbleObjectWithIdent;
 import no.statkart.skif.store.StoreEntry;
 import no.statkart.skif.util.CopyHelper;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
