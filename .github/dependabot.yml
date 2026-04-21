@@ -13,6 +13,13 @@ updates:
           interval: 'weekly'
           time: '07:00'
           timezone: 'Europe/Oslo'
+      groups:
+          marocchino:
+            patterns:
+               - "marocchino/*"
+          github-actions:
+            patterns:
+               - "actions/*"
     - package-ecosystem: "gradle"
       directory: "/"
       open-pull-requests-limit: 20
