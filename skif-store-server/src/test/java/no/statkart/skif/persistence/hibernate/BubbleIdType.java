@@ -2,9 +2,9 @@ package no.statkart.skif.persistence.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.internal.CoreLogging;
 import org.hibernate.usertype.UserType;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 public abstract class BubbleIdType implements UserType {
-    private static final Logger log = CoreLogging.logger( UserType.class );
+    private static final Logger log = LoggerFactory.getLogger(UserType.class);
 
     private final int[] SQL_TYPES = new int[]{Types.BIGINT};
 
@@ -56,8 +56,8 @@ public abstract class BubbleIdType implements UserType {
         Long value = rs.getLong(name);
         if (rs.wasNull()) {
             if ( traceEnabled ) {
-                log.tracef(
-                        "extracted value ([%s] : [%s]) - [null]",
+                log.trace(
+                        "extracted value ({} : {}) - [null]",
                         name,
                         getClass().getName()
                 );
@@ -65,8 +65,8 @@ public abstract class BubbleIdType implements UserType {
             return null;
         } else {
             if ( traceEnabled ) {
-                log.tracef(
-                        "extracted value ([%s] : [%s]) - [%s]",
+                log.trace(
+                        "extracted value ({} : {}) - {}",
                         name,
                         getClass().getName(),
                         value
@@ -81,8 +81,8 @@ public abstract class BubbleIdType implements UserType {
         final boolean traceEnabled = log.isTraceEnabled();
         if (value == null) {
             if ( traceEnabled ) {
-                log.tracef(
-                        "binding parameter [%s] as [%s] - [null]",
+                log.trace(
+                        "binding parameter {} as {} - [null]",
                         index,
                         getClass().getName()
                 );
@@ -91,8 +91,8 @@ public abstract class BubbleIdType implements UserType {
         } else {
             Long longValue = getValue(value);
             if ( traceEnabled ) {
-                log.tracef(
-                        "binding parameter [%s] as [%s] - [%s]",
+                log.trace(
+                        "binding parameter {} as {} - {}",
                         index,
                         getClass().getName(),
                         longValue
