@@ -135,7 +135,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
         Object[][] values = {{"1", "Ingen BubbleWithRelation peker til denne"}};
 
         var connection = getOracleConnection();
-        try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where (s.nr,s.text) in (select * from table(:idValues))")) {
+        try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where (s.id,s.text) in (select * from table(:idValues))")) {
             statement.setArray(1, new OracleArrayStringStringConverter().toArray(connection, values));
             ResultSet resultSet = statement.executeQuery();
             assertThat(resultSet.next()).isTrue();
