@@ -83,7 +83,6 @@ import no.statkart.skif.store.relation.cache.RelationCacheProxyHandler;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.store.service.StoreService;
 import no.statkart.skif.store.service.ejb.EJBResourceProxyHandlerForHibernateWithLocks;
-import no.statkart.skif.storetest.domain.basic.BubbleWithAnyBubbleRef;
 import no.statkart.skif.storetest.domain.basic.BubbleWithFilter;
 import no.statkart.skif.storetest.domain.basic.BubbleWithKode;
 import no.statkart.skif.storetest.domain.basic.BubbleWithLocalDate;
@@ -288,7 +287,6 @@ public class StoreTestServerModule extends SkifModule {
                 // NB: Rekkefølgen er viktig. Objekter som ikke avhenger av andre må stå først
                 .addBubble(Simple.class)
                 .addBubble(BubbleWithRelation.class)
-                .addBubble(BubbleWithAnyBubbleRef.class)
                 .addBubble(BubbleWithFilter.class)
                 .addBubble(BubbleWithValueObject.class)
                 .addBubble(BubbleWithLocalDate.class)
