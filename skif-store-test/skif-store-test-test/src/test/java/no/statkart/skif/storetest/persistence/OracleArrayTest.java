@@ -132,7 +132,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
     public void testOracleArrayStringStringConverter() throws SQLException {
         final var mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
         final var simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
-        Object[][] values = {{"1", "Ingen BubbleWithRelation peker til denne"}};
+        Object[][] values = {{String.valueOf(simpleId1.getValue()), "Ingen BubbleWithRelation peker til denne"}};
 
         var connection = getOracleConnection();
         try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where (s.id,s.text) in (select * from table(:idValues))")) {
