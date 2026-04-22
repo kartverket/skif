@@ -1,6 +1,5 @@
 package no.statkart.skif.persistence.hibernate.type;
 
-import no.statkart.skif.store.persistence.hibernate.type.BubbleIdType;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -29,22 +28,13 @@ import java.util.Properties;
  * loading Hibernate would get the empty collections in the same database call.
  * <p>
  * The type is a flag where each bit corresponds to a given collection in the bubble. A set bit indicates that
- * the collection is know to be empty. A non set bit indicates that the collection might be non empty and must
+ * the collection is known to be empty. A non set bit indicates that the collection might be non empty and must
  * be loaded.
  *
  * @author Henrik Fredholm
  */
 public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, ParameterizedType {
-    /* Logging is implemented as in org.hibernate.type.NullableType in order to get similar logging performance and output as for standard hibernate types */
-    private static final boolean IS_VALUE_TRACING_ENABLED = LoggerFactory.getLogger(StringHelper.qualifier(BubbleIdType.class.getName())).isTraceEnabled();
-    private transient Logger log;
-
-    private Logger log() {
-        if (log == null) {
-            log = LoggerFactory.getLogger(getClass());
-        }
-        return log;
-    }
+    private final static Logger log = LoggerFactory.getLogger(EmptyCollectionsOptimizerFlagType.class);
 
     private Properties properties;
 
@@ -103,18 +93,14 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
         try {
             long value = rs.getLong(position);
             if (rs.wasNull()) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning null as column: " + position);
-                }
+                log.trace("returning null as column: {}", position);
                 return null;
             } else {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("returning '" + value + "' as column: " + position);
-                }
+                log.trace("returning '{}' as column: {}", value, position);
                 return value;
             }
         } catch (RuntimeException | SQLException re) {
-            log().info("could not read column value from result set: " + position + "; " + re.getMessage());
+            log.info("could not read column value from result set: {}; {}", position, re.getMessage());
             throw re;
         }
     }
@@ -124,21 +110,17 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         try {
             if (value == null) {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding null to parameter: " + index);
-                }
+                log.trace("binding null to parameter: {}", index);
                 st.setNull(index, Types.BIGINT);
             } else {
-                if (IS_VALUE_TRACING_ENABLED) {
-                    log().trace("binding '" + value + "' to parameter: " + index);
-                }
+                log.trace("binding '{}' to parameter: {}", value, index);
                 st.setLong(index, (Long) value);
             }
         } catch (ClassCastException ce) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; ClassCastException: expected parameter of class " + getClass() + " got " + ce.getMessage());
+            log.info("could not bind value '{}' to parameter: {}; ClassCastException: expected parameter of class {} got {}", value, index, getClass(), ce.getMessage());
             throw ce;
         } catch (RuntimeException | SQLException re) {
-            log().info("could not bind value '" + value + "' to parameter: " + index + "; " + re.getMessage());
+            log.info("could not bind value '{}' to parameter: {}; {}", value, index, re.getMessage());
             throw re;
         }
     }
