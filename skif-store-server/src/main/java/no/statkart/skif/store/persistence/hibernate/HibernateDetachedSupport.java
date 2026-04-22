@@ -42,7 +42,6 @@ import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.PreparedStatement;
@@ -471,14 +470,14 @@ public class HibernateDetachedSupport {
     protected void attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForCollectionCascade(Collection<?> collectionInOject, Collection<?> collectionInExistingObject, Type elementType, IdentityHashMap<Object, Object> processedObjects, int nestingLevel, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException {
         SessionImplementor sessionImpl = (SessionImplementor) session();
         if (elementType.isEntityType()) {
-            Map<Serializable, Object> oldElementMap = Maps.newHashMap();
+            Map<Object, Object> oldElementMap = Maps.newHashMap();
             for (Object o : collectionInExistingObject) {
                 final EntityPersister elementPersister = sessionImpl.getEntityPersister(elementType.getName(), o);
                 oldElementMap.put(elementPersister.getIdentifier(o, sessionImpl), o);
             }
             for (Object object : collectionInOject) {
                 final EntityPersister elementPersister = sessionImpl.getEntityPersister(elementType.getName(), object);
-                final Serializable identifier = elementPersister.getIdentifier(object, sessionImpl);
+                final Object identifier = elementPersister.getIdentifier(object, sessionImpl);
                 final Object valueExisting = oldElementMap.get(identifier);
                 if (valueExisting != null) { // TODO: Dersom objektet ikke fantes før, så kan det vel ikke være noen collections som skal attaches?
                     attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities(object, valueExisting, processedObjects, nestingLevel, orphanOneToOneEntityComponents);
