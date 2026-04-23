@@ -54,7 +54,7 @@ jobs:
               uses: gradle/actions/wrapper-validation@v6
 
             - name: Build
-              run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }}
+              run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
               env:
                   PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
@@ -145,7 +145,7 @@ jobs:
                   distribution: 'temurin'
 
             - name: Publish to GitHub Packages
-              run: ./gradlew publish --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }}
+              run: ./gradlew publish --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
