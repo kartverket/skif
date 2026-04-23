@@ -3,7 +3,7 @@ package no.statkart.skif.store;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.ImplementedBy;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 /**

@@ -22,7 +22,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.engine.spi.EntityKey;
 import org.hibernate.engine.spi.PersistenceContext;
-import org.hibernate.internal.SessionImpl;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.persister.entity.EntityPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,11 +154,11 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     }
 
     @Override
-    public SessionImpl reserveSession() {
+    public Session reserveSession() {
         if (sessionFactoryDescriptor.isSnapshotChangable()) {
             reserveCount++;
         }
-        return (SessionImpl)session();
+        return session();
     }
 
     @Override
@@ -440,7 +440,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         final EntityPersister classPersister = getClassPersister(bubbleId.getType());
         final EntityKey key = new EntityKey(bubbleId, classPersister);
         //noinspection unchecked,UnnecessaryLocalVariable
-        T bubble = (T) ((SessionImpl) session()).getPersistenceContext().getEntity(key);
+        T bubble = (T) ((SharedSessionContractImplementor) session()).getPersistenceContext().getEntity(key);
         return bubble;
     }
 
@@ -506,7 +506,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     protected final Object lookupInHibernateCache(Class aClass, Serializable hibernateId) {
         final EntityPersister classPersister = getClassPersister(aClass);
         final EntityKey key = new EntityKey(hibernateId, classPersister);
-        PersistenceContext context = ((SessionImpl) session()).getPersistenceContext();
+        PersistenceContext context = ((SharedSessionContractImplementor) session()).getPersistenceContext();
         return context.getEntity(key);
     }
 
@@ -538,7 +538,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     private EntityPersister getClassPersister(Class theClass) {
         try {
             if (lastClass != theClass) {
-                lastResultForClass = ((SessionImpl) session()).getFactory().getEntityPersister(theClass.getName());
+                lastResultForClass = ((SharedSessionContractImplementor) session()).getFactory().getEntityPersister(theClass.getName());
                 lastClass = theClass;
             }
             return lastResultForClass;
@@ -611,7 +611,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
     public void verifySessionIsEmpty() {
         Preconditions.checkState(hibernateLazySupport.getFullyInitializedBubbles().size() == 0, "FullyInitializedBubbles er ikke tom");
         Preconditions.checkState(hibernateLazySupport.getExportedLazyLoadedBubbles().size() == 0, "ExportedLazyLoadedBubbles er ikke tom");
-        PersistenceContext persistenceContext = ((SessionImpl) session()).getPersistenceContext();
+        PersistenceContext persistenceContext = ((SharedSessionContractImplementor) session()).getPersistenceContext();
         Preconditions.checkState(persistenceContext.getEntitiesByKey().size() == 0, "EntitiesByKey er ikke tom");
         Preconditions.checkState(persistenceContext.reentrantSafeEntityEntries().length == 0, "EntityEntries er ikke tom");
         Preconditions.checkState(persistenceContext.getCollectionEntries().size() == 0, "CollectionEnties er ikke tom");

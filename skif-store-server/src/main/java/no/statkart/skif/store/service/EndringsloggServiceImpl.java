@@ -10,7 +10,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
 import no.statkart.skif.exception.NotImplementedException;
-import no.statkart.skif.persistence.hibernate.type.OracleLongBubbleIdArrayCustomType;
+import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.store.AbstractBubbleId;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
@@ -29,7 +29,7 @@ import org.hibernate.Session;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.query.NativeQuery;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -243,7 +243,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
             String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))" + discriminatorSql;
 
             NativeQuery<?> query = session.createNativeQuery(sql)
-                    .setParameter("ids", ids, new OracleLongBubbleIdArrayCustomType());
+                    .setParameter("ids", ids, new OracleArrayLongBubbleIdCustomType());
 
             Kontroll result = new Kontroll();
             result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6

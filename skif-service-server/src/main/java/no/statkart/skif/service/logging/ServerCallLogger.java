@@ -24,7 +24,7 @@ public interface ServerCallLogger {
      *
      * @param method      metoden som ble kalt og har returnert
      * @param args        argumentene metoden ble kalt med
-     * @param returnValue returverdien fra metoden som ble kalt
+     * @param returnValue returverdien fra metodecreateCallMessagen som ble kalt
      * @param time        tiden kallet tok, i millisekunder
      */
     void logEjbReturn(Method method, Object[] args, Object returnValue, long time);

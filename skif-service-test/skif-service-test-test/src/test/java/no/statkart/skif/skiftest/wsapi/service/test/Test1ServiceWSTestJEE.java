@@ -35,7 +35,7 @@ import no.statkart.skif.util.testsupport.SkifTestConfigurationAccessor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import java.util.Arrays;
 import java.util.List;

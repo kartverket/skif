@@ -80,6 +80,21 @@ subprojects { Project project ->
         }
     }
 
+    plugins.withType(MavenPublishPlugin) {
+        publishing {
+            repositories {
+                maven {
+                    name = "GitHubPackages"
+                    url = "https://maven.pkg.github.com/kartverket/skif"
+                    credentials {
+                        username = System.getenv("GITHUB_ACTOR")
+                        password = System.getenv("GITHUB_TOKEN")
+                    }
+                }
+            }
+        }
+    }
+
 
     plugins.withType(JavaPlugin) {
         // Avhengigheter som trengs for testing (riktignok ikke alle overalt)
@@ -91,8 +106,6 @@ subprojects { Project project ->
             }
             testImplementation libs.mockito
             testImplementation libs.assertj
-
-            compileOnly libs.jsr305 //for bruk av @Nullable @Nonnull osv - disse brukes på tvers av hele skif APIet
         }
 
         project.java {

@@ -15,10 +15,10 @@ import no.statkart.skif.store.persistence.PersistenceSessionManager;
 import no.statkart.skif.store.persistence.hibernate.HibernatePersistenceSessionMasterImpl;
 import no.statkart.skif.util.CopyHelper;
 import org.hibernate.JDBCException;
-import org.hibernate.internal.SessionImpl;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.resource.transaction.spi.TransactionCoordinator;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -283,11 +283,12 @@ public class StoreSessionServer extends AbstractStoreSession {
      */
     public void attemptDelete(BubbleId<?> bubbleId) throws AttemptDeleteException {
         Preconditions.checkState(level == 0, "level!=0");
+        HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
         try {
             flush();
-            HibernatePersistenceSessionMasterImpl persistenceSessionMaster = persistenceSessionManager.getForSnapshotVersion(SnapshotVersion.CURRENT).getImplementation(HibernatePersistenceSessionMasterImpl.class);
-            SessionImpl session = persistenceSessionMaster.reserveSession();
-            Connection connection = session.connection();
+            SharedSessionContractImplementor session = (SharedSessionContractImplementor) persistenceSessionMaster.reserveSession();
+            //session.checkOpen() er allerede gjort i flush() over
+            final Connection connection = session.getJdbcCoordinator().getLogicalConnection().getPhysicalConnection();
             Savepoint savepoint = connection.setSavepoint();
             StoreEntry storeEntry = storeCache.get(bubbleId);
             if (storeEntry == null) {
@@ -316,7 +317,7 @@ public class StoreSessionServer extends AbstractStoreSession {
         }
     }
 
-    private void resetRollbackOnly(SessionImpl session) {
+    private void resetRollbackOnly(SharedSessionContractImplementor session) {
         TransactionCoordinator.TransactionDriver transactionDriverControl = session.getTransactionCoordinator().getTransactionDriverControl();
         Field rollbackOnlyField = null;
         try {

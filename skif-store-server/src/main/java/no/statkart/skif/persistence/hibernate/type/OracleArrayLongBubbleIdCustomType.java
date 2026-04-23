@@ -7,8 +7,8 @@ import org.hibernate.type.CustomType;
 
 /**
  * En Hibernate {@code CustomType} klasse som gjør det mulig å bruke collections av vilkårlig størrelse
- * som innput parameter i hibernate spørringer. Klassen baserer seg på [@code OracleLongBubbleIdArrayUserType}
- * som er en Hibernate {@code UserType} for persistering av Oracle {@code oracle.sql.ARRAY}.
+ * som innput parameter i hibernate spørringer. Implementasjonen forutsetter at en type i databaseskjema er opprettet. 
+ * Implementasjonen bruker {@code oracle.sql.ARRAY} i Oracle JDBC driver.
  * <p>
  * <strong>Eksempel på bruk:</strong>
  * <pre>

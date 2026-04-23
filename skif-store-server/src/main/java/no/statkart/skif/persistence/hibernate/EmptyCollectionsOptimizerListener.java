@@ -4,14 +4,13 @@ import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.ComponentWithOwnerReference;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.event.spi.PreCollectionUpdateEvent;
 import org.hibernate.event.spi.PreCollectionUpdateEventListener;
 import org.hibernate.event.spi.PreLoadEvent;
 import org.hibernate.event.spi.PreLoadEventListener;
 import org.hibernate.event.spi.SaveOrUpdateEvent;
 import org.hibernate.event.spi.SaveOrUpdateEventListener;
-import org.hibernate.internal.SessionImpl;
 import org.hibernate.persister.entity.EntityPersister;
 
 import java.util.Map;
@@ -78,8 +77,8 @@ public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, 
         }
     }
 
-    private <T extends BubbleObject> EntityPersister findPersister(T storeBubbleObject, Session session) {
-        return ((SessionImpl) session).getEntityPersister(null, storeBubbleObject);
+    private <T extends BubbleObject> EntityPersister findPersister(T storeBubbleObject, SharedSessionContractImplementor session) {
+        return session.getEntityPersister(null, storeBubbleObject);
     }
 
     private EmptyCollectionsOptimizer getOrCreateOptimizer(EntityPersister entityPersister) {

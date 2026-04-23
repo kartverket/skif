@@ -29,7 +29,7 @@ import org.assertj.core.api.Fail;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

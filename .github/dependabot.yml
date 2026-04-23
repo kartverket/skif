@@ -1,14 +1,30 @@
 version: 2
+registries:
+    github-sktools:
+        type: maven-repository
+        url: https://maven.pkg.github.com/kartverket/SkTools
+        username: x-access-token
+        password: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
+
 updates:
     - package-ecosystem: 'github-actions'
-      directory: '.github'
+      directory: '.github/workflows'
       schedule:
           interval: 'weekly'
           time: '07:00'
           timezone: 'Europe/Oslo'
+      groups:
+          marocchino:
+            patterns:
+               - "marocchino/*"
+          github-actions:
+            patterns:
+               - "actions/*"
     - package-ecosystem: "gradle"
       directory: "/"
       open-pull-requests-limit: 20
+      registries:
+          - github-sktools
       schedule:
           interval: "weekly"
           time: '07:00'
@@ -20,7 +36,7 @@ updates:
           # Jakarta EE Web services
           - dependency-name: "com.sun.xml.ws:*"
             update-types: ["version-update:semver-major", "version-update:semver-minor"]
-          # Jakarta EE JAXB  
+          # Jakarta EE JAXB
           - dependency-name: "com.sun.xml.bind:*"
             update-types: ["version-update:semver-major"]
           - dependency-name: "org.glassfish.jaxb:*"
@@ -33,5 +49,3 @@ updates:
             update-types: ["version-update:semver-major"]
           - dependency-name: "org.apache.tomee:*"
             update-types: ["version-update:semver-major"]
-            
-            

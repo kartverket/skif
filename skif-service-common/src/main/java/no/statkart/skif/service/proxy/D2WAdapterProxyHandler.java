@@ -9,7 +9,7 @@ import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 

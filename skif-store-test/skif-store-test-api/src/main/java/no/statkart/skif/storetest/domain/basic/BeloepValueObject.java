@@ -2,7 +2,7 @@ package no.statkart.skif.storetest.domain.basic;
 
 import no.statkart.skif.store.ValueObject;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Objects;
 
 

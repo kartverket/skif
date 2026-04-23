@@ -12,7 +12,7 @@ import no.statkart.skif.storetest.domain.basic.BubbleWithValueObject;
 import no.statkart.skif.storetest.domain.basic.BubbleWithValueObjectId;
 import no.statkart.skif.util.CopyHelper;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**

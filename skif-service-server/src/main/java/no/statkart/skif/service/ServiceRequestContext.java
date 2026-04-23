@@ -6,7 +6,7 @@ import jakarta.inject.Inject;
 import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.security.Principal;
 

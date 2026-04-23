@@ -26,7 +26,7 @@ import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.RuntimeExceptionProxyHandler;
 import no.statkart.skif.skiftest.service.SkifTestServiceContext;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;

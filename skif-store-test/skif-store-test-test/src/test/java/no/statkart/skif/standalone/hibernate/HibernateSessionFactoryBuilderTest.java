@@ -9,17 +9,15 @@ import no.statkart.skif.storetest.domain.standalone.TestEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.internal.SessionImpl;
 import org.hibernate.query.Query;
+import org.hibernate.type.IntegerType;
 import org.testng.annotations.Test;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 
-import static org.testng.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertNotNull;
 
 /**
@@ -54,18 +52,25 @@ public class HibernateSessionFactoryBuilderTest {
         HibernateSessionFactoryBuilder sfbuilder = createHibernateSessionFactoryBuilder();
         sfbuilder.addResource(Foo.class);
         Properties hibernateProperties = StandAloneTestHelper.createHibernatePropertiesSingleVm() ;
-        SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null);
-        assertNotNull(sf);
-        SessionImpl s = (SessionImpl) sf.openSession();
-        Connection c = s.connection();
-        Statement statement = c.createStatement();
-        ResultSet rs = statement.executeQuery("select 1 from dual");
-        rs.next();
-        assertEquals(rs.getInt(1), 1);
-        statement.close();
-        c.close();
-        s.close();
-        sf.close();
+        try (SessionFactory sf = sfbuilder.build(new SnapshotVersionSeed(SnapshotVersion.CURRENT), hibernateProperties, null)) {
+            try (Session s = sf.openSession()) {
+                
+                //via Hibernate Worker API
+                var nativeQuery = s.createNativeQuery("select 1 as value from dual");
+                nativeQuery.addScalar("value", IntegerType.INSTANCE);
+                assertThat(nativeQuery.list().get(0)).isEqualTo(1);
+                
+                //via PreparedStatement
+                s.doWork(c -> {
+                    try (var preparedStatement = c.prepareStatement("select 1 from dual")) {
+                        try (ResultSet rs = preparedStatement.executeQuery()) {
+                            rs.next();
+                            assertThat(rs.getInt(1)).isEqualTo(1);
+                        }
+                    }
+                });
+            }
+        }
     }
 
     @Test(invocationCount = 1 /*200*/, groups="slow")

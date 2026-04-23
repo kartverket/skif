@@ -43,6 +43,7 @@ public class SkifMixedTestCase extends SkifTestCase {
          * @deprecated Bruk {@link #runInTxRequired}. Oppførslen til runInTxRequiresNew kommer muligvis til å endre seg
          * i fremtiden mht frigivelse av låser ved commit.
          */
+        @Deprecated
         public Object runInTxRequiresNew(RunOnServerMethod method) {
             RunOnServerWithTxRequiresNewService runOnServerService = injector.getInstance(RunOnServerWithTxRequiresNewService.class);
             return runOnServerService.run(method);

@@ -7,7 +7,7 @@ import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.service.ServiceContextMapper;
 import no.statkart.skif.service.annotation.WSServiceChain;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**

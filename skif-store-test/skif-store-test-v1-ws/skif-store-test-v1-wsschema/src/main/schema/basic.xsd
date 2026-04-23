@@ -41,31 +41,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="BubbleWithAnyBubbleRefId">
-        <xs:complexContent>
-            <xs:extension base="domainns:StoreTestBubbleId">
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="BubbleWithAnyBubbleRefIdList">
-        <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="basicns:BubbleWithAnyBubbleRefId"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="BubbleWithAnyBubbleRef">
-        <xs:complexContent>
-            <xs:extension base="domainns:StoreTestBubble">
-                <xs:sequence>
-                    <xs:element name="nr" type="xs:int"/>
-                    <xs:element name="anyId" type="domainns:StoreTestBubbleId" nillable="true"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-
     <xs:complexType name="BubbleWithFilterId">
         <xs:complexContent>
             <xs:extension base="domainns:StoreTestBubbleId">

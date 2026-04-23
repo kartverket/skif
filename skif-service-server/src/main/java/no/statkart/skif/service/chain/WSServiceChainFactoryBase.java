@@ -7,7 +7,7 @@ import no.statkart.skif.service.annotation.WSServiceChain;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.TerminatingProxyHandler;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author Henrik Fredholm
