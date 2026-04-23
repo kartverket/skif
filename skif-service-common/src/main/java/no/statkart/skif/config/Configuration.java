@@ -539,7 +539,7 @@ public interface Configuration
      * @throws ConversionException is thrown if the key maps to an
      *         object that is not a List.
      */
-    List getList(String key);
+    List<String> getList(String key);
 
     /**
      * Get a List of strings associated with the given configuration key.
@@ -553,5 +553,5 @@ public interface Configuration
      * @throws ConversionException is thrown if the key maps to an
      *         object that is not a List.
      */
-    List getList(String key, List defaultValue);
+    List<String> getList(String key, List<String> defaultValue);
 }

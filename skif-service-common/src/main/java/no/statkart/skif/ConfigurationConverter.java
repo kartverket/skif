@@ -3,7 +3,6 @@ package no.statkart.skif;
 import no.statkart.skif.config.AbstractConfiguration;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.config.MapConfiguration;
-import no.statkart.skif.internal.util.InternalStringUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -51,16 +50,17 @@ public final class ConfigurationConverter
         Properties props = new Properties();
 
         char delimiter = (config instanceof AbstractConfiguration)
-            ? ((AbstractConfiguration) config).getListDelimiter() : ',';
+            ? ((AbstractConfiguration) config).getListDelimiter() : AbstractConfiguration.getDefaultListDelimiter();
 
         Iterator keys = config.getKeys();
         while (keys.hasNext())
         {
             String key = (String) keys.next();
-            List list = config.getList(key);
+            List<String> list = config.getList(key);
 
             // turn the list into a string
-            props.setProperty(key, InternalStringUtils.join(list.iterator(), delimiter));
+            final String value = String.join(String.valueOf(delimiter), list);
+            props.setProperty(key, value);
         }
 
         return props;

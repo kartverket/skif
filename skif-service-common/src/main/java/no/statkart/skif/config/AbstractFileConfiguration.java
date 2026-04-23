@@ -2,7 +2,6 @@ package no.statkart.skif.config;
 
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.internal.util.InternalConfigurationUtils;
-import no.statkart.skif.internal.util.InternalStringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -228,10 +227,8 @@ public abstract class AbstractFileConfiguration extends MapConfiguration
      */
     public void load(URL url) throws ConfigurationException
     {
-        if (sourceURL == null)
-        {
-            if (InternalStringUtils.isEmpty(getBasePath()))
-            {
+        if (sourceURL == null) {
+            if (getBasePath() == null || getBasePath().isBlank()) {
                 // ensure that we have a valid base path
                 setBasePath(url.toString());
             }
