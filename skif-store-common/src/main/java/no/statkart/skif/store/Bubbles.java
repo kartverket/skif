@@ -86,6 +86,7 @@ public class Bubbles {
     /**
      *  @deprecated bruk identisk metode  {@link Components#onChangeRelation}
      */
+    @Deprecated
     public static <E> E onChangeRelation(ComponentWithOwnerReference<?> component, RelationName relationName, E oldValue, E newValue) {
         BubbleObject owningBubble = Components.getOwningBubble(component);
         Bubbles.onChangeRelationImpl(owningBubble, relationName, oldValue, newValue);

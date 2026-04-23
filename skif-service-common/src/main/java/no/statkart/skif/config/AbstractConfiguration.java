@@ -77,8 +77,9 @@ public abstract class AbstractConfiguration implements Configuration {
      *
      * @param delimiter the delimiter character
      * @deprecated Use AbstractConfiguration.setDefaultListDelimiter(char)
-     *             instead
+     * instead
      */
+    @Deprecated(forRemoval = true)
     public static void setDelimiter(char delimiter) {
         setDefaultListDelimiter(delimiter);
     }
@@ -98,6 +99,7 @@ public abstract class AbstractConfiguration implements Configuration {
      * @return the default list delimiter
      * @deprecated Use AbstractConfiguration.getDefaultListDelimiter() instead
      */
+    @Deprecated(forRemoval = true)
     public static char getDelimiter() {
         return getDefaultListDelimiter();
     }
