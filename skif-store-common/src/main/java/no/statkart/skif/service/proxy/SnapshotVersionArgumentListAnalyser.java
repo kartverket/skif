@@ -28,6 +28,11 @@ public class SnapshotVersionArgumentListAnalyser {
      * Annotasjon som ble innført først til Jakarta EE10 (finnes ikke i <=EE9)
      */
     static final Class<?> JAKARTA_NULLABLE_CLAZZ = tryFindOptionalClass("jakarta.annotation.Nullable");
+    /**
+     * Finnes i org.jspecify:jspecify:1.0.0 
+     * JSpecify følger med Guava 33.4 og nyere 
+     */
+    static final Class<?> JSPECIFY_NULLABLE_CLAZZ = tryFindOptionalClass("org.jspecify.annotations.Nullable");
 
     private static Class<?> tryFindOptionalClass(String className) {
         try {
@@ -114,6 +119,7 @@ public class SnapshotVersionArgumentListAnalyser {
      */
     private boolean hasIgnoreAnnotation(Annotation[] annotations) {
         for (Annotation annotation : annotations) {
+            if (annotation.annotationType() == JSPECIFY_NULLABLE_CLAZZ) return true;
             if (annotation.annotationType() == JAVAX_NULLABLE_CLAZZ) return true;
             if (annotation.annotationType() == JAKARTA_NULLABLE_CLAZZ) return true;
             if (annotation.annotationType() == SuppressSnapshotVersionMapping.class) return true;
