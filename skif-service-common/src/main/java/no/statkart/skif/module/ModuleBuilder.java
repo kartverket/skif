@@ -64,8 +64,10 @@ public class ModuleBuilder {
      * {@code SystemConfiguration}-instans. Moduler som ikke deler {@code Configuration}-instans bruker hver sin
      * SystemConfiguration kopi. SingleVmServer moduler deler for eksempel ikke {@code Configuration}-instans med
      * klienter har derfor sin egen {@code SystemConfiguration}-instans.
+     *
      * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      */
+    @Deprecated
     protected SystemConfiguration systemConfiguration;
 
     /**
@@ -101,8 +103,10 @@ public class ModuleBuilder {
 
     /**
      * Configuration som kombinerer alle de andre configurations. Initialiseres lazy.
+     *
      * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      */
+    @Deprecated
     private CompositeConfiguration compositeConfiguration;
 
     public ModuleBuilder() {
@@ -110,9 +114,10 @@ public class ModuleBuilder {
     }
 
     /**
-     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      * @param systemConfiguration systemkonfigurasjon
+     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      */
+    @Deprecated
     public ModuleBuilder(SystemConfiguration systemConfiguration) {
         this.systemConfiguration = systemConfiguration;
         this.builderConfiguration = new MapConfiguration();
@@ -177,18 +182,20 @@ public class ModuleBuilder {
     }
 
     /**
-     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      * @return konfigurasjonsfilnavn
+     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      */
+    @Deprecated
     public String getConfigurationFilename() {
         return getCompositeConfiguration().getString(CONFIGURATION_FILENAME);
     }
 
     /**
-     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      * @param filename navn på konfigurasjonsfil
      * @return <code>this</code>
+     * @deprecated Bruk SkifConfiguration til konfigurasjonshierarki
      */
+    @Deprecated
     public ModuleBuilder setConfigurationFilename(String filename) {
         builderConfiguration.setProperty(CONFIGURATION_FILENAME, filename);
         setConfiguration(null);

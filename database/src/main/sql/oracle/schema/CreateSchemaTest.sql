@@ -46,16 +46,6 @@ create table Simple (
     primary key (id)
 );
 
-create table BubbleWithAnyBubbleRef (
-    id number(19,0) not null,
-    nr number(10,0),
-    anyId number(19,0),
-    anyIdclass varchar2(255),
-    someIdentValue varchar2(255),
-    someIdentclass varchar2(255),
-    primary key (id)
-);
-
 create table BubbleWithRelation (
     id number(19,0) not null,
     nr number(10,0),

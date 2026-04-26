@@ -13,6 +13,7 @@ import java.sql.SQLException;
  *
  * @deprecated Inneffektiv. Bruk heller {@link ConnectionFactoryUsingPool}.
  */
+@Deprecated
 public class ConnectionFactoryUsingJDBC extends AbstractConnectionFactory {
     private final String url;
     private final String username;

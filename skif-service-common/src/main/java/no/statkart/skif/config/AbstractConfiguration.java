@@ -77,8 +77,9 @@ public abstract class AbstractConfiguration implements Configuration {
      *
      * @param delimiter the delimiter character
      * @deprecated Use AbstractConfiguration.setDefaultListDelimiter(char)
-     *             instead
+     * instead
      */
+    @Deprecated(forRemoval = true)
     public static void setDelimiter(char delimiter) {
         setDefaultListDelimiter(delimiter);
     }
@@ -98,6 +99,7 @@ public abstract class AbstractConfiguration implements Configuration {
      * @return the default list delimiter
      * @deprecated Use AbstractConfiguration.getDefaultListDelimiter() instead
      */
+    @Deprecated(forRemoval = true)
     public static char getDelimiter() {
         return getDefaultListDelimiter();
     }
@@ -710,30 +712,30 @@ public abstract class AbstractConfiguration implements Configuration {
      *
      * @see #getStringArray(String)
      */
-    public List getList(String key) {
-        return getList(key, new ArrayList());
+    public List<String> getList(String key) {
+        return getList(key, new ArrayList<>(0));
     }
 
-    public List getList(String key, List defaultValue) {
+    public List<String> getList(String key, List<String> defaultValue) {
         Object value = getProperty(key);
-        List list;
+        List<String> list;
 
         if (value instanceof String) {
-            list = new ArrayList(1);
+            list = new ArrayList<>(1);
             list.add(interpolate((String) value));
         } else if (value instanceof List) {
-            List l = (List) value;
-            list = new ArrayList(l.size());
+            @SuppressWarnings("unchecked") 
+            List<String> l = (List<String>) value;
+            list = new ArrayList<>(l.size());
 
             // add the interpolated elements in the new list
-            Iterator it = l.iterator();
-            while (it.hasNext()) {
-                list.add(interpolate(it.next()));
+            for (String item : l) {
+                list.add(interpolate(item));
             }
         } else if (value == null) {
             list = defaultValue;
         } else if (value.getClass().isArray()) {
-            return Arrays.asList((Object[]) value);
+            return Arrays.asList((String[]) value);
         } else {
             throw new ConversionException('\'' + key + "' doesn't map to a List object: " + value + ", a "
                     + value.getClass().getName());

@@ -7,6 +7,7 @@ import no.statkart.skif.exception.ImplementationException;
  * @since 2.1
  * @deprecated Denne ser ut til å ha en grov rekursjonsfeil i {@link #selected()}!
  */
+@Deprecated
 public class SwitchingResourceManager implements ResourceManager {
     private ResourceManager selected;
     private final ResourceManager jdbcOnlyBased;

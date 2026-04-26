@@ -12,7 +12,7 @@ concurrency:
     cancel-in-progress: true
 
 env:
-    MAJOR_VERSION: 5
+    MAJOR_VERSION: 6
     TEST_PROPERTIES: "-Pdb_jdbc_url=jdbc:oracle:thin:@//localhost:1521/skifdev -Pdb_username=SKIF_DEV -Pdb_password=SKIF_DEV -Padmin_db_username=SYSTEM -Padmin_db_password=MATRIKKELADM -Pdb_dataroot_dir=/opt/oracle/oradata"
     TZ: Europe/Oslo #SKIF-760: workaround for historikk-tester
 
@@ -51,10 +51,10 @@ jobs:
                   distribution: 'temurin'
 
             - name: Validate Gradle wrapper
-              uses: gradle/actions/wrapper-validation@v4
+              uses: gradle/actions/wrapper-validation@v6
 
             - name: Build
-              run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }}
+              run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
               env:
                   PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
@@ -93,7 +93,7 @@ jobs:
                   distribution: 'temurin'
 
             - name: Validate Gradle wrapper
-              uses: gradle/actions/wrapper-validation@v4
+              uses: gradle/actions/wrapper-validation@v6
 
             - name: Initialize database
               run: |
@@ -145,7 +145,7 @@ jobs:
                   distribution: 'temurin'
 
             - name: Publish to GitHub Packages
-              run: ./gradlew publish --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }}
+              run: ./gradlew publish --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.store.persistence.OracleArrayNumberConverter;
+import no.statkart.skif.store.persistence.OracleArrayStringStringConverter;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -102,65 +103,20 @@ public class OracleArrayTest extends StoreTestServerTestCase {
         }
     }
 
+    @Test
+    public void testOracleArrayStringStringConverter() throws SQLException {
+        final var mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        final var simpleId1 = mockupFacade.getSimpleMockupFactory().getSimpleId1();
+        Object[][] values = {{String.valueOf(simpleId1.getValue()), "Ingen BubbleWithRelation peker til denne"}};
 
-//    public void testOracleArrayAnyBubbleIdConverter() throws SQLException {
-//        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-//        Collection<BubbleId<?>> anyIds = ImmutableList.<BubbleId<?>>of(
-//                mockupFacade.getSimpleMockupFactory().getSimpleId2(),
-//                mockupFacade.getBubbleWithRelationMockupFactory().getBubbleWithRelationId1()
-//        );
-//
-//        var connection = getOracleConnection();
-//        try (PreparedStatement statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.anyId, b.anyIdClass) in (select * from table(:anyBubbleIds))")) {
-//            statement.setArray(1, new OracleArrayAnyBubbleIdConverter().toArray(connection, anyIds));
-//            ResultSet resultSet = statement.executeQuery();
-//            int size = 0;
-//            while (resultSet.next()) {
-//                size++;
-//            }
-//            assertEquals(size, 2);
-//        }
-//    }
-//
-//    public void testOracleArrayStringStringConverter() throws SQLException {
-//        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-//
-//        Object[][] values =
-//            {
-//                {mockupFacade.getSimpleMockupFactory().getSimpleId2().getClass().getName(), "En BubbleWithRelation (nr 1) peker til denne"}
-//            };
-//
-//        var connection = getOracleConnection();
-//        try (PreparedStatement statement = connection.prepareStatement("select s.id from BubbleWithAnyBubbleRef b, Simple s where b.anyId=s.id and s.id=:sId and (b.anyIdClass,s.text) in (select * from table(:idValues))")) {
-//            statement.setLong(1, mockupFacade.getSimpleMockupFactory().getSimpleId2().getValue());
-//            statement.setArray(2, new OracleArrayStringStringConverter().toArray(connection, values));
-//            ResultSet resultSet = statement.executeQuery();
-//            int size = 0;
-//            while (resultSet.next()) {
-//                size++;
-//            }
-//            assertEquals(size, 1);
-//        }
-//    }
-//
-//    public void testOracleArrayConcatenatedFieldsConverter() throws SQLException {
-//        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
-//
-//        BubbleWithAnyBubbleRef bubbleWithAnyBubbleRef = mockupFacade.getStore().get(mockupFacade.getBubbleWithAnyBubbleRefMockupFactory().getBubbleWithAnyBubbleRefId2());
-//        ImmutableList<SomeIdent> identValues = ImmutableList.of(
-//            new SomeIdent(bubbleWithAnyBubbleRef.getNr(), "null")
-//        );
-//
-//        var connection = getOracleConnection();
-//        try (PreparedStatement statement = connection.prepareStatement("select b.id from BubbleWithAnyBubbleRef b where (b.someIdentValue, b.someIdentClass) in (select * from table(:identValues))")) {
-//            statement.setArray(1, new OracleArrayConcatenatedFieldsConverter().toArray(connection, identValues));
-//            ResultSet resultSet = statement.executeQuery();
-//            int size = 0;
-//            while (resultSet.next()) {
-//                size++;
-//            }
-//            assertEquals(size, 1);
-//        }
-//    }
+        var connection = getOracleConnection();
+        try (PreparedStatement statement = connection.prepareStatement("select s.id from Simple s where (s.id,s.text) in (select * from table(:idValues))")) {
+            statement.setArray(1, new OracleArrayStringStringConverter().toArray(connection, values));
+            ResultSet resultSet = statement.executeQuery();
+            assertThat(resultSet.next()).isTrue();
+            assertThat(resultSet.getLong(1)).isEqualTo(simpleId1.getValue());
+            assertThat(resultSet.next()).as("Kun èn rad").isFalse();
+        }
+    }
 
 }
