@@ -50,5 +50,9 @@ public class SnapshotVersionArgumentListAnalyserTest {
         assertThatCode(() -> snapshotVersionArgumentListAnalyser.analyseD2W(barMethod(), new Object[]{null, new FooId(), new FooId(), new FooId(), new FooId()}))
             .as("ignore null når annotert med @org.jspecify.annotations.Nullable")
             .doesNotThrowAnyException();
+        
+        //positiv test
+        assertThatCode(() -> snapshotVersionArgumentListAnalyser.analyseD2W(barMethod(), new Object[]{null, new FooId(), new FooId(), new FooId(), null}))
+            .hasMessage("Parameter with index '4' of subtype BubbleId is null, did you forget to annotate with @Nullable?");
     }
 }
