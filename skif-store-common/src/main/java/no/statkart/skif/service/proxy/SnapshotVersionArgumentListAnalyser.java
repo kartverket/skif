@@ -24,20 +24,20 @@ public class SnapshotVersionArgumentListAnalyser {
     /**
      * Legacy klasse fra JSR305 (finnes ikke i Java/Jakarta EE). Ligger bare her i tilfelle konsumenter fortsatt bruker JSR305
      */
-    static final Class<?> JAVAX_NULLABLE_CLAZZ = tryFindOptionalClass("javax.annotation.Nullable");
+    static final Class<? extends Annotation> JAVAX_NULLABLE_CLAZZ = tryFindOptionalClass("javax.annotation.Nullable");
     /**
      * Annotasjon som ble innført først til Jakarta EE10 (finnes ikke i <=EE9)
      */
-    static final Class<?> JAKARTA_NULLABLE_CLAZZ = tryFindOptionalClass("jakarta.annotation.Nullable");
+    static final Class<? extends Annotation> JAKARTA_NULLABLE_CLAZZ = tryFindOptionalClass("jakarta.annotation.Nullable");
     /**
      * Finnes i org.jspecify:jspecify:1.0.0 
      * JSpecify følger med Guava 33.4 og nyere 
      */
-    static final Class<?> JSPECIFY_NULLABLE_CLAZZ = tryFindOptionalClass("org.jspecify.annotations.Nullable");
+    static final Class<? extends Annotation> JSPECIFY_NULLABLE_CLAZZ = tryFindOptionalClass("org.jspecify.annotations.Nullable");
 
-    private static Class<?> tryFindOptionalClass(String className) {
+    private static Class<? extends Annotation> tryFindOptionalClass(String className) {
         try {
-            return Class.forName(className);
+            return Class.forName(className).asSubclass(Annotation.class);
         } catch (ClassNotFoundException e) {
             return null;
         }
@@ -60,7 +60,7 @@ public class SnapshotVersionArgumentListAnalyser {
         // er en subtype av SnapshotVersion, BubbleId eller Collection<? extends BubbleId>.
         for (int i = 0; i < length; i++) {
             final Parameter parameter = parameters[i];
-            if (hasIgnoreAnnotation(parameter.getAnnotations())) continue;
+            if (hasIgnoreAnnotation(parameter)) continue;
 
             if (parameter.getType() == SnapshotVersion.class) {
                 return new SnapshotVersionD2WResult((SnapshotVersion) args[i], length);
@@ -113,14 +113,12 @@ public class SnapshotVersionArgumentListAnalyser {
     /**
      * Returnerer true hvis typen har annotasjon @Nullable eller @SuppressSnapshotVersionMapping
      */
-    private boolean hasIgnoreAnnotation(Annotation[] annotations) {
-        for (Annotation annotation : annotations) {
-            if (annotation.annotationType() == JSPECIFY_NULLABLE_CLAZZ) return true;
-            if (annotation.annotationType() == JAVAX_NULLABLE_CLAZZ) return true;
-            if (annotation.annotationType() == JAKARTA_NULLABLE_CLAZZ) return true;
-            if (annotation.annotationType() == SuppressSnapshotVersionMapping.class) return true;
-        }
-        return false;
+    private boolean hasIgnoreAnnotation(Parameter parameter) {
+        return JSPECIFY_NULLABLE_CLAZZ != null && parameter.getAnnotatedType().isAnnotationPresent(JSPECIFY_NULLABLE_CLAZZ)
+            || JAVAX_NULLABLE_CLAZZ != null && parameter.isAnnotationPresent(JAVAX_NULLABLE_CLAZZ)
+            || JAKARTA_NULLABLE_CLAZZ != null && parameter.isAnnotationPresent(JAKARTA_NULLABLE_CLAZZ)
+            || parameter.isAnnotationPresent(SuppressSnapshotVersionMapping.class)
+            ;
     }
 
     private boolean isCollectionOfBubbleIdType(Type parameterType) {
