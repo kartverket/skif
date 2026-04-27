@@ -3,6 +3,7 @@
 annotation-api = '2.1.1'
 assertj = '3.27.7'
 c3p0 = '0.12.0'
+checker-framework = '3.55.1'
 commons-pool = '2.12.1'
 ejb-api = '4.0.1'
 guava = '33.6.0-jre'
@@ -61,6 +62,7 @@ openejb-core = { module = 'org.apache.tomee:openejb-core', version.ref = 'tomee'
 
 # Testing
 testng = { module = 'org.testng:testng', version.ref = 'testng' } #husk exclude group:'junit' vi benytter ikke JUnit i prosjektet [SKIF-385]
+checker-framework = { module = 'org.checkerframework:checker-qual', version.ref = 'checker-framework' }
 
 
 mockito     = { module = 'org.mockito:mockito-core', version.ref = 'mockito' }

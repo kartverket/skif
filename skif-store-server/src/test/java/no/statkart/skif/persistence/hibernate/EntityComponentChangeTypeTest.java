@@ -28,11 +28,10 @@ import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.collection.spi.PersistentSet;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.internal.SessionImpl;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
-import org.testng.annotations.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+import org.testng.annotations.Test;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -61,7 +60,7 @@ public class EntityComponentChangeTypeTest {
         Metadata metadata = createMetadataOneToMany();
 
         try (SessionFactory sessionFactory = metadata.buildSessionFactory()) {
-            SessionImplementor session = Mockito.mock(SessionImpl.class, EntityComponentChangeTypeTest::notMocked);
+            SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
             Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
             Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToManyComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToManyComponent.class.getName()), Mockito.any(TestBubbleOneToManyComponent.class));
@@ -97,7 +96,7 @@ public class EntityComponentChangeTypeTest {
         Metadata metadata = createMetadataOneToMany();
 
         try (SessionFactory sessionFactory = metadata.buildSessionFactory()) {
-            SessionImplementor session = Mockito.mock(SessionImpl.class, EntityComponentChangeTypeTest::notMocked);
+            SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
             Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
             Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToManyComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToManyComponent.class.getName()), Mockito.any(TestBubbleOneToManyComponent.class));
@@ -145,7 +144,7 @@ public class EntityComponentChangeTypeTest {
         Metadata metadata = createMetadataOneToOne();
 
         try (SessionFactory sessionFactory = metadata.buildSessionFactory()) {
-            SessionImplementor session = Mockito.mock(SessionImpl.class, EntityComponentChangeTypeTest::notMocked);
+            SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
             Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
             Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToOneComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToOneComponent.class.getName()), Mockito.any(TestBubbleOneToOneComponent.class));
@@ -179,7 +178,7 @@ public class EntityComponentChangeTypeTest {
         Metadata metadata = createMetadataOneToOne();
 
         try (SessionFactory sessionFactory = metadata.buildSessionFactory()) {
-            SessionImplementor session = Mockito.mock(SessionImpl.class, EntityComponentChangeTypeTest::notMocked);
+            SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
             Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
             Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToOneComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToOneComponent.class.getName()), Mockito.any(TestBubbleOneToOneComponent.class));
