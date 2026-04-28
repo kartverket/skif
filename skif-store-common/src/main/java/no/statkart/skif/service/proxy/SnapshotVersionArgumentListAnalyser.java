@@ -49,7 +49,7 @@ public class SnapshotVersionArgumentListAnalyser {
 
         // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping på metodenivå  => Bruk SnapshotVersionContext
         if (length == 0 || apiMethod.isAnnotationPresent(SuppressSnapshotVersionMapping.class)) 
-            return new SnapshotVersionD2WResult(0);
+            return new SnapshotVersionD2WResult(length);
 
         // Regel 2: siste parameter er av type SnapshotVersion og er  annotert med @ServiceContextMapped. Denne skal da mappes via ServiceContext og ikke som egen parameter
         final Parameter lastParameter = parameters[length - 1];
@@ -100,7 +100,7 @@ public class SnapshotVersionArgumentListAnalyser {
 
         // Regel 1: ingen parametre eller @SuppressSnapshotVersionMapping på metodenivå => apimethod skal ikke ha egen snapshotVersion parameter
         if (length == 0 || apiMethod.isAnnotationPresent(SuppressSnapshotVersionMapping.class))
-            return new SnapshotVersionW2DResult(false, 0);
+            return new SnapshotVersionW2DResult(false, length);
 
         // Regel 2: siste parameter er av type SnapshotVersion og er annotert med @ServiceContextMapped => apimethod har en ekstra SnapshotVersion parameter
         final Parameter lastParameter = parameters[length - 1];
