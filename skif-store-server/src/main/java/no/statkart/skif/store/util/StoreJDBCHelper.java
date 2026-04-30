@@ -84,15 +84,6 @@ public class StoreJDBCHelper extends JDBCHelper {
         }
     }
 
-    public static Object getBubbleIdValue(BubbleId component, Class idValueType) {
-        if (idValueType == Long.class) {
-            return component.getValue();
-        } else if (idValueType == String.class) {
-            return component.getValue();
-        } else {
-            throw new ImplementationException("Value type " + idValueType.getName() + " is not supported");
-        }
-    }
 
    public static <T extends BubbleId<?>> T getBubbleIdWithSnapshot(ResultSet resultSet, int bubbleIdIndex, int snapshotVersionIndex, T bubbleIdPrototype) throws SQLException {
        Object idValue = StoreJDBCHelper.getBubbleIdValue(resultSet, bubbleIdIndex, bubbleIdPrototype.getValueType());
