@@ -33,6 +33,4 @@ public class OracleArrayLongBubbleIdCustomType extends CustomType {
     public static Object wrap(Collection<? extends BubbleId<?>> objects) {
         return new OracleArrayConverter.Wrapper<>(objects);
     }
-
-
 }

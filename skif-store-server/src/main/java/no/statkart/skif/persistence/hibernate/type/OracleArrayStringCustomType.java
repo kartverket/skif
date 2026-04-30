@@ -26,10 +26,7 @@ import java.util.Collection;
  */
 public class OracleArrayStringCustomType extends CustomType {
     public OracleArrayStringCustomType() throws MappingException {
-        super(
-            new OracleArrayUserType<>(new OracleArrayStringConverter()),
-            null
-        );
+        super(new OracleArrayUserType<>(new OracleArrayStringConverter()), null);
     }
 
     public static Object wrap(Collection<String> strings) {
