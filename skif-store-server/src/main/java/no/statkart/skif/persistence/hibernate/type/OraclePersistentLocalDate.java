@@ -23,11 +23,9 @@ import java.sql.Types;
  */
 public class OraclePersistentLocalDate implements EnhancedUserType, Serializable {
 
-    private static final int SQL_TYPES = Types.DATE;
-
     @Override
     public int getSqlType() {
-        return SQL_TYPES;
+        return Types.DATE;
     }
 
     @Override

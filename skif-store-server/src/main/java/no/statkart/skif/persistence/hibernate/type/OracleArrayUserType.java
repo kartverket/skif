@@ -29,7 +29,6 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
 
     private static final String BIND_MSG_TEMPLATE = "binding parameter [%d] as [%s] - %s";
     private static final String NULL_BIND_MSG_TEMPLATE = "binding parameter [%d] as [%s] - <null>";
-    private static final int SQL_TYPES = Types.ARRAY;
 
     protected final T oracleArrayConverter;
 
@@ -39,7 +38,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
 
     @Override
     public int getSqlType() {
-        return SQL_TYPES;
+        return Types.ARRAY;
     }
 
     @Override
@@ -75,7 +74,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
                         )
                 );
             }
-            st.setNull(index, SQL_TYPES, oracleArrayConverter.getOracleArrayType());
+            st.setNull(index, Types.ARRAY, oracleArrayConverter.getOracleArrayType());
         } else {
             OracleArrayConverter.Wrapper<E> values = (OracleArrayConverter.Wrapper<E>) value;
 

@@ -22,11 +22,9 @@ import java.util.Objects;
  */
 public class OracleLocalTimestamp implements UserType {
 
-    private static final int SQL_TYPES = Types.TIMESTAMP;
-
     @Override
     public int getSqlType() {
-        return SQL_TYPES;
+        return Types.TIMESTAMP;
     }
 
     @Override

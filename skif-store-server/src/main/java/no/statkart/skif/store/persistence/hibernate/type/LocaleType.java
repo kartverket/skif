@@ -17,11 +17,10 @@ import java.util.Locale;
  * streng. Benytter istedenfor {@code "_"} som representasjon.
  */
 public class LocaleType implements UserType {
-    private static final int SQL_TYPES = Types.VARCHAR;
 
     @Override
     public int getSqlType() {
-        return SQL_TYPES;
+        return Types.VARCHAR;
     }
 
     @Override

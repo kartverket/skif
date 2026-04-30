@@ -16,11 +16,9 @@ import java.sql.Types;
 public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T> {
     private static final Logger log = LoggerFactory.getLogger(UserType.class);
 
-    private final int SQL_TYPES = Types.BIGINT;
-
     @Override
     public int getSqlType() {
-        return SQL_TYPES;
+        return Types.BIGINT;
     }
 
 
