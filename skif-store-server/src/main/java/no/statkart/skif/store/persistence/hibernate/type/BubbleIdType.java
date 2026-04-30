@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Objects;
+
 /**
  * Hibernate UserType for BubbleId
  *
@@ -25,39 +26,38 @@ import java.util.Objects;
  * @since 2.0
  */
 public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
-    private final int[] SQL_TYPES;
     private TypeConfiguration typeConfiguration;
     /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
     private SnapshotVersionSeed snapshotVersionSeed = null;
     protected final Class<?> idValueType;
+
     public BubbleIdType() {
         idValueType = BubbleIds.getValueType(returnedClass());
-        if (idValueType==Long.class) {
-            SQL_TYPES = new int[]{Types.BIGINT};
-        } else {
-            SQL_TYPES = new int[]{Types.VARCHAR};
-        }
     }
+
     protected BubbleIdType(int[] SQL_TYPES) {
-        this.SQL_TYPES= SQL_TYPES;
-        if (SQL_TYPES[0]== Types.BIGINT) {
-            idValueType=Long.class;
-        } else if (SQL_TYPES[0]== Types.VARCHAR) {
-            idValueType=String.class;
+        if (SQL_TYPES[0] == Types.BIGINT) {
+            idValueType = Long.class;
+        } else if (SQL_TYPES[0] == Types.VARCHAR) {
+            idValueType = String.class;
         } else {
             throw new ImplementationException("SQL type " + Types.VARCHAR + " is not supported as id type for BubbleId");
         }
     }
+
     public SnapshotVersionSeed getSnapshotVersionSeed() {
         return snapshotVersionSeed;
     }
+
     public void setSnapshotVersionSeed(SnapshotVersionSeed snapshotVersionSeed) {
         this.snapshotVersionSeed = snapshotVersionSeed;
     }
+
     @Override
     public TypeConfiguration getTypeConfiguration() {
         return typeConfiguration;
     }
+
     @Override
     public void setTypeConfiguration(TypeConfiguration typeConfiguration) {
         this.typeConfiguration = typeConfiguration;
@@ -71,7 +71,11 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
 
     @Override
     public int getSqlType() {
-        return SQL_TYPES[0];
+        if (idValueType == Long.class) {
+            return Types.BIGINT;
+        } else {
+            return Types.VARCHAR;
+        }
     }
 
     @Override
