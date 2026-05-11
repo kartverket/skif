@@ -13,6 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+/**
+ * Testklasse
+ */
 public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T> {
     private static final Logger log = LoggerFactory.getLogger(UserType.class);
 
@@ -28,12 +31,13 @@ public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T>
 
     @Override
     public Serializable disassemble(T value) throws HibernateException {
-        return (Serializable) value;
+        return value;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T assemble(Serializable cached, Object owner) throws HibernateException {
-        return (T)cached;
+        return (T) cached;
     }
 
     public T replace(T original, T target, Object owner) throws HibernateException {
@@ -57,24 +61,24 @@ public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T>
         final boolean traceEnabled = log.isTraceEnabled();
         Long value = rs.getLong(position);
         if (rs.wasNull()) {
-            if ( traceEnabled ) {
+            if (traceEnabled) {
                 log.trace(
-                        "extracted value ({} : {}) - [null]",
-                        position,
-                        getClass().getName()
+                    "extracted value ({} : {}) - [null]",
+                    position,
+                    getClass().getName()
                 );
             }
             return null;
         } else {
-            if ( traceEnabled ) {
+            if (traceEnabled) {
                 log.trace(
-                        "extracted value ({} : {}) - {}",
-                        position,
-                        getClass().getName(),
-                        value
+                    "extracted value ({} : {}) - {}",
+                    position,
+                    getClass().getName(),
+                    value
                 );
             }
-            return (T)createId(value);
+            return createId(value);
         }
     }
 
@@ -82,23 +86,22 @@ public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T>
     public void nullSafeSet(PreparedStatement st, T value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         final boolean traceEnabled = log.isTraceEnabled();
         if (value == null) {
-            if ( traceEnabled ) {
+            if (traceEnabled) {
                 log.trace(
-                        "binding parameter {} as {} - [null]",
-                        index,
-                        getClass().getName()
+                    "binding parameter {} as {} - [null]",
+                    index,
+                    getClass().getName()
                 );
             }
             st.setNull(index, Types.BIGINT);
         } else {
             Long longValue = getValue(value);
-            if ( traceEnabled ) {
+            if (traceEnabled) {
                 log.trace(
-                        "binding parameter {} as {} - {}",
-                        index,
-                        getClass().getName(),
-                        longValue
-
+                    "binding parameter {} as {} - {}",
+                    index,
+                    getClass().getName(),
+                    longValue
                 );
             }
             st.setLong(index, longValue);
@@ -107,5 +110,5 @@ public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T>
 
     public abstract Long getValue(Object id);
 
-    public abstract Object createId(Long value);
+    public abstract T createId(Long value);
 }
