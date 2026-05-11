@@ -614,7 +614,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         PersistenceContext persistenceContext = ((SharedSessionContractImplementor) session()).getPersistenceContext();
         Preconditions.checkState(persistenceContext.getEntitiesByKey().size() == 0, "EntitiesByKey er ikke tom");
         Preconditions.checkState(persistenceContext.reentrantSafeEntityEntries().length == 0, "EntityEntries er ikke tom");
-        Preconditions.checkState(persistenceContext.getCollectionEntries()==null||persistenceContext.getCollectionEntries().size() == 0, "CollectionEnties er ikke tom");
+        Preconditions.checkState(persistenceContext.getCollectionEntriesSize() == 0, "CollectionEnties er ikke tom");
         Preconditions.checkState(persistenceContext.getCollectionsByKey().size() == 0, "CollectionEntiesByKey er ikke tom");
         Preconditions.checkState(persistenceContext.isNullifiableEntityKeysEmpty(), "NullifiableEntityKeys er ikke tom");
     }
