@@ -13,7 +13,6 @@ import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.model.TypeContributor;
 import org.hibernate.boot.registry.BootstrapServiceRegistry;
@@ -227,23 +226,26 @@ public class HibernateSessionFactoryBuilder {
         // NB: HibernateSessions som skal jobbe med forskjellige snapshotVersions uavhengig avhverander innenfor samme tråd (f.eks Current og Old sessions)
         // må bruke hver sin factory. De kan ikke bruke samme factory siden det er factoryen som styrer
         // hvilken snapshotVersionSeed instans som vil bli brukt ved materalisering av BubbleId'en.
-        SessionFactory sessionFactory;
         synchronized (LOCK) {
             try {
-                MetadataBuilder metadataBuilder = metadataSources.getMetadataBuilder();
-                typeContributors.forEach(metadataBuilder::applyTypes);
-                Metadata metadata = metadataBuilder.build();
-                if (metadataInterceptor != null) {
-                    metadataInterceptor.apply(metadata);
-                }
-                sessionFactory = metadata.getSessionFactoryBuilder()
-                        .applyInterceptor(interceptor)
-                        .build();
+                return buildMetadata(metadataSources)
+                    .getSessionFactoryBuilder()
+                    .applyInterceptor(interceptor)
+                    .build();
             } catch (HibernateException e) {
                 throw new ImplementationException("Error initializing Hibernate", e, logger);
             }
         }
-        return sessionFactory;
+    }
+
+    private Metadata buildMetadata(MetadataSources metadataSources) {
+        var metadataBuilder = metadataSources.getMetadataBuilder();
+        typeContributors.forEach(metadataBuilder::applyTypes);
+        var metadata = metadataBuilder.build();
+        if (metadataInterceptor != null) {
+            metadataInterceptor.apply(metadata);
+        }
+        return metadata;
     }
 
     private String getAndConnectionInfo(SnapshotVersionSeed snapshotVersionSeed, Properties properties) {
