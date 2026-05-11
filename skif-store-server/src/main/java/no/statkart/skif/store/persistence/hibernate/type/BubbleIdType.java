@@ -130,8 +130,8 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
             LoggerFactory.getLogger(BubbleIdType.class).info("could not read column value from result set: {}; {}", position, re.getMessage());
             throw re;
         }
-
     }
+    
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         try {
@@ -151,6 +151,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
             throw re;
         }
     }
+    
     /**
      * Oppretter id med den spesifisert verdi. Id classen må være av den type metoden {@link
      * #returnedClass()} spesifisere. SnapshotVersion kan ha defalut verdi siden den overskrive
@@ -161,6 +162,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
         return BubbleIds.createInstance(returnedClass(), value, snapshotVersion);
     }
+    
     /**
      * Oppretter BubbleId av riktig type og setter idvalue og SnapshotVersion
      *
