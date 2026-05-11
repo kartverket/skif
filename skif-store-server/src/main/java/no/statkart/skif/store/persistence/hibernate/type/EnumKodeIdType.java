@@ -169,6 +169,11 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
     }
 
     @Override
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        return getInstance(Integer.parseInt(sequence.toString()));
+    }
+
+    @Override
     public String toSqlLiteral(Object value) {
         return '\'' + returnedClass().cast(value).getValue().toString() + '\'';
     }
@@ -176,10 +181,5 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
     @Override
     public String toString(Object value) throws HibernateException {
         return returnedClass().cast(value).getValue().toString();
-    }
-
-    @Override
-    public Object fromStringValue(CharSequence sequence) throws HibernateException {
-        return getInstance(Integer.parseInt(sequence.toString()));
     }
 }
