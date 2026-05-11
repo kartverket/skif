@@ -1,6 +1,5 @@
 package no.statkart.skif.persistence.hibernate.type;
 
-import com.google.common.collect.Lists;
 import no.statkart.skif.store.persistence.OracleArrayConverter;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -79,7 +78,7 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
                                 BIND_MSG_TEMPLATE,
                                 index,
                                 JdbcTypeNameMapper.getTypeName(Types.ARRAY),
-                                extractLoggableRepresentation(Lists.newArrayList(values.collection))
+                                extractLoggableRepresentation(List.copyOf(values.collection))
                         )
                 );
             }
