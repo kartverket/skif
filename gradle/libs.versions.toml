@@ -61,7 +61,6 @@ openejb-core = { module = 'org.apache.tomee:openejb-core', version.ref = 'tomee'
 
 # Testing
 testng = { module = 'org.testng:testng', version.ref = 'testng' } #husk exclude group:'junit' vi benytter ikke JUnit i prosjektet [SKIF-385]
-checker-framework = { module = 'org.checkerframework:checker-qual', version.ref = 'checker-framework' }
 
 
 mockito     = { module = 'org.mockito:mockito-core', version.ref = 'mockito' }
