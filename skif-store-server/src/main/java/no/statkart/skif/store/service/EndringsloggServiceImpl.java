@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
@@ -28,7 +29,6 @@ import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -213,16 +213,14 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
             CriteriaQuery<Long> cq = cb.createQuery(Long.class);
             Root<? extends AbstractEndring> root = cq.from(endringClass);
 
-            cq.select(root.get("id").as(Long.class));
-            cq.where(cb.gt(root.get("id").as(Long.class), 0L));
-            cq.orderBy(cb.asc(root.get("id").as(Long.class)));
+            cq.select(cb.count(root))
+              .where(cb.greaterThan(root.get("id"), id));
 
-            List<Long> ids = session.createQuery(cq)
-                .setMaxResults(antall)
-                .getResultList();
+            Long count = session.createQuery(cq).getSingleResult();
+            
 
             Kontroll result = new Kontroll();
-            result.setAntall(((long) ids.size())); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(Math.min(antall, count));
             return result;
         } finally {
             if (sessionSelector != null) sessionSelector.close();
