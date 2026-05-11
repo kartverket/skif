@@ -25,14 +25,6 @@ Tokenet leses fra systemets miljøvariabler, og må hete `PACKAGES_TOKEN`, `KV_P
 Tokenet `GITHUB_USER` må også settes som er brukernavn.
 
 
-# Lokal utvikling på tvers av prosjekter
-For enkelt å teste endringer i andre gradle prosjekt kan disse inkluderes som "composite builds" i byggesystemet.
-Etter endring av oppsett må man oppfriske Gradle prosjektet i IntelliJ.
-```properties 
-# gradle.properties:
-includeBuild.hibernate-orm=../hibernate-orm
-```
-
 #### Oppsett av testdatabase
 Bruker opprettes via `gradle dbCreateUser`. Hvor tablespacefilen skal legges bestemmes
 av property `db_dataroot_dir`.
