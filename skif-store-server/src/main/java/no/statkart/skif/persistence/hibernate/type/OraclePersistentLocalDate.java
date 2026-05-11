@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
  * Persisterer en {@link LocalDate} fra JodaTime ned i en Oracle-database uten å gå via {@link java.util.Date}.
@@ -35,15 +36,7 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == y) {
-            return true;
-        }
-        if (x == null || y == null) {
-            return false;
-        }
-        LocalDate dtx = (LocalDate) x;
-        LocalDate dty = (LocalDate) y;
-        return dtx.equals(dty);
+        return Objects.equals(x, y);
     }
 
     @Override

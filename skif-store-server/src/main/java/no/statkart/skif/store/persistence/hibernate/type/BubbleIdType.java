@@ -103,7 +103,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
 
     @Override
     public boolean equals(Object x, Object y) {
-        return (x == y) || (x != null && y != null && x.equals(y));
+        return Objects.equals(x, y);
     }
 
     @Override

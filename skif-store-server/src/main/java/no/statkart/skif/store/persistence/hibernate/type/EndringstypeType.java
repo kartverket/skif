@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
  * Mapper {@link Endringstype} til en numerisk kolonne i databasen. Hibernate 3.6 har en slik selv, men det har ikke 3.2.
@@ -30,7 +31,7 @@ public class EndringstypeType implements UserType {
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        return x.equals(y);
+        return Objects.equals(x, y);
     }
 
     @Override

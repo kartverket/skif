@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
  * Testklasse
@@ -45,7 +46,7 @@ public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T>
     }
 
     public boolean equals(T x, T y) {
-        return (x == y) || (x != null && x.equals(y));
+        return Objects.equals(x, y);
     }
 
     public final int hashCode(T x) throws HibernateException {
