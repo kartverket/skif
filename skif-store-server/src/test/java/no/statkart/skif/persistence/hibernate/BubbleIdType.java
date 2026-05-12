@@ -26,6 +26,7 @@ public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T>
     }
 
 
+    @Override
     public boolean isMutable() {
         return false;
     }
@@ -41,18 +42,22 @@ public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T>
         return (T) cached;
     }
 
+    @Override
     public T replace(T original, T target, Object owner) throws HibernateException {
         return original;
     }
 
+    @Override
     public boolean equals(T x, T y) {
         return Objects.equals(x, y);
     }
 
+    @Override
     public final int hashCode(T x) throws HibernateException {
         return x.hashCode();
     }
 
+    @Override
     public T deepCopy(T value) {
         return value;
     }
