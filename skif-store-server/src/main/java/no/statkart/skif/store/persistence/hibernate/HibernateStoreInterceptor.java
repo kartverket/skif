@@ -11,7 +11,6 @@ import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.metamodel.RepresentationMode;
-import org.hibernate.metamodel.spi.EntityRepresentationStrategy;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,17 +78,10 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
     }
 
     @Override
-    public Object instantiate(String entityName, EntityRepresentationStrategy representationStrategy, Object id) throws CallbackException {
-        //FIXME: TH-2583
-        //sjekkSnapshotVersjon(id);
-        return null;
-    }
-
-    @Override
     public Object instantiate(String entityName, RepresentationMode representationMode, Object id) throws CallbackException {
-        //FIXME: TH-2583
-        //sjekkSnapshotVersjon(id);
-        return null;
+        //TH-2583: instantiate gjør ikke sjekkSnapshotVersjon
+//        sjekkSnapshotVersjon(id);
+        return null; //null betyr bruk standard oppførsel
     }
 
     @Override
