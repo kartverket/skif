@@ -3,10 +3,8 @@ package no.statkart.skif.store.persistence.hibernate;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.AbstractBubbleObject;
 import no.statkart.skif.store.BubbleId;
-import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.ComponentWithOwnerReference;
 import no.statkart.skif.store.SnapshotVersionSeed;
-import no.statkart.skif.store.module.common.BubbleIdFactory;
 import org.hibernate.CallbackException;
 import org.hibernate.Interceptor;
 import org.hibernate.collection.spi.PersistentCollection;
@@ -14,9 +12,6 @@ import org.hibernate.metamodel.RepresentationMode;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import static no.statkart.skif.config.SkifConfigConstants.TOGGLE_LEGACY_IDCLASS_STRATEGY;
 
 
 /**
@@ -35,46 +30,6 @@ public class HibernateStoreInterceptor implements Interceptor {
         this.snapshotVersionSeed = snapshotVersionSeed;
     }
 
-    /**
-     * Denne metoden retter opp id'en for entiteter hvor hibernate har brukt supertypens idklasse
-     * @return false fordi vi ikke endrer på <code>state</code> til <code>entity</code>
-     * @see {@link org.hibernate.Interceptor#onLoad(Object, java.io.Serializable, Object[], String[], org.hibernate.type.Type[])}
-     */
-    @SuppressWarnings("removal")
-    @Override
-    public boolean onLoad(Object entity, Object hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
-        if ("true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
-            modifyIdSubclass(entity);
-        }
-        return false;
-    }
-
-    private void modifyIdSubclass(Object entity) {
-        if (entity instanceof BubbleObject) {
-            BubbleObject bubbleEntity = (BubbleObject) entity;
-            String classname = bubbleEntity.getClass().getName();
-            BubbleId<?> bubbleId = bubbleEntity.getBubbleId();
-            try {
-                String idString;
-                if (classname.contains("Impl")) {
-                    idString = classname.substring(0, classname.indexOf("Impl")) + "IdImpl";
-                } else {
-                    idString = classname + "Id";
-                }
-                Class classid = Class.forName(idString);
-                if (classid != bubbleId.getClass()) {
-                    Object value = bubbleId.getValue();
-                    BubbleId<?> newBubbleId = (BubbleId<?>) BubbleIdFactory.createInstance(classid, value, bubbleId.getSnapshotVersion());
-                    bubbleEntity.setId(newBubbleId);
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Endret id for " + classname + " fra: " + bubbleId + " til: " + newBubbleId);
-                    }
-                }
-            } catch (ClassNotFoundException e) {
-                throw new ImplementationException("Class " + classname + "Id was not found in classpath");
-            }
-        }
-    }
 
     @Override
     public Object instantiate(String entityName, RepresentationMode representationMode, Object id) throws CallbackException {

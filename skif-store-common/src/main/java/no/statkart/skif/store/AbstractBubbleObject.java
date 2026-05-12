@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkState;
-import static no.statkart.skif.config.SkifConfigConstants.TOGGLE_LEGACY_IDCLASS_STRATEGY;
 
 /**
  * @author Henrik Fredholm
@@ -44,11 +43,9 @@ public class AbstractBubbleObject implements BubbleObject, Serializable, Equalit
         return id;
     }
 
-    @SuppressWarnings("removal")
     public void setId(@Nullable BubbleId<?> id) {
         if (id == null
-            || id.getType() == getClass()
-            || "true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
+            || id.getType() == getClass()) {
             this.id = id;
         } else {
             this.id = subtypeCompatibleId(id);
