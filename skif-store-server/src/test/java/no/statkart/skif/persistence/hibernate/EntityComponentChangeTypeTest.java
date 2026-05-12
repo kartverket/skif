@@ -27,7 +27,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.collection.spi.PersistentSet;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -44,7 +43,6 @@ public class EntityComponentChangeTypeTest {
 
     private Metadata createMetadataOneToMany() {
         LoadedConfig loadedConfig = new LoadedConfig(null);
-        //noinspection unchecked
         loadedConfig.getConfigurationValues().put(AvailableSettings.DIALECT, "org.hibernate.dialect.H2Dialect");
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure(loadedConfig).build();
         return new MetadataSources(registry)
@@ -74,8 +72,7 @@ public class EntityComponentChangeTypeTest {
             TestBubbleOneToManyComponent1 persistentBubbleComponent = new TestBubbleOneToManyComponent1(2L);
             TestBubbleOneToMany persistentBubble = new TestBubbleOneToMany(bubbleId);
             persistentBubble.getComponents().add(persistentBubbleComponent);
-            //noinspection unchecked
-            persistentBubble.setComponents(new PersistentSet((SharedSessionContractImplementor) session, persistentBubble.getComponents()));
+            persistentBubble.setComponents(new PersistentSet<>(session, persistentBubble.getComponents()));
 
             Mockito.doReturn(persistentBubble).when(session).get(TestBubbleOneToMany.class, bubbleId, LockMode.NONE);
             Mockito.doNothing().when(session).update(Mockito.any(TestBubbleOneToMany.class));
@@ -110,8 +107,7 @@ public class EntityComponentChangeTypeTest {
             TestBubbleOneToManyComponent1 persistentBubbleComponent = new TestBubbleOneToManyComponent1(2L);
             TestBubbleOneToMany persistentBubble = new TestBubbleOneToMany(bubbleId);
             persistentBubble.getComponents().add(persistentBubbleComponent);
-            //noinspection unchecked
-            persistentBubble.setComponents(new PersistentSet((SharedSessionContractImplementor) session, persistentBubble.getComponents()));
+            persistentBubble.setComponents(new PersistentSet<>(session, persistentBubble.getComponents()));
 
             Mockito.doReturn(persistentBubble).when(session).get(TestBubbleOneToMany.class, bubbleId, LockMode.NONE);
             Mockito.doNothing().when(session).update(Mockito.any(TestBubbleOneToMany.class));
@@ -128,7 +124,6 @@ public class EntityComponentChangeTypeTest {
 
     private Metadata createMetadataOneToOne() {
         LoadedConfig loadedConfig = new LoadedConfig(null);
-        //noinspection unchecked
         loadedConfig.getConfigurationValues().put(AvailableSettings.DIALECT, "org.hibernate.dialect.H2Dialect");
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure(loadedConfig).build();
         return new MetadataSources(registry)
