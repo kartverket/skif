@@ -1,11 +1,11 @@
 package no.statkart.skif.storetest.service.store;
 
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.ObjectNotFoundException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.UnitOfWorkTransfer;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 /**

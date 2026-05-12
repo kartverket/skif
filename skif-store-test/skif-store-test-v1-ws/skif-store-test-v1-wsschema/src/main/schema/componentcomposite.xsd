@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema
-        version="1.0"
-        targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/component/composite"
-        xmlns:compositens="http://skif.statkart.no/storetest/wsapi/domain/component/composite"
-        xmlns:basicns="http://skif.statkart.no/storetest/wsapi/domain/basic"
-        xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
-        xmlns:basetyperns="http://skif.statkart.no/storetest/wsapi/domain/basetyper"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        elementFormDefault="qualified">
+    version="1.0"
+    targetNamespace="http://skif.statkart.no/storetest/wsapi/domain/component/composite"
+    xmlns:compositens="http://skif.statkart.no/storetest/wsapi/domain/component/composite"
+    xmlns:basicns="http://skif.statkart.no/storetest/wsapi/domain/basic"
+    xmlns:domainns="http://skif.statkart.no/storetest/wsapi/domain"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified">
 
     <xs:import schemaLocation="demoKoder.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain/demo/koder"/>
     <xs:import schemaLocation="domain.xsd" namespace="http://skif.statkart.no/storetest/wsapi/domain"/>

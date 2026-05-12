@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.service.store;
 
 import com.google.inject.Inject;
+import jakarta.annotation.Nullable;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;
@@ -13,7 +14,6 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.UnitOfWorkTransfer;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 /**

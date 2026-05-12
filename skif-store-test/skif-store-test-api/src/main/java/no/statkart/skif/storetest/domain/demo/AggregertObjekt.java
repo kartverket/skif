@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.demo;
 
 import no.statkart.skif.store.AbstractBubbleObject;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 
 import java.sql.Timestamp;
