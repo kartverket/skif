@@ -9,6 +9,7 @@ import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.module.common.BubbleIdFactory;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.EntityMode;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
@@ -76,10 +77,11 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
         }
     }
 
-    public Object instantiate(Class entitetClazz, Serializable id) throws CallbackException {
-        sjekkSnapshotVersjon(id);
-        //Retur av null gjør at Hibernate bruker default oppførsel
-        return null;
+    @Override
+    public Object instantiate(String entityName, EntityMode entityMode, Serializable id) throws CallbackException {
+        //TH-2583: instantiate gjør ikke sjekkSnapshotVersjon
+//        sjekkSnapshotVersjon(id);
+        return null; //null betyr bruk standard oppførsel
     }
 
     @Override
