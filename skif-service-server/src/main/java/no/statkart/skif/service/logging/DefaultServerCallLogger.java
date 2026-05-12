@@ -3,13 +3,13 @@ package no.statkart.skif.service.logging;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.ApplicationException;
 import no.statkart.skif.service.ServiceRequestContext;
 import no.statkart.skif.service.TxMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**

@@ -3,13 +3,13 @@ package no.statkart.skif.service.chain;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.ProvisionException;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.service.annotation.Call;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.SingleVmRemoteCallProxyHandler;
 
-import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**
