@@ -8,7 +8,7 @@ import no.statkart.skif.store.ComponentWithOwnerReference;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.module.common.BubbleIdFactory;
 import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
+import org.hibernate.Interceptor;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.metamodel.RepresentationMode;
 import org.hibernate.type.Type;
@@ -27,7 +27,7 @@ import static no.statkart.skif.config.SkifConfigConstants.TOGGLE_LEGACY_IDCLASS_
  * @author Henrik Fredholm
  * @since 2.0
  */
-public class HibernateStoreInterceptor extends EmptyInterceptor {
+public class HibernateStoreInterceptor implements Interceptor {
     protected Logger logger = LoggerFactory.getLogger(HibernateStoreInterceptor.class);
 
     protected final SnapshotVersionSeed snapshotVersionSeed;
