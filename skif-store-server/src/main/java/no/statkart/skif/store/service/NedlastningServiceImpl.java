@@ -30,7 +30,6 @@ import static no.statkart.skif.util.HibernateHelper.getTableName;
  * @author Tor Egil R. Strand
  * @since 2.5.0
  */
-// OBS! Det er en kopi av denne i hs3.2
 public abstract class NedlastningServiceImpl implements NedlastningService {
     protected final Provider<SnapshotVersion> snapshotVersionProvider;
 
@@ -50,8 +49,7 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
     @Override
     public <I extends BubbleId<? extends T>, T extends BubbleObject> List<I> findIdsEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall) {
         checkBobbleklasseGyldigForNedlasting(domainklasse);
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Object> cq = cb.createQuery();
@@ -70,16 +68,13 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
                 .getResultList();
 
             return (List<I>) result;
-        } finally {
-            if (sessionSelector != null) sessionSelector.close();
         }
     }
 
     @Override
     public <T extends BubbleObject> List<T> findObjekterEtterId(@Nullable BubbleId<? extends T> id, Class<T> domainklasse, @Nullable String filter, int maksAntall) {
         checkBobbleklasseGyldigForNedlasting(domainklasse);
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<T> cq = cb.createQuery(domainklasse);
@@ -98,16 +93,13 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
                 .getResultList();
 
             return (List) store.getOrdered(Bubbles.asIds(result));
-        } finally {
-            if (sessionSelector != null) sessionSelector.close();
         }
     }
 
     @Override
     public <T extends BubbleObject> Kontroll calcObjektkontrollForRange(@Nullable BubbleId<? extends T> fraId, @Nullable BubbleId<? extends T> tilId, Class<T> domainklasse, @Nullable String filter) {
         checkBobbleklasseGyldigForNedlasting(domainklasse);
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Long> cq = cb.createQuery(Long.class);
@@ -132,16 +124,13 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
             Kontroll result =  new Kontroll();
             result.setAntall(count != null ? count : 0L); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
             return result;
-        } finally {
-            if (sessionSelector != null) sessionSelector.close();
         }
     }
 
     @Override
     public <I extends BubbleId<? extends T>, T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<I> ids, Class<T> domainklasse) {
         checkBobbleklasseGyldigForNedlasting(domainklasse);
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
             String tableName = getTableName(session, domainklasse);
 
@@ -153,8 +142,6 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
             Kontroll result = new Kontroll();
             result.setAntall(count.longValue());
             return result;
-        } finally {
-            if (sessionSelector != null) sessionSelector.close();
         }
     }
 
