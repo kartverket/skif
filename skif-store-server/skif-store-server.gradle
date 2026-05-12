@@ -20,6 +20,7 @@ dependencies {
     testImplementation libs.bundles.jee
     testImplementation project(':skif-config')
     testImplementation project(':skif-testsupport-common')
+    testImplementation libs.checker.framework // Trengs til mock av SessionImplementor i EntityComponentChangeTypeTest
 }
 
 publishing {
