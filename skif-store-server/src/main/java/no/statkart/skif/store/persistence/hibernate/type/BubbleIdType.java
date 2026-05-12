@@ -82,36 +82,45 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
         );
     }
 
+    @Override
     public int[] sqlTypes() {
         return SQL_TYPES;
     }
 
+    @Override
     public abstract Class<? extends BubbleId> returnedClass();
 
+    @Override
     public boolean isMutable() {
         return false;
     }
 
+    @Override
     public Serializable disassemble(Object value) throws HibernateException {
         return (Serializable) value;
     }
 
+    @Override
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
         return cached;
     }
 
+    @Override
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
         return original;
     }
 
+    @Override
     public boolean equals(Object x, Object y) {
         return (x == y) || (x != null && y != null && x.equals(y));
     }
 
+    @Override
     public final int hashCode(Object x) throws HibernateException {
         return x.hashCode();
     }
 
+    @Override
     public Object deepCopy(Object value) {
         return value;
     }

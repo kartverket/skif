@@ -38,14 +38,17 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
         this.oracleArrayConverter = oracleArrayConverter;
     }
 
+    @Override
     public int[] sqlTypes() {
         return SQL_TYPES;
     }
 
+    @Override
     public Class returnedClass() {
         return List.class;
     }
 
+    @Override
     public boolean equals(Object x, Object y) throws HibernateException {
         if (x == y) {
             return true;
@@ -100,28 +103,34 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
         }
     }
 
+    @Override
     public Object deepCopy(
             Object value) throws HibernateException {
         return value;
     }
 
+    @Override
     public boolean isMutable() {
         return false;
     }
 
+    @Override
     public int hashCode(Object arg0) throws HibernateException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Serializable disassemble(Object arg0) throws HibernateException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object assemble(
             Serializable arg0, Object arg1) throws HibernateException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object replace(
             Object arg0, Object arg1, Object arg2) throws HibernateException {
         throw new UnsupportedOperationException("Not supported yet.");

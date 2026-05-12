@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, PreCollectionUpdateEventListener, SaveOrUpdateEventListener {
     private final Map<EntityPersister, EmptyCollectionsOptimizer> optimizers = new ConcurrentHashMap<>();
 
+    @Override
     public void onPreLoad(PreLoadEvent event) {
         EntityPersister persister = event.getPersister();
         // Only bubbles can have this flag, but collections may be located in any object that is owned by the bubble.

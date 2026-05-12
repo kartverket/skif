@@ -53,6 +53,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
         this.enumClass = enumClass;
     }
 
+    @Override
     public void setParameterValues(Properties parameters) {
         String enumClassName = parameters.getProperty("enumClassName");
         try {
@@ -86,26 +87,32 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
         return BubbleIds.createInstance(enumClass, (long) code, snapshotVersion);
     }
 
+    @Override
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
         return cached;
     }
 
+    @Override
     public Object deepCopy(Object value) throws HibernateException {
         return value;
     }
 
+    @Override
     public Serializable disassemble(Object value) throws HibernateException {
         return (Enum<?>) value;
     }
 
+    @Override
     public boolean equals(Object x, Object y) throws HibernateException {
         return !(x == null && y != null) && (x == null || x.equals(y));
     }
 
+    @Override
     public int hashCode(Object x) throws HibernateException {
         return x.hashCode();
     }
 
+    @Override
     public boolean isMutable() {
         return false;
     }
@@ -147,26 +154,32 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
         }
     }
 
+    @Override
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
         return original;
     }
 
+    @Override
     public Class<? extends KodeId> returnedClass() {
         return enumClass;
     }
 
+    @Override
     public int[] sqlTypes() {
         return new int[]{Types.SMALLINT};
     }
 
+    @Override
     public Object fromXMLString(String xmlValue) {
         return getInstance(Integer.parseInt(xmlValue));
     }
 
+    @Override
     public String objectToSQLString(Object value) {
         return '\'' + returnedClass().cast(value).getValue().toString() + '\'';
     }
 
+    @Override
     public String toXMLString(Object value) {
         return returnedClass().cast(value).getValue().toString();
     }
