@@ -8,8 +8,9 @@ import com.google.inject.Provider;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.EntityType;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.store.AbstractBubbleId;
@@ -252,15 +253,15 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
         @SuppressWarnings("unchecked")
         Class<E> cls = (Class<E>) AbstractBubbleId.getType(endringIdClass);
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        CriteriaQuery<EI> cq = cb.createQuery(endringIdClass);
         Root<E> root = cq.from(cls);
-        Expression<Long> id = root.get("id").as(Long.class);
-        cq.select(cb.greatest(id));
-        return  endringIdFromLong(session.createQuery(cq).uniqueResult());
-    }
 
-    private EI endringIdFromLong(Long id) {
-        return BubbleIds.createInstance(endringIdClass, id==null?0L:id, SnapshotVersionContext.getInstance().getSnapshotVersion());
+        EntityType<E> entity = session.getMetamodel().entity(cls);
+        var idAttribute = entity.getId(entity.getIdType().getJavaType());
+        Path<EI> idPath = root.get(idAttribute.getName());
+        cq.select(cb.greatest(idPath));
+
+        return setIfNull(session.createQuery(cq).uniqueResult());
     }
 
     private EI setIfNull(EI id) {
