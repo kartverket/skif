@@ -3,12 +3,12 @@ package no.statkart.skif.service.proxy;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.service.ServiceContextMapper;
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**

@@ -4,12 +4,12 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
+import jakarta.annotation.Nullable;
 import jakarta.xml.ws.WebFault;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
