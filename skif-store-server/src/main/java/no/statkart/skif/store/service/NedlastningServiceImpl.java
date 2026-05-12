@@ -122,7 +122,7 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
 
             Long count = session.createQuery(cq).getSingleResult();
             Kontroll result =  new Kontroll();
-            result.setAntall(count != null ? count : 0L); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(count != null ? count : 0L);
             return result;
         }
     }
