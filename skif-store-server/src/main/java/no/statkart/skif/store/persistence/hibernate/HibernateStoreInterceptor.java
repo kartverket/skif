@@ -15,7 +15,6 @@ import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 
 import static no.statkart.skif.config.SkifConfigConstants.TOGGLE_LEGACY_IDCLASS_STRATEGY;
 
@@ -105,7 +104,7 @@ public class HibernateStoreInterceptor implements Interceptor {
     }
 
     @Override
-    public void onCollectionUpdate(Object collection, Serializable key) throws CallbackException {
+    public void onCollectionUpdate(Object collection, Object key) throws CallbackException {
         PersistentCollection persistentCollection = (PersistentCollection) collection;
         flagFlushed(persistentCollection.getOwner());
     }
