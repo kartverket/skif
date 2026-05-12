@@ -159,7 +159,7 @@ public class HibernatePersistenceSessionTest {
             persistenceSession.beginTransaction();
             try {
                 Session hibernateSession = persistenceSession.reserveSession();
-                hibernateSession.createQuery("delete from TestBubble where cast(id as long)>100").executeUpdate();
+                hibernateSession.createQuery("delete from TestBubble where id>100").executeUpdate();
             } finally {
                 persistenceSession.releaseSession();
             }
