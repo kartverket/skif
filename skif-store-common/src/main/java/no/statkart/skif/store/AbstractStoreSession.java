@@ -3,6 +3,7 @@ package no.statkart.skif.store;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import jakarta.annotation.Nonnull;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.NotLockedException;
@@ -13,7 +14,6 @@ import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.util.CopyHelper;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.exception.ObjectNotFoundException;
@@ -21,7 +22,6 @@ import no.statkart.skif.store.WrappableStoreSession;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 import no.statkart.skif.store.relation.cache.StoreRelationCacheImpl;
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

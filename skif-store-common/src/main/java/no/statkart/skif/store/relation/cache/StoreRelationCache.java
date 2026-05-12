@@ -1,6 +1,8 @@
 package no.statkart.skif.store.relation.cache;
 
 import com.google.common.collect.Lists;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Provider;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.AbstractStoreSession;
@@ -13,8 +15,6 @@ import no.statkart.skif.store.InverseRelationParticipation;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.WrappableStoreSession;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;

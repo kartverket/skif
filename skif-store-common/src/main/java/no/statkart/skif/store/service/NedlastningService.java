@@ -1,10 +1,10 @@
 package no.statkart.skif.store.service;
 
+import jakarta.annotation.Nullable;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Kontroll;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 

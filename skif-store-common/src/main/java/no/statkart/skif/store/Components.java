@@ -4,10 +4,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.store.relation.cache.RelationName;
 import no.statkart.skif.store.relation.cache.StoreRelationCache;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
