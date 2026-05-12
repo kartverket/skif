@@ -226,25 +226,25 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
     @Override
     public <T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<? extends BubbleId<?>> ids, Class<T> bobleklasse) {
         checkEndringsklasseFinnes(bobleklasse);
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        try {
-            Session session = sessionSelector.get(snapshotVersionProvider.get());
-            Kontroll result = new Kontroll();
+
+        final var result = new Kontroll();
+        if (ids == null || ids.isEmpty()) {
             result.setAntall(0L);
-            if (ids == null || ids.isEmpty()) {
-                return result;
-            }
-
-            String tableName = getTableName(session, bobleklasse);
-            String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))";
-
-            NativeQuery<?> query = session.createNativeQuery(sql)
-                    .setParameter("ids", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType());
-
-            result.setAntall(((Number) query.uniqueResult()).longValue());
             return result;
-        } finally {
-            if (sessionSelector != null) sessionSelector.close();
+        }
+
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
+            Session session = sessionSelector.get(snapshotVersionProvider.get());
+            String tableName = getTableName(session, bobleklasse);
+
+            String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))";
+            
+            //benytter native query for å unngå dynamisk sql + Oracle grense på 1000-parametere
+            NativeQuery<Long> query = session.createNativeQuery(sql, Long.class);
+            query.setParameter("ids", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType());
+
+            result.setAntall(query.uniqueResult());
+            return result;
         }
     }
 
