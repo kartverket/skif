@@ -204,10 +204,9 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
     @Override
     public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EI id, Class<T> bobleklasse, @Nullable String filter, int antall) {
         Class<? extends AbstractEndring> endringClass = endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
         id = setIfNull(id);
         // TODO: Legge inn filter
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Long> cq = cb.createQuery(Long.class);
@@ -218,12 +217,9 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
 
             Long count = session.createQuery(cq).getSingleResult();
             
-
             Kontroll result = new Kontroll();
             result.setAntall(Math.min(antall, count));
             return result;
-        } finally {
-            if (sessionSelector != null) sessionSelector.close();
         }
     }
 
