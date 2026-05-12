@@ -2,6 +2,7 @@ package no.statkart.skif.store.service;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Provider;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
@@ -18,7 +19,6 @@ import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.persistence.SessionSelector;
 import org.hibernate.Session;
 
-import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

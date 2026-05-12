@@ -1,6 +1,5 @@
 package no.statkart.skif.storetest.domain.basic;
 
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 
 /**

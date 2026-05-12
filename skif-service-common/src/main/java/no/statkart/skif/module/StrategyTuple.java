@@ -1,11 +1,11 @@
 package no.statkart.skif.module;
 
 import com.google.common.base.Preconditions;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifUtil;
 import no.statkart.skif.config.Configuration;
 
-import jakarta.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;

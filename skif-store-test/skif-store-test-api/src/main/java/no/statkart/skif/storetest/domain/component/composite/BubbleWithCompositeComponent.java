@@ -1,9 +1,8 @@
 package no.statkart.skif.storetest.domain.component.composite;
 
+import jakarta.annotation.Nullable;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-
-import jakarta.annotation.Nullable;
 
 /**
  *

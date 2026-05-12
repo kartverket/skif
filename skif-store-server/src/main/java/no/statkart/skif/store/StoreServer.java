@@ -1,10 +1,10 @@
 package no.statkart.skif.store;
 
 import com.google.inject.Injector;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.AttemptDeleteException;
 import no.statkart.skif.exception.ImplementationException;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 

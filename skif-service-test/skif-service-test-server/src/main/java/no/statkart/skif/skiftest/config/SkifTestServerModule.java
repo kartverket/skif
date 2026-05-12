@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.ServiceMode;
 import no.statkart.skif.SkifModule;
 import no.statkart.skif.SkifUtil;
@@ -26,7 +27,6 @@ import no.statkart.skif.service.proxy.ProxyHandler;
 import no.statkart.skif.service.proxy.RuntimeExceptionProxyHandler;
 import no.statkart.skif.skiftest.service.SkifTestServiceContext;
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;

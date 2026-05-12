@@ -5,9 +5,9 @@ import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.util.Types;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.SkifUtil;
 
-import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**

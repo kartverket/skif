@@ -6,10 +6,10 @@ import com.google.common.collect.ForwardingSetMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.domain.EqualityByFields;
 import no.statkart.skif.domain.EqualsByFields;
 
-import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;

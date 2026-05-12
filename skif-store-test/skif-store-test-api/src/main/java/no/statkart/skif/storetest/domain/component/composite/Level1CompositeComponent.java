@@ -2,13 +2,13 @@ package no.statkart.skif.storetest.domain.component.composite;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.store.AbstractCompositeBubbleComponent;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.store.CompositeComponentWithCollections;
 import no.statkart.skif.store.ValueObjects;
 import no.statkart.skif.storetest.domain.basic.BeloepValueObject;
 
-import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**
