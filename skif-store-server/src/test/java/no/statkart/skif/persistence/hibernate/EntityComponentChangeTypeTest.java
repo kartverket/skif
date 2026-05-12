@@ -312,7 +312,7 @@ public class EntityComponentChangeTypeTest {
     @Entity
     public static class TestBubbleOneToMany implements BubbleObject {
         @Id
-        @Type(TestBubbleOneToManyIdType.class)
+        @Type(no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest.TestBubbleOneToManyIdType.class)
         private TestBubbleOneToManyId id;
 
         @OneToMany(cascade = CascadeType.ALL)
@@ -546,7 +546,7 @@ public class EntityComponentChangeTypeTest {
     @Entity
     public static class TestBubbleOneToOne implements BubbleObject {
         @Id
-        @Type(TestBubbleOneToOneIdType.class)
+        @Type(no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest.TestBubbleOneToOneIdType.class)
         private TestBubbleOneToOneId id;
 
         @SuppressWarnings({"FieldCanBeLocal", "unused"}) // JPA
