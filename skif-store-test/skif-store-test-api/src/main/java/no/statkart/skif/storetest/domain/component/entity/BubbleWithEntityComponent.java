@@ -1,11 +1,11 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
 import com.google.common.collect.Sets;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
 import no.statkart.skif.storetest.domain.component.composite.BubbleWithCompositeComponentId;
 
-import jakarta.annotation.Nullable;
 import java.util.Set;
 
 /**

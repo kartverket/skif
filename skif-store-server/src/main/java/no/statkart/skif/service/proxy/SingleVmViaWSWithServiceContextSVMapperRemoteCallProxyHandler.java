@@ -3,6 +3,7 @@ package no.statkart.skif.service.proxy;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
 import no.statkart.skif.service.LoginUserHolder;
@@ -15,7 +16,6 @@ import no.statkart.skif.service.ws.ServiceWSI;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.SnapshotVersionContext;
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.Method;
 
 /**

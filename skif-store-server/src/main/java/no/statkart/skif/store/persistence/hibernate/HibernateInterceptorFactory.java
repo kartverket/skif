@@ -1,9 +1,8 @@
 package no.statkart.skif.store.persistence.hibernate;
 
+import jakarta.annotation.Nullable;
 import no.statkart.skif.store.SnapshotVersionSeed;
 import org.hibernate.Interceptor;
-
-import jakarta.annotation.Nullable;
 
 /**
  * Factory for å opprette Hibernate Interceptor.

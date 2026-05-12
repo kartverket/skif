@@ -1,11 +1,11 @@
 package no.statkart.skif.storetest.service.histtest;
 
+import jakarta.annotation.Nullable;
 import no.statkart.skif.service.annotation.ServiceContextMapped;
 import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.storetest.domain.basic.HistSimpleId;
 import no.statkart.skif.storetest.domain.basic.HistWithRelationId;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

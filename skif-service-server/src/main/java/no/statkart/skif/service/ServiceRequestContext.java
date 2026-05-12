@@ -1,12 +1,12 @@
 package no.statkart.skif.service;
 
 import com.google.inject.Provider;
+import jakarta.annotation.Nullable;
 import jakarta.ejb.TransactionAttributeType;
 import jakarta.inject.Inject;
 import no.statkart.skif.service.annotation.CallId;
 import no.statkart.skif.service.scope.ServiceRequestScoped;
 
-import jakarta.annotation.Nullable;
 import java.io.Serializable;
 import java.security.Principal;
 

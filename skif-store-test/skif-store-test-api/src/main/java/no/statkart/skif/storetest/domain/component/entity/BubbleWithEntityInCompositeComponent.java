@@ -1,9 +1,8 @@
 package no.statkart.skif.storetest.domain.component.entity;
 
+import jakarta.annotation.Nullable;
 import no.statkart.skif.store.Components;
 import no.statkart.skif.storetest.domain.AbstractStoreTestBubble;
-
-import jakarta.annotation.Nullable;
 
 /**
  * Boble med composite componenter i nestede nivåer og hvor hver composite component inneholder en entity og et sett

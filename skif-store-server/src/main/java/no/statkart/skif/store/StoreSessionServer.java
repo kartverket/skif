@@ -3,6 +3,7 @@ package no.statkart.skif.store;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.inject.Provider;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.AttemptDeleteException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.NotImplementedException;
@@ -18,7 +19,6 @@ import org.hibernate.JDBCException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.resource.transaction.spi.TransactionCoordinator;
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;

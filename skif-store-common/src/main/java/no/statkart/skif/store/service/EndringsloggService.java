@@ -1,5 +1,6 @@
 package no.statkart.skif.store.service;
 
+import jakarta.annotation.Nullable;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Kontroll;
@@ -8,7 +9,6 @@ import no.statkart.skif.store.endringslogg.AbstractEndringId;
 import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 /**

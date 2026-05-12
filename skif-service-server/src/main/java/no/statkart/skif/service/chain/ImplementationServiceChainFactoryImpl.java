@@ -2,12 +2,12 @@ package no.statkart.skif.service.chain;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.service.annotation.Implementation;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.InvokeViaProviderProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 
-import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

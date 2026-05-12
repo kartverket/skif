@@ -1,5 +1,6 @@
 package no.statkart.skif.store.persistence.hibernate;
 
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.ConfigurationException;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.exception.OperationalException;
@@ -21,7 +22,6 @@ import org.hibernate.cfg.AvailableSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;

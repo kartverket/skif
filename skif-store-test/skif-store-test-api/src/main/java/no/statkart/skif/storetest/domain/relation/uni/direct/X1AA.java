@@ -1,12 +1,12 @@
 package no.statkart.skif.storetest.domain.relation.uni.direct;
 
+import jakarta.annotation.Nullable;
 import no.statkart.skif.store.BubbleObjectWithIdent;
 import no.statkart.skif.store.Bubbles;
 import no.statkart.skif.store.InverseRelationCollector;
 import no.statkart.skif.store.InverseRelationParticipation;
 import no.statkart.skif.storetest.domain.relation.AbstractRelationTestBubble;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 

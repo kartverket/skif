@@ -3,13 +3,13 @@ package no.statkart.skif.store.relation.cache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObjectWithIdent;
 import no.statkart.skif.store.StoreEntry;
 import no.statkart.skif.util.CopyHelper;
 
-import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;

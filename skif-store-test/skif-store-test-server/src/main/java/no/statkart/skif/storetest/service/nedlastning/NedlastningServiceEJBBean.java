@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.service.nedlastning;
 
 import com.google.inject.Inject;
+import jakarta.annotation.Nullable;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
@@ -13,7 +14,6 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.Kontroll;
 import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
