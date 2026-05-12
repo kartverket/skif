@@ -40,6 +40,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      * @return false fordi vi ikke endrer på <code>state</code> til <code>entity</code>
      * @see {@link org.hibernate.Interceptor#onLoad(Object, java.io.Serializable, Object[], String[], org.hibernate.type.Type[])}
      */
+    @Override
     @SuppressWarnings("removal")
     public boolean onLoad(Object entity, Serializable hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         if ("true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
@@ -81,18 +82,21 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
         return null;
     }
 
+    @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
         return false;
     }
 
+    @Override
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
         return false;
     }
 
+    @Override
     public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
