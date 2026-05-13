@@ -18,6 +18,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -122,6 +123,21 @@ public class EndringsloggServiceTest extends StoreTestTestCase {
     public void testCalcKontrollForRange(){
         Kontroll kontrollRange = nedlastningService.calcObjektkontrollForRange(null, null, Simple.class, null);
         assertTrue(kontrollRange.getAntall() > 0);
+    }
+
+    @Test
+    public void testCalcKontrollForRange_fra_og_til() {
+        var readMockupFacade = mockupFacadeFactory.getReadMockupFacade();
+        var simpleId1 = readMockupFacade.getSimpleMockupFactory().getSimpleId1();
+        var simpleId2 = readMockupFacade.getSimpleMockupFactory().getSimpleId2();
+        var simpleId3 = readMockupFacade.getSimpleMockupFactory().getSimpleId3();
+        
+        assertThat(nedlastningService.calcObjektkontrollForRange(simpleId1, simpleId1, Simple.class, null).getAntall()).
+            isEqualTo(0);
+        assertThat(nedlastningService.calcObjektkontrollForRange(simpleId1, simpleId2, Simple.class, null).getAntall()).
+            isEqualTo(1);
+        assertThat(nedlastningService.calcObjektkontrollForRange(simpleId1, simpleId3, Simple.class, null).getAntall()).
+            isEqualTo(2);
     }
 
     public void testCalcKontrollForList(){
