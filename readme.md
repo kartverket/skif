@@ -1,17 +1,22 @@
-# Versjonering og utviklingsløp
+# SKIF
 
-## Publisering
+SKIF (Statens Kartverk Infrastructure Framework) er Statens kartverk sitt felles egenutviklede rammeverk for eiendomsssystemer; Grunnboken, Matrikkelen, NRL og Stedsnavn.
+Det er et rammeverk for Java utvikling på klient og tjener basert på JEE-teknologi og SOAP Web Services.
+
+## Versjonering og utviklingsløp
+
+### Publisering
 Pakkene ble tidligere publisert til Nexus. Gamle pakker er migrert til GitHub Packages.
 
 Nye pakker publiseres til [GitHub Packages](https://github.com/orgs/kartverket/packages?repo_name=skif) via [build-push.yml](.github/workflows/build-publish.yml) workflowen.
 Ved hver push til `trunk` så vil det bygges og publiseres en ny versjon av pakkene.
 
 
-## Releasetesting
+### Releasetesting
 Tester kjøres automatisk som en del av [build-push.yml](.github/workflows/build-publish.yml) workflowen ved PR og push til `trunk`.
 
 
-## Versjonering
+### Versjonering
 Pakkene har versjonsnummer som er av formatet `[Major version].[Date].[SHA]`
 Alle pakker har samme versjon, og versjonsnummeret oppdateres ved hver publisering.
 
