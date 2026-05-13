@@ -244,7 +244,6 @@ public class EmptyCollectionsOptimizer {
                         logger.debug(String.format("Collection for bit %d is known to be empty. Initializing collection [%s] without database queries for entity: %s", i, collectionTypes[i].getRole(), getEntityInfoString(event, persister)));
                     }
                     // Initialize the collection to 0 elements without querying the database
-                    collection.beginRead();
                     collection.initializeEmptyCollection(collectionPersisters[i]);
 
                     // Set the snapshot of the collection such that this also will be initialized to an empty collection.
