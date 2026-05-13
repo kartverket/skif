@@ -122,7 +122,7 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
 
             Long count = session.createQuery(cq).getSingleResult();
             Kontroll result =  new Kontroll();
-            result.setAntall(count != null ? count : 0L);
+            result.setAntall(count);
             return result;
         }
     }
