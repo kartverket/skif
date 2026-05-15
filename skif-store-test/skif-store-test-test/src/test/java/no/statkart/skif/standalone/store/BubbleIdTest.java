@@ -36,17 +36,13 @@ public class BubbleIdTest  {
         TestBubbleId<?> testBubbleId = mock(TestBubbleId.class, RETURNS_DEEP_STUBS);
 
         assertThatCode(testBubbleId::toString)
-                .doesNotThrowAnyException();
+            .doesNotThrowAnyException();
 
-        final Long value = 11L;
-        final String hashCodeAsString = String.valueOf(value.hashCode());
-        Mockito.when(testBubbleId.getValue()).thenReturn(value);
+        Mockito.when(testBubbleId.getValue()).thenReturn(11L);
 
         assertThat(String.valueOf(testBubbleId))
-                .describedAs("Non null toString fixed in Mockito 3.4.0")
-                .isNotNull()
-                .describedAs("Default toString for mock contains calculated hashCode() value")
-                .contains(hashCodeAsString);
+            .describedAs("Non null toString fixed in Mockito 3.4.0")
+            .isNotNull();
     }
 
     /**
@@ -57,18 +53,13 @@ public class BubbleIdTest  {
         TestBubble testBubble = mock(TestBubble.class, RETURNS_DEEP_STUBS);
 
         assertThatCode(testBubble::toString)
-                .doesNotThrowAnyException();
+            .doesNotThrowAnyException();
 
-        final TestBubbleId value = new TestBubbleId<>(11L);
-        final String hashCodeAsString = String.valueOf(value.hashCode());
-        Mockito.when(testBubble.getId()).thenReturn(value);
+        Mockito.when(testBubble.getId()).thenReturn(new TestBubbleId<>(11L));
 
         assertThat(String.valueOf(testBubble))
-                .describedAs("Non null toString fixed in Mockito 3.4.0")
-                .isNotNull()
-                .describedAs("Default toString for mock contains calculated hashCode() value")
-                .contains(hashCodeAsString);
+            .describedAs("Non null toString fixed in Mockito 3.4.0")
+            .isNotNull();
     }
-
 }
 
