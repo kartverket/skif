@@ -1,9 +1,11 @@
-apiVersion: backstage.io/v1alpha1
+# nonk8s
+apiVersion: "backstage.io/v1alpha1"
 kind: Component
 metadata:
-  name: skif
+  name: "skif"
+  description: "Statens kartverk sitt felles egenutviklede rammeverk for informasjons-systemer"
   tags:
-    - internal
+    - "public"
 spec:
   type: library
   lifecycle: production
