@@ -37,10 +37,6 @@ jobs:
         needs:
             - calculate-version
 
-        permissions:
-            contents: read
-            packages: read
-
         steps:
             - name: Checkout repository
               uses: actions/checkout@v6
