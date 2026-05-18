@@ -56,6 +56,8 @@ jobs:
 
             - name: Build
               run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     test:
         name: Test
@@ -93,6 +95,8 @@ jobs:
               uses: gradle/actions/wrapper-validation@v6
 
             - name: Initialize database
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                 ./gradlew dbInit \
                   -Pbase_version=${{ env.MAJOR_VERSION }} \
@@ -100,6 +104,8 @@ jobs:
                   ${TEST_PROPERTIES}
 
             - name: Run tests
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                 ./gradlew check --continue --stacktrace \
                 -Pbase_version=${{ env.MAJOR_VERSION }} \
