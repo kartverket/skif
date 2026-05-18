@@ -26,7 +26,7 @@ Alle pakker har samme versjon, og versjonsnummeret oppdateres ved hver publiseri
 
 Skif er avhengig av blant annet SkTools.xjc som hentes fra [GitHub Packages](https://github.com/orgs/kartverket/packages?repo_name=SkTools).
 For å kunne kjøre build og testene hentes denne fra GitHub Packages i [settings.gradle](settings.gradle), som krever et Token med lese-tilgang for pakker på GitHub for Karteverket organisasjonen.
-Tokenet leses fra systemets miljøvariabler, og må hete `PACKAGES_TOKEN`, eller `GITHUB_TOKEN`.
+Tokenet leses fra systemets miljøvariabler, og må hete `PACKAGES_TOKEN`, `KV_PACKAGES_PAT` eller `GH_PACKAGES_PAT`.
 Tokenet `GITHUB_USER` må også settes som er brukernavn.
 
 

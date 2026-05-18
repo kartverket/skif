@@ -53,7 +53,7 @@ jobs:
             - name: Build
               run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_PACKAGES_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     test:
         name: Test
@@ -92,7 +92,7 @@ jobs:
 
             - name: Initialize database
               env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_PACKAGES_PAT: ${{ secrets.GITHUB_TOKEN }}
               run: |
                 ./gradlew dbInit \
                   -Pbase_version=${{ env.MAJOR_VERSION }} \
@@ -101,7 +101,7 @@ jobs:
 
             - name: Run tests
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_PACKAGES_PAT: ${{ secrets.GITHUB_TOKEN }}
               run: |
                 ./gradlew check --continue --stacktrace \
                 -Pbase_version=${{ env.MAJOR_VERSION }} \
@@ -146,4 +146,5 @@ jobs:
             - name: Publish to GitHub Packages
               run: ./gradlew publish --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # publishing
+                  GH_PACKAGES_PAT: ${{ secrets.GITHUB_TOKEN }}
