@@ -55,16 +55,12 @@ jobs:
 
             - name: Build
               run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
-              env:
-                  PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
     test:
         name: Test
         runs-on: ubuntu-latest
         needs:
             - build
-        env:
-            PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
 
         services:
             oracle:
@@ -148,4 +144,3 @@ jobs:
               run: ./gradlew publish --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
