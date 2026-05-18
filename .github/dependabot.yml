@@ -30,6 +30,8 @@ updates:
           time: '07:00'
           timezone: 'Europe/Oslo'
       ignore:
+          - dependency-name: "gradle-wrapper"
+            update-types: ["version-update:semver-major"]
           # Jakarta EE
           - dependency-name: "jakarta.*"
             update-types: ["version-update:semver-major", "version-update:semver-minor"]
