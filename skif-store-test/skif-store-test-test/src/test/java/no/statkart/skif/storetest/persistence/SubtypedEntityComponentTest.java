@@ -20,8 +20,9 @@ import no.statkart.skif.util.CopyHelper;
 import org.assertj.core.api.Assertions;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester endring av subtype på entitycomponent på tjenersiden.
@@ -50,7 +51,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
             public Object run() {
                 BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
-                Assertions.assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent()) instanceof Subtype1EntityComponent).isTrue();
+                assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent())).isInstanceOf(Subtype1EntityComponent.class);
                 return null;
             }
         });
@@ -137,7 +138,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
                 BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
-                Assertions.assertThat(bubble.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue();
+                assertThat(bubble.getSubtypedEntityComponent()).isInstanceOf(Subtype1EntityComponent.class);
 
                 Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubble.getSubtypedEntityComponent();
                 Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
@@ -161,8 +162,8 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
             public Object run() {
                 BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
-                Assertions.assertThat(current.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue(); //Ikke endret
-                Assertions.assertThat(current.getSubtypedEntityComponent().getNr() == NON_DEFAULT_NR).isTrue();// Endret
+                assertThat(current.getSubtypedEntityComponent()).isInstanceOf(Subtype1EntityComponent.class);
+                assertThat(current.getSubtypedEntityComponent().getNr()).as("endret nr").isEqualTo(NON_DEFAULT_NR);
                 return null;
             }
         });
