@@ -123,4 +123,48 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
     }
 
+    @Test(groups = {"singlevm-required"})
+    // Denne testen er ment å illustrere oppførsel som kan oppstå ved spesifik bruk av hibernate + store.
+    public void updateWithSubtypeChangeIncorrectUse() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private StoreServer store;
+
+            @Override
+            public Object run() {
+
+                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
+                BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
+                Assertions.assertThat(bubble.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue();
+
+                Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubble.getSubtypedEntityComponent();
+                Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
+                newComponentWithOldId.setId(oldComponent.getId());
+                newComponentWithOldId.setNr(NON_DEFAULT_NR);
+
+                Session session = store.getInstance(SessionSelector.class).get(SnapshotVersion.CURRENT);
+                session.evict(oldComponent); //Uten evict klarer hibernate å plukke opp feilen med: org.hibernate.NonUniqueObjectException
+
+                bubble.setSubtypedEntityComponent(newComponentWithOldId);
+                store.update(bubble);
+                return null;
+            }
+        });
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private Store store;
+
+            @Override
+            public Object run() {
+                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
+                BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
+                Assertions.assertThat(current.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue(); //Ikke endret
+                Assertions.assertThat(current.getSubtypedEntityComponent().getNr() == NON_DEFAULT_NR).isTrue();// Endret
+                return null;
+            }
+        });
+    }
 }
