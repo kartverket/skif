@@ -3,6 +3,7 @@ name: Dependency Submission
 on:
     push:
         branches: [ 'trunk' ]
+    workflow_dispatch:
 
 permissions:
     contents: write
@@ -20,4 +21,4 @@ jobs:
             - name: Generate and submit dependency graph
               uses: gradle/actions/dependency-submission@v6
               env:
-                  PACKAGES_TOKEN: ${{ secrets.SHARED_PACKAGES_READ_TOKEN }}
+                  PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
