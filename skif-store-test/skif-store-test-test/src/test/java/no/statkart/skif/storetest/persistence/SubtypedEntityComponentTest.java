@@ -138,7 +138,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
                 BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
-                assertThat(bubble.getSubtypedEntityComponent()).isInstanceOf(Subtype1EntityComponent.class);
+                assertThat(Hibernate.unproxy(bubble.getSubtypedEntityComponent())).isInstanceOf(Subtype1EntityComponent.class);
 
                 Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubble.getSubtypedEntityComponent();
                 Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
@@ -162,7 +162,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
             public Object run() {
                 BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
-                assertThat(current.getSubtypedEntityComponent()).isInstanceOf(Subtype1EntityComponent.class);
+                assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent())).isInstanceOf(Subtype1EntityComponent.class);
                 assertThat(current.getSubtypedEntityComponent().getNr()).as("endret nr").isEqualTo(NON_DEFAULT_NR);
                 return null;
             }
