@@ -140,7 +140,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
                 BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
                 assertThat(Hibernate.unproxy(bubble.getSubtypedEntityComponent())).isInstanceOf(Subtype1EntityComponent.class);
 
-                Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubble.getSubtypedEntityComponent();
+                var oldComponent = bubble.getSubtypedEntityComponent();
                 Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
                 newComponentWithOldId.setId(oldComponent.getId());
                 newComponentWithOldId.setNr(NON_DEFAULT_NR);
