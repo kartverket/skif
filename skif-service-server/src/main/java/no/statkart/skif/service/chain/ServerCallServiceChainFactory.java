@@ -3,6 +3,7 @@ package no.statkart.skif.service.chain;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.service.annotation.Call;
 import no.statkart.skif.service.ejb.EJBAttributesLookup;
@@ -10,7 +11,6 @@ import no.statkart.skif.service.ejb.EJBCallTypeChooserProxyHandler;
 import no.statkart.skif.service.proxy.ChainedProxyHandler;
 import no.statkart.skif.service.proxy.ProxyHandler;
 
-import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

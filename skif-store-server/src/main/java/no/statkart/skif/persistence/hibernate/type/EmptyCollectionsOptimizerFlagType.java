@@ -37,6 +37,7 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
 
     private Properties properties;
 
+    @Override
     public void setParameterValues(Properties parameters) {
         this.properties = parameters;
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
@@ -56,26 +57,32 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
         return properties;
     }
 
+    @Override
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
         return cached;
     }
 
+    @Override
     public Object deepCopy(Object value) throws HibernateException {
         return value;
     }
 
+    @Override
     public Serializable disassemble(Object value) throws HibernateException {
         return (Long) value;
     }
 
+    @Override
     public boolean equals(Object x, Object y) throws HibernateException {
         return Objects.equals(x, y);
     }
 
+    @Override
     public int hashCode(Object x) throws HibernateException {
         return x.hashCode();
     }
 
+    @Override
     public boolean isMutable() {
         return false;
     }
@@ -118,26 +125,32 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
         }
     }
 
+    @Override
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
         return original;
     }
 
+    @Override
     public Class returnedClass() {
         return long.class;
     }
 
+    @Override
     public int[] sqlTypes() {
         return new int[]{Types.BIGINT};
     }
 
+    @Override
     public Object fromXMLString(String xmlValue) {
         return Long.parseLong(xmlValue);
     }
 
+    @Override
     public String objectToSQLString(Object value) {
         return '\'' + value.toString() + '\'';
     }
 
+    @Override
     public String toXMLString(Object value) {
         return value.toString();
     }

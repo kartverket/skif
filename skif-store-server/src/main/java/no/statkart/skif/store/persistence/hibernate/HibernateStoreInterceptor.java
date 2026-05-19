@@ -9,6 +9,7 @@ import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.module.common.BubbleIdFactory;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
+import org.hibernate.EntityMode;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
      * @return false fordi vi ikke endrer på <code>state</code> til <code>entity</code>
      * @see {@link org.hibernate.Interceptor#onLoad(Object, java.io.Serializable, Object[], String[], org.hibernate.type.Type[])}
      */
+    @Override
     @SuppressWarnings("removal")
     public boolean onLoad(Object entity, Serializable hibernateId, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         if ("true".equals(System.getProperty(TOGGLE_LEGACY_IDCLASS_STRATEGY, "false"))) {
@@ -75,24 +77,28 @@ public class HibernateStoreInterceptor extends EmptyInterceptor {
         }
     }
 
-    public Object instantiate(Class entitetClazz, Serializable id) throws CallbackException {
-        sjekkSnapshotVersjon(id);
-        //Retur av null gjør at Hibernate bruker default oppførsel
-        return null;
+    @Override
+    public Object instantiate(String entityName, EntityMode entityMode, Serializable id) throws CallbackException {
+        //TH-2583: instantiate gjør ikke sjekkSnapshotVersjon
+//        sjekkSnapshotVersjon(id);
+        return null; //null betyr bruk standard oppførsel
     }
 
+    @Override
     public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
         return false;
     }
 
+    @Override
     public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);
         return false;
     }
 
+    @Override
     public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) throws CallbackException {
         sjekkSnapshotVersjon(id);
         flagFlushed(entity);

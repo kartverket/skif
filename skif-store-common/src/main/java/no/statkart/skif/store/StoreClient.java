@@ -1,9 +1,8 @@
 package no.statkart.skif.store;
 
 import com.google.inject.Injector;
-import no.statkart.skif.exception.ImplementationException;
-
 import jakarta.annotation.Nullable;
+import no.statkart.skif.exception.ImplementationException;
 
 /**
  * @author Henrik Fredholm

@@ -246,18 +246,15 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
     private static Class<?> calcType(Class<?> clazz) {
-        Class<?> type;
         String className = clazz.getName();
         try {
-            type = calcClassFromIdClassName(className);
-            return type;
+            return calcClassFromIdClassName(className, clazz.getClassLoader());
         } catch (ClassNotFoundException e) {
-            throw new ReflectionException("Could not load class " + className + " derived from " + clazz, e);
+            throw new ReflectionException("Could not load bubble class derived from " + clazz, e);
         }
     }
 
-    private static Class<?> calcClassFromIdClassName(String className) throws ClassNotFoundException {
-        Class<?> type;
+    private static Class<?> calcClassFromIdClassName(String className, ClassLoader classLoader) throws ClassNotFoundException {
         if (className.endsWith("IdImpl")) {
             int cutIndex = className.length() - 6;
             int dollarIndex = className.lastIndexOf("$"); // For inner classes
@@ -271,8 +268,7 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
             className = className.substring(0, cutIndex);
         }
 
-        type = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
-        return type;
+        return Class.forName(className, true, classLoader);
     }
 
     /**
@@ -330,15 +326,13 @@ public abstract class AbstractBubbleId<T extends BubbleObject> implements Bubble
     }
 
     private static Class<?> calcBaseType(Class<?> clazz) {
-        Class<?> baseType;
         Class<?> c = calcBaseIdType(clazz);
         String className = c.getName();
         try {
-            baseType = calcClassFromIdClassName(className);
+            return calcClassFromIdClassName(className, clazz.getClassLoader());
         } catch (ClassNotFoundException e) {
-            throw new ConfigurationException("Could not load base class " + className + " derived from " + clazz, e);
+            throw new ConfigurationException("Could not load bubble base class derived from " + clazz, e);
         }
-        return baseType;
     }
 
 

@@ -677,10 +677,8 @@ public class HibernateDetachedSupport {
      * attached og detached state kaster metoden derfor exception dersom en entity component blir orphan i detached
      * state.
      *
-     * <P>I Hibernate 3.6 støttes automatisk sletting av orphan entity components i attached state. For å få dette til
-     * har Hibernate 3.6 blitt patchet med 2 bugfixes (se SKIF-326). Oppførslen blir derfor lik for attached og
-     * detached state.
-     * <p>
+     * <P>I Hibernate 3.6 støttes automatisk sletting av orphan entity components i attached state.
+     * Oppførselen er lik for attached og detached state.
      *
      * @param type          typen til feltet
      * @param value         nåværende verdi

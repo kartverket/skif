@@ -5,6 +5,7 @@ import com.google.inject.Key;
 import com.google.inject.PrivateBinder;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Singleton;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.handler.Handler;
@@ -23,7 +24,6 @@ import no.statkart.skif.service.ws.WebServiceExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

@@ -5,6 +5,7 @@ import com.google.inject.PrivateBinder;
 import com.google.inject.PrivateModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.config.Configuration;
 import no.statkart.skif.mapper.ExceptionMapping;
 import no.statkart.skif.mapper.Mapping;
@@ -15,7 +16,6 @@ import no.statkart.skif.service.proxy.W2DAdapterProxyHandler;
 import no.statkart.skif.service.proxy.W2DAdapterWithServiceContextMapperProxyHandler;
 import no.statkart.skif.service.ws.ServiceWSI;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;

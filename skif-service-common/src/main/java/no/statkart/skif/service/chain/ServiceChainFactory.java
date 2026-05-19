@@ -1,8 +1,7 @@
 package no.statkart.skif.service.chain;
 
-import no.statkart.skif.service.proxy.ProxyHandler;
-
 import jakarta.annotation.Nullable;
+import no.statkart.skif.service.proxy.ProxyHandler;
 
 /**
  * Factory for å lage en {@code ServiceChain} eller en del av en {@code ServiceChain}. Subklasser av dette interfacet

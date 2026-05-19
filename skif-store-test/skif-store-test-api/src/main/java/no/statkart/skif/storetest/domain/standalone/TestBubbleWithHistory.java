@@ -1,7 +1,6 @@
 package no.statkart.skif.storetest.domain.standalone;
 
 import no.statkart.skif.store.AbstractBubbleObject;
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObjectWithHistory;
 import no.statkart.skif.storetest.domain.StoreTestBubble;
 

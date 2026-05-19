@@ -1,6 +1,7 @@
 package no.statkart.skif.storetest.service.endringslogg;
 
 import com.google.inject.Inject;
+import jakarta.annotation.Nullable;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
@@ -17,7 +18,6 @@ import no.statkart.skif.storetest.config.StoreTestEJBInterceptorJEE;
 import no.statkart.skif.storetest.domain.endringslogg.Endring;
 import no.statkart.skif.storetest.domain.endringslogg.EndringId;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 /**

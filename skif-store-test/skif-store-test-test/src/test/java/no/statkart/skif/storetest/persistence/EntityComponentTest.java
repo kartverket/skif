@@ -2,17 +2,18 @@ package no.statkart.skif.storetest.persistence;
 
 import com.google.inject.Inject;
 import no.statkart.skif.exception.ImplementationException;
+import no.statkart.skif.service.RunOnServerMethod;
 import no.statkart.skif.service.sequence.IdService;
 import no.statkart.skif.store.AbstractEntityComponent;
 import no.statkart.skif.store.StoreServer;
-import no.statkart.skif.storetest.config.StoreTestServerModule;
 import no.statkart.skif.storetest.domain.demo.BubbleWithComponents;
 import no.statkart.skif.storetest.domain.demo.BubbleWithComponentsComponent;
 import no.statkart.skif.storetest.domain.demo.BubbleWithComponentsId;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
+import no.statkart.skif.storetest.util.testsupport.StoreTestMixedTestCase;
 import no.statkart.skif.util.CopyHelper;
-import no.statkart.skif.util.testsupport.SkifServerTestCase;
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,19 +26,13 @@ import java.util.Collections;
  * @since 2.1
  */
 @Deprecated // Skrives om til å bruke andre objekter og mockupfactory
-public class EntityComponentTest extends SkifServerTestCase {
+public class EntityComponentTest extends StoreTestMixedTestCase {
 
     @Inject
     private StoreTestMockupFacadeFactory mockupFacadeFactory;
 
-    @Inject
-    private StoreServer store;
 
-
-    public EntityComponentTest() {
-        super(StoreTestServerModule.class);
-    }
-
+    @Test
     public void pseudoId() {
         BubbleWithComponentsComponent component = new BubbleWithComponentsComponent();
 
@@ -48,6 +43,7 @@ public class EntityComponentTest extends SkifServerTestCase {
         Assert.assertEquals(getPseudoId(copy), getPseudoId(component), "Pseudo-id ikke bevart ved kopiering");
     }
 
+    @Test(groups = "singlevm-required")
     public void hashCodePersistentAcrossPersist() {
         IdService idService = mockupFacadeFactory.getWriteMockupFacade().getIdService();
 
@@ -61,28 +57,47 @@ public class EntityComponentTest extends SkifServerTestCase {
 
         final int initialHashCode = component.hashCode();
         final Long initialPseudoId = getPseudoId(component);
+        
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
 
-        store.beginTransaction();
-        store.insert(bubbleWithComponents);
-        store.commitTransaction();
+            @Override
+            public Object run() {
+                store.beginTransaction();
+                store.insert(bubbleWithComponents);
+                store.commitTransaction();
 
-        Assert.assertNotNull(component.getId(), "Component id er null");
-        Assert.assertEquals(getPseudoId(component), initialPseudoId, "PseudoId har endret seg");
-        Assert.assertEquals(component.hashCode(), initialHashCode, "Hashcode har endret seg");
-        Assert.assertNotSame(getPseudoId(component), component.getId(), "Id er pseudo-id");
+                Assert.assertNotNull(component.getId(), "Component id er null");
+                Assert.assertEquals(getPseudoId(component), initialPseudoId, "PseudoId har endret seg");
+                Assert.assertEquals(component.hashCode(), initialHashCode, "Hashcode har endret seg");
+                Assert.assertNotSame(getPseudoId(component), component.getId(), "Id er pseudo-id");
 
-        // Få Store og Hibernate til å glemme objektet i minnet, og lese det opp fra databasen på nytt
-        store.evict(bubbleWithComponents.getId());
+                // Få Store og Hibernate til å glemme objektet i minnet, og lese det opp fra databasen på nytt
+                store.evict(bubbleWithComponents.getId());
 
-        store.beginTransaction();
-        BubbleWithComponents persistedBubble = store.get(bubbleWithComponents.getId());
-        store.commitTransaction();
+                return null;
+            }
+        });
 
-        BubbleWithComponentsComponent persistedComponent = persistedBubble.getComponents().iterator().next();
+        server.runInBeanManagedTransaction(new RunOnServerMethod() {
+            @Inject
+            StoreServer store;
 
-        Assert.assertEquals(persistedComponent.getId(), component.getId(), "Id-ene er forskjellig etter opplesing");
-        Assert.assertEquals(getPseudoId(persistedComponent), persistedComponent.getId(), "Id er ikke pseudo-id");
-        Assert.assertFalse(component.equals(persistedComponent), "Nytt objekt er ikke foventet å være likt det samme objektet i neste transaksjon");
+            @Override
+            public Object run() {
+                store.beginTransaction();
+                BubbleWithComponents persistedBubble = store.get(bubbleWithComponents.getId());
+                store.commitTransaction();
+
+                BubbleWithComponentsComponent persistedComponent = persistedBubble.getComponents().iterator().next();
+
+                Assert.assertEquals(persistedComponent.getId(), component.getId(), "Id-ene er forskjellig etter opplesing");
+                Assert.assertEquals(getPseudoId(persistedComponent), persistedComponent.getId(), "Id er ikke pseudo-id");
+                Assert.assertFalse(component.equals(persistedComponent), "Nytt objekt er ikke foventet å være likt det samme objektet i neste transaksjon");
+                return null;
+            }
+        });
     }
 
     private static Long getPseudoId(AbstractEntityComponent component) {

@@ -2,6 +2,7 @@ package no.statkart.skif.store.service;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Provider;
+import jakarta.annotation.Nullable;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
@@ -17,7 +18,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 

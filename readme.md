@@ -1,17 +1,22 @@
-# Versjonering og utviklingsløp
+# SKIF
 
-## Publisering
+SKIF (Statens Kartverk Infrastructure Framework) er Statens kartverk sitt felles egenutviklede rammeverk for eiendomsssystemer; Grunnboken, Matrikkelen, NRL og Stedsnavn.
+Det er et rammeverk for Java utvikling på klient og tjener basert på JEE-teknologi og SOAP Web Services.
+
+## Versjonering og utviklingsløp
+
+### Publisering
 Pakkene ble tidligere publisert til Nexus. Gamle pakker er migrert til GitHub Packages.
 
 Nye pakker publiseres til [GitHub Packages](https://github.com/orgs/kartverket/packages?repo_name=skif) via [build-push.yml](.github/workflows/build-publish.yml) workflowen.
 Ved hver push til `trunk` så vil det bygges og publiseres en ny versjon av pakkene.
 
 
-## Releasetesting
+### Releasetesting
 Tester kjøres automatisk som en del av [build-push.yml](.github/workflows/build-publish.yml) workflowen ved PR og push til `trunk`.
 
 
-## Versjonering
+### Versjonering
 Pakkene har versjonsnummer som er av formatet `[Major version].[Date].[SHA]`
 Alle pakker har samme versjon, og versjonsnummeret oppdateres ved hver publisering.
 
@@ -19,19 +24,11 @@ Alle pakker har samme versjon, og versjonsnummeret oppdateres ved hver publiseri
 
 ## Lokal utvikling og dependencies
 
-Skif er avhenging av blant annet SkTools.xjc som hentes fra [GitHub Packages](https://github.com/orgs/kartverket/packages?repo_name=SkTools).
+Skif er avhengig av blant annet SkTools.xjc som hentes fra [GitHub Packages](https://github.com/orgs/kartverket/packages?repo_name=SkTools).
 For å kunne kjøre build og testene hentes denne fra GitHub Packages i [settings.gradle](settings.gradle), som krever et Token med lese-tilgang for pakker på GitHub for Karteverket organisasjonen.
 Tokenet leses fra systemets miljøvariabler, og må hete `PACKAGES_TOKEN`, `KV_PACKAGES_PAT` eller `GH_PACKAGES_PAT`.
 Tokenet `GITHUB_USER` må også settes som er brukernavn.
 
-
-# Lokal utvikling på tvers av prosjekter
-For enkelt å teste endringer i andre gradle prosjekt kan disse inkluderes som "composite builds" i byggesystemet.
-Etter endring av oppsett må man oppfriske Gradle prosjektet i IntelliJ.
-```properties 
-# gradle.properties:
-includeBuild.hibernate-orm=../hibernate-orm
-```
 
 #### Oppsett av testdatabase
 Bruker opprettes via `gradle dbCreateUser`. Hvor tablespacefilen skal legges bestemmes
