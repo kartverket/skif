@@ -19,12 +19,10 @@ import no.statkart.skif.util.CopyHelper;
 import org.assertj.core.api.Assertions;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.StaleObjectStateException;
 import org.jspecify.annotations.NonNull;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Tester endring av subtype på entitycomponent på tjenersiden.
@@ -38,7 +36,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
     @Inject
     private RunOnServerWithTxRequiresNewService server;
 
-    
+
     static @NonNull Subtype2EntityComponent Subtype2EntityComponent(Long id, long nonDefaultNr) {
         Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
         newComponentWithOldId.setId(id);
@@ -46,7 +44,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
         return newComponentWithOldId;
     }
 
-    
+
     @Test(groups = {"singlevm-required"})
     public void enkelLesetest() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -139,8 +137,8 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
                 Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
                 bubble.setSubtypedEntityComponent(newComponentWithOldId);
-                
-                store.flush(); 
+
+//                store.flush(); 
                 store.update(bubble);
                 return null;
             }
@@ -164,14 +162,17 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Illustrerer feilsituasjon for edge-case som med Hibernate <= 5 kunne oppstå der man ikke benytter unit-of-work.
+     * Illustrerer uhåndtert edge-case av SKIF-777 som kan oppstå der man ikke benytter unit-of-work.
+     * Info: 
+     * Med {@code select-before-update="true"} i så vil man få en feilmelding ved flush() fra og med Hibernate 6 
+     * da denne gjør noen ekstra sjekker. 
      */
     @Test(groups = {"singlevm-required"})
-    public void updateWithSubtypeChange_AdHoc_IncorrectUse_throwsException() {
+    public void updateWithSubtypeChange_AdHoc_IncorrectUse_doesNotThrowException() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
         var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
 
-        final RunOnServerMethod byttSubklasseOgEvict = new RunOnServerMethod() {
+        server.run(new RunOnServerMethod() {
             @Inject
             private StoreServer store;
 
@@ -188,18 +189,23 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
                 Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
                 bubble.setSubtypedEntityComponent(newComponentWithOldId);
 
-                assertThatCode(() -> store.flush())
-                    .hasRootCauseMessage("Row was updated or deleted by another transaction (or unsaved-value mapping was incorrect): [%s#%s]",
-                        newComponentWithOldId.getClass().getName(), newComponentWithOldId.getId());
-                
+                store.flush();
                 store.update(bubble);
-
                 return null;
             }
-        };
-        
-        assertThatCode(() -> server.run(byttSubklasseOgEvict))
-            .hasRootCauseInstanceOf(StaleObjectStateException.class);
+        });
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private StoreServer store;
+
+            @Override
+            public Object run() {
+                BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
+                assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent())).as("uendret").isInstanceOf(Subtype1EntityComponent.class);
+                assertThat(current.getSubtypedEntityComponent().getNr()).as("endret nr").isEqualTo(NON_DEFAULT_NR);
+                return null;
+            }
+        });
     }
-    
 }
