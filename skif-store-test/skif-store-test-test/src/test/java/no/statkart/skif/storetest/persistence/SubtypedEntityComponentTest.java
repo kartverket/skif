@@ -23,6 +23,7 @@ import org.hibernate.Session;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Tester endring av subtype på entitycomponent på tjenersiden.
@@ -94,7 +95,8 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
     @Test(groups = {"singlevm-required"})
     public void updateWithSubtypeChangeShouldThrowWithCopy() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        var mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
 
         server.run(new RunOnServerMethod() {
             @Inject
@@ -102,7 +104,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
+                var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
                 BubbleWithSubtypedEntityComponent bubbleCopy = CopyHelper.copy(bubble);
 
@@ -128,6 +130,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
     // Denne testen er ment å illustrere oppførsel som kan oppstå ved spesifik bruk av hibernate + store.
     public void updateWithSubtypeChangeIncorrectUse() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
 
         server.run(new RunOnServerMethod() {
             @Inject
@@ -135,8 +138,6 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-
-                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
                 assertThat(Hibernate.unproxy(bubble.getSubtypedEntityComponent())).isInstanceOf(Subtype1EntityComponent.class);
 
@@ -145,10 +146,15 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
                 newComponentWithOldId.setId(oldComponent.getId());
                 newComponentWithOldId.setNr(NON_DEFAULT_NR);
 
-                Session session = store.getInstance(SessionSelector.class).get(SnapshotVersion.CURRENT);
-                session.evict(oldComponent); //Uten evict klarer hibernate å plukke opp feilen med: org.hibernate.NonUniqueObjectException
-
                 bubble.setSubtypedEntityComponent(newComponentWithOldId);
+
+                assertThatCode(() -> store.flush()).hasRootCauseInstanceOf(org.hibernate.NonUniqueObjectException.class);
+
+                Session session = store.getInstance(SessionSelector.class).get(SnapshotVersion.CURRENT);
+                session.evict(oldComponent);
+
+                store.flush();
+                
                 store.update(bubble);
                 return null;
             }
@@ -160,7 +166,6 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
                 assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent())).isInstanceOf(Subtype1EntityComponent.class);
                 assertThat(current.getSubtypedEntityComponent().getNr()).as("endret nr").isEqualTo(NON_DEFAULT_NR);
