@@ -19,6 +19,7 @@ import no.statkart.skif.util.CopyHelper;
 import org.assertj.core.api.Assertions;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.StaleObjectStateException;
 import org.jspecify.annotations.NonNull;
 import org.testng.annotations.Test;
 
@@ -139,7 +140,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
                 Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
                 bubble.setSubtypedEntityComponent(newComponentWithOldId);
                 
-//                store.flush(); 
+                store.flush(); 
                 store.update(bubble);
                 return null;
             }
@@ -163,14 +164,14 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Illustrerer feilsituasjon for edge-case som kan oppstå der man ikke benytter unit-of-work.
+     * Illustrerer feilsituasjon for edge-case som med Hibernate <= 5 kunne oppstå der man ikke benytter unit-of-work.
      */
     @Test(groups = {"singlevm-required"})
-    public void updateWithSubtypeChange_AdHoc_IncorrectUse_doesNotThrowException() {
+    public void updateWithSubtypeChange_AdHoc_IncorrectUse_throwsException() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
         var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
 
-        server.run(new RunOnServerMethod() {
+        final RunOnServerMethod byttSubklasseOgEvict = new RunOnServerMethod() {
             @Inject
             private StoreServer store;
 
@@ -186,24 +187,19 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
                 Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
                 bubble.setSubtypedEntityComponent(newComponentWithOldId);
-               
-                store.flush();
+
+                assertThatCode(() -> store.flush())
+                    .hasRootCauseMessage("Row was updated or deleted by another transaction (or unsaved-value mapping was incorrect): [%s#%s]",
+                        newComponentWithOldId.getClass().getName(), newComponentWithOldId.getId());
+                
                 store.update(bubble);
+
                 return null;
             }
-        });
-
-        server.run(new RunOnServerMethod() {
-            @Inject
-            private StoreServer store;
-
-            @Override
-            public Object run() {
-                BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
-                assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent())).as("uendret").isInstanceOf(Subtype1EntityComponent.class);
-                assertThat(current.getSubtypedEntityComponent().getNr()).as("endret nr").isEqualTo(NON_DEFAULT_NR);
-                return null;
-            }
-        });
+        };
+        
+        assertThatCode(() -> server.run(byttSubklasseOgEvict))
+            .hasRootCauseInstanceOf(StaleObjectStateException.class);
     }
+    
 }
