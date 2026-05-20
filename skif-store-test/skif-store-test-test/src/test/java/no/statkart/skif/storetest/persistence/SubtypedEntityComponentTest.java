@@ -10,7 +10,6 @@ import no.statkart.skif.store.StoreServer;
 import no.statkart.skif.store.UnitOfWork;
 import no.statkart.skif.store.persistence.SessionSelector;
 import no.statkart.skif.storetest.domain.component.entity.BubbleWithSubtypedEntityComponent;
-import no.statkart.skif.storetest.domain.component.entity.BubbleWithSubtypedEntityComponentId;
 import no.statkart.skif.storetest.domain.component.entity.Subtype1EntityComponent;
 import no.statkart.skif.storetest.domain.component.entity.Subtype2EntityComponent;
 import no.statkart.skif.storetest.mockup.StoreTestMockupFacade;
@@ -18,9 +17,12 @@ import no.statkart.skif.storetest.mockup.StoreTestMockupFacadeFactory;
 import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import no.statkart.skif.util.CopyHelper;
 import org.assertj.core.api.Assertions;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.testng.annotations.Ignore;
+import org.jspecify.annotations.NonNull;
 import org.testng.annotations.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tester endring av subtype på entitycomponent på tjenersiden.
@@ -34,12 +36,19 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
     @Inject
     private RunOnServerWithTxRequiresNewService server;
 
-    @Inject
-    private Store clientStore;
+    
+    static @NonNull Subtype2EntityComponent Subtype2EntityComponent(Long id, long nonDefaultNr) {
+        Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
+        newComponentWithOldId.setId(id);
+        newComponentWithOldId.setNr(nonDefaultNr);
+        return newComponentWithOldId;
+    }
 
+    
     @Test(groups = {"singlevm-required"})
     public void enkelLesetest() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
+        var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
 
         server.run(new RunOnServerMethod() {
             @Inject
@@ -47,17 +56,17 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
-                Assertions.assertThat(current.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue();
+                assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent())).isInstanceOf(Subtype1EntityComponent.class);
                 return null;
             }
         });
     }
 
     @Test(groups = {"singlevm-required"})
-    public void updateWithSubtypeChangeShouldThrowWithUnitOfWork() {
+    public void updateWithSubtypeChange_WithUnitOfWork_ThrowsException() {
         StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
 
         server.run(new RunOnServerMethod() {
             @Inject
@@ -65,34 +74,28 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                UnitOfWork uow = store.beginUnitOfWork();
-                try {
-                    BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
+                try (UnitOfWork uow = store.beginUnitOfWork()) {
                     BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
+                    var oldComponent = bubble.getSubtypedEntityComponent();
+                    assertThat(Hibernate.unproxy(oldComponent)).isInstanceOf(Subtype1EntityComponent.class);
 
-                    Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubble.getSubtypedEntityComponent();
-                    Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
-                    newComponentWithOldId.setId(oldComponent.getId());
-                    newComponentWithOldId.setNr(NON_DEFAULT_NR);
-
+                    Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
                     bubble.setSubtypedEntityComponent(newComponentWithOldId);
                     store.update(bubble);
 
                     Assertions.assertThatThrownBy(() -> store.commitUnitOfWork(uow))
-                            .isInstanceOf(ImplementationException.class)
-                            .hasMessageContaining("Attempted to change class");
-                } finally {
-                    uow.close();
+                        .isInstanceOf(ImplementationException.class)
+                        .hasMessageContaining("Attempted to change class");
                 }
                 return null;
             }
         });
-
     }
 
     @Test(groups = {"singlevm-required"})
-    public void updateWithSubtypeChangeShouldThrowWithCopy() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+    public void updateWithSubtypeChange_Detached_ThrowsException() {
+        var mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
 
         server.run(new RunOnServerMethod() {
             @Inject
@@ -100,32 +103,49 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
-                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
                 BubbleWithSubtypedEntityComponent bubbleCopy = CopyHelper.copy(bubble);
+                var oldComponent = bubbleCopy.getSubtypedEntityComponent();
+                assertThat(Hibernate.unproxy(oldComponent)).isInstanceOf(Subtype1EntityComponent.class);
 
-                Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubbleCopy.getSubtypedEntityComponent();
-                Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
-                newComponentWithOldId.setId(oldComponent.getId());
-                newComponentWithOldId.setNr(NON_DEFAULT_NR);
-
+                Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
                 bubbleCopy.setSubtypedEntityComponent(newComponentWithOldId);
 
-                Assertions.assertThatThrownBy(() ->
-                                store.update(bubbleCopy))
-                        .isInstanceOf(ImplementationException.class)
-                        .hasMessageContaining("Attempted to change class");
+                Assertions.assertThatThrownBy(() -> store.update(bubbleCopy))
+                    .isInstanceOf(ImplementationException.class)
+                    .hasMessageContaining("Attempted to change class");
 
                 return null;
             }
         });
-
     }
 
     @Test(groups = {"singlevm-required"})
-    // Denne testen er ment å illustrere oppførsel som kan oppstå ved spesifik bruk av hibernate + store.
-    public void updateWithSubtypeChangeIncorrectUse() {
-        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+    public void updateWithSubtypeChange_AdHoc_ThrowsException() {
+        var mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
+
+        final RunOnServerMethod byttSubklasse = new RunOnServerMethod() {
+            @Inject
+            private StoreServer store;
+
+            @Override
+            public Object run() {
+                BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
+                var oldComponent = bubble.getSubtypedEntityComponent();
+                assertThat(Hibernate.unproxy(oldComponent)).isInstanceOf(Subtype1EntityComponent.class);
+
+                Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
+                bubble.setSubtypedEntityComponent(newComponentWithOldId);
+                
+//                store.flush(); 
+                store.update(bubble);
+                return null;
+            }
+        };
+
+        Assertions.assertThatThrownBy(() -> server.run(byttSubklasse))
+            .hasRootCauseInstanceOf(org.hibernate.NonUniqueObjectException.class);
 
         server.run(new RunOnServerMethod() {
             @Inject
@@ -133,20 +153,40 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
             @Override
             public Object run() {
+                BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
+                assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent())).as("uendret").isInstanceOf(Subtype1EntityComponent.class);
+                assertThat(current.getSubtypedEntityComponent().getNr()).as("uendret").isEqualTo(0L);
+                return null;
+            }
+        });
+    }
 
-                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
+    /**
+     * Illustrerer feilsituasjon for edge-case som kan oppstå der man ikke benytter unit-of-work.
+     */
+    @Test(groups = {"singlevm-required"})
+    public void updateWithSubtypeChange_AdHoc_IncorrectUse_doesNotThrowException() {
+        StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getWriteMockupFacadeAndSaveData();
+        var bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
+
+        server.run(new RunOnServerMethod() {
+            @Inject
+            private StoreServer store;
+
+            @Override
+            public Object run() {
                 BubbleWithSubtypedEntityComponent bubble = store.lock(bubbleId);
-                Assertions.assertThat(bubble.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue();
+                var oldComponent = bubble.getSubtypedEntityComponent();
+                assertThat(Hibernate.unproxy(oldComponent)).isInstanceOf(Subtype1EntityComponent.class);
 
-                Subtype1EntityComponent oldComponent = (Subtype1EntityComponent) bubble.getSubtypedEntityComponent();
-                Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
-                newComponentWithOldId.setId(oldComponent.getId());
-                newComponentWithOldId.setNr(NON_DEFAULT_NR);
-
+                //unngår "org.hibernate.NonUniqueObjectException: A different object with the same identifier value was already associated with the session ..."
                 Session session = store.getInstance(SessionSelector.class).get(SnapshotVersion.CURRENT);
-                session.evict(oldComponent); //Uten evict klarer hibernate å plukke opp feilen med: org.hibernate.NonUniqueObjectException
+                session.evict(oldComponent);
 
+                Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
                 bubble.setSubtypedEntityComponent(newComponentWithOldId);
+               
+                store.flush();
                 store.update(bubble);
                 return null;
             }
@@ -154,14 +194,13 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
         server.run(new RunOnServerMethod() {
             @Inject
-            private Store store;
+            private StoreServer store;
 
             @Override
             public Object run() {
-                BubbleWithSubtypedEntityComponentId<?> bubbleId = mockupFacade.getBubbleWithSubtypedEntityComponentMockupFactory().getWithNonNullSubtypedComponentsId();
                 BubbleWithSubtypedEntityComponent current = store.get(bubbleId);
-                Assertions.assertThat(current.getSubtypedEntityComponent() instanceof Subtype1EntityComponent).isTrue(); //Ikke endret
-                Assertions.assertThat(current.getSubtypedEntityComponent().getNr() == NON_DEFAULT_NR).isTrue();// Endret
+                assertThat(Hibernate.unproxy(current.getSubtypedEntityComponent())).as("uendret").isInstanceOf(Subtype1EntityComponent.class);
+                assertThat(current.getSubtypedEntityComponent().getNr()).as("endret nr").isEqualTo(NON_DEFAULT_NR);
                 return null;
             }
         });
