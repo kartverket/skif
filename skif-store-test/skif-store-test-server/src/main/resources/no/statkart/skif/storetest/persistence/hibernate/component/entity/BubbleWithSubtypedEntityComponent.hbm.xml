@@ -42,11 +42,11 @@
 
         <subclass name="no.statkart.skif.storetest.domain.component.entity.Subtype1EntityComponent"
                   discriminator-value="Subtype1EntityComponent" lazy="true"
-                  select-before-update="true">
+                  select-before-update="false">
         </subclass>
         <subclass name="no.statkart.skif.storetest.domain.component.entity.Subtype2EntityComponent"
                   discriminator-value="Subtype2EntityComponent" lazy="true"
-                  select-before-update="true">
+                  select-before-update="false">
         </subclass>
     </class>
 

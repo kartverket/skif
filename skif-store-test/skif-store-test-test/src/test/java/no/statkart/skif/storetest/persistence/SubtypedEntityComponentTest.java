@@ -36,7 +36,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
     @Inject
     private RunOnServerWithTxRequiresNewService server;
 
-    
+
     static @NonNull Subtype2EntityComponent Subtype2EntityComponent(Long id, long nonDefaultNr) {
         Subtype2EntityComponent newComponentWithOldId = new Subtype2EntityComponent();
         newComponentWithOldId.setId(id);
@@ -44,7 +44,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
         return newComponentWithOldId;
     }
 
-    
+
     @Test(groups = {"singlevm-required"})
     public void enkelLesetest() {
         final StoreTestMockupFacade mockupFacade = mockupFacadeFactory.getReadMockupFacadeAndSaveData();
@@ -137,7 +137,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
                 Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
                 bubble.setSubtypedEntityComponent(newComponentWithOldId);
-                
+
 //                store.flush(); 
                 store.update(bubble);
                 return null;
@@ -162,7 +162,10 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
     }
 
     /**
-     * Illustrerer feilsituasjon for edge-case som kan oppstå der man ikke benytter unit-of-work.
+     * Illustrerer uhåndtert edge-case av SKIF-777 som kan oppstå der man ikke benytter unit-of-work.
+     * Info: 
+     * Med {@code select-before-update="true"} i så vil man få en feilmelding ved flush() fra og med Hibernate 6 
+     * da denne gjør noen ekstra sjekker. 
      */
     @Test(groups = {"singlevm-required"})
     public void updateWithSubtypeChange_AdHoc_IncorrectUse_doesNotThrowException() {
@@ -185,7 +188,7 @@ public class SubtypedEntityComponentTest extends StoreTestTestCase {
 
                 Subtype2EntityComponent newComponentWithOldId = Subtype2EntityComponent(oldComponent.getId(), NON_DEFAULT_NR);
                 bubble.setSubtypedEntityComponent(newComponentWithOldId);
-               
+
                 store.flush();
                 store.update(bubble);
                 return null;
