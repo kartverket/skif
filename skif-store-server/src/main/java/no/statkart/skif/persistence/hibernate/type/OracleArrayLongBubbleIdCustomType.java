@@ -25,7 +25,7 @@ import java.util.Collection;
  * @since 2.3
  * @author Henrik Fredholm
  */
-public class OracleArrayLongBubbleIdCustomType extends CustomType {
+public class OracleArrayLongBubbleIdCustomType extends CustomType<Object> {
     public OracleArrayLongBubbleIdCustomType() throws MappingException {
         super(new OracleArrayUserType<>(new OracleArrayLongBubbleIdConverter()), null);
     }
