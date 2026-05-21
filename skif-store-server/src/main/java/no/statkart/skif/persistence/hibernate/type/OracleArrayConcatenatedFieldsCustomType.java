@@ -12,7 +12,7 @@ import org.hibernate.type.CustomType;
  * @since 2.6
  * @author Henrik Fredholm
  */
-public class OracleArrayConcatenatedFieldsCustomType extends CustomType {
+public class OracleArrayConcatenatedFieldsCustomType extends CustomType<Object> {
     public OracleArrayConcatenatedFieldsCustomType() throws MappingException {
         super(new OracleArrayUserType<>(new OracleArrayConcatenatedFieldsConverter()), null);
     }

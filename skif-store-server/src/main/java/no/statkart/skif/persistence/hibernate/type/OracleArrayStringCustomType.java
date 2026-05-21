@@ -24,7 +24,7 @@ import java.util.Collection;
  * @since 2.3
  * @author Henrik Fredholm
  */
-public class OracleArrayStringCustomType extends CustomType {
+public class OracleArrayStringCustomType extends CustomType<Object> {
     public OracleArrayStringCustomType() throws MappingException {
         super(new OracleArrayUserType<>(new OracleArrayStringConverter()), null);
     }

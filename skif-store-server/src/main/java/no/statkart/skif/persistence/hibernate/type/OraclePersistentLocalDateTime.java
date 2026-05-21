@@ -23,7 +23,7 @@ import java.util.Objects;
  * @author Tor Egil R. Strand
  * @since 2.5.0
  */
-public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializable {
+public class OraclePersistentLocalDateTime implements EnhancedUserType<Object>, Serializable {
 
     @Override
     public int getSqlType() {

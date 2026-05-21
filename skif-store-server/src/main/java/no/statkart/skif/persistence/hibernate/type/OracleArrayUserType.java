@@ -24,7 +24,7 @@ import java.util.Objects;
  * @author Henrik Fredholm
  * @since 2.6
  */
-public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implements UserType {
+public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implements UserType<Object> {
     private static final Logger log = LoggerFactory.getLogger(OracleArrayUserType.class);
 
     private static final String BIND_MSG_TEMPLATE = "binding parameter [%d] as [%s] - %s";
