@@ -26,10 +26,10 @@ public class HibernateHelper {
             throw new IllegalArgumentException("Not an AbstractEntityPersister: " + persister.getEntityName());
         }
         AbstractEntityPersister entityPersister = (AbstractEntityPersister) persister;
-        if (!entityPersister.needsDiscriminator()) {
-            return "";
+        if (entityPersister.needsDiscriminator()) {
+            return " and " + alias + '.' + entityPersister.getDiscriminatorColumnName() + '=' + entityPersister.getDiscriminatorSQLValue();
         }
-        return " and " + alias + '.' + entityPersister.getDiscriminatorColumnName() + '=' + entityPersister.getDiscriminatorSQLValue();
+        return "";
     }
     
     public static String getTableName(Session session, Class<?> cls) {
