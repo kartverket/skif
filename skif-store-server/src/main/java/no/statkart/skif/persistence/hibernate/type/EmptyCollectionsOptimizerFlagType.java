@@ -32,7 +32,7 @@ import java.util.Properties;
  *
  * @author Henrik Fredholm
  */
-public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, ParameterizedType {
+public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType<Object>, ParameterizedType {
     private final static Logger log = LoggerFactory.getLogger(EmptyCollectionsOptimizerFlagType.class);
 
     private Properties properties;

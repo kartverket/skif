@@ -20,7 +20,7 @@ import java.util.Objects;
  * databasen er {@code TIMESTAMP WITH LOCAL TIME ZONE}. Må gjøre oversettelsen før vi oversender dataene til JDBC.
  * Dersom datatypen i databasen ikke er {@code TIMESTAMP WITH LOCAL TIME ZONE}, så er det meningsløst å bruke denne klasen.
  */
-public class OracleLocalTimestamp implements UserType {
+public class OracleLocalTimestamp implements UserType<Object> {
 
     @Override
     public int getSqlType() {
