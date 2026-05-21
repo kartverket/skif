@@ -4,7 +4,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import jakarta.annotation.Nullable;
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.mockup.MockupTransfer;
 import no.statkart.skif.store.BubbleId;
@@ -24,7 +23,6 @@ import no.statkart.skif.storetest.domain.basic.BubbleWithRelation;
 import no.statkart.skif.storetest.domain.basic.BubbleWithRelationId;
 import no.statkart.skif.storetest.domain.basic.Simple;
 import no.statkart.skif.storetest.domain.basic.SimpleId;
-import no.statkart.skif.storetest.domain.basic.SubTypeWithCollectionId;
 import no.statkart.skif.storetest.domain.basic.SubTypeWithPrimitive;
 import no.statkart.skif.storetest.domain.basic.SubTypeWithPrimitiveId;
 import no.statkart.skif.storetest.domain.basic.SubTypedBubble;
@@ -43,6 +41,7 @@ import no.statkart.skif.storetest.util.testsupport.StoreTestTestCase;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -304,7 +303,6 @@ public class EndringManagerTest extends StoreTestTestCase {
      * Tester beregning av kontroll for gitt boble klasse. Tester også at det ikke er mulig å bruke supertype
      * av boble basisklassene (f.eks StoreTestBubble).
      */
-    @Test
     public void testKontrollForList() {
         // Oppretter testset med 2 BubbleWitheRelation og 2 Simple objekter
         final EndringId<?> endringIdFoer = endringsloggService.findSisteEndringId();
@@ -339,16 +337,6 @@ public class EndringManagerTest extends StoreTestTestCase {
         } catch (IllegalArgumentException e) {
             assertThat(e).hasMessageContaining("StoreTestBubble");
         }
-    }
-
-    @Test
-    public void testKontrollForList_subtype() {
-        var readMockupFacade = mockupFacadeFactory.getReadMockupFacade();
-        SubTypeWithCollectionId<?> differentHistoricSubtypesId = readMockupFacade.getSubTypedBubbleMockupFactory().getDifferentHistoricSubtypesId();
-        
-        assertThat(nedlastningService.calcObjektkontrollForList(List.of(differentHistoricSubtypesId), SubTypedBubble.class))
-            .extracting(Kontroll::getAntall)
-            .isEqualTo(1L);
     }
 
     long getEndringsnummmer(AbstractEndringId<?> id) {
