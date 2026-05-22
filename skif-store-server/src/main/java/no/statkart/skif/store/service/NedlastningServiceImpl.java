@@ -17,12 +17,15 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.Store;
 import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.persistence.SessionSelector;
+import no.statkart.skif.util.HibernateHelper;
 import org.hibernate.Session;
+import org.hibernate.persister.entity.EntityPersister;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static no.statkart.skif.util.HibernateHelper.getPersister;
 import static no.statkart.skif.util.HibernateHelper.getTableName;
 
 /**
@@ -132,15 +135,17 @@ public abstract class NedlastningServiceImpl implements NedlastningService {
         checkBobbleklasseGyldigForNedlasting(domainklasse);
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            String tableName = getTableName(session, domainklasse);
+            EntityPersister persister = getPersister(session, domainklasse);
+            var tableName = getTableName(session, domainklasse);
 
-            String sql = "select count(*) from " + tableName + " where id in (select * from table(?))";
+            String sql = "select count(*) from " + tableName + " t where t.id in (select * from table(:ids))" 
+                + HibernateHelper.getDiscriminatorSql(persister, "t");
 
-            Number count = (Number) session.createNativeQuery(sql)
-                .setParameter(1, OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType())
+            Long count = session.createNativeQuery(sql, Long.class)
+                .setParameter("ids", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType())
                 .getSingleResult();
             Kontroll result = new Kontroll();
-            result.setAntall(count.longValue());
+            result.setAntall(count);
             return result;
         }
     }
