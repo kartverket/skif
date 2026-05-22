@@ -27,7 +27,9 @@ import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.store.persistence.SessionSelector;
+import no.statkart.skif.util.HibernateHelper;
 import org.hibernate.Session;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.query.NativeQuery;
 
 import java.util.Collection;
@@ -36,6 +38,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static no.statkart.skif.util.HibernateHelper.getPersister;
 import static no.statkart.skif.util.HibernateHelper.getTableName;
 
 /**
@@ -236,10 +239,12 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
 
         try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            String tableName = getTableName(session, bobleklasse);
+            EntityPersister persister = getPersister(session, bobleklasse);
+            var tableName = getTableName(session, bobleklasse);
 
-            String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))";
-            
+            String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))"
+                + HibernateHelper.getDiscriminatorSql(persister, "t");
+
             //benytter native query for å unngå dynamisk sql + Oracle grense på 1000-parametere
             NativeQuery<Long> query = session.createNativeQuery(sql, Long.class);
             query.setParameter("ids", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType());
