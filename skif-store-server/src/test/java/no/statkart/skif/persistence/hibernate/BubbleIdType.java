@@ -1,5 +1,6 @@
 package no.statkart.skif.persistence.hibernate;
 
+import no.statkart.skif.store.BubbleId;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
@@ -11,65 +12,76 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
-public abstract class BubbleIdType implements UserType {
+/**
+ * Testklasse
+ */
+public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T> {
     private static final Logger log = LoggerFactory.getLogger(UserType.class);
 
-    private final int[] SQL_TYPES = new int[]{Types.BIGINT};
-
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    @Override
+    public int getSqlType() {
+        return Types.BIGINT;
     }
 
+
+    @Override
     public boolean isMutable() {
         return false;
     }
 
-    public Serializable disassemble(Object value) throws HibernateException {
-        return (Serializable) value;
+    @Override
+    public Serializable disassemble(T value) throws HibernateException {
+        return value;
     }
 
-    public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        return cached;
+    @SuppressWarnings("unchecked")
+    @Override
+    public T assemble(Serializable cached, Object owner) throws HibernateException {
+        return (T) cached;
     }
 
-    public Object replace(Object original, Object target, Object owner) throws HibernateException {
+    @Override
+    public T replace(T original, T target, Object owner) throws HibernateException {
         return original;
     }
 
-    public boolean equals(Object x, Object y) {
-        return (x == y) || (x != null && x.equals(y));
+    @Override
+    public boolean equals(T x, T y) {
+        return Objects.equals(x, y);
     }
 
-    public final int hashCode(Object x) throws HibernateException {
+    @Override
+    public final int hashCode(T x) throws HibernateException {
         return x.hashCode();
     }
 
-    public Object deepCopy(Object value) {
+    @Override
+    public T deepCopy(T value) {
         return value;
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public T nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         final boolean traceEnabled = log.isTraceEnabled();
-        String name = names[0];
-        Long value = rs.getLong(name);
+        Long value = rs.getLong(position);
         if (rs.wasNull()) {
-            if ( traceEnabled ) {
+            if (traceEnabled) {
                 log.trace(
-                        "extracted value ({} : {}) - [null]",
-                        name,
-                        getClass().getName()
+                    "extracted value ({} : {}) - [null]",
+                    position,
+                    getClass().getName()
                 );
             }
             return null;
         } else {
-            if ( traceEnabled ) {
+            if (traceEnabled) {
                 log.trace(
-                        "extracted value ({} : {}) - {}",
-                        name,
-                        getClass().getName(),
-                        value
+                    "extracted value ({} : {}) - {}",
+                    position,
+                    getClass().getName(),
+                    value
                 );
             }
             return createId(value);
@@ -77,26 +89,25 @@ public abstract class BubbleIdType implements UserType {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, T value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         final boolean traceEnabled = log.isTraceEnabled();
         if (value == null) {
-            if ( traceEnabled ) {
+            if (traceEnabled) {
                 log.trace(
-                        "binding parameter {} as {} - [null]",
-                        index,
-                        getClass().getName()
+                    "binding parameter {} as {} - [null]",
+                    index,
+                    getClass().getName()
                 );
             }
             st.setNull(index, Types.BIGINT);
         } else {
             Long longValue = getValue(value);
-            if ( traceEnabled ) {
+            if (traceEnabled) {
                 log.trace(
-                        "binding parameter {} as {} - {}",
-                        index,
-                        getClass().getName(),
-                        longValue
-
+                    "binding parameter {} as {} - {}",
+                    index,
+                    getClass().getName(),
+                    longValue
                 );
             }
             st.setLong(index, longValue);
@@ -105,5 +116,5 @@ public abstract class BubbleIdType implements UserType {
 
     public abstract Long getValue(Object id);
 
-    public abstract Object createId(Long value);
+    public abstract T createId(Long value);
 }

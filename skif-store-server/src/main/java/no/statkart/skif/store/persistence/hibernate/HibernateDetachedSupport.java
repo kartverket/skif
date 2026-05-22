@@ -11,12 +11,11 @@ import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.EntityComponent;
 import no.statkart.skif.util.CopyHelper;
-import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
-import org.hibernate.collection.internal.PersistentMap;
 import org.hibernate.collection.spi.PersistentCollection;
+import org.hibernate.collection.spi.PersistentMap;
 import org.hibernate.engine.spi.CascadeStyle;
 import org.hibernate.engine.spi.CascadeStyles;
 import org.hibernate.engine.spi.CascadingActions;
@@ -24,6 +23,7 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.Assigned;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.metamodel.mapping.JdbcMapping;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.collection.QueryableCollection;
 import org.hibernate.persister.entity.AbstractEntityPersister;
@@ -35,9 +35,7 @@ import org.hibernate.type.ComponentType;
 import org.hibernate.type.CompositeType;
 import org.hibernate.type.CustomType;
 import org.hibernate.type.EntityType;
-import org.hibernate.type.LiteralType;
 import org.hibernate.type.MapType;
-import org.hibernate.type.SingleColumnType;
 import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -373,7 +371,7 @@ public class HibernateDetachedSupport {
      * @since 2.3
      */
     void setPropertyValues(Type componentType, Object component, Object[] properties) {
-        ((CompositeType) componentType).setPropertyValues(component, properties, EntityMode.POJO);
+        ((CompositeType) componentType).setPropertyValues(component, properties);
     }
 
     /**
@@ -383,7 +381,7 @@ public class HibernateDetachedSupport {
      * @since 2.3
      */
     Object[] getPropertyValues(Type componentType, Object component) {
-        return ((CompositeType) componentType).getPropertyValues(component, EntityMode.POJO);
+        return ((CompositeType) componentType).getPropertyValues(component);
     }
 
     /**
@@ -405,11 +403,8 @@ public class HibernateDetachedSupport {
             }
 
             final SharedSessionContractImplementor sessionImpl = (SharedSessionContractImplementor) session();
-            final CollectionPersister collectionPersister = sessionImpl.getFactory().getMetamodel().collectionPersister(mapType.getRole());
+            final CollectionPersister collectionPersister = sessionImpl.getFactory().getMappingMetamodel().getCollectionDescriptor(mapType.getRole());
 
-            if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
-                throw new ImplementationException("Key must be LiteralType");
-            }
             Map<?, ?> map = (Map<?, ?>) mapType.instantiate(mapInObject != null ? mapInObject.size() : 0);
             PersistentMap persistentMap = (PersistentMap) mapType.wrap(sessionImpl, map);
             persistentMap.unsetSession(sessionImpl); // Skal ikke være attached enda, men null er ikke lov over
@@ -617,11 +612,7 @@ public class HibernateDetachedSupport {
     }
 
     private void checkEntityComponentsInMapOnInsert(CollectionType collectionType, Map<?, ?> value, IdentityHashMap<Object, Object> processedObjects, CascadeStyle cascadeStyle) {
-        CollectionPersister collectionPersister = lazyInitializer.getMetamodel().collectionPersister(collectionType.getRole());
-
-        if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
-            throw new ImplementationException("Key must be LiteralType");
-        }
+        CollectionPersister collectionPersister = lazyInitializer.getMetamodel().getCollectionDescriptor(collectionType.getRole());
 
         if (cascadeStyle.doCascade(CascadingActions.SAVE_UPDATE)) {
             // Sjekk at det ikke er noen collections inni her
@@ -927,10 +918,13 @@ public class HibernateDetachedSupport {
     }
 
     protected boolean isSingleColumnType(Type type) {
-        return type instanceof SingleColumnType;
-
+        if (type instanceof JdbcMapping) {
+            JdbcMapping jdbcMapping = (JdbcMapping) type;
+            return jdbcMapping.getJdbcTypeCount() == 1;
+        }
+        return false;
     }
-
+    
     /**
      * Finn entity components for object og sjekk at disse alle er nye. Sjekker også objektet selv hvis det er en entity component
      *
@@ -986,10 +980,6 @@ public class HibernateDetachedSupport {
     // TODO: Denne gjør ikke noe av det den sier den gjør
     private void checkForStolenEntitiesInNewObjectForMap(Map<?, ?> mapInObject, CollectionType collectionType, IdentityHashMap<Object, Object> processedObjects, CascadeStyle cascadeStyleForElement) {
         CollectionPersister collectionPersister = lazyInitializer.getMetamodel().collectionPersister(collectionType.getRole());
-
-        if (!(collectionPersister.getKeyType() instanceof LiteralType)) {
-            throw new ImplementationException("Key must be LiteralType");
-        }
 
         // Sjekk at det ikke er noen collections inni her
         Type elementType = collectionPersister.getElementType();

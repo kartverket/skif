@@ -1,6 +1,5 @@
 package no.statkart.skif.persistence.hibernate.type;
 
-import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.persistence.OracleArrayStringBubbleIdConverter;
 import org.hibernate.MappingException;
 import org.hibernate.type.CustomType;
@@ -22,8 +21,8 @@ import org.hibernate.type.CustomType;
  * @since 2.3
  * @author Henrik Fredholm
  */
-public class OracleArrayStringBubbleIdCustomType extends CustomType {
+public class OracleArrayStringBubbleIdCustomType extends CustomType<Object> {
     public OracleArrayStringBubbleIdCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayStringBubbleIdConverter, BubbleId<?>>(new OracleArrayStringBubbleIdConverter()));
+        super(new OracleArrayUserType<>(new OracleArrayStringBubbleIdConverter()), null);
     }
 }

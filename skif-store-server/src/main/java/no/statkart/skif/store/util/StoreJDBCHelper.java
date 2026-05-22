@@ -84,15 +84,6 @@ public class StoreJDBCHelper extends JDBCHelper {
         }
     }
 
-    public static Object getBubbleIdValue(ResultSet resultSet, String name, Class idValueType) throws SQLException {
-        if (idValueType == Long.class) {
-            return resultSet.getLong(name);
-        } else if (idValueType == String.class) {
-            return resultSet.getString(name);
-        } else {
-            throw new ImplementationException("Value type " + idValueType.getName() + " is not supported");
-        }
-    }
 
    public static <T extends BubbleId<?>> T getBubbleIdWithSnapshot(ResultSet resultSet, int bubbleIdIndex, int snapshotVersionIndex, T bubbleIdPrototype) throws SQLException {
        Object idValue = StoreJDBCHelper.getBubbleIdValue(resultSet, bubbleIdIndex, bubbleIdPrototype.getValueType());

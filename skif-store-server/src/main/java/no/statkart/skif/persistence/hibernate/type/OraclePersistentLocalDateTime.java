@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
  * Persisterer en {@link LocalDateTime} fra JodaTime ned i en Oracle-database uten å gå via {@link java.util.Date}.
@@ -22,13 +23,11 @@ import java.sql.Types;
  * @author Tor Egil R. Strand
  * @since 2.5.0
  */
-public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializable {
-
-    private static final int[] SQL_TYPES = new int[] { Types.TIMESTAMP, };
+public class OraclePersistentLocalDateTime implements EnhancedUserType<Object>, Serializable {
 
     @Override
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    public int getSqlType() {
+        return Types.TIMESTAMP;
     }
 
     @Override
@@ -38,15 +37,7 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == y) {
-            return true;
-        }
-        if (x == null || y == null) {
-            return false;
-        }
-        LocalDateTime dtx = (LocalDateTime) x;
-        LocalDateTime dty = (LocalDateTime) y;
-        return dtx.equals(dty);
+        return Objects.equals(x, y);
     }
 
     @Override
@@ -55,9 +46,9 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         OracleResultSet oracleResultSet = rs.unwrap(OracleResultSet.class);
-        TIMESTAMP oracleDate = oracleResultSet.getTIMESTAMP(names[0]);
+        TIMESTAMP oracleDate = oracleResultSet.getTIMESTAMP(position);
         if (oracleDate == null) {
             return null;
         }
@@ -129,18 +120,17 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType, Serializ
     }
 
     @Override
-    public String objectToSQLString(Object object) {
+    public String toSqlLiteral(Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String toXMLString(Object object) {
-        return object.toString();
+    public String toString(Object value) throws HibernateException {
+        return value.toString();
     }
 
     @Override
-    public Object fromXMLString(String string) {
-        return new LocalDateTime(string);
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        return new LocalDateTime(sequence);
     }
-
 }

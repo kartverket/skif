@@ -1,8 +1,11 @@
 package no.statkart.skif.persistence.hibernate.type;
 
+import no.statkart.skif.store.persistence.OracleArrayConverter;
 import no.statkart.skif.store.persistence.OracleArrayStringConverter;
 import org.hibernate.MappingException;
 import org.hibernate.type.CustomType;
+
+import java.util.Collection;
 
 /**
  * En Hibernate {@code CustomType} klasse som gjør det mulig å bruke collections av vilkårlig størrelse
@@ -21,8 +24,12 @@ import org.hibernate.type.CustomType;
  * @since 2.3
  * @author Henrik Fredholm
  */
-public class OracleArrayStringCustomType extends CustomType {
+public class OracleArrayStringCustomType extends CustomType<Object> {
     public OracleArrayStringCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayStringConverter, String>(new OracleArrayStringConverter()));
+        super(new OracleArrayUserType<>(new OracleArrayStringConverter()), null);
+    }
+
+    public static Object wrap(Collection<String> strings) {
+        return new OracleArrayConverter.Wrapper<>(strings);
     }
 }

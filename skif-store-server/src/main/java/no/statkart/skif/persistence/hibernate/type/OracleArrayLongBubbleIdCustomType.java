@@ -1,9 +1,12 @@
 package no.statkart.skif.persistence.hibernate.type;
 
 import no.statkart.skif.store.BubbleId;
+import no.statkart.skif.store.persistence.OracleArrayConverter;
 import no.statkart.skif.store.persistence.OracleArrayLongBubbleIdConverter;
 import org.hibernate.MappingException;
 import org.hibernate.type.CustomType;
+
+import java.util.Collection;
 
 /**
  * En Hibernate {@code CustomType} klasse som gjør det mulig å bruke collections av vilkårlig størrelse
@@ -22,8 +25,12 @@ import org.hibernate.type.CustomType;
  * @since 2.3
  * @author Henrik Fredholm
  */
-public class OracleArrayLongBubbleIdCustomType extends CustomType {
+public class OracleArrayLongBubbleIdCustomType extends CustomType<Object> {
     public OracleArrayLongBubbleIdCustomType() throws MappingException {
-        super(new OracleArrayUserType<OracleArrayLongBubbleIdConverter, BubbleId<?>>(new OracleArrayLongBubbleIdConverter()));
+        super(new OracleArrayUserType<>(new OracleArrayLongBubbleIdConverter()), null);
+    }
+
+    public static Object wrap(Collection<? extends BubbleId<?>> objects) {
+        return new OracleArrayConverter.Wrapper<>(objects);
     }
 }

@@ -32,7 +32,7 @@ import java.util.Properties;
  *
  * @author Henrik Fredholm
  */
-public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, ParameterizedType {
+public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType<Object>, ParameterizedType {
     private final static Logger log = LoggerFactory.getLogger(EmptyCollectionsOptimizerFlagType.class);
 
     private Properties properties;
@@ -88,19 +88,18 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         try {
-            long value = rs.getLong(name);
+            long value = rs.getLong(position);
             if (rs.wasNull()) {
-                log.trace("returning null as column: {}", name);
+                log.trace("returning null as column: {}", position);
                 return null;
             } else {
-                log.trace("returning '{}' as column: {}", value, name);
+                log.trace("returning '{}' as column: {}", value, position);
                 return value;
             }
         } catch (RuntimeException | SQLException re) {
-            log.info("could not read column value from result set: {}; {}", name, re.getMessage());
+            log.info("could not read column value from result set: {}; {}", position, re.getMessage());
             throw re;
         }
     }
@@ -136,22 +135,22 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType, Para
     }
 
     @Override
-    public int[] sqlTypes() {
-        return new int[]{Types.BIGINT};
+    public int getSqlType() {
+        return Types.BIGINT;
     }
 
     @Override
-    public Object fromXMLString(String xmlValue) {
-        return Long.parseLong(xmlValue);
+    public Object fromStringValue(CharSequence xmlValue) {
+        return Long.parseLong(xmlValue.toString());
     }
 
     @Override
-    public String objectToSQLString(Object value) {
+    public String toSqlLiteral(Object value) {
         return '\'' + value.toString() + '\'';
     }
 
     @Override
-    public String toXMLString(Object value) {
+    public String toString(Object value) {
         return value.toString();
     }
 }

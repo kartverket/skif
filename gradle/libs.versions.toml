@@ -3,11 +3,12 @@
 annotation-api = '2.1.1'
 assertj = '3.27.7'
 c3p0 = '0.13.0'
+checker-framework = '3.55.1'
 commons-pool = '2.13.1'
 ejb-api = '4.0.1'
 guava = '33.6.0-jre'
 guice = '7.0.0'
-hibernate-core-jakarta = '5.6.15.Final'
+hibernate-core = '6.6.49.Final'
 interceptor-api = '2.1.0'
 jaxb-api  = '3.0.1'
 jaxb-impl = '3.0.2'
@@ -61,6 +62,7 @@ openejb-core = { module = 'org.apache.tomee:openejb-core', version.ref = 'tomee'
 
 # Testing
 testng = { module = 'org.testng:testng', version.ref = 'testng' } #husk exclude group:'junit' vi benytter ikke JUnit i prosjektet [SKIF-385]
+checker-framework = { module = 'org.checkerframework:checker-qual', version.ref = 'checker-framework' }
 
 
 mockito     = { module = 'org.mockito:mockito-core', version.ref = 'mockito' }
@@ -89,7 +91,7 @@ jakarta-transaction-api = { module = 'jakarta.transaction:jakarta.transaction-ap
 jakarta-ejbapi          = { module = 'jakarta.ejb:jakarta.ejb-api', version.ref = 'ejb-api' }
 jakarta-interceptor-api = { module = 'jakarta.interceptor:jakarta.interceptor-api', version.ref = 'interceptor-api' }
 
-hibernate-core-jakarta = { module = 'org.hibernate:hibernate-core-jakarta', version.ref = 'hibernate-core-jakarta'}
+hibernate-core = { module = 'org.hibernate.orm:hibernate-core', version.ref = 'hibernate-core'}
 
 [bundles]
 # for kjøring utenfor container
@@ -99,7 +101,7 @@ jaxws-rt = [
 ]
 
 hibernate = [
-    'hibernate-core-jakarta'
+    'hibernate-core'
 ]
 
 # javax.javaee-api:6.0 virker ikke for testing fordi det er gjort noe rart med klassene

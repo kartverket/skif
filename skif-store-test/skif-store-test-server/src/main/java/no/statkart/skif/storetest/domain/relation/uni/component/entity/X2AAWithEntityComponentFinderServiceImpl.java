@@ -36,13 +36,13 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
             NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
                 .createNativeQuery("select someBBId, ownerId  from X2EntityComponentOne  where someBBId in (select * from table(:idValues))")
                 .addSynchronizedQuerySpace("X2EntityComponentOne")
-                .setParameter("idValues", ids, new OracleArrayLongBubbleIdCustomType())
+                .setParameter("idValues", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType())
                 .setFetchSize(Math.min(1000, ids.size()))
                 .addScalar("someBBId", StandardBasicTypes.LONG)
                 .addScalar("ownerId", StandardBasicTypes.LONG);
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[])scroll.get();
                     X2BBOneId<?> key = new X2BBOneId<>((Long) next[0], snapshotVersion);
                     Set<X2AAWithEntityComponentId<?>> relatedIds = result.get(key);
                     relatedIds.add(new X2AAWithEntityComponentId<>((Long) next[1], snapshotVersion));
@@ -64,14 +64,14 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
                 .createNativeQuery("select t.childId as id, c.ownerId  from X2AAForX2CCMany t, X2EntityComponentOne c  where t.ownerId = c.id and  t.childId in (select * from table(:idValues))")
                 .addSynchronizedQuerySpace("X2AAForX2CCMany")
                 .addSynchronizedQuerySpace("X2EntityComponentOne")
-                .setParameter("idValues", ids, new OracleArrayLongBubbleIdCustomType())
+                .setParameter("idValues", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType())
                 .setFetchSize(Math.min(1000, ids.size()))
                 .addScalar("id", StandardBasicTypes.LONG)
                 .addScalar("ownerId", StandardBasicTypes.LONG);
 
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[])scroll.get();
                     if (next[1] != null) {
                         X2CCManyId<?> key = new X2CCManyId<>((Long) next[0], snapshotVersion);
                         result.put(key, new X2AAWithEntityComponentId<>((Long) next[1], snapshotVersion));
@@ -91,14 +91,14 @@ public class X2AAWithEntityComponentFinderServiceImpl implements X2AAWithEntityC
             NativeQuery<?> sqlQuery = sessionSelector.get(snapshotVersion)
                 .createNativeQuery("select role1BBOneId, ownerId  from X2SetEntityComp  where role1BBOneId in (select * from table(:idValues))")
                 .addSynchronizedQuerySpace("X2SetEntityComp")
-                .setParameter("idValues", ids, new OracleArrayLongBubbleIdCustomType())
+                .setParameter("idValues", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType())
                 .setFetchSize(Math.min(1000, ids.size()))
                 .addScalar("role1BBOneId", StandardBasicTypes.LONG)
                 .addScalar("ownerId", StandardBasicTypes.LONG);
 
             try (ScrollableResults scroll = sqlQuery.scroll(ScrollMode.FORWARD_ONLY)) {
                 while (scroll.next()) {
-                    Object[] next = scroll.get();
+                    Object[] next = (Object[])scroll.get();
                     X2BBOneId<?> key = new X2BBOneId<>((Long) next[0], snapshotVersion);
                     Set<X2AAWithEntityComponentId<?>> relatedIds = result.get(key);
                     relatedIds.add(new X2AAWithEntityComponentId<>((Long) next[1], snapshotVersion));

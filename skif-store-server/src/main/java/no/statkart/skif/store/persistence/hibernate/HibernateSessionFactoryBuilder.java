@@ -14,6 +14,7 @@ import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.model.TypeContributor;
 import org.hibernate.boot.registry.BootstrapServiceRegistry;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -31,6 +32,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +61,10 @@ public class HibernateSessionFactoryBuilder {
     final List<String> hbmResource = new ArrayList<>();
     private String mappingFilesDirectory;
     private final Map<String, String> className2resourceNameMap = new HashMap<>();
+    @Nullable
     private MetadataInterceptor metadataInterceptor;
+    @Nullable
+    private Collection<TypeContributor> typeContributors;
 
     public HibernateSessionFactoryBuilder() {
     }
@@ -87,6 +92,11 @@ public class HibernateSessionFactoryBuilder {
      */
     public HibernateSessionFactoryBuilder withMetadataInterceptor(MetadataInterceptor metadataInterceptor) {
         this.metadataInterceptor = metadataInterceptor;
+        return this;
+    }
+
+    public HibernateSessionFactoryBuilder withTypeContributors(Collection<TypeContributor> typeContributors) {
+        this.typeContributors = typeContributors;
         return this;
     }
 
@@ -220,21 +230,28 @@ public class HibernateSessionFactoryBuilder {
         // NB: HibernateSessions som skal jobbe med forskjellige snapshotVersions uavhengig avhverander innenfor samme tråd (f.eks Current og Old sessions)
         // må bruke hver sin factory. De kan ikke bruke samme factory siden det er factoryen som styrer
         // hvilken snapshotVersionSeed instans som vil bli brukt ved materalisering av BubbleId'en.
-        SessionFactory sessionFactory;
         synchronized (LOCK) {
             try {
-                Metadata metadata = metadataSources.buildMetadata();
-                if (metadataInterceptor != null) {
-                    metadataInterceptor.apply(metadata);
-                }
-                sessionFactory = metadata.getSessionFactoryBuilder()
-                        .applyInterceptor(interceptor)
-                        .build();
+                return buildMetadata(metadataSources)
+                    .getSessionFactoryBuilder()
+                    .applyInterceptor(interceptor)
+                    .build();
             } catch (HibernateException e) {
                 throw new ImplementationException("Error initializing Hibernate", e, logger);
             }
         }
-        return sessionFactory;
+    }
+
+    private Metadata buildMetadata(MetadataSources metadataSources) {
+        var metadataBuilder = metadataSources.getMetadataBuilder();
+        if (typeContributors != null) {
+            typeContributors.forEach(metadataBuilder::applyTypes);
+        }
+        var metadata = metadataBuilder.build();
+        if (metadataInterceptor != null) {
+            metadataInterceptor.apply(metadata);
+        }
+        return metadata;
     }
 
     private String getAndConnectionInfo(SnapshotVersionSeed snapshotVersionSeed, Properties properties) {

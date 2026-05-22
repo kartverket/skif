@@ -20,14 +20,11 @@ import java.util.Objects;
  * databasen er {@code TIMESTAMP WITH LOCAL TIME ZONE}. Må gjøre oversettelsen før vi oversender dataene til JDBC.
  * Dersom datatypen i databasen ikke er {@code TIMESTAMP WITH LOCAL TIME ZONE}, så er det meningsløst å bruke denne klasen.
  */
-public class OracleLocalTimestamp implements UserType {
-
-    private static final int[] SQL_TYPES = new int[]{Types.TIMESTAMP};
+public class OracleLocalTimestamp implements UserType<Object> {
 
     @Override
-    public int[] sqlTypes() {
-        // Er oracle.jdbc.OracleTypes.TIMESTAMPLTZ er alternativ her?
-        return SQL_TYPES;
+    public int getSqlType() {
+        return Types.TIMESTAMP;
     }
 
     @Override
@@ -46,8 +43,8 @@ public class OracleLocalTimestamp implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        return rs.getTimestamp(names[0]);
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        return rs.getTimestamp(position);
     }
 
     @Override

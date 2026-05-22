@@ -59,7 +59,7 @@ public class OracleArrayTest extends StoreTestServerTestCase {
         Collection<SimpleId<?>> eierIds = getSimpleIds();
         NativeQuery<Simple> query = session
             .createNativeQuery("select s.* from Simple s where s.id in (select * from table(:idValues))", Simple.class)
-            .setParameter("idValues", eierIds, new OracleArrayLongBubbleIdCustomType());
+            .setParameter("idValues", OracleArrayLongBubbleIdCustomType.wrap(eierIds), new OracleArrayLongBubbleIdCustomType());
 
         assertThat(query.list()).hasSize(1);
     }

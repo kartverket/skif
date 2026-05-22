@@ -1,6 +1,5 @@
 package no.statkart.skif.persistence.hibernate.type;
 
-import com.google.common.collect.Lists;
 import no.statkart.skif.store.persistence.OracleArrayConverter;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
@@ -14,8 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * En Hibernate {@code UserType} for persistering av collections med elementer av type {@code <E>} via Oracle
@@ -25,12 +24,11 @@ import java.util.List;
  * @author Henrik Fredholm
  * @since 2.6
  */
-public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implements UserType {
+public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implements UserType<Object> {
     private static final Logger log = LoggerFactory.getLogger(OracleArrayUserType.class);
 
     private static final String BIND_MSG_TEMPLATE = "binding parameter [%d] as [%s] - %s";
     private static final String NULL_BIND_MSG_TEMPLATE = "binding parameter [%d] as [%s] - <null>";
-    private static final int[] SQL_TYPES = {Types.ARRAY};
 
     protected final T oracleArrayConverter;
 
@@ -39,28 +37,22 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
     }
 
     @Override
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    public int getSqlType() {
+        return Types.ARRAY;
     }
 
     @Override
     public Class returnedClass() {
-        return List.class;
+        return OracleArrayConverter.Wrapper.class;
     }
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == y) {
-            return true;
-        } else if (x == null || y == null) {
-            return false;
-        } else {
-            return x.equals(y);
-        }
+        return Objects.equals(x, y);
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -76,9 +68,9 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
                         )
                 );
             }
-            st.setNull(index, SQL_TYPES[0], oracleArrayConverter.getOracleArrayType());
+            st.setNull(index, Types.ARRAY, oracleArrayConverter.getOracleArrayType());
         } else {
-            Collection<E> values = (Collection<E>) value;
+            OracleArrayConverter.Wrapper<E> values = (OracleArrayConverter.Wrapper<E>) value;
 
             if (log.isTraceEnabled()) {
                 log.trace(
@@ -86,11 +78,11 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
                                 BIND_MSG_TEMPLATE,
                                 index,
                                 JdbcTypeNameMapper.getTypeName(Types.ARRAY),
-                                extractLoggableRepresentation(Lists.newArrayList(values))
+                                extractLoggableRepresentation(List.copyOf(values.collection))
                         )
                 );
             }
-            st.setArray(index, oracleArrayConverter.toArray(st.getConnection(), values));
+            st.setArray(index, oracleArrayConverter.toArray(st.getConnection(), values.collection));
         }
     }
 

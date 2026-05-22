@@ -8,8 +8,9 @@ import com.google.inject.Provider;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.EntityType;
 import no.statkart.skif.exception.NotImplementedException;
 import no.statkart.skif.persistence.hibernate.type.OracleArrayLongBubbleIdCustomType;
 import no.statkart.skif.store.AbstractBubbleId;
@@ -26,8 +27,9 @@ import no.statkart.skif.store.endringslogg.EndringManagerConfiguration;
 import no.statkart.skif.store.endringslogg.Endringer;
 import no.statkart.skif.store.endringslogg.ReturnerBobler;
 import no.statkart.skif.store.persistence.SessionSelector;
+import no.statkart.skif.util.HibernateHelper;
 import org.hibernate.Session;
-import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.query.NativeQuery;
 
 import java.util.Collection;
@@ -36,8 +38,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static no.statkart.skif.util.HibernateHelper.getClassMetadata;
-import static no.statkart.skif.util.HibernateHelper.getDiscriminatorSql;
+import static no.statkart.skif.util.HibernateHelper.getPersister;
 import static no.statkart.skif.util.HibernateHelper.getTableName;
 
 /**
@@ -207,49 +208,49 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
     @Override
     public <T extends BubbleObject> Kontroll calcEndringskontroll(@Nullable EI id, Class<T> bobleklasse, @Nullable String filter, int antall) {
         Class<? extends AbstractEndring> endringClass = endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
         id = setIfNull(id);
         // TODO: Legge inn filter
-        try {
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
             Session session = sessionSelector.get(snapshotVersionProvider.get());
-            ClassMetadata classMetadata = getClassMetadata(session, endringClass);
-            String tableName = getTableName(classMetadata);
-            String discriminatorSql = getDiscriminatorSql(classMetadata, "t");
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<? extends AbstractEndring> root = cq.from(endringClass);
 
-            String sql = "select count(id) from (select * from (select t.id from " + tableName + " t where t.id>:id" + discriminatorSql + ") where rownum <=:antall)";
+            cq.select(cb.count(root))
+              .where(cb.greaterThan(root.get("id"), id));
 
-            NativeQuery<?> query = session.createNativeQuery(sql)
-                .setParameter("id", 0L)
-                .setParameter("antall", antall);
-
+            Long count = session.createQuery(cq).getSingleResult();
+            
             Kontroll result = new Kontroll();
-            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+            result.setAntall(Math.min(antall, count));
             return result;
-        } finally {
-            if (sessionSelector != null) sessionSelector.close();
         }
     }
 
     @Override
     public <T extends BubbleObject> Kontroll calcObjektkontrollForList(Collection<? extends BubbleId<?>> ids, Class<T> bobleklasse) {
         checkEndringsklasseFinnes(bobleklasse);
-        SessionSelector sessionSelector = sessionSelectorProvider.get();
-        try {
-            Session session = sessionSelector.get(snapshotVersionProvider.get());
-            ClassMetadata classMetadata = getClassMetadata(session, bobleklasse);
-            String tableName = getTableName(classMetadata);
-            String discriminatorSql = getDiscriminatorSql(classMetadata, "t");
 
-            String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))" + discriminatorSql;
-
-            NativeQuery<?> query = session.createNativeQuery(sql)
-                    .setParameter("ids", ids, new OracleArrayLongBubbleIdCustomType());
-
-            Kontroll result = new Kontroll();
-            result.setAntall(((Number) query.uniqueResult()).longValue()); // kan ikke caste direkte til Long pga forskjell på datatype her i hibernate 3.2 og 3.6
+        final var result = new Kontroll();
+        if (ids == null || ids.isEmpty()) {
+            result.setAntall(0L);
             return result;
-        } finally {
-            if (sessionSelector != null) sessionSelector.close();
+        }
+
+        try (SessionSelector sessionSelector = sessionSelectorProvider.get()) {
+            Session session = sessionSelector.get(snapshotVersionProvider.get());
+            EntityPersister persister = getPersister(session, bobleklasse);
+            var tableName = getTableName(session, bobleklasse);
+
+            String sql = "select count(t.id) from " + tableName + " t where t.id in (select * from table(:ids))"
+                + HibernateHelper.getDiscriminatorSql(persister, "t");
+
+            //benytter native query for å unngå dynamisk sql + Oracle grense på 1000-parametere
+            NativeQuery<Long> query = session.createNativeQuery(sql, Long.class);
+            query.setParameter("ids", OracleArrayLongBubbleIdCustomType.wrap(ids), new OracleArrayLongBubbleIdCustomType());
+
+            result.setAntall(query.uniqueResult());
+            return result;
         }
     }
 
@@ -259,8 +260,12 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<EI> cq = cb.createQuery(endringIdClass);
         Root<E> root = cq.from(cls);
-        Expression<EI> id = root.get("id");
-        cq.select(cb.greatest(id));
+
+        EntityType<E> entity = session.getMetamodel().entity(cls);
+        var idAttribute = entity.getId(entity.getIdType().getJavaType());
+        Path<EI> idPath = root.get(idAttribute.getName());
+        cq.select(cb.greatest(idPath));
+
         return setIfNull(session.createQuery(cq).uniqueResult());
     }
 
@@ -269,7 +274,7 @@ public class EndringsloggServiceImpl<E extends AbstractEndring<EI, ?>, EI extend
             id = BubbleIds.createInstance(endringIdClass, 0L, SnapshotVersionContext.getInstance().getSnapshotVersion());
         }
         return id;
-    }
+    } 
 
     private <T extends BubbleObject> void checkEndringsklasseFinnes(Class<T> bobleklasse) {
         endringManagerConfiguration.getEndringsklasseNullSafe(bobleklasse);

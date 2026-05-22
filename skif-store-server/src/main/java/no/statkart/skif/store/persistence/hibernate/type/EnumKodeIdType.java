@@ -118,17 +118,16 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         try {
-            int code = rs.getInt(name);
+            int code = rs.getInt(position);
             if (rs.wasNull()) {
                 return null;
             } else {
                 return getInstance(code);
             }
         } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
+            LoggerFactory.getLogger(EnumKodeIdType.class).info("could not read column value from result set: {}; {}", position, re.getMessage());
             throw re;
         }
 
@@ -165,22 +164,22 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
     }
 
     @Override
-    public int[] sqlTypes() {
-        return new int[]{Types.SMALLINT};
+    public int getSqlType() {
+        return Types.SMALLINT;
     }
 
     @Override
-    public Object fromXMLString(String xmlValue) {
-        return getInstance(Integer.parseInt(xmlValue));
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        return getInstance(Integer.parseInt(sequence.toString()));
     }
 
     @Override
-    public String objectToSQLString(Object value) {
+    public String toSqlLiteral(Object value) {
         return '\'' + returnedClass().cast(value).getValue().toString() + '\'';
     }
 
     @Override
-    public String toXMLString(Object value) {
+    public String toString(Object value) throws HibernateException {
         return returnedClass().cast(value).getValue().toString();
     }
 }

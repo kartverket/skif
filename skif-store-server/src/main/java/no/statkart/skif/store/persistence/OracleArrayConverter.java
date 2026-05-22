@@ -102,4 +102,12 @@ public class OracleArrayConverter<T> {
     protected Object toValue(T object) {
         return object;
     }
+
+    public static class Wrapper<T> {
+        public final Collection<? extends T> collection;
+
+        public Wrapper(Collection<? extends T> collection) {
+            this.collection = collection;
+        }
+    }
 }

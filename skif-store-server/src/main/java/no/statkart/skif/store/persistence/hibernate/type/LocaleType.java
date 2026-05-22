@@ -11,17 +11,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Hibernates standard Locale-mapping støtter ikke {@link Locale#ROOT} på Oracle, siden strengrepresentasjonen er en tom
  * streng. Benytter istedenfor {@code "_"} som representasjon.
  */
 public class LocaleType implements UserType {
-    private static final int[] SQL_TYPES = {Types.VARCHAR };
 
     @Override
-    public int[] sqlTypes() {
-        return SQL_TYPES.clone(); // Lag klone for å beskytte originalen fra endringer utenfra
+    public int getSqlType() {
+        return Types.VARCHAR;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class LocaleType implements UserType {
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        return (x == y) || (x != null && y != null && x.equals(y));
+        return Objects.equals(x, y);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class LocaleType implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String text = rs.getString(names[0]);
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        String text = rs.getString(position);
         if (text.equals("_")) {
             return Locale.ROOT;
         } else {

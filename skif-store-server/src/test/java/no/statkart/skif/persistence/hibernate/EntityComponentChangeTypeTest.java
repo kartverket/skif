@@ -25,13 +25,12 @@ import org.hibernate.boot.cfgxml.spi.LoadedConfig;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.collection.internal.PersistentSet;
+import org.hibernate.collection.spi.PersistentSet;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.metamodel.spi.MetamodelImplementor;
-import org.testng.annotations.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+import org.testng.annotations.Test;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -44,7 +43,6 @@ public class EntityComponentChangeTypeTest {
 
     private Metadata createMetadataOneToMany() {
         LoadedConfig loadedConfig = new LoadedConfig(null);
-        //noinspection unchecked
         loadedConfig.getConfigurationValues().put(AvailableSettings.DIALECT, "org.hibernate.dialect.H2Dialect");
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure(loadedConfig).build();
         return new MetadataSources(registry)
@@ -74,8 +72,7 @@ public class EntityComponentChangeTypeTest {
             TestBubbleOneToManyComponent1 persistentBubbleComponent = new TestBubbleOneToManyComponent1(2L);
             TestBubbleOneToMany persistentBubble = new TestBubbleOneToMany(bubbleId);
             persistentBubble.getComponents().add(persistentBubbleComponent);
-            //noinspection unchecked
-            persistentBubble.setComponents(new PersistentSet((SharedSessionContractImplementor) session, persistentBubble.getComponents()));
+            persistentBubble.setComponents(new PersistentSet<>(session, persistentBubble.getComponents()));
 
             Mockito.doReturn(persistentBubble).when(session).get(TestBubbleOneToMany.class, bubbleId, LockMode.NONE);
             Mockito.doNothing().when(session).update(Mockito.any(TestBubbleOneToMany.class));
@@ -110,8 +107,7 @@ public class EntityComponentChangeTypeTest {
             TestBubbleOneToManyComponent1 persistentBubbleComponent = new TestBubbleOneToManyComponent1(2L);
             TestBubbleOneToMany persistentBubble = new TestBubbleOneToMany(bubbleId);
             persistentBubble.getComponents().add(persistentBubbleComponent);
-            //noinspection unchecked
-            persistentBubble.setComponents(new PersistentSet((SharedSessionContractImplementor) session, persistentBubble.getComponents()));
+            persistentBubble.setComponents(new PersistentSet<>(session, persistentBubble.getComponents()));
 
             Mockito.doReturn(persistentBubble).when(session).get(TestBubbleOneToMany.class, bubbleId, LockMode.NONE);
             Mockito.doNothing().when(session).update(Mockito.any(TestBubbleOneToMany.class));
@@ -128,7 +124,6 @@ public class EntityComponentChangeTypeTest {
 
     private Metadata createMetadataOneToOne() {
         LoadedConfig loadedConfig = new LoadedConfig(null);
-        //noinspection unchecked
         loadedConfig.getConfigurationValues().put(AvailableSettings.DIALECT, "org.hibernate.dialect.H2Dialect");
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure(loadedConfig).build();
         return new MetadataSources(registry)
@@ -297,7 +292,7 @@ public class EntityComponentChangeTypeTest {
         }
     }
 
-    public static class TestBubbleOneToManyIdType extends BubbleIdType {
+    public static class TestBubbleOneToManyIdType extends BubbleIdType<TestBubbleOneToManyId> {
         @Override
         public Long getValue(Object id) {
             return ((TestBubbleOneToManyId) id).getValue();
@@ -317,7 +312,7 @@ public class EntityComponentChangeTypeTest {
     @Entity
     public static class TestBubbleOneToMany implements BubbleObject {
         @Id
-        @Type(type = "no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest$TestBubbleOneToManyIdType")
+        @Type(no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest.TestBubbleOneToManyIdType.class)
         private TestBubbleOneToManyId id;
 
         @OneToMany(cascade = CascadeType.ALL)
@@ -531,7 +526,7 @@ public class EntityComponentChangeTypeTest {
         }
     }
 
-    public static class TestBubbleOneToOneIdType extends BubbleIdType {
+    public static class TestBubbleOneToOneIdType extends BubbleIdType<TestBubbleOneToOneId> {
         @Override
         public Long getValue(Object id) {
             return ((TestBubbleOneToOneId) id).getValue();
@@ -551,7 +546,7 @@ public class EntityComponentChangeTypeTest {
     @Entity
     public static class TestBubbleOneToOne implements BubbleObject {
         @Id
-        @Type(type = "no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest$TestBubbleOneToOneIdType")
+        @Type(no.statkart.skif.persistence.hibernate.EntityComponentChangeTypeTest.TestBubbleOneToOneIdType.class)
         private TestBubbleOneToOneId id;
 
         @SuppressWarnings({"FieldCanBeLocal", "unused"}) // JPA

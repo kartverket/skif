@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
  * Persisterer en {@link LocalDate} fra JodaTime ned i en Oracle-database uten å gå via {@link java.util.Date}.
@@ -21,13 +22,11 @@ import java.sql.Types;
  * @author Tor Egil R. Strand
  * @since 2.5.0
  */
-public class OraclePersistentLocalDate implements EnhancedUserType, Serializable {
-
-    private static final int[] SQL_TYPES = new int[] { Types.DATE, };
+public class OraclePersistentLocalDate implements EnhancedUserType<Object>, Serializable {
 
     @Override
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    public int getSqlType() {
+        return Types.DATE;
     }
 
     @Override
@@ -37,15 +36,7 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == y) {
-            return true;
-        }
-        if (x == null || y == null) {
-            return false;
-        }
-        LocalDate dtx = (LocalDate) x;
-        LocalDate dty = (LocalDate) y;
-        return dtx.equals(dty);
+        return Objects.equals(x, y);
     }
 
     @Override
@@ -54,14 +45,14 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        return nullSafeGet(rs, names[0]);
-
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+        return nullSafeGet(rs, position);
     }
 
-    public Object nullSafeGet(ResultSet resultSet, String name) throws SQLException {
+
+    public Object nullSafeGet(ResultSet resultSet, int position) throws SQLException {
         OracleResultSet oracleResultSet = resultSet.unwrap(OracleResultSet.class);
-        DATE oracleDate = oracleResultSet.getDATE(name);
+        DATE oracleDate = oracleResultSet.getDATE(position);
         if (oracleDate == null) {
             return null;
         }
@@ -125,18 +116,17 @@ public class OraclePersistentLocalDate implements EnhancedUserType, Serializable
     }
 
     @Override
-    public String objectToSQLString(Object object) {
+    public String toSqlLiteral(Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String toXMLString(Object object) {
-        return object.toString();
+    public String toString(Object value) throws HibernateException {
+        return value.toString();
     }
 
     @Override
-    public Object fromXMLString(String string) {
-        return new LocalDate(string);
+    public Object fromStringValue(CharSequence sequence) throws HibernateException {
+        return new LocalDate(sequence);
     }
-
 }

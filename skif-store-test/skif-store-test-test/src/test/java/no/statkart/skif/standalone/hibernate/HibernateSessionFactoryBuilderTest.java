@@ -10,7 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
-import org.hibernate.type.IntegerType;
+import org.hibernate.type.StandardBasicTypes;
 import org.testng.annotations.Test;
 
 import java.sql.ResultSet;
@@ -57,7 +57,7 @@ public class HibernateSessionFactoryBuilderTest {
                 
                 //via Hibernate Worker API
                 var nativeQuery = s.createNativeQuery("select 1 as value from dual");
-                nativeQuery.addScalar("value", IntegerType.INSTANCE);
+                nativeQuery.addScalar("value", StandardBasicTypes.INTEGER);
                 assertThat(nativeQuery.list().get(0)).isEqualTo(1);
                 
                 //via PreparedStatement

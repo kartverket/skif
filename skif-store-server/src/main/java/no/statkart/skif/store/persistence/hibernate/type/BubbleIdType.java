@@ -1,5 +1,4 @@
 package no.statkart.skif.store.persistence.hibernate.type;
-
 import no.statkart.skif.exception.ImplementationException;
 import no.statkart.skif.store.BubbleId;
 import no.statkart.skif.store.BubbleIds;
@@ -13,14 +12,12 @@ import org.hibernate.type.spi.TypeConfiguration;
 import org.hibernate.type.spi.TypeConfigurationAware;
 import org.hibernate.usertype.UserType;
 import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Objects;
-
 
 /**
  * Hibernate UserType for BubbleId
@@ -29,30 +26,20 @@ import java.util.Objects;
  * @since 2.0
  */
 public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
-    private final int[] SQL_TYPES;
-
     private TypeConfiguration typeConfiguration;
-
     /* Holds the SnapshotVersion that will be assigned to BubbleIds materialized by this instance */
     private SnapshotVersionSeed snapshotVersionSeed = null;
-
     protected final Class<?> idValueType;
 
     public BubbleIdType() {
         idValueType = BubbleIds.getValueType(returnedClass());
-        if (idValueType==Long.class) {
-            SQL_TYPES = new int[]{Types.BIGINT};
-        } else {
-            SQL_TYPES = new int[]{Types.VARCHAR};
-        }
     }
 
     protected BubbleIdType(int[] SQL_TYPES) {
-        this.SQL_TYPES= SQL_TYPES;
-        if (SQL_TYPES[0]== Types.BIGINT) {
-            idValueType=Long.class;
-        } else if (SQL_TYPES[0]== Types.VARCHAR) {
-            idValueType=String.class;
+        if (SQL_TYPES[0] == Types.BIGINT) {
+            idValueType = Long.class;
+        } else if (SQL_TYPES[0] == Types.VARCHAR) {
+            idValueType = String.class;
         } else {
             throw new ImplementationException("SQL type " + Types.VARCHAR + " is not supported as id type for BubbleId");
         }
@@ -75,16 +62,20 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     public void setTypeConfiguration(TypeConfiguration typeConfiguration) {
         this.typeConfiguration = typeConfiguration;
         snapshotVersionSeed = Objects.requireNonNull(
-                typeConfiguration.getServiceRegistry()
-                        .requireService(ConfigurationService.class)
-                        .getSetting("no.statkart.skif.SnapshotVersionSeed", SnapshotVersionSeed.class, snapshotVersionSeed),
-                "SnapshotVersionSeed not configured for session factory"
+            typeConfiguration.getServiceRegistry()
+                .requireService(ConfigurationService.class)
+                .getSetting("no.statkart.skif.SnapshotVersionSeed", SnapshotVersionSeed.class, snapshotVersionSeed),
+            "SnapshotVersionSeed not configured for session factory"
         );
     }
 
     @Override
-    public int[] sqlTypes() {
-        return SQL_TYPES;
+    public int getSqlType() {
+        if (idValueType == Long.class) {
+            return Types.BIGINT;
+        } else {
+            return Types.VARCHAR;
+        }
     }
 
     @Override
@@ -112,7 +103,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
 
     @Override
     public boolean equals(Object x, Object y) {
-        return (x == y) || (x != null && y != null && x.equals(y));
+        return Objects.equals(x, y);
     }
 
     @Override
@@ -126,10 +117,9 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        String name = names[0];
+    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
         try {
-            Object value = StoreJDBCHelper.getBubbleIdValue(rs, name, idValueType);
+            Object value = StoreJDBCHelper.getBubbleIdValue(rs, position, idValueType);
             //long value = rs.getLong(name);
             if (rs.wasNull()) {
                 return null;
@@ -137,12 +127,11 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
                 return createId(value);
             }
         } catch (RuntimeException | SQLException re) {
-            LoggerFactory.getLogger(BubbleIdType.class).info("could not read column value from result set: {}; {}", name, re.getMessage());
+            LoggerFactory.getLogger(BubbleIdType.class).info("could not read column value from result set: {}; {}", position, re.getMessage());
             throw re;
         }
-
     }
-
+    
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         try {
@@ -162,7 +151,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
             throw re;
         }
     }
-
+    
     /**
      * Oppretter id med den spesifisert verdi. Id classen må være av den type metoden {@link
      * #returnedClass()} spesifisere. SnapshotVersion kan ha defalut verdi siden den overskrive
@@ -173,7 +162,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     protected Object createPrototypeId(Object value, SnapshotVersion snapshotVersion) {
         return BubbleIds.createInstance(returnedClass(), value, snapshotVersion);
     }
-
+    
     /**
      * Oppretter BubbleId av riktig type og setter idvalue og SnapshotVersion
      *
