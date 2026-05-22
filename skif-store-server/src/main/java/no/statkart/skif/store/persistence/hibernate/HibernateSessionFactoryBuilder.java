@@ -32,6 +32,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,8 +61,10 @@ public class HibernateSessionFactoryBuilder {
     final List<String> hbmResource = new ArrayList<>();
     private String mappingFilesDirectory;
     private final Map<String, String> className2resourceNameMap = new HashMap<>();
+    @Nullable
     private MetadataInterceptor metadataInterceptor;
-    private final List<TypeContributor> typeContributors = new ArrayList<>(8);
+    @Nullable
+    private Collection<TypeContributor> typeContributors;
 
     public HibernateSessionFactoryBuilder() {
     }
@@ -92,8 +95,9 @@ public class HibernateSessionFactoryBuilder {
         return this;
     }
 
-    public void addTypeContributor(TypeContributor typeContributor) {
-        typeContributors.add(typeContributor);
+    public HibernateSessionFactoryBuilder withTypeContributors(Collection<TypeContributor> typeContributors) {
+        this.typeContributors = typeContributors;
+        return this;
     }
 
     /**
@@ -240,7 +244,9 @@ public class HibernateSessionFactoryBuilder {
 
     private Metadata buildMetadata(MetadataSources metadataSources) {
         var metadataBuilder = metadataSources.getMetadataBuilder();
-        typeContributors.forEach(metadataBuilder::applyTypes);
+        if (typeContributors != null) {
+            typeContributors.forEach(metadataBuilder::applyTypes);
+        }
         var metadata = metadataBuilder.build();
         if (metadataInterceptor != null) {
             metadataInterceptor.apply(metadata);
