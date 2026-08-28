@@ -110,4 +110,5 @@ jee = [
     'jakarta-inject-api',
     'jakarta-interceptor-api',
     'jakarta-persistence-api',
+    'jaxb-api',
 ]
