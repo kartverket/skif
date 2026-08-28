@@ -48,7 +48,7 @@ jobs:
                   distribution: 'temurin'
 
             - name: Validate Gradle wrapper
-              uses: gradle/actions/wrapper-validation@v6.2.0
+              uses: gradle/actions/wrapper-validation@v6.3.0
 
             - name: Build
               run: ./gradlew clean assemble --stacktrace -Pbase_version=${{ env.MAJOR_VERSION }} -Psub_version=${{ needs.calculate-version.outputs.version }} --warning-mode all
@@ -88,7 +88,7 @@ jobs:
                   distribution: 'temurin'
 
             - name: Validate Gradle wrapper
-              uses: gradle/actions/wrapper-validation@v6.2.0
+              uses: gradle/actions/wrapper-validation@v6.3.0
 
             - name: Initialize database
               env:
