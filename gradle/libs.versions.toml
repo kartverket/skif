@@ -1,15 +1,11 @@
 #Alfabetisk rekkefølge
 [versions]
-annotation-api = '2.1.1'
 assertj = '3.27.7'
 c3p0 = '0.14.1'
 checker-framework = '4.2.2'
-commons-pool = '2.13.1'
-ejb-api = '4.0.1'
 guava = '33.7.1-jre'
 guice = '7.0.0'
 hibernate-core = '6.6.49.Final'
-interceptor-api = '2.1.0'
 jodatime = '2.14.3'
 jws-api = '3.0.0'
 logback = '1.6.3'
@@ -18,18 +14,13 @@ ojdbc = '19.12.0.0'
 reflections = '0.10.2'
 slf4j = '2.0.18'
 testng = '7.12.0'
-transaction-api = '2.0.1'
 xstream = '1.4.21'
+jakarta-ee = '10.0.0'
 tomee = '10.2.0'
-inject-api = '2.0.1'
-jaxb-api  = '4.0.5'
 jaxb-impl = '4.0.9'
-jaxb-runtime = '4.0.9'
 jaxb-xjc = '4.0.9'
-jaxws-api = '4.0.3'
 jaxws-rt = '4.0.5'
 jaxws-tools = '4.0.5'
-servlet-api = '6.0.0'
 
 #Rekkefølge etter bruk
 [libraries]
@@ -39,7 +30,7 @@ ojdbc  = { module = "com.oracle.database.jdbc:ojdbc8", version.ref = "ojdbc" }
 c3p0            = { module = 'com.mchange:c3p0', version.ref = 'c3p0' }
 
 # Logging
-slf4j-api       = { module = 'org.slf4j:slf4j-api', version.ref = 'slf4j' }
+slf4j-api       = { module = 'org.slf4j:slf4j-api' }
 jcl-to-slf4j    = { module = 'org.slf4j:jcl-over-slf4j', version.ref = 'slf4j' }
 jul-to-slf4j    = { module = 'org.slf4j:jul-to-slf4j', version.ref = 'slf4j' }
 log4j-to-slf4j  = { module = 'org.slf4j:log4j-over-slf4j', version.ref = 'slf4j' }
@@ -51,15 +42,18 @@ guice       = { module = 'com.google.inject:guice', version.ref = 'guice' }
 # Utility libraries
 guava           = { module = 'com.google.guava:guava', version.ref = 'guava' }
 xstream         = { module = 'com.thoughtworks.xstream:xstream', version.ref = 'xstream' }
-commons-pool    = { module = 'org.apache.commons:commons-pool2', version.ref = 'commons-pool' }
+commons-pool    = { module = 'org.apache.commons:commons-pool2' }
 
 
 jaxws-tools  = { module = 'com.sun.xml.ws:jaxws-tools', version.ref = 'jaxws-tools' }
-jaxb-runtime = { module = 'org.glassfish.jaxb:jaxb-runtime', version.ref = 'jaxb-runtime' }
+jaxb-runtime = { module = 'org.glassfish.jaxb:jaxb-runtime' }
 jaxb-xjc     = { module = 'org.glassfish.jaxb:jaxb-xjc', version.ref = 'jaxb-xjc' }
 
+jakarta-ee-bom = { module = 'jakarta.platform:jakarta.jakartaee-bom', version.ref = 'jakarta-ee' }
 tomee-embedded = { module = 'org.apache.tomee:tomee-embedded', version.ref = 'tomee' }
-openejb-core = { module = 'org.apache.tomee:openejb-core', version.ref = 'tomee' }
+tomee-plus-api-bom = { module = 'org.apache.tomee.bom:tomee-plus-api', version.ref = 'tomee' }
+tomee-plus-bom = { module = 'org.apache.tomee.bom:tomee-plus', version.ref = 'tomee' }
+openejb-core = { module = 'org.apache.tomee:openejb-core' }
 
 # Testing
 testng = { module = 'org.testng:testng', version.ref = 'testng' } #husk exclude group:'junit' vi benytter ikke JUnit i prosjektet [SKIF-385]
@@ -78,20 +72,21 @@ jodatime    = { module = 'joda-time:joda-time', version.ref = 'jodatime' }
 
 
 # JAXB
-jaxb-api = { module = 'jakarta.xml.bind:jakarta.xml.bind-api', version.ref ='jaxb-api' }
+jaxb-api = { module = 'jakarta.xml.bind:jakarta.xml.bind-api' }
 
 # JAXWS
-jaxws-api = { module = 'jakarta.xml.ws:jakarta.xml.ws-api', version.ref ='jaxws-api' } # for kompilering
+jaxws-api = { module = 'jakarta.xml.ws:jakarta.xml.ws-api' } # for kompilering
 jws-api   = { module = 'jakarta.jws:jakarta.jws-api', version.ref ='jws-api' }
 xml-ws-jaxb-rt = { module = 'com.sun.xml.ws:jaxws-rt', version.ref = 'jaxws-rt'}
 
 
-jakarta-annotation-api  = { module = 'jakarta.annotation:jakarta.annotation-api', version.ref = 'annotation-api' }
-jakarta-serverlet-api   = { module = 'jakarta.servlet:jakarta.servlet-api', version.ref = 'servlet-api' }
-jakarta-transaction-api = { module = 'jakarta.transaction:jakarta.transaction-api', version.ref = 'transaction-api' }
-jakarta-ejbapi          = { module = 'jakarta.ejb:jakarta.ejb-api', version.ref = 'ejb-api' }
-jakarta-inject-api      = { module = 'jakarta.inject:jakarta.inject-api', version.ref = 'inject-api' }
-jakarta-interceptor-api = { module = 'jakarta.interceptor:jakarta.interceptor-api', version.ref = 'interceptor-api' }
+jakarta-annotation-api  = { module = 'jakarta.annotation:jakarta.annotation-api' }
+jakarta-serverlet-api   = { module = 'jakarta.servlet:jakarta.servlet-api' }
+jakarta-transaction-api = { module = 'jakarta.transaction:jakarta.transaction-api' }
+jakarta-ejbapi          = { module = 'jakarta.ejb:jakarta.ejb-api' }
+jakarta-inject-api      = { module = 'jakarta.inject:jakarta.inject-api' }
+jakarta-interceptor-api = { module = 'jakarta.interceptor:jakarta.interceptor-api' }
+jakarta-persistence-api = { module = 'jakarta.persistence:jakarta.persistence-api' }
 
 hibernate-core = { module = 'org.hibernate.orm:hibernate-core', version.ref = 'hibernate-core'}
 
@@ -114,4 +109,5 @@ jee = [
     'jakarta-ejbapi',
     'jakarta-inject-api',
     'jakarta-interceptor-api',
+    'jakarta-persistence-api',
 ]
