@@ -38,6 +38,9 @@ allprojects {
 allprojects {
     configurations.configureEach {
         resolutionStrategy {
+            // Tvinger frem riktig hibernate versjon ettersom TomEE BOM også spesifiserer denne
+            force libs.hibernate.core.get().toString()
+
             dependencySubstitution {
                 substitute(module('commons-logging:commons-logging')).because('SKIF bruker SLF4J').using(module(libs.jcl.to.slf4j.get().toString()))
             }
