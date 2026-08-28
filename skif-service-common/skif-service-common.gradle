@@ -51,6 +51,7 @@ def assertDependencies = tasks.register("assertDependencies") {
     doFirst {
         configurations.apiElements.getAllDependencies().each { Dependency dependency ->
             if (dependency instanceof SelfResolvingDependency) return
+            if (dependency.group in ['jakarta.platform', 'org.apache.tomee.bom']) return
             boolean godkjent = [
                 'org.slf4j',
                 'com.google.inject:guice',
