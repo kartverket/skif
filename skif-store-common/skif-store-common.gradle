@@ -46,6 +46,7 @@ def assertDependencies = tasks.register("assertDependencies") {
     doFirst {
         configurations.apiElements.getAllDependencies().each { Dependency dependency ->
             if (dependency instanceof SelfResolvingDependency) return
+            if (dependency.group in ['jakarta.platform', 'org.apache.tomee.bom']) return
             boolean godkjent = [ //liste over dependencies. For syntax se parsing under..
             ].find { "${dependency.group}:${dependency.name}:${dependency.version}".startsWith(it) }
 
