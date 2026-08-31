@@ -12,7 +12,7 @@ concurrency:
     cancel-in-progress: true
 
 env:
-    MAJOR_VERSION: 7
+    MAJOR_VERSION: 8
     TEST_PROPERTIES: "-Pdb_jdbc_url=jdbc:oracle:thin:@//localhost:1521/skifdev -Pdb_username=SKIF_DEV -Pdb_password=SKIF_DEV -Padmin_db_username=SYSTEM -Padmin_db_password=MATRIKKELADM -Pdb_dataroot_dir=/opt/oracle/oradata"
     TZ: Europe/Oslo #SKIF-760: workaround for historikk-tester
 
