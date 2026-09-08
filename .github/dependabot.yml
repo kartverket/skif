@@ -51,3 +51,7 @@ updates:
             update-types: ["version-update:semver-major"]
           - dependency-name: "org.apache.tomee:*"
             update-types: ["version-update:semver-major"]
+
+          # Oracle Driver
+          - dependency-name: "com.oracle.database.jdbc:*"
+            update-types: ["version-update:semver-major"]     
