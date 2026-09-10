@@ -9,11 +9,17 @@ dependencies {
     api libs.guava //pga Multimap
     api libs.bundles.hibernate
 
+    compileOnlyApi libs.jakarta.persistence.api
+    compileOnlyApi libs.jakarta.transaction.api
     compileOnly libs.bundles.jee
 
     implementation libs.jodatime
     implementation libs.bundles.hibernate
     implementation libs.ojdbc //provided
+    runtimeOnly libs.jaxb.api
+    runtimeOnly libs.jakarta.activation.api
+    runtimeOnly libs.jakarta.persistence.api
+    runtimeOnly libs.jakarta.transaction.api
 
     compileOnly libs.openejb.core
 

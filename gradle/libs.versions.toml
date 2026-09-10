@@ -80,6 +80,7 @@ jws-api   = { module = 'jakarta.jws:jakarta.jws-api', version.ref ='jws-api' }
 xml-ws-jaxb-rt = { module = 'com.sun.xml.ws:jaxws-rt', version.ref = 'jaxws-rt'}
 
 
+jakarta-activation-api  = { module = 'jakarta.activation:jakarta.activation-api' }
 jakarta-annotation-api  = { module = 'jakarta.annotation:jakarta.annotation-api' }
 jakarta-serverlet-api   = { module = 'jakarta.servlet:jakarta.servlet-api' }
 jakarta-transaction-api = { module = 'jakarta.transaction:jakarta.transaction-api' }
