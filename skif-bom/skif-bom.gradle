@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-description = "Platform BOM for SKIF dependencies. See tomee.gradle for how to consume it."
+description = "Platform BOM for aligning SKIF dependencies and security patches for TomEE/Tomcat!"
 
 javaPlatform {
     allowDependencies()
@@ -47,8 +47,8 @@ dependencies {
             "tomcat-websocket-api",
             "tomcat-websocket-client-api",
             "tomcat-juli",
-        ].each { module ->
-            runtime("org.apache.tomcat:${module}:${libs.versions.tomee.tomcat.patch.get()}") because(
+        ].each { tomcatModule ->
+            runtime("org.apache.tomcat:${tomcatModule}:${libs.versions.tomee.tomcat.patch.get()}") because(
                 "Temporary security override until TomEE updates Tomcat"
             )
         }
