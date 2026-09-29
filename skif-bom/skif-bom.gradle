@@ -3,14 +3,6 @@ plugins {
     id 'maven-publish'
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.javaPlatform
-        }
-    }
-}
-
 description = "Platform BOM for aligning SKIF dependencies and security patches for TomEE/Tomcat!"
 
 javaPlatform {
@@ -59,6 +51,14 @@ dependencies {
             runtime("org.apache.tomcat:${tomcatModule}:${libs.versions.tomee.tomcat.patch.get()}") because(
                 "Temporary security override until TomEE updates Tomcat"
             )
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.javaPlatform
         }
     }
 }
