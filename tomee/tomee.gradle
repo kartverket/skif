@@ -4,7 +4,8 @@ plugins {
 }
 
 dependencies {
-    implementation libs.tomee.embedded
+    implementation platform(project(':skif-bom'))
+    implementation 'org.apache.tomee:tomee-embedded'
 
     runtimeOnly libs.ojdbc
 }
