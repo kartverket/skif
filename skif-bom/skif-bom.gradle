@@ -14,9 +14,9 @@ dependencies {
         api libs.tomee.embedded
         api libs.tomee.security
 
-        api libs.jakarta.ee.bom
-        api libs.tomee.plus.bom
-        api libs.tomee.plus.api.bom
+        api(platform(libs.jakarta.ee.bom))
+        api(platform(libs.tomee.plus.bom))
+        api(platform(libs.tomee.plus.api.bom))
 
         api project(":skif-service-common")
         api project(":skif-service-server")
