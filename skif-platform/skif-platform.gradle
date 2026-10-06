@@ -1,0 +1,61 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+}
+
+description = "Platform BOM for aligning SKIF dependencies and security patches for TomEE/Tomcat!"
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    api platform(libs.jakarta.ee.bom)
+    api platform(libs.tomee.plus.bom)
+    api platform(libs.tomee.plus.api.bom)
+
+    constraints {
+
+        // Midlertidig sikkerhetsoverstyring : baseline constraints for konsumenter (gir et ekstra lag av sikkerhet) 
+        var baselineTomcatReason = "Temporary security override until TomEE 10.2.0 updates Tomcat"
+        var baselineTomcatVersion = '10.1.60'
+        runtime("org.apache.tomcat:tomcat-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-annotations-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-catalina:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-catalina-ha:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-coyote:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-dbcp:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-el-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jaspic-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jasper:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jasper-el:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jdbc:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jni:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jsp-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-servlet-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-tribes:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-util:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-util-scan:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-websocket:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-websocket-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-websocket-client-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-juli:${baselineTomcatVersion}") because(baselineTomcatReason)
+
+        api libs.tomee.embedded
+        api libs.tomee.security
+
+        api project(":skif-service-common")
+        api project(":skif-service-server")
+        api project(":skif-store-common")
+        api project(":skif-store-server")
+        api project(":skif-testsupport-common")
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}

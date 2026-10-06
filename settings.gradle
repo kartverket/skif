@@ -28,6 +28,7 @@ pluginManagement {
 
 include ':database'
 
+include ':skif-platform'
 include ':skif-config'
 include ':skif-service-common'
 include ':skif-testsupport-common'

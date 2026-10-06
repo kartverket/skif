@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+// For konsumenter kan man ta inn plattform-constrains her      
+//    implementation platform(project(':skif-platform'))
     implementation libs.tomee.embedded
 
     runtimeOnly libs.ojdbc

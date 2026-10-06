@@ -17,6 +17,7 @@ testng = '7.12.0'
 xstream = '1.4.21'
 jakarta-ee = '10.0.0'
 tomee = '10.2.0'
+tomee-tomcat-patch = '10.1.60' #patchbar Tomcat for tilfeller hvor man venter på at TomEE skal oppgradere Tomcat.
 jaxb-impl = '4.0.9'
 jaxb-xjc = '4.0.9'
 jaxws-rt = '4.0.5'
@@ -51,9 +52,12 @@ jaxb-xjc     = { module = 'org.glassfish.jaxb:jaxb-xjc', version.ref = 'jaxb-xjc
 
 jakarta-ee-bom = { module = 'jakarta.platform:jakarta.jakartaee-bom', version.ref = 'jakarta-ee' }
 tomee-embedded = { module = 'org.apache.tomee:tomee-embedded', version.ref = 'tomee' }
+tomee-security = { module = 'org.apache.tomee:tomee-security', version.ref = 'tomee'}
 tomee-plus-api-bom = { module = 'org.apache.tomee.bom:tomee-plus-api', version.ref = 'tomee' }
 tomee-plus-bom = { module = 'org.apache.tomee.bom:tomee-plus', version.ref = 'tomee' }
 openejb-core = { module = 'org.apache.tomee:openejb-core' }
+
+tomee-tomcat = { module = 'org.apache.tomcat:tomcat-catalina', version.ref = 'tomee-tomcat-patch' }
 
 # Testing
 testng = { module = 'org.testng:testng', version.ref = 'testng' } #husk exclude group:'junit' vi benytter ikke JUnit i prosjektet [SKIF-385]
