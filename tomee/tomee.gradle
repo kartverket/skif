@@ -27,7 +27,7 @@ var tomeeSpec = project.copySpec {
 }
 
 application {
-    mainClassName = 'no.statkart.skif.tomee.RunServer'
+    mainClass = 'no.statkart.skif.tomee.RunServer'
     applicationDefaultJvmArgs = [
         "-Dskif.db_jdbc_url=$db_jdbc_url",
         "-Dskif.db_username=$db_username",
@@ -35,7 +35,7 @@ application {
         "-Dskif.db_datasource=openejb:Resource/no.statkart.skif.Skif_CURRENT",
         "-Dskif.db_datasource_old=openejb:Resource/no.statkart.skif.Skif_OLD",
         '-Djava.naming.factory.initial=org.apache.openejb.core.OpenEJBInitialContextFactory',
-    ].collect { it.toString() }
+    ]
 }
 
 distributions {
