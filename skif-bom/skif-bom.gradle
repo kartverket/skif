@@ -11,6 +11,32 @@ javaPlatform {
 
 dependencies {
     constraints {
+
+        // Midlertidig sikkerhetsoverstyring : baseline constraints for konsumenter (gir et ekstra lag av sikkerhet) 
+        var baselineTomcatReason = "Temporary security override until TomEE 10.2.0 updates Tomcat"
+        var baselineTomcatVersion = '10.1.60'
+        runtime("org.apache.tomcat:tomcat-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-annotations-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-catalina:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-catalina-ha:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-coyote:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-dbcp:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-el-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jaspic-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jasper:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jasper-el:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jdbc:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jni:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-jsp-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-servlet-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-tribes:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-util:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-util-scan:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-websocket:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-websocket-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-websocket-client-api:${baselineTomcatVersion}") because(baselineTomcatReason)
+        runtime("org.apache.tomcat:tomcat-juli:${baselineTomcatVersion}") because(baselineTomcatReason)
+
         api libs.tomee.embedded
         api libs.tomee.security
 
@@ -23,35 +49,6 @@ dependencies {
         api project(":skif-store-common")
         api project(":skif-store-server")
         api project(":skif-testsupport-common")
-
-        //security fixes for Apache Tomcat when waiting for Apache TomEE fix
-        [
-            "tomcat-api",
-            "tomcat-annotations-api",
-            "tomcat-catalina",
-            "tomcat-catalina-ha",
-            "tomcat-coyote",
-            "tomcat-dbcp",
-            "tomcat-el-api",
-            "tomcat-jaspic-api",
-            "tomcat-jasper",
-            "tomcat-jasper-el",
-            "tomcat-jdbc",
-            "tomcat-jni",
-            "tomcat-jsp-api",
-            "tomcat-servlet-api",
-            "tomcat-tribes",
-            "tomcat-util",
-            "tomcat-util-scan",
-            "tomcat-websocket",
-            "tomcat-websocket-api",
-            "tomcat-websocket-client-api",
-            "tomcat-juli",
-        ].each { tomcatModule ->
-            runtime("org.apache.tomcat:${tomcatModule}:${libs.versions.tomee.tomcat.patch.get()}") because(
-                "Temporary security override until TomEE updates Tomcat"
-            )
-        }
     }
 }
 
