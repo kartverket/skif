@@ -102,13 +102,9 @@ subprojects { Project project ->
     plugins.withType(JavaPlugin) {
         // Avhengigheter som trengs for testing (riktignok ikke alle overalt)
         project.dependencies {
-            implementation platform(libs.jakarta.ee.bom)
-            implementation platform(libs.tomee.plus.bom)
-            implementation platform(libs.tomee.plus.api.bom)
+            implementation platform(it.project(path: ':skif-platform'))
 
-            compileOnly platform(libs.jakarta.ee.bom)
-            compileOnly platform(libs.tomee.plus.bom)
-            compileOnly platform(libs.tomee.plus.api.bom)
+            compileOnly platform(it.project(path: ':skif-platform'))
 
             testImplementation (libs.testng){
                 exclude group:'junit' // vi benytter ikke JUnit i prosjektet [SKIF-385]
@@ -120,9 +116,7 @@ subprojects { Project project ->
 
         plugins.withType(JavaLibraryPlugin) {
             project.dependencies {
-                api platform(libs.jakarta.ee.bom)
-                api platform(libs.tomee.plus.bom)
-                api platform(libs.tomee.plus.api.bom)
+                api platform(it.project(path: ':skif-platform'))
             }
         }
 
