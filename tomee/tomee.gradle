@@ -3,12 +3,44 @@ plugins {
     id 'application'
 }
 
+//patch Tomcat modules to a newer version than what is provided by TomEE 
+def tomcatVersion = libs.versions.tomee.tomcat.patch.get()
+def tomcatModules = [
+    "org.apache.tomcat:tomcat-api:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-annotations-api:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-catalina:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-catalina-ha:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-coyote:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-dbcp:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-el-api:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-jaspic-api:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-jasper:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-jasper-el:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-jdbc:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-jni:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-jsp-api:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-servlet-api:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-tribes:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-util:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-util-scan:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-websocket:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-websocket-api:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-websocket-client-api:${tomcatVersion}",
+    "org.apache.tomcat:tomcat-juli:${tomcatVersion}",
+]
+
 dependencies {
 // For konsumenter kan man ta inn plattform-constrains her      
 //    implementation platform(project(':skif-platform'))
     implementation libs.tomee.embedded
 
     runtimeOnly libs.ojdbc
+    
+    constraints {
+        tomcatModules.each { tomcatModule ->
+            implementation(tomcatModule) { because 'Temporary security override until TomEE updates Tomcat' }
+        }
+    }
 }
 
 var deployments = [
