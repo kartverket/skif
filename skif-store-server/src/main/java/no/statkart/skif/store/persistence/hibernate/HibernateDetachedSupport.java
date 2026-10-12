@@ -12,20 +12,19 @@ import no.statkart.skif.store.BubbleObject;
 import no.statkart.skif.store.EntityComponent;
 import no.statkart.skif.util.CopyHelper;
 import org.hibernate.HibernateException;
-import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.collection.spi.PersistentMap;
 import org.hibernate.engine.spi.CascadeStyle;
 import org.hibernate.engine.spi.CascadeStyles;
 import org.hibernate.engine.spi.CascadingActions;
+import org.hibernate.engine.spi.CollectionKey;
+import org.hibernate.engine.spi.EntityEntry;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.id.Assigned;
-import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.generator.Assigned;
 import org.hibernate.metamodel.mapping.JdbcMapping;
 import org.hibernate.persister.collection.CollectionPersister;
-import org.hibernate.persister.collection.QueryableCollection;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
@@ -98,14 +97,41 @@ public class HibernateDetachedSupport {
     public <T extends BubbleObject> void update(T bubbleObject) {
         List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents = Lists.newArrayList();
         try {
-            assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject, orphanOneToOneEntityComponents);
+            boolean alreadyAttached = assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(bubbleObject, orphanOneToOneEntityComponents);
             Session session = session();
-            session.update(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
+            // FIXME Hibernate 7: Session.update() er fjernet (ingen saveOrUpdate/update igjen, kun persist/merge).
+            // merge() er nærmeste erstatning, MEN returnerer en *annen* (evt. nylastet) managed instans og lar
+            // `bubbleObject` forbli detached - i motsetning til update() som reattachet akkurat denne instansen.
+            // Dette kan bryte identitetsantakelser andre steder i koden (f.eks. HibernateLazySupport sin sporing av
+            // "samme instans"). Må verifiseres grundig mot faktisk oppførsel/tester når build kan kjøres.
+            //
+            // Viktig rekkefølge: orphan one-to-one entity components fjernes FØR merge() kalles. Fjernes de etter
+            // merge() kan merge() sin cascade ha generert en update-handling mot en entity som deretter slettes
+            // manuelt, noe som kolliderer i Hibernates action queue og gir StaleObjectStateException/
+            // OptimisticLockException ved flush (observert med update()->merge()-migreringen).
             for (int i = orphanOneToOneEntityComponents.size() - 1; i >= 0; i--) {
                 Multimap<Class<? extends EntityComponent>, EntityComponent> multimap = orphanOneToOneEntityComponents.get(i);
                 for (Object orphanEntity : multimap.values()) {
-                    session.delete(orphanEntity);
+                    session.remove(orphanEntity);
                 }
+            }
+            // Hvis bubbleObject allerede var den samme instansen som lå i Hibernate sessionen (f.eks. hentet via
+            // store.lock() i samme transaksjon) er merge() både unødvendig og skadelig: merge() på en allerede
+            // managed instans trigger en full re-cascade av assosiasjoner, som kolliderer med Hibernates egen
+            // "dirty collection"-sjekk av collections med cascade="all-delete-orphan" ved flush og gir dobbel
+            // sletting (StaleStateException: "Batch update returned unexpected row count ... expected 1 but was 0").
+            // Siden endringene allerede er gjort direkte på den managed instansen trenger vi bare la Hibernates
+            // dirty-checking ta seg av resten.
+            if (!alreadyAttached) {
+                // Hibernate 7: session.merge() er nærmeste erstatning for det fjernede update(). Forsøkte også
+                // session.lock(bubbleObject, LockMode.NONE), som var nærmere update() sin reassosieringssemantikk
+                // (bevarer instansidentitet), men denne forutsetter at HELE objektgrafen allerede er assosiert med
+                // sessionen (OnLockVisitor kaskaderer og krever EntityEntry for alle refererte entities) - noe som
+                // ikke stemmer her siden vi nettopp har bygget en frisk, fortsatt-detached graf av
+                // PersistentCollections/entities i attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities.
+                // Dette ga "IllegalArgumentException: Given entity is not associated with the persistence context"
+                // for mange flere tester enn merge() alene. Beholder derfor merge().
+                session.merge(bubbleObject); // Viktig at class-mapping inneholder 'select-before-update="true"'. Dette bør settes automatisk ved konfigurasjon av hibernate session factory.
             }
         } catch (HibernateException | SQLException e) {
             throw new ImplementationException("Update failed for " + bubbleObject, e);
@@ -133,7 +159,7 @@ public class HibernateDetachedSupport {
      * @throws HibernateException    dersom get() eller evict() på hibernate session feiler
      * @throws SQLException dersom SQL feiler ved typeendring
      */
-    private void assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(BubbleObject bubbleObject, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException, SQLException {
+    private boolean assignPersistentCollectionsAndConvertObjectIfTypeChangedAndEvictOtherInstance(BubbleObject bubbleObject, List<Multimap<Class<? extends EntityComponent>, EntityComponent>> orphanOneToOneEntityComponents) throws HibernateException, SQLException {
         // Hibernate tillater ikke update på et objekt når et annet objekt med samme id finnes i hibernate sin cache
         // Vi må teste på dette og evt. kaste ut det gamle objektet fra hibernate sin cache. Dette kan testes ved å
         // slå opp objektet i hibernates interne cache slik at objektet ikke lastes fra databasen hvis det ikke allerede
@@ -144,7 +170,7 @@ public class HibernateDetachedSupport {
         // Dersom objektet ikke allerede er lastet lastes eksisterende objekt her. For bulk updates vil det går raskere
         // hvis eksisterende objekter allerede er lastet før man kommer her slik at eksisterende objekter ikke lastes
         // en-etter-en.
-        BubbleObject existingBubble = (BubbleObject) session().get(bubbleObject.getId().getBaseType(), bubbleObject.getId(), LockMode.NONE);
+        BubbleObject existingBubble = (BubbleObject) session().find(bubbleObject.getId().getBaseType(), bubbleObject.getId());
         if (existingBubble != bubbleObject) {
             lazyInitializer.ensureFullyLoaded(existingBubble); // TODO: Håndter lazy loaded collections. Må pt kalle ensureFullyLoaded fordi attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents pt ikke håndtere lazyloaded collections.
 
@@ -153,7 +179,7 @@ public class HibernateDetachedSupport {
                 changeType(bubbleObject, existingBubble);
 
                 // Les inn objektet på nytt med den nye typen. changeType har evictet.
-                existingBubble = (BubbleObject) session().get(bubbleObject.getId().getBaseType(), bubbleObject.getId(), LockMode.NONE);
+                existingBubble = (BubbleObject) session().find(bubbleObject.getId().getBaseType(), bubbleObject.getId());
                 lazyInitializer.ensureFullyLoaded(existingBubble); // TODO: Håndter lazy loaded collections. Må pt kalle ensureFullyLoaded fordi attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntityComponents pt ikke håndtere lazyloaded collections.
             }
 
@@ -172,9 +198,84 @@ public class HibernateDetachedSupport {
             lazyInitializer.markAsFullyInitialized(bubbleObject);
 
             session().evict(existingBubble);
-        } // else {
-        // Gjør ingen ting, bubbleObject er det objektet som allerede ligger i hibernate sessionen
-        // }
+            return false;
+        } else {
+            // bubbleObject er allerede det objektet som ligger i hibernate sessionen (allerede managed/attached).
+            // Test-hjelpere (f.eks. removeHibernatePersistenceSet()) kan likevel ha byttet ut collection-felt på
+            // denne instansen med vanlige java-collections (for å simulere hvordan objektet ser ut etter WS-mapping).
+            // Siden vi her IKKE kaller attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntities (det
+            // trengs normalt ikke, da Hibernates egen dirty-checking tar seg av den allerede managed PersistentCollection-en),
+            // må vi likevel sørge for at slike "avkoblede" collection-felt kobles tilbake til Hibernates eksisterende
+            // PersistentCollection for samme rolle/eier. Hvis ikke vil Hibernate oppfatte den gamle PersistentCollection-en
+            // som dereferenced og prosessere orphan-removal for alle dens elementer, i tillegg til at det usammenhengende
+            // feltet kan gi dobbel sletting (StaleStateException ved flush).
+            reattachCollectionFieldsReplacedWithPlainCollections(bubbleObject);
+            // Vi hopper bevisst over å kjøre en eksplisitt null-collection-sjekk her (i motsetning til i
+            // attachPersistenceCollectionWithSnapshotOfOldStateAndCollectOrphanEntitiesForComponent, som kjøres i
+            // den andre grenen). Komponenter som får et null collection-felt mens de fortsatt eies av samme boble
+            // (f.eks. testDeleteComponentBySettingItToNullNotPossibleInAttachedState) skal gi Hibernates egen,
+            // mer presise "orphan removal"-feilmelding ved flush. Tilfellet hvor en component med en
+            // cascade="all-delete-orphan" collection blir "stjålet" og flyttet til en annen (ny) boble fanges i
+            // stedet opp i HibernateDetachedSupport.insert(), som oversetter Hibernates (her mindre presise)
+            // "Found shared references to a collection"-feil til en tilsvarende SKIF ImplementationException.
+            return true;
+        }
+    }
+
+    /**
+     * Finner collection-felt på {@code object} som ikke lenger er {@link PersistentCollection} (fordi de f.eks. er
+     * byttet ut med en vanlig {@link java.util.Collection} av test-kode eller WS-mapping) og kobler dem tilbake til
+     * Hibernates eksisterende {@link PersistentCollection} for samme rolle, slik at innholdet (nytt) erstatter det
+     * gamle in-place, uten at identiteten til PersistentCollection-objektet endres. Dette hindrer at Hibernate
+     * oppfatter collection-en som "dereferenced" (som ville trigget uønsket orphan-removal av alle gamle elementer).
+     */
+    @SuppressWarnings("unchecked")
+    private void reattachCollectionFieldsReplacedWithPlainCollections(Object object) throws HibernateException {
+        reattachCollectionFieldsReplacedWithPlainCollections(object, new IdentityHashMap<>());
+    }
+
+    @SuppressWarnings("unchecked")
+    private void reattachCollectionFieldsReplacedWithPlainCollections(Object object, IdentityHashMap<Object, Object> processedObjects) throws HibernateException {
+        if (object == null || processedObjects.containsKey(object)) return;
+        processedObjects.put(object, null);
+
+        EntityPersister persister = HibernateHelper.getClassMetadata(session(), object);
+        if (erAvTypeSomIkkeSkalInitialiseresVidere(persister)) return;
+
+        SharedSessionContractImplementor sessionImpl = (SharedSessionContractImplementor) session();
+        Type[] types = persister.getPropertyTypes();
+        Object[] values = persister.getPropertyValues(object);
+        boolean modified = false;
+
+        for (int i = 0; i < types.length; i++) {
+            Type type = types[i];
+            Object value = values[i];
+            if (type.isEntityType()) {
+                if (value != null) {
+                    reattachCollectionFieldsReplacedWithPlainCollections(value, processedObjects);
+                }
+            } else if (type.isCollectionType() && value != null && !(value instanceof PersistentCollection)) {
+                CollectionType collectionType = (CollectionType) type;
+                CollectionPersister collectionPersister = sessionImpl.getFactory().getMappingMetamodel().getCollectionDescriptor(collectionType.getRole());
+                EntityEntry entry = sessionImpl.getPersistenceContextInternal().getEntry(object);
+                Object key = AbstractEntityPersister.getCollectionKey(collectionPersister, object, entry, sessionImpl);
+                PersistentCollection<Object> existingPersistentCollection = key == null ? null : (PersistentCollection<Object>) sessionImpl.getPersistenceContextInternal().getCollection(new CollectionKey(collectionPersister, key));
+                if (existingPersistentCollection != null) {
+                    // Oppdater innholdet på den eksisterende PersistentCollection in-place (bevarer identitet og snapshot)
+                    // slik at Hibernates dirty-checking ser riktig nytt innhold uten å tro collection-en er dereferenced.
+                    Collection<Object> newContent = (Collection<Object>) value;
+                    ((Collection<Object>) existingPersistentCollection).clear();
+                    ((Collection<Object>) existingPersistentCollection).addAll(newContent);
+                    persister.setPropertyValue(object, i, existingPersistentCollection);
+                    modified = true;
+                }
+            }
+        }
+        // Properties trenger ikke skrives tilbake med setPropertyValues siden setPropertyValue(object, i, ...) over
+        // skriver direkte til feltet på objektet (via reflection), i motsetning til component-properties.
+        if (modified && logger.isDebugEnabled()) {
+            logger.debug("Reattached collection field(s) replaced with plain collections for: " + object);
+        }
     }
 
 
@@ -203,17 +304,17 @@ public class HibernateDetachedSupport {
         if (processedObjects.containsKey(object)) return;
         processedObjects.put(object, null);
 
-        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(session(), object);
+        EntityPersister classMetadata = HibernateHelper.getClassMetadata(session(), object);
 
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
-        EntityPersister persister = (EntityPersister) classMetadata;
+        EntityPersister persister = classMetadata;
 
         Type[] types = persister.getPropertyTypes();
         Object[] values = persister.getPropertyValues(object);
         CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
 
         Class<?> entityClass = existingObject instanceof HibernateProxy ? existingObject.getClass().getSuperclass() : existingObject.getClass();
-        EntityPersister persisterExisting = lazyInitializer.getMetamodel().entityPersister(entityClass.getName());
+        EntityPersister persisterExisting = lazyInitializer.getMetamodel().getEntityDescriptor(entityClass.getName());
         Type[] typesExisting = persisterExisting.getPropertyTypes();
         Object[] valuesExisting = persisterExisting.getPropertyValues(existingObject);
 
@@ -505,8 +606,21 @@ public class HibernateDetachedSupport {
     public <T extends BubbleObject> void insert(T bubbleObject) {
         try {
             checkEntityComponentsOnInsert(bubbleObject);
-            session().save(bubbleObject);
+            // Hibernate 7: Session.save() er fjernet. persist() er JPA-erstatningen - semantisk nokså lik for
+            // transiente (nye) objekter, som er den tiltenkte bruken her, men persist() returnerer ikke en id
+            // slik save() gjorde (metoden her brukte uansett ikke returverdien).
+            session().persist(bubbleObject);
         } catch (HibernateException e) {
+            // Hibernates egen "Found shared references to a collection"-sjekk slår inn her hvis en composite
+            // component er "stjålet" fra en annen (fortsatt managed) boble uten at komponentens collection-felt
+            // har blitt nullstilt/reinitialisert for den nye eieren. Siden insert() alltid committes FØR update()
+            // (se StoreSessionServer.commitUnitOfWork() sin bevisste insert-før-update rekkefølge, som ikke kan
+            // endres uten å bryte FK-avhengighetsrekkefølgen ved inserts), er det her - og ikke i update() - at
+            // dette tilfellet faktisk oppdages. Oversetter derfor Hibernates lite informative exception til
+            // SKIF sin tilsvarende, mer informative ImplementationException.
+            if (e.getMessage() != null && e.getMessage().contains("Found shared references to a collection")) {
+                throw new ImplementationException("Component contains a Collection that is null: " + e.getMessage(), e);
+            }
             throw new ImplementationException("Insert failed for " + bubbleObject, e);
         }
     }
@@ -535,10 +649,10 @@ public class HibernateDetachedSupport {
     private void checkEntityComponentsOnInsert(Object object, IdentityHashMap<Object, Object> processedObjects) throws HibernateException {
         if (object == null) return;
 
-        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(session(), object);
+        EntityPersister classMetadata = HibernateHelper.getClassMetadata(session(), object);
 
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
-        EntityPersister persister = (EntityPersister) classMetadata;
+        EntityPersister persister = classMetadata;
 
         Type[] types = persister.getPropertyTypes();
         Object[] values = persister.getPropertyValues(object);
@@ -580,7 +694,7 @@ public class HibernateDetachedSupport {
                 Object property = properties[j];
                 CascadeStyle cascadeStyle = getCascadeStyle(componentType, j);
 
-                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingActions.SAVE_UPDATE)) {
+                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingActions.PERSIST)) {
                     // Hver property kan enten være et simple objekt (f.eks Long), complex objekt (f.eks Boundary) eller en collection
                     if (propertyType.isEntityType()) {
                         //checkForReplacedOrStolenEntityComponentInV32((EntityType) propertyType, property, null);
@@ -614,7 +728,7 @@ public class HibernateDetachedSupport {
     private void checkEntityComponentsInMapOnInsert(CollectionType collectionType, Map<?, ?> value, IdentityHashMap<Object, Object> processedObjects, CascadeStyle cascadeStyle) {
         CollectionPersister collectionPersister = lazyInitializer.getMetamodel().getCollectionDescriptor(collectionType.getRole());
 
-        if (cascadeStyle.doCascade(CascadingActions.SAVE_UPDATE)) {
+        if (cascadeStyle.doCascade(CascadingActions.PERSIST)) {
             // Sjekk at det ikke er noen collections inni her
             Type elementType = collectionPersister.getElementType();
             if (elementType.isCollectionType()) {
@@ -701,9 +815,14 @@ public class HibernateDetachedSupport {
     }
 
     protected void checkIsNewEntityComponent(EntityMetamodel entityMetamodel, EntityComponent component, Set<EntityComponent> newlyInsertedComponents) {
+        // FIXME Hibernate 7: IdentifierProperty.getIdentifierGenerator() gjør internt en ugyldig checkcast til den
+        // gamle org.hibernate.id.IdentifierGenerator for generatorer av typen org.hibernate.generator.Assigned
+        // (assigned id-strategi), og kaster da ClassCastException. Bruker i stedet EntityPersister.getGenerator()
+        // (returnerer org.hibernate.generator.Generator) for å unngå dette.
+        EntityPersister persister = lazyInitializer.getMetamodel().getEntityDescriptor(entityMetamodel.getName());
         if (component.getId() != null
                 && !newlyInsertedComponents.contains(component)
-                && !(entityMetamodel.getIdentifierProperty().getIdentifierGenerator() instanceof Assigned)) {
+                && !(persister.getGenerator() instanceof Assigned)) {
             throw new ImplementationException("Found entity component that is not new. Class: " + entityMetamodel.getEntityType().getReturnedClass().getName() + " Id:" + component.getId(), logger);
         }
     }
@@ -725,8 +844,9 @@ public class HibernateDetachedSupport {
             Class<?> typeClass = elementType.getReturnedClass();
             if (EntityComponent.class.isAssignableFrom(typeClass)) {
                 // Dersom komponentid er assigned, så kan vi ikke detektere stjeling av komponenter. Slike id-er finnes i matrikkel historikk. // TODO: jo vi kan siden vi ved hvilke objekter som insertes, ligger i eget set
-                EntityPersister persister = lazyInitializer.getMetamodel().entityPersister(elementType.getName());
-                boolean kanSjekkeForTyveri = !(persister.getIdentifierGenerator() instanceof Assigned);
+                EntityPersister persister = lazyInitializer.getMetamodel().getEntityDescriptor(elementType.getName());
+                // FIXME Hibernate 7: samme ClassCastException-problem som i checkIsNewEntityComponent - bruk getGenerator() i stedet for getIdentifierGenerator().
+                boolean kanSjekkeForTyveri = !(persister.getGenerator() instanceof Assigned);
 
                 Map<Long, EntityComponent> oldIdMap = collectionExisting.stream().map(EntityComponent.class::cast).collect(Collectors.toMap(
                     EntityComponent::getId,
@@ -770,10 +890,10 @@ public class HibernateDetachedSupport {
 
         final String dbTable = toEntityPersister.getTableName();
 
-        if (fromEntityPersister.isMultiTable()) {
+        if (fromEntityPersister.hasMultipleTables()) {
             throw new ImplementationException("Can not change type from " + previousObject.getClass() + " since it spans multiple tables", logger);
         }
-        if (toEntityPersister.isMultiTable()) {
+        if (toEntityPersister.hasMultipleTables()) {
             throw new ImplementationException("Can not change type to " + currentObject.getClass() + " since it spans multiple tables", logger);
         }
         if (!dbTable.equals(fromEntityPersister.getTableName())) {
@@ -936,8 +1056,8 @@ public class HibernateDetachedSupport {
         if (processedObjects.containsKey(object)) return;
         processedObjects.put(object, null);
 
-        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(session(), object);
-        EntityPersister persister = (EntityPersister) classMetadata;
+        EntityPersister classMetadata = HibernateHelper.getClassMetadata(session(), object);
+        EntityPersister persister = classMetadata;
 
         if (objectType.isEntityType()) {
             if (object instanceof EntityComponent) {
@@ -950,7 +1070,7 @@ public class HibernateDetachedSupport {
         if (processedObjects.containsKey(object)) return;
         processedObjects.put(object, null);
 
-        if (cascadeStyle.doCascade(CascadingActions.SAVE_UPDATE)) {
+        if (cascadeStyle.doCascade(CascadingActions.PERSIST)) {
 
             Type[] types = persister.getPropertyTypes();
             Object[] values = persister.getPropertyValues(object);
@@ -979,14 +1099,14 @@ public class HibernateDetachedSupport {
 
     // TODO: Denne gjør ikke noe av det den sier den gjør
     private void checkForStolenEntitiesInNewObjectForMap(Map<?, ?> mapInObject, CollectionType collectionType, IdentityHashMap<Object, Object> processedObjects, CascadeStyle cascadeStyleForElement) {
-        CollectionPersister collectionPersister = lazyInitializer.getMetamodel().collectionPersister(collectionType.getRole());
+        CollectionPersister collectionPersister = lazyInitializer.getMetamodel().getCollectionDescriptor(collectionType.getRole());
 
         // Sjekk at det ikke er noen collections inni her
         Type elementType = collectionPersister.getElementType();
         if (elementType.isCollectionType()) {
             throw new NotImplementedException("Map value kan ikke være collection");
         } else if (elementType.isAssociationType()) {
-            EntityPersister entityPersister = ((QueryableCollection) collectionPersister).getElementPersister();
+            EntityPersister entityPersister = collectionPersister.getElementPersister();
             Type[] propertyTypes = entityPersister.getPropertyTypes();
             for (int i = 0; i < propertyTypes.length; i++) {
                 Type propertyType = propertyTypes[i];
@@ -1008,10 +1128,10 @@ public class HibernateDetachedSupport {
         if (processedObjects.containsKey(object)) return;
         processedObjects.put(object, null);
 
-        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(session(), object.getClass());
+        EntityPersister classMetadata = HibernateHelper.getClassMetadata(session(), object.getClass());
 
         if (erAvTypeSomIkkeSkalInitialiseresVidere(classMetadata)) return;
-        EntityPersister persister = (EntityPersister) classMetadata;
+        EntityPersister persister = classMetadata;
 
         Type[] types = persister.getPropertyTypes();
         Object[] values = persister.getPropertyValues(object);
@@ -1023,7 +1143,7 @@ public class HibernateDetachedSupport {
             CascadeStyle cascadeStyle = cascadeStyles != null ? cascadeStyles[i] : null;
 
             if (type.isEntityType()) {
-                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingActions.SAVE_UPDATE)) {
+                if (cascadeStyle != null && cascadeStyle.doCascade(CascadingActions.PERSIST)) {
                     fixForBatchInsertUpdateOfEntityComponent((EntityType) type, value, processedObjects, levelKey, batchGroupedEntityComponents);
                 }
 //            } else if (type.isComponentType()) {

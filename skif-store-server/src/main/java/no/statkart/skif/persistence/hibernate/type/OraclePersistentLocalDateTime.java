@@ -4,7 +4,7 @@ import oracle.jdbc.OraclePreparedStatement;
 import oracle.jdbc.OracleResultSet;
 import oracle.sql.TIMESTAMP;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.usertype.EnhancedUserType;
 import org.joda.time.LocalDateTime;
 
@@ -46,7 +46,7 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType<Object>, 
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         OracleResultSet oracleResultSet = rs.unwrap(OracleResultSet.class);
         TIMESTAMP oracleDate = oracleResultSet.getTIMESTAMP(position);
         if (oracleDate == null) {
@@ -68,7 +68,7 @@ public class OraclePersistentLocalDateTime implements EnhancedUserType<Object>, 
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         if (value == null) {
             st.setNull(index, Types.DATE);
         } else {

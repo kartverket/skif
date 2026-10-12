@@ -1,6 +1,7 @@
 package no.statkart.skif.persistence.hibernate;
 
 import org.hibernate.boot.Metadata;
+import org.hibernate.boot.spi.BootstrapContext;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
@@ -17,12 +18,17 @@ import org.hibernate.service.spi.SessionFactoryServiceRegistry;
  * @author Henrik Fredholm
  */
 public class EmptyCollectionOptimizerIntegrator implements Integrator {
+   /**
+    * Hibernate 7 fjernet {@code integrate(Metadata, SessionFactoryImplementor, SessionFactoryServiceRegistry)} og
+    * {@code EventType.SAVE} (siden {@code Session.save()} er fjernet). Lytteren registreres derfor nå på
+    * {@code EventType.PERSIST} via den nye {@code integrate(Metadata, BootstrapContext, SessionFactoryImplementor)}-overloaden.
+    */
    @Override
-   public void integrate(Metadata metadata, SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
-      final EventListenerRegistry eventListenerRegistry = serviceRegistry.getService( EventListenerRegistry.class );
+   public void integrate(Metadata metadata, BootstrapContext bootstrapContext, SessionFactoryImplementor sessionFactory) {
+      final EventListenerRegistry eventListenerRegistry = sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
       eventListenerRegistry.appendListeners(EventType.PRE_LOAD, EmptyCollectionsOptimizerListener.class);
       eventListenerRegistry.appendListeners(EventType.PRE_COLLECTION_UPDATE, EmptyCollectionsOptimizerListener.class);
-      eventListenerRegistry.appendListeners(EventType.SAVE, EmptyCollectionsOptimizerListener.class);
+      eventListenerRegistry.appendListeners(EventType.PERSIST, EmptyCollectionsOptimizerListener.class);
    }
 
    @Override

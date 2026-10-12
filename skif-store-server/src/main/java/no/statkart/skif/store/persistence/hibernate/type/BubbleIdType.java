@@ -7,7 +7,7 @@ import no.statkart.skif.store.SnapshotVersionSeed;
 import no.statkart.skif.store.util.StoreJDBCHelper;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.config.spi.ConfigurationService;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.spi.TypeConfiguration;
 import org.hibernate.type.spi.TypeConfigurationAware;
 import org.hibernate.usertype.UserType;
@@ -117,7 +117,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         try {
             Object value = StoreJDBCHelper.getBubbleIdValue(rs, position, idValueType);
             //long value = rs.getLong(name);
@@ -133,7 +133,7 @@ public abstract class BubbleIdType implements UserType, TypeConfigurationAware {
     }
     
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         try {
             if (value == null) {
                 StoreJDBCHelper.setBubbleIdValue(st, index, null, idValueType);

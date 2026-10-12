@@ -16,7 +16,6 @@ import no.statkart.skif.store.SnapshotVersion;
 import no.statkart.skif.store.persistence.PersistenceSessionForSnapshot;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
-import org.hibernate.LockMode;
 import org.hibernate.MappingException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -304,7 +303,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         try {
             Object obj = getFromHibernateSessionOrLoad(bubbleObject.getId());
             hibernateLazySupport.markAsRemoved(bubbleObject.getId());
-            session().delete(obj);
+            session().remove(obj); // Hibernate 7: Session.delete() er fjernet, remove() er JPA-erstatningen (samme semantikk for managed entiteter).
         } catch (HibernateException e) {
             throw new ImplementationException("Delete failed for " + bubbleObject, e);
         }
@@ -431,7 +430,7 @@ public class HibernatePersistenceSessionMasterImpl implements HibernatePersisten
         T bubble = getFromHibernatePersistenceContext(bubbleId);
         if (bubble == null) {
             //noinspection
-            bubble = session().get(bubbleId.getType(), bubbleId, LockMode.NONE);
+            bubble = session().find(bubbleId.getType(), bubbleId);
         }
         return bubble;
     }

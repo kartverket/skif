@@ -32,9 +32,9 @@ public class StoreTest1ServiceImpl implements StoreTest1Service {
     public String put(String key, String value) {
         String result = null;
         Session s = getSession();
-        TestMap entry = (TestMap) s.get(TestMap.class, key);
+        TestMap entry = (TestMap) s.find(TestMap.class, key);
         if (entry == null) {
-            s.save(new TestMap(key, value));
+            s.persist(new TestMap(key, value));
         } else {
             result = entry.getV();
             entry.setV(value);
@@ -45,7 +45,7 @@ public class StoreTest1ServiceImpl implements StoreTest1Service {
     @Override
     public String get(String key) {
         Session s = getSession();
-        TestMap entry = (TestMap) s.get(TestMap.class, key);
+        TestMap entry = (TestMap) s.find(TestMap.class, key);
         if (entry == null) {
             return null;
         } else {
@@ -56,8 +56,8 @@ public class StoreTest1ServiceImpl implements StoreTest1Service {
     @Override
     public String remove(String key) {
         Session s = getSession();
-        TestMap entry = (TestMap) s.get(TestMap.class, key);
-        s.delete(entry);
+        TestMap entry = (TestMap) s.find(TestMap.class, key);
+        s.remove(entry);
         return entry.getV();
     }
 

@@ -16,7 +16,6 @@ import no.statkart.skif.store.Store;
 import no.statkart.skif.store.persistence.hibernate.HibernateDetachedSupport;
 import no.statkart.skif.store.persistence.hibernate.HibernateLazySupport;
 import org.assertj.core.api.Assertions;
-import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.annotations.Type;
 import org.hibernate.boot.Metadata;
@@ -27,7 +26,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.collection.spi.PersistentSet;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.metamodel.spi.MetamodelImplementor;
+import org.hibernate.metamodel.spi.MappingMetamodelImplementor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.testng.annotations.Test;
@@ -61,7 +60,7 @@ public class EntityComponentChangeTypeTest {
             SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
             Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
-            Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToManyComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToManyComponent.class.getName()), Mockito.any(TestBubbleOneToManyComponent.class));
+            Mockito.doAnswer(invocation -> ((MappingMetamodelImplementor) sessionFactory.getMetamodel()).getEntityDescriptor(TestBubbleOneToManyComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToManyComponent.class.getName()), Mockito.any(TestBubbleOneToManyComponent.class));
             Mockito.doNothing().when(session).evict(Mockito.any());
 
             HibernateLazySupport hibernateLazySupport = new HibernateLazySupport(() -> session);
@@ -74,8 +73,8 @@ public class EntityComponentChangeTypeTest {
             persistentBubble.getComponents().add(persistentBubbleComponent);
             persistentBubble.setComponents(new PersistentSet<>(session, persistentBubble.getComponents()));
 
-            Mockito.doReturn(persistentBubble).when(session).get(TestBubbleOneToMany.class, bubbleId, LockMode.NONE);
-            Mockito.doNothing().when(session).update(Mockito.any(TestBubbleOneToMany.class));
+            Mockito.doReturn(persistentBubble).when(session).find(TestBubbleOneToMany.class, bubbleId);
+            Mockito.doReturn(null).when(session).merge(Mockito.any(TestBubbleOneToMany.class));
 
             TestBubbleOneToManyComponent2 updatedBubbleComponent = new TestBubbleOneToManyComponent2(2L);
             TestBubbleOneToMany updatedBubble = new TestBubbleOneToMany(bubbleId);
@@ -96,7 +95,7 @@ public class EntityComponentChangeTypeTest {
             SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
             Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
-            Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToManyComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToManyComponent.class.getName()), Mockito.any(TestBubbleOneToManyComponent.class));
+            Mockito.doAnswer(invocation -> ((MappingMetamodelImplementor) sessionFactory.getMetamodel()).getEntityDescriptor(TestBubbleOneToManyComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToManyComponent.class.getName()), Mockito.any(TestBubbleOneToManyComponent.class));
             Mockito.doNothing().when(session).evict(Mockito.any());
 
             HibernateLazySupport hibernateLazySupport = new HibernateLazySupport(() -> session);
@@ -109,8 +108,8 @@ public class EntityComponentChangeTypeTest {
             persistentBubble.getComponents().add(persistentBubbleComponent);
             persistentBubble.setComponents(new PersistentSet<>(session, persistentBubble.getComponents()));
 
-            Mockito.doReturn(persistentBubble).when(session).get(TestBubbleOneToMany.class, bubbleId, LockMode.NONE);
-            Mockito.doNothing().when(session).update(Mockito.any(TestBubbleOneToMany.class));
+            Mockito.doReturn(persistentBubble).when(session).find(TestBubbleOneToMany.class, bubbleId);
+            Mockito.doReturn(null).when(session).merge(Mockito.any(TestBubbleOneToMany.class));
 
             TestBubbleOneToManyComponent2 updatedBubbleComponent = new TestBubbleOneToManyComponent2(null);
             TestBubbleOneToMany updatedBubble = new TestBubbleOneToMany(bubbleId);
@@ -118,7 +117,7 @@ public class EntityComponentChangeTypeTest {
 
             hibernateDetachedSupport.update(updatedBubble);
 
-            Mockito.verify(session).update(updatedBubble);
+            Mockito.verify(session).merge(updatedBubble);
         }
     }
 
@@ -142,7 +141,7 @@ public class EntityComponentChangeTypeTest {
             SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
             Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
-            Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToOneComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToOneComponent.class.getName()), Mockito.any(TestBubbleOneToOneComponent.class));
+            Mockito.doAnswer(invocation -> ((MappingMetamodelImplementor) sessionFactory.getMetamodel()).getEntityDescriptor(TestBubbleOneToOneComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToOneComponent.class.getName()), Mockito.any(TestBubbleOneToOneComponent.class));
             Mockito.doNothing().when(session).evict(Mockito.any());
 
             HibernateLazySupport hibernateLazySupport = new HibernateLazySupport(() -> session);
@@ -154,8 +153,8 @@ public class EntityComponentChangeTypeTest {
             TestBubbleOneToOne persistentBubble = new TestBubbleOneToOne(bubbleId);
             persistentBubble.setComponent(persistentBubbleComponent);
 
-            Mockito.doReturn(persistentBubble).when(session).get(TestBubbleOneToOne.class, bubbleId, LockMode.NONE);
-            Mockito.doNothing().when(session).update(Mockito.any(TestBubbleOneToOne.class));
+            Mockito.doReturn(persistentBubble).when(session).find(TestBubbleOneToOne.class, bubbleId);
+            Mockito.doReturn(null).when(session).merge(Mockito.any(TestBubbleOneToOne.class));
 
             TestBubbleOneToOneComponent2 updatedBubbleComponent = new TestBubbleOneToOneComponent2(2L);
             TestBubbleOneToOne updatedBubble = new TestBubbleOneToOne(bubbleId);
@@ -176,7 +175,7 @@ public class EntityComponentChangeTypeTest {
             SessionImplementor session = Mockito.mock(SessionImplementor.class, EntityComponentChangeTypeTest::notMocked);
             Mockito.doReturn(sessionFactory).when(session).getFactory();
             Mockito.doReturn(sessionFactory).when(session).getSessionFactory();
-            Mockito.doAnswer(invocation -> ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersister(TestBubbleOneToOneComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToOneComponent.class.getName()), Mockito.any(TestBubbleOneToOneComponent.class));
+            Mockito.doAnswer(invocation -> ((MappingMetamodelImplementor) sessionFactory.getMetamodel()).getEntityDescriptor(TestBubbleOneToOneComponent.class)).when(session).getEntityPersister(Mockito.eq(TestBubbleOneToOneComponent.class.getName()), Mockito.any(TestBubbleOneToOneComponent.class));
             Mockito.doNothing().when(session).evict(Mockito.any());
 
             HibernateLazySupport hibernateLazySupport = new HibernateLazySupport(() -> session);
@@ -188,8 +187,8 @@ public class EntityComponentChangeTypeTest {
             TestBubbleOneToOne persistentBubble = new TestBubbleOneToOne(bubbleId);
             persistentBubble.setComponent(persistentBubbleComponent);
 
-            Mockito.doReturn(persistentBubble).when(session).get(TestBubbleOneToOne.class, bubbleId, LockMode.NONE);
-            Mockito.doNothing().when(session).update(Mockito.any(TestBubbleOneToOne.class));
+            Mockito.doReturn(persistentBubble).when(session).find(TestBubbleOneToOne.class, bubbleId);
+            Mockito.doReturn(null).when(session).merge(Mockito.any(TestBubbleOneToOne.class));
 
             TestBubbleOneToOneComponent2 updatedBubbleComponent = new TestBubbleOneToOneComponent2(null);
             TestBubbleOneToOne updatedBubble = new TestBubbleOneToOne(bubbleId);
@@ -197,7 +196,7 @@ public class EntityComponentChangeTypeTest {
 
             hibernateDetachedSupport.update(updatedBubble);
 
-            Mockito.verify(session).update(updatedBubble);
+            Mockito.verify(session).merge(updatedBubble);
         }
     }
 

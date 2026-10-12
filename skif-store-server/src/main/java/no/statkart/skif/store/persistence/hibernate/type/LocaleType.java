@@ -2,7 +2,7 @@ package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.internal.util.InternalLocaleUtils;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
@@ -40,7 +40,7 @@ public class LocaleType implements UserType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         String text = rs.getString(position);
         if (text.equals("_")) {
             return Locale.ROOT;
@@ -51,7 +51,7 @@ public class LocaleType implements UserType {
 
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         String text;
         if (value == null) {
             text = null;

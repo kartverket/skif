@@ -15,8 +15,7 @@ import org.hibernate.engine.spi.EntityKey;
 import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.metamodel.spi.MetamodelImplementor;
+import org.hibernate.metamodel.spi.MappingMetamodelImplementor;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.HibernateProxy;
@@ -64,8 +63,8 @@ public class HibernateLazySupport {
         return sessionSupplier.get();
     }
 
-    MetamodelImplementor getMetamodel() {
-        return (MetamodelImplementor) session().getSessionFactory().getMetamodel();
+    MappingMetamodelImplementor getMetamodel() {
+        return (MappingMetamodelImplementor) session().getSessionFactory().getMetamodel();
     }
 
     public Map<BubbleId, BubbleObject> getFullyInitializedBubbles() {
@@ -151,7 +150,7 @@ public class HibernateLazySupport {
 
         final SessionImplementor sessionImpl = (SessionImplementor) session();
         final SessionFactoryImplementor sessionFactory = sessionImpl.getFactory();
-        ClassMetadata classMetadata = HibernateHelper.getClassMetadata(sessionImpl, object);
+        EntityPersister classMetadata = HibernateHelper.getClassMetadata(sessionImpl, object);
 
         if (classMetadata == null) {
             Hibernate.initialize(object);
@@ -166,7 +165,7 @@ public class HibernateLazySupport {
             persistentObject = object;
         }
 
-        EntityPersister persister = (EntityPersister) classMetadata;
+        EntityPersister persister = classMetadata;
         Type[] types = persister.getPropertyTypes();
         Object[] values = persister.getPropertyValues(persistentObject);
         CascadeStyle[] cascadeStyles = persister.getPropertyCascadeStyles();
@@ -181,7 +180,7 @@ public class HibernateLazySupport {
                 // TODO: Opptimaliser Many-to-one-bubbleref trenger ikke initialiseres
                 Hibernate.initialize(values[i]);
 
-                if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingActions.SAVE_UPDATE)) {
+                if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingActions.PERSIST)) {
                     ensureInitialized(values[i], initializedObjects);
                 }
             } else if (type.isComponentType()) {
@@ -198,7 +197,7 @@ public class HibernateLazySupport {
                 }
             } else if (type.isAssociationType()) {
                 Hibernate.initialize(values[i]);
-                if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingActions.SAVE_UPDATE)) {
+                if (cascadeStyles != null && cascadeStyles[i].doCascade(CascadingActions.PERSIST)) {
                     // Initialisert collectionen og hvert element. Element kan være av typen composite eller association.
                     // TODO: Nåværende implementasjon håndtere kun et nivå av composite-elementer. Generaliser ved behov
                     if (values[i] instanceof Collection) {
@@ -292,7 +291,7 @@ public class HibernateLazySupport {
     EntityPersister getClassPersister(Class<?> theClass) {
         try {
             if (lastClass != theClass) {
-                lastResultForClass = getMetamodel().entityPersister(theClass.getName());
+                lastResultForClass = getMetamodel().getEntityDescriptor(theClass.getName());
                 lastClass = theClass;
             }
             return lastResultForClass;

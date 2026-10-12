@@ -3,7 +3,7 @@ package no.statkart.skif.persistence.hibernate.type;
 import oracle.jdbc.OraclePreparedStatement;
 import oracle.sql.TIMESTAMPTZ;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
@@ -43,12 +43,12 @@ public class OracleLocalTimestamp implements UserType<Object> {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         return rs.getTimestamp(position);
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         OraclePreparedStatement ops = st.unwrap(OraclePreparedStatement.class);
         ops.setTIMESTAMPTZ(index, new TIMESTAMPTZ(ops.getConnection(), (Timestamp) value));
     }

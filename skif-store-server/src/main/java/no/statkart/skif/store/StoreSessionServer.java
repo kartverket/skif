@@ -297,7 +297,9 @@ public class StoreSessionServer extends AbstractStoreSession {
             StoreEntryState oldState = storeEntry.getState(level);
             // Må ta vare på om objektet var modifisert på forhånd slik at flushed flagget får riktig verdi ved feil
             boolean oldFlushed = storeEntry.getBubbleObject(level).isFlushed();
-            boolean markedForRollbackOnly = !session.getTransactionCoordinator().getTransactionDriverControl().isActive(false);
+            // Hibernate 7: isActive(boolean) er fjernet. isActive(false) tilsvarte "kun ACTIVE teller, ikke MARKED_ROLLBACK",
+            // som nå er isActiveAndNoMarkedForRollback() (verifisert mot Hibernate-kildekoden for begge versjoner).
+            boolean markedForRollbackOnly = !session.getTransactionCoordinator().getTransactionDriverControl().isActiveAndNoMarkedForRollback();
             try {
                 deleteEntry(level, storeEntry.getBubbleObject(level));
                 flush();

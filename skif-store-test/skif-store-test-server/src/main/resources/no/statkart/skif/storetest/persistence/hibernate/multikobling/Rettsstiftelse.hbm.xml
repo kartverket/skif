@@ -17,7 +17,7 @@
             <key column="rettsstiftelseId"/>
             <composite-element class="no.statkart.skif.storetest.domain.multikobling_old.kobling.RetttstiftelseTilPersonKobling">
                 <property name="rolle">
-                    <type name="org.hibernate.type.EnumType">
+                    <type name="no.statkart.skif.storetest.persistence.hibernate.type.multikobling.NamedEnumType">
                         <param name="enumClass">no.statkart.skif.storetest.domain.multikobling_old.kobling.RettsstiftelsePersonRolle</param>
                         <param name="useNamed">true</param>
                     </type>

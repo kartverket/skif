@@ -9,8 +9,9 @@ import org.hibernate.event.spi.PreCollectionUpdateEvent;
 import org.hibernate.event.spi.PreCollectionUpdateEventListener;
 import org.hibernate.event.spi.PreLoadEvent;
 import org.hibernate.event.spi.PreLoadEventListener;
-import org.hibernate.event.spi.SaveOrUpdateEvent;
-import org.hibernate.event.spi.SaveOrUpdateEventListener;
+import org.hibernate.event.spi.PersistContext;
+import org.hibernate.event.spi.PersistEvent;
+import org.hibernate.event.spi.PersistEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 
 import java.util.Map;
@@ -25,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2.11
  * @author Henrik Fredholm
  */
-public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, PreCollectionUpdateEventListener, SaveOrUpdateEventListener {
+public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, PreCollectionUpdateEventListener, PersistEventListener {
     private final Map<EntityPersister, EmptyCollectionsOptimizer> optimizers = new ConcurrentHashMap<>();
 
     @Override
@@ -42,14 +43,26 @@ public class EmptyCollectionsOptimizerListener implements PreLoadEventListener, 
         }
     }
 
+    /**
+     * Hibernate 7 fjernet {@code Session.save()}/{@code saveOrUpdate()} og dermed
+     * {@code SaveOrUpdateEvent}/{@code SaveOrUpdateEventListener}. {@code EventType.SAVE} er erstattet med
+     * {@code EventType.PERSIST}, som denne lytteren nå er registrert på i {@link EmptyCollectionOptimizerIntegrator}.
+     * NB: semantikken er ikke 100% lik - persist() kaster normalt for allerede detached/eksisterende entiteter,
+     * mens saveOrUpdate() håndterte begge tilfeller. Må verifiseres mot faktisk kjøretidsbruk.
+     */
     @Override
-    public void onSaveOrUpdate(SaveOrUpdateEvent event) throws HibernateException {
+    public void onPersist(PersistEvent event) throws HibernateException {
         if (event.getObject() instanceof BubbleObject) {
             BubbleObject storeBubbleObject = (BubbleObject) event.getObject();
             EntityPersister entityPersister = findPersister(storeBubbleObject, event.getSession());
             EmptyCollectionsOptimizer emptyCollectionsOptimizer = getOrCreateOptimizer(entityPersister);
             emptyCollectionsOptimizer.updateEmptyCollectionFlag(entityPersister, storeBubbleObject);
         }
+    }
+
+    @Override
+    public void onPersist(PersistEvent event, PersistContext createCache) throws HibernateException {
+        onPersist(event);
     }
 
     @Override

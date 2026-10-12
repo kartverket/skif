@@ -8,10 +8,9 @@ import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.config.spi.ConfigurationService;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.generator.GeneratorCreationContext;
 import org.hibernate.id.Configurable;
 import org.hibernate.id.IdentifierGenerator;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.type.Type;
 
 import java.io.Serializable;
 import java.util.Properties;
@@ -46,8 +45,8 @@ public class HighLowGenerator implements IdentifierGenerator, Configurable {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
-        idServiceProvider = (Provider<IdService>) serviceRegistry.requireService(ConfigurationService.class)
+    public void configure(GeneratorCreationContext creationContext, Properties params) throws MappingException {
+        idServiceProvider = (Provider<IdService>) creationContext.getServiceRegistry().requireService(ConfigurationService.class)
                 .getSetting("no.statkart.skif.IdServiceProvider", Provider.class, null);
     }
 }

@@ -7,7 +7,7 @@ import no.statkart.skif.store.kodeliste.KodeId;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
 import org.hibernate.engine.config.spi.ConfigurationService;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.spi.TypeConfiguration;
 import org.hibernate.type.spi.TypeConfigurationAware;
 import org.hibernate.usertype.EnhancedUserType;
@@ -118,7 +118,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         try {
             int code = rs.getInt(position);
             if (rs.wasNull()) {
@@ -135,7 +135,7 @@ public class EnumKodeIdType implements EnhancedUserType, ParameterizedType, Type
 
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         try {
             if (value == null) {
                 st.setNull(index, Types.SMALLINT);

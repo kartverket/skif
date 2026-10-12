@@ -2,7 +2,7 @@ package no.statkart.skif.persistence.hibernate.type;
 
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.usertype.EnhancedUserType;
 import org.hibernate.usertype.ParameterizedType;
 import org.slf4j.Logger;
@@ -88,7 +88,7 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType<Objec
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         try {
             long value = rs.getLong(position);
             if (rs.wasNull()) {
@@ -106,7 +106,7 @@ public class EmptyCollectionsOptimizerFlagType implements EnhancedUserType<Objec
 
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         try {
             if (value == null) {
                 log.trace("binding null to parameter: {}", index);

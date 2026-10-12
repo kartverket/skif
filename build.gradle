@@ -40,6 +40,12 @@ allprojects {
         resolutionStrategy {
             // Tvinger frem riktig hibernate versjon ettersom TomEE BOM også spesifiserer denne
             force libs.hibernate.core.get().toString()
+            // Hibernate 7 krever Jakarta Persistence 3.2 (Jakarta EE11), men TomEE 10.2.0 sin
+            // jakartaee-api bundler kun 3.1.0 (Jakarta EE10). Tvinger frem riktig versjon på
+            // compile-/testklassebanen her - MERK: TomEE-kjøretiden selv har fortsatt kun en
+            // EE10-implementasjon, så dette kan feile ved faktisk deploy/kjøring mot TomEE
+            // (se SKIF-xxx / Hibernate 7-oppgraderingsnotatet) inntil TomEE 11 er GA.
+            force libs.jakarta.persistence.api.get().toString()
 
             dependencySubstitution {
                 substitute(module('commons-logging:commons-logging')).because('SKIF bruker SLF4J').using(module(libs.jcl.to.slf4j.get().toString()))

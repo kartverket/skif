@@ -2,7 +2,7 @@ package no.statkart.skif.store.persistence.hibernate.type;
 
 import no.statkart.skif.store.endringslogg.Endringstype;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
@@ -40,12 +40,12 @@ public class EndringstypeType implements UserType {
     }
 
     @Override
-    public Endringstype nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Endringstype nullSafeGet(ResultSet rs, int position, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         return Endringstype.values()[rs.getInt(position)];
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         Endringstype endringstype = (Endringstype) value;
         st.setInt(index, endringstype.ordinal());
     }

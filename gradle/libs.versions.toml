@@ -5,7 +5,8 @@ c3p0 = '0.14.2'
 checker-framework = '4.3.0'
 guava = '33.7.2-jre'
 guice = '7.0.0'
-hibernate-core = '6.6.58.Final'
+hibernate-core = '7.0.2.Final'
+jakarta-persistence-api = '3.2.0' # Krevd av hibernate-core 7.x (Jakarta EE11); TomEE 10.2.0 bundler selv kun 3.1.0 (EE10) - se kommentar ved resolutionStrategy.force i build.gradle
 jodatime = '2.15.0'
 jws-api = '3.0.0'
 logback = '1.6.5'
@@ -91,7 +92,7 @@ jakarta-transaction-api = { module = 'jakarta.transaction:jakarta.transaction-ap
 jakarta-ejbapi          = { module = 'jakarta.ejb:jakarta.ejb-api' }
 jakarta-inject-api      = { module = 'jakarta.inject:jakarta.inject-api' }
 jakarta-interceptor-api = { module = 'jakarta.interceptor:jakarta.interceptor-api' }
-jakarta-persistence-api = { module = 'jakarta.persistence:jakarta.persistence-api' }
+jakarta-persistence-api = { module = 'jakarta.persistence:jakarta.persistence-api', version.ref = 'jakarta-persistence-api' }
 
 hibernate-core = { module = 'org.hibernate.orm:hibernate-core', version.ref = 'hibernate-core'}
 

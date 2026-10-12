@@ -2,7 +2,7 @@ package no.statkart.skif.persistence.hibernate.type;
 
 import no.statkart.skif.store.persistence.OracleArrayConverter;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.JdbcTypeNameMapper;
 import org.hibernate.usertype.UserType;
 import org.slf4j.Logger;
@@ -52,12 +52,12 @@ public class OracleArrayUserType<T extends OracleArrayConverter<E>, E> implement
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, int position, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         if (value == null) {
             if (log.isTraceEnabled()) {
                 log.trace(

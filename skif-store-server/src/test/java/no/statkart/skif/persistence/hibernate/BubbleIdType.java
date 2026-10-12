@@ -2,7 +2,7 @@ package no.statkart.skif.persistence.hibernate;
 
 import no.statkart.skif.store.BubbleId;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.usertype.UserType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T>
     }
 
     @Override
-    public T nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public T nullSafeGet(ResultSet rs, int position, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         final boolean traceEnabled = log.isTraceEnabled();
         Long value = rs.getLong(position);
         if (rs.wasNull()) {
@@ -89,7 +89,7 @@ public abstract class BubbleIdType<T extends BubbleId<?>> implements UserType<T>
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, T value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, T value, int index, WrapperOptions wrapperOptions) throws HibernateException, SQLException {
         final boolean traceEnabled = log.isTraceEnabled();
         if (value == null) {
             if (traceEnabled) {
