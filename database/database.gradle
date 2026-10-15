@@ -12,7 +12,7 @@ def filterProperties = [
         db_tablespace: db_username,
         db_dataroot_dir: db_dataroot_dir,
 ]
-configureDatabasePlugin {
+db.configureDatabasePlugin {
     useDrivers(libs.ojdbc.get().toString())
     toolset(name: '', type: 'oracle', prefix: '') {
         sqlTask('purge', sqlFile: 'src/main/sql/oracle/schema/Purge.sql')
