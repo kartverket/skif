@@ -26,12 +26,14 @@ dependencies {
     earlib project(':skif-config')
 }
 
-libDirName = 'APP-INF/lib'
-deploymentDescriptor {
-    version = '5'
-    displayName = 'skif-store-test'
-    warMap.each {
-        def p = project(it.key)
-        webModule(p.name + '-' + p.version + '.war', it.value)
+ear {
+    libDirName = 'APP-INF/lib'
+    deploymentDescriptor {
+        version = '5'
+        displayName = 'skif-store-test'
+        warMap.each {
+            def p = project(it.key)
+            webModule(p.name + '-' + p.version + '.war', it.value)
+        }
     }
 }
