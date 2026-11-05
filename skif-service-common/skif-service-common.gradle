@@ -52,7 +52,7 @@ publishing {
 def assertDependencies = tasks.register("assertDependencies") {
     doFirst {
         configurations.apiElements.getAllDependencies().each { Dependency dependency ->
-            if (dependency instanceof SelfResolvingDependency) return
+            if (dependency instanceof ProjectDependency || dependency instanceof FileCollectionDependency) return
             if (dependency.group in ['jakarta.platform', 'org.apache.tomee.bom', 'jakarta.activation', 'jakarta.jws', 'jakarta.xml.bind', 'jakarta.xml.ws']) return
             boolean godkjent = [
                 'org.slf4j',
