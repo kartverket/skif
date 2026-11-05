@@ -31,7 +31,7 @@ publishing {
 def assertDependencies = tasks.register("assertDependencies") {
     doFirst {
         configurations.apiElements.getAllDependencies().each { Dependency dependency ->
-            if (dependency instanceof FileCollectionDependency) return
+            if (dependency instanceof ProjectDependency || dependency instanceof FileCollectionDependency) return
             if (dependency.group in ['jakarta.platform', 'org.apache.tomee.bom']) return
             throw new TaskExecutionException(it, new RuntimeException('Skal ikke ha api-avhengigheter: ' + dependency))
         }

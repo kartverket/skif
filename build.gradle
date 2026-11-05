@@ -60,7 +60,7 @@ subprojects { Project project ->
 
     def filterTestGroup = { Test test = test, String group, String value ->
         test.with {
-            if (testFramework.class.simpleName == 'TestNGTestFramework') {
+            if (testFramework.class.simpleName.startsWith('TestNGTestFramework')) {
                 if (value == 'INCLUDE') {
                     testFramework.options.includeGroups group
                     test.doFirst { logger.quiet "${test.name} configuration: including group '${group}'" }
