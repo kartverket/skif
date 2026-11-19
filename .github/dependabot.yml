@@ -13,6 +13,9 @@ updates:
           interval: 'weekly'
           time: '07:00'
           timezone: 'Europe/Oslo'
+      cooldown:
+          exclude: # ikke cooldown for interne pakker
+              - "kartverket/*"
       groups:
           marocchino:
             patterns:
@@ -29,6 +32,10 @@ updates:
           interval: "weekly"
           time: '07:00'
           timezone: 'Europe/Oslo'
+      cooldown:
+          exclude: # ikke cooldown for interne pakker
+              - "no.kartverket.*:*"
+              - "no.statkart.*:*"
       ignore:
           - dependency-name: "gradle-wrapper"
             update-types: ["version-update:semver-major"]
